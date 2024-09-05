@@ -5,8 +5,13 @@ import PageUsers from "../Pages/PageUsers";
 import PageSellers from "../Pages/PageSellers";
 import PageRoutes from "../Pages/PageRoutes";
 import PageProducts from "../Pages/PageProducts";
+import PageLogin from "../Pages/PageLogin";
 
 export const router = createBrowserRouter([
+  {
+    path: "login",
+    element: <PageLogin />,
+  },
   {
     path: "/",
     element: <LayoutPublic />,
