@@ -4,48 +4,52 @@ import { Outlet } from "react-router-dom";
 
 const LayoutPublic = () => {
   const location = useLocation();
-  const currentPath = location.pathname || "/";
+  const currentPath = location.pathname;
+
+  const isActive = (path) => {
+    return currentPath.startsWith(path);
+  };
 
   const menuItems = [
     {
       name: "Empresas",
-      path: "/",
-      icon: "assets/icons/shop-window.svg",
-      activeIcon: "assets/icons/shop-window-fill.svg",
+      path: "/home/empresas",
+      icon: "/assets/icons/shop-window.svg",
+      activeIcon: "/assets/icons/shop-window-fill.svg",
     },
     {
       name: "Usuarios",
-      path: "/usuarios",
-      icon: "assets/icons/people.svg",
-      activeIcon: "assets/icons/people-fill.svg",
+      path: "/home/usuarios",
+      icon: "/assets/icons/people.svg",
+      activeIcon: "/assets/icons/people-fill.svg",
     },
     {
       name: "Vendedores",
-      path: "/vendedores",
-      icon: "assets/icons/briefcase.svg",
-      activeIcon: "assets/icons/briefcase-fill.svg",
+      path: "/home/vendedores",
+      icon: "/assets/icons/briefcase.svg",
+      activeIcon: "/assets/icons/briefcase-fill.svg",
     },
     {
       name: "Rutas",
-      path: "/rutas",
-      icon: "assets/icons/compass.svg",
-      activeIcon: "assets/icons/compass-fill.svg",
+      path: "/home/rutas",
+      icon: "/assets/icons/compass.svg",
+      activeIcon: "/assets/icons/compass-fill.svg",
     },
     {
       name: "Productos",
-      path: "/productos",
-      icon: "assets/icons/box-seam.svg",
-      activeIcon: "assets/icons/box-seam-fill.svg",
+      path: "/home/productos",
+      icon: "/assets/icons/box-seam.svg",
+      activeIcon: "/assets/icons/box-seam-fill.svg",
     },
   ];
 
   return (
-    <div className="font-roboto flex h-screen flex-col">
+    <div className="flex h-screen flex-col font-roboto">
       <div className="flex flex-1">
         <aside className="w-[267px] bg-white">
           <div className="flex justify-center">
             <img
-              src="assets/img/logo.png"
+              src="/assets/img/logo.png"
               alt="Logo img"
               className="mt-[10px] p-4"
             />
@@ -56,14 +60,12 @@ const LayoutPublic = () => {
                 key={item.name}
                 to={item.path}
                 className={`flex h-[50px] w-[247px] items-center gap-[6px] rounded-[12px] px-[24px] py-[5px] ${
-                  currentPath === item.path ? "bg-red-500 text-white" : ""
+                  isActive(item.path) ? "bg-red-500 text-white" : ""
                 }`}
               >
                 <div className="flex items-center gap-[10px]">
                   <img
-                    src={
-                      currentPath === item.path ? item.activeIcon : item.icon
-                    }
+                    src={isActive(item.path) ? item.activeIcon : item.icon}
                     alt=""
                     className="h-[20px] w-[20px] rounded"
                   />
@@ -79,9 +81,9 @@ const LayoutPublic = () => {
           <nav className="flex items-center justify-between bg-white p-[24px]">
             <Breadcrumbs />
             <div className="flex items-center gap-[38px]">
-              <div className="bg-black_l shadow-bl flex w-[250px] items-center gap-[10px] rounded-full px-[16px] py-[8px]">
+              <div className="flex w-[250px] items-center gap-[10px] rounded-full bg-black_l px-[16px] py-[8px] shadow-bl">
                 <img
-                  src="assets/icons/search.svg"
+                  src="/assets/icons/search.svg"
                   alt="Search icon"
                   className="h-[20px] w-[20px]"
                 />
@@ -92,17 +94,17 @@ const LayoutPublic = () => {
                 />
               </div>
               <img
-                src="assets/icons/gear.svg"
+                src="/assets/icons/gear.svg"
                 alt="Gear icon"
                 className="h-[30px] w-[30px]"
               />
               <img
-                src="assets/icons/bell.svg"
+                src="/assets/icons/bell.svg"
                 alt="Bell icon"
                 className="h-[30px] w-[30px]"
               />
               <img
-                src="assets/icons/avatar.svg"
+                src="/assets/icons/avatar.svg"
                 alt="Avatar icon"
                 className="h-[40px] w-[40px]"
               />

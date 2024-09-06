@@ -6,7 +6,6 @@ const Breadcrumbs = () => {
   const generateBreadcrumbs = () => {
     const pathnames = location.pathname.split("/").filter((x) => x);
     return [
-      { name: "Home", path: "/" },
       ...pathnames.map((name, index) => {
         const path = `/${pathnames.slice(0, index + 1).join("/")}`;
         return { name, path };

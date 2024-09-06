@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import LayoutPublic from "../Layouts/LayoutPublic";
+import PageHome from "../Pages/PageHome";
 import PageCompanies from "../Pages/PageCompanies";
 import PageUsers from "../Pages/PageUsers";
 import PageSellers from "../Pages/PageSellers";
@@ -8,11 +9,15 @@ import PageProducts from "../Pages/PageProducts";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/home",
     element: <LayoutPublic />,
     children: [
       {
         index: true,
+        element: <PageHome />,
+      },
+      {
+        path: "empresas",
         element: <PageCompanies />,
       },
       {
