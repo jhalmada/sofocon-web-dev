@@ -23,7 +23,7 @@ const CompInputPass = ({ placeholder, label }) => {
         <input
           type={isVisible ? "text" : "password"}
           placeholder={placeholder}
-          className="font-roboto relative h-[100%] w-[100%] rounded-md border border-black p-[10px] pl-[10px] pr-[40px] text-[16px] font-light"
+          className="relative h-[100%] w-[100%] rounded-md border border-black p-[10px] pl-[10px] pr-[40px] font-roboto text-[16px] font-light"
         />
         <span
           onClick={toggleVisibility}
