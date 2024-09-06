@@ -1,7 +1,9 @@
 import { useState } from "react";
 
-const CompInputPass = ({ placeholder, label }) => {
+const CompInputPass = ({ placeholder, label, msjError }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [error, setError] = useState(false);
+  const colorError = "#9A0000";
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -9,7 +11,11 @@ const CompInputPass = ({ placeholder, label }) => {
 
   return (
     <div className="text-left">
-      <label htmlFor="password" className="font-roboto text-xl font-medium">
+      <label
+        htmlFor="password"
+        className="font-roboto text-xl font-medium"
+        style={{ color: error ? colorError : "black" }}
+      >
         {label}
       </label>
       <div
@@ -23,7 +29,11 @@ const CompInputPass = ({ placeholder, label }) => {
         <input
           type={isVisible ? "text" : "password"}
           placeholder={placeholder}
-          className="font-roboto relative h-[100%] w-[100%] rounded-md border border-black p-[10px] pl-[10px] pr-[40px] text-[16px] font-light"
+          className={`relative h-[100%] w-[100%] rounded-md border p-[10px] pl-[10px] pr-[40px] font-roboto text-[16px] font-light ${error ? "placeholder-[#9A0000]" : "border-black placeholder-gray-400"}`}
+          onFocus={() => setError(false)}
+          style={{
+            borderColor: error ? colorError : "black",
+          }}
         />
         <span
           onClick={toggleVisibility}
@@ -49,6 +59,11 @@ const CompInputPass = ({ placeholder, label }) => {
             />
           )}
         </span>
+        {error && (
+          <p className="font-roboto text-xs" style={{ color: colorError }}>
+            {msjError}
+          </p>
+        )}
       </div>
     </div>
   );
