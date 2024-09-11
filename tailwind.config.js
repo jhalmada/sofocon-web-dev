@@ -15,6 +15,7 @@ export default {
         pink_l: "#F7CCCC",
         blue_b: "#1E5EDA",
         blue_l: "#5E95FF",
+        gray_b: "#9F9F9F",
       },
       boxShadow: {
         bl: "2px 3px 6px rgba(0, 0, 0, 0.2)",
@@ -28,8 +29,9 @@ export default {
       fontSize: {
         xs: "12px",
         sm: "14px",
-        md: "20px",
-        lg: "24px",
+        md: "16px",
+        lg: "20px",
+        xl: "24px",
       },
     },
   },

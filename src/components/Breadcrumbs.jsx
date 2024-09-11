@@ -22,9 +22,16 @@ const Breadcrumbs = () => {
           <li key={index} className="flex items-center gap-[6px]">
             <Link
               to={breadcrumb.path}
-              className="font-medium capitalize leading-[14px] text-black underline"
+              className="flex items-center font-medium capitalize leading-[14px] text-black underline"
             >
-              {breadcrumb.name}
+              {index === 0 ? (
+                <img
+                  src="/assets/icons/house-door.svg"
+                  alt="Home"
+                  className="mr-1 h-4 w-4"
+                />
+              ) : null}
+              {index === 0 ? "Home" : breadcrumb.name}
             </Link>
             {index < breadcrumbs.length - 1 && <span>/</span>}
           </li>
