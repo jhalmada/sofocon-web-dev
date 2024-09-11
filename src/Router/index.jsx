@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import LayoutPublic from "../Layouts/LayoutPublic";
+import PageHome from "../Pages/PageHome";
 import PageCompanies from "../Pages/PageCompanies";
 import PageUsers from "../Pages/PageUsers";
 import PageSellers from "../Pages/PageSellers";
@@ -9,6 +10,7 @@ import PageLogin from "../Pages/PageLogin";
 import LayoutLogin from "../Layouts/LayoutLogin";
 import PageRecoverPass from "../Pages/PageRecoverPass";
 import PageNewPassword from "../Pages/PageNewPassword";
+import PagePassword from "../Pages/PagePassword";
 
 export const router = createBrowserRouter([
   {
@@ -27,14 +29,22 @@ export const router = createBrowserRouter([
         path: "new-password",
         element: <PageNewPassword />,
       },
+      {
+        path: "password-Changed",
+        element: <PagePassword />,
+      },
     ],
   },
   {
-    path: "/",
+    path: "/home",
     element: <LayoutPublic />,
     children: [
       {
         index: true,
+        element: <PageHome />,
+      },
+      {
+        path: "empresas",
         element: <PageCompanies />,
       },
       {

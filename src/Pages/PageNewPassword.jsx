@@ -25,9 +25,11 @@ const PageNewPassword = () => {
         >
           <h4>VOLVER</h4>
         </Link>
-        <button className="h-[45px] w-[188px] rounded-[20px] bg-[#D70000] font-roboto text-sm text-xl font-medium text-white shadow-md shadow-gray-500">
-          CAMBIAR CONTRASEÑA
-        </button>
+        <Link to="/login/password-Changed">
+          <button className="h-[45px] w-[188px] rounded-[20px] bg-[#D70000] font-roboto text-sm text-xl font-medium text-white shadow-md shadow-gray-500">
+            CAMBIAR CONTRASEÑA
+          </button>
+        </Link>
       </div>
     </>
   );
