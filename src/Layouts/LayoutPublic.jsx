@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { Outlet } from "react-router-dom";
+import { useState } from "react";
 
 const LayoutPublic = () => {
   const location = useLocation();
@@ -13,6 +14,9 @@ const LayoutPublic = () => {
 
     return currentPath.startsWith(`${path}/`) || currentPath === path;
   };
+
+  //para manejar el abrir o cerrar el menu
+  const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
     {
@@ -56,7 +60,9 @@ const LayoutPublic = () => {
   return (
     <div className="flex h-screen flex-col font-roboto">
       <div className="flex flex-1">
-        <aside className="flex h-screen max-h-screen w-[267px] flex-col justify-between bg-white">
+        <aside
+          className={`flex h-screen max-h-screen ${isOpen ? "w-[267px]" : "w-[100px]"} flex-col justify-between bg-white transition-all duration-300 ease-in-out`}
+        >
           <div>
             <div className="flex justify-center">
               <img
@@ -70,9 +76,9 @@ const LayoutPublic = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`flex h-[50px] w-[247px] items-center gap-[6px] rounded-[12px] px-[24px] py-[5px] ${
+                  className={`flex h-[50px] ${isOpen ? "w-[247px]" : "w-[70px]"} items-center gap-[6px] rounded-[12px] px-[24px] py-[5px] ${
                     isActive(item.path) ? "bg-red_m text-white" : ""
-                  }`}
+                  } transition-all duration-300 ease-in-out`}
                 >
                   <div className="flex items-center gap-[10px]">
                     <img
@@ -80,15 +86,24 @@ const LayoutPublic = () => {
                       alt=""
                       className="h-[20px] w-[20px] rounded"
                     />
-                    <p className="text-sm font-light leading-[14px]">
-                      {item.name}
-                    </p>
+                    {isOpen && (
+                      <p className="text-sm font-light leading-[14px]">
+                        {item.name}
+                      </p>
+                    )}
                   </div>
                 </Link>
               ))}
             </div>
           </div>
-          <div className="flex justify-end py-4 pr-4">
+          <div
+            style={{
+              transform: isOpen ? "rotate(0deg)" : "rotate(180deg)", // Rotación según el estado
+              transition: "transform 0.3s ease", // Transición suave
+            }}
+            className="flex cursor-pointer justify-end py-4 pr-4"
+            onClick={() => setIsOpen(!isOpen)}
+          >
             <img src="/assets/icons/arrow-left.svg" alt="" />
           </div>
         </aside>
