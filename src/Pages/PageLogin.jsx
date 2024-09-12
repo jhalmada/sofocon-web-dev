@@ -16,9 +16,12 @@ const PageLogin = () => {
         placeholder={"escribe tu contraseña"}
         label={"Contraseña"}
       />
-      <button className="mt-[100px] h-[45px] w-[147px] rounded-[20px] bg-[#D70000] font-roboto text-sm text-xl font-medium text-white shadow-md shadow-gray-500">
-        INGRESAR
-      </button>
+      <Link to={"/home"}>
+        <button className="mt-[100px] h-[45px] w-[147px] rounded-[20px] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md shadow-gray-500">
+          INGRESAR
+        </button>
+      </Link>
+
       <Link
         to={"recover"}
         className="mt-5 font-roboto text-xs font-medium text-[#555]"

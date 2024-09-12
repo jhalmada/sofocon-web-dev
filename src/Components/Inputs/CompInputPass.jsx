@@ -13,7 +13,7 @@ const CompInputPass = ({ placeholder, label, msjError }) => {
     <div className="text-left">
       <label
         htmlFor="password"
-        className="font-roboto text-xl font-medium"
+        className="font-roboto text-lg font-medium"
         style={{ color: error ? colorError : "black" }}
       >
         {label}

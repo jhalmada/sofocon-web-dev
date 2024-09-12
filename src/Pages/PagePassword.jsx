@@ -11,7 +11,7 @@ const PagePassword = () => {
         sesión con tu nueva contraseña.
       </p>
       <Link to={"/login"}>
-        <button className="mt-10 h-[45px] w-[188px] rounded-[20px] bg-[#D70000] font-roboto text-sm text-xl font-medium text-white shadow-md shadow-gray-500">
+        <button className="mt-10 h-[45px] w-[188px] rounded-[20px] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md shadow-gray-500">
           INGRESAR
         </button>
       </Link>

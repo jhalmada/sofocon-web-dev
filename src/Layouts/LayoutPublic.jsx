@@ -46,7 +46,7 @@ const LayoutPublic = () => {
   return (
     <div className="flex h-screen flex-col font-roboto">
       <div className="flex flex-1">
-        <aside className="w-[267px] bg-white">
+        <aside className="h-screen max-h-screen w-[267px] bg-white">
           <div className="flex justify-center">
             <img
               src="/assets/img/logo.png"
@@ -75,6 +75,9 @@ const LayoutPublic = () => {
                 </div>
               </Link>
             ))}
+          </div>
+          <div className="mt-[12rem] flex justify-end pr-4">
+            <img src="/assets/icons/arrow-left.svg" alt="" />
           </div>
         </aside>
         <div className="flex flex-1 flex-col">

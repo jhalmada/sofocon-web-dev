@@ -11,6 +11,7 @@ import LayoutLogin from "../Layouts/LayoutLogin";
 import PageRecoverPass from "../Pages/PageRecoverPass";
 import PageNewPassword from "../Pages/PageNewPassword";
 import PagePassword from "../Pages/PagePassword";
+import PageRedirection from "../Pages/PageRedirection";
 
 export const router = createBrowserRouter([
   {
@@ -64,5 +65,9 @@ export const router = createBrowserRouter([
         element: <PageProducts />,
       },
     ],
+  },
+  {
+    path: "/",
+    element: <PageRedirection />,
   },
 ]);

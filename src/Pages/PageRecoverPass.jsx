@@ -23,7 +23,7 @@ const PageRecoverPass = () => {
           <h4>VOLVER</h4>
         </Link>
         <Link to={"/login/new-password"}>
-          <button className="h-[45px] w-[147px] rounded-[20px] bg-[#D70000] font-roboto text-sm text-xl font-medium text-white shadow-md shadow-gray-500">
+          <button className="h-[45px] w-[147px] rounded-[20px] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md shadow-gray-500">
             ENVIAR CODIGO
           </button>
         </Link>

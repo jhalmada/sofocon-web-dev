@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-const CompInput = ({ placeholder, label, msjError }) => {
+const CompInput = ({ placeholder, label, msjError, width = "435px" }) => {
   const [error, setError] = useState(false);
   const colorError = "#9A0000";
   return (
     <div className="text-left">
       <label
         htmlFor="password"
-        className="font-roboto text-xl font-medium"
+        className="font-roboto text-lg font-medium"
         style={{ color: error ? colorError : "black" }}
       >
         {label}
@@ -15,7 +15,7 @@ const CompInput = ({ placeholder, label, msjError }) => {
       <div
         style={{
           position: "relative",
-          width: "435px",
+          width: width,
           height: "45px",
           marginBottom: "35px",
         }}
