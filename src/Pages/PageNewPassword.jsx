@@ -10,6 +10,7 @@ const PageNewPassword = () => {
         msjError={
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos."
         }
+        labelSize="20px"
       />
       <CompInputPass
         placeholder={"escribe tu nueva contraseña"}
@@ -17,6 +18,7 @@ const PageNewPassword = () => {
         msjError={
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos. Debe coincidir con el campo anterior."
         }
+        labelSize="20px"
       />
       <div className="flex w-[100%] items-center justify-between">
         <Link

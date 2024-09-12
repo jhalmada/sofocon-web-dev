@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-const CompInputPass = ({ placeholder, label, msjError }) => {
+const CompInputPass = ({
+  placeholder,
+  label,
+  msjError,
+  labelSize = "14px",
+  width = "100%",
+}) => {
   const [isVisible, setIsVisible] = useState(false);
   const [error, setError] = useState(false);
   const colorError = "#9A0000";
@@ -13,12 +19,12 @@ const CompInputPass = ({ placeholder, label, msjError }) => {
     <div className="text-left">
       <label
         htmlFor="password"
-        className="font-roboto text-sm font-medium"
-        style={{ color: error ? colorError : "black" }}
+        className="font-roboto font-medium"
+        style={{ color: error ? colorError : "black", fontSize: labelSize }}
       >
         {label}
       </label>
-      <div className="relative mb-[35px] h-[45px] w-full">
+      <div className="relative mb-[35px] h-[45px]" style={{ width: width }}>
         <input
           type={isVisible ? "text" : "password"}
           placeholder={placeholder}

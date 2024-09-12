@@ -10,6 +10,7 @@ const PageRecoverPass = () => {
         msjError={
           "*Este campo debe contener una direccion de correo válida vinculada a la plataforma."
         }
+        labelSize="20px"
       />
       <p className="mt-4 max-w-[435px] font-roboto text-xs font-light">
         Introduce tu dirección de correo electrónico y te enviaremos un enlace
