@@ -6,11 +6,12 @@ const UserRow = ({
   role,
   editIconSrc,
   deleteIconSrc,
+  onEditClick,
 }) => {
   return (
     <tr>
-      <td className="p-2">
-        <img src={avatarSrc} alt="Avatar icon" className="h-[30px] w-[27px]" />
+      <td>
+        <img src={avatarSrc} alt="Avatar icon" className="h-[30px] w-[30px]" />
       </td>
       <td className="p-2">{fullName}</td>
       <td className="p-2">{email}</td>
@@ -21,7 +22,8 @@ const UserRow = ({
           <img
             src={editIconSrc}
             alt="Edit icon"
-            className="h-[20px] w-[20px]"
+            className="h-[20px] w-[20px] cursor-pointer"
+            onClick={onEditClick}
           />
           <img
             src={deleteIconSrc}

@@ -1,4 +1,3 @@
-import React from "react";
 import CompInput from "../Inputs/CompInput";
 
 const CompFormAddRol = () => {

@@ -51,6 +51,8 @@ const roles = [
   {
     avatarSrc: icono,
     fullName: "Taller",
+    email: "",
+    password: "",
     permisos: ["Productos"],
     editIconSrc: "/assets/icons/pencil-square.svg",
     deleteIconSrc: "/assets/icons/trash3.svg",

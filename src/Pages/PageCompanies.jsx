@@ -1,14 +1,21 @@
+import { Link } from "react-router-dom";
 const PageCompanies = () => {
   return (
-    <div className="p-4">
-      <h1 className="mb-5 text-xl font-medium leading-[24px]">Empresas</h1>
-      <div className="flex gap-6">
-        <div className="h-[126px] w-[247px] bg-black_l"></div>
-        <div className="h-[126px] w-[247px] bg-black_l"></div>
-        <div className="h-[126px] w-[247px] bg-black_l"></div>
-        <div className="h-[126px] w-[247px] bg-black_l"></div>
+    <div className="bg-gray p-4">
+      <div className="mb-4 flex items-center">
+        <img
+          src="/assets/icons/chevron-left.svg"
+          alt="arrow left"
+          className="-ml-1 h-[16px] w-[16px]"
+        />
+        <Link to={"/home"}>
+          {" "}
+          <p className="text-sm font-medium leading-[16px]">Volver</p>
+        </Link>
       </div>
-      <div className="mt-10 h-[16rem] bg-black_l"></div>
+      <h1 className="mb-5 text-xl font-medium leading-[24px] text-black_m">
+        Empresas
+      </h1>
     </div>
   );
 };

@@ -1,37 +1,60 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import UserRow from "../components/UserRow";
 import { users } from "../Utils/Datainfo";
 import CompTableRoles from "../Components/Tables/CompTableRoles";
 import CompButtonAdd from "../Components/Buttons/CompButtonAdd";
-import { Link } from "react-router-dom";
 import CompFormAddRol from "../Components/Forms/CompFormAddRol";
+import CompModalUsers from "../components/Modals/CompModalUsers";
 
 const PageUsers = () => {
   const [activeTab, setActiveTab] = useState("users");
   const [addRol, setAddRol] = useState(false);
-  console.log(addRol);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => {
+    setModalOpen(true);
+  };
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   return (
-    <div className="bg-black_l">
+    <div className="bg-gray">
       <div className="p-4">
-        <h1 className="mb-5 text-xl font-medium leading-[24px]">Usuarios</h1>
+        <div className="mb-4 flex items-center">
+          <img
+            src="/assets/icons/chevron-left.svg"
+            alt="arrow left"
+            className="-ml-1 h-[16px] w-[16px]"
+          />
+          <Link to={"/home"}>
+            {" "}
+            <p className="text-sm font-medium leading-[16px]">Volver</p>
+          </Link>
+        </div>
+        <h1 className="mb-5 text-xl font-medium leading-[24px] text-black_m">
+          Usuarios
+        </h1>
         <div className="flex items-center justify-between">
           <div className="flex">
             <h2
               onClick={() => setActiveTab("users")}
-              className={`w-[145px] cursor-pointer rounded-t-lg ${activeTab === "users" ? "bg-white" : "bg-gray_b"} p-4 text-center text-md font-medium leading-[24px] shadow-t`}
+              className={`w-[145px] cursor-pointer rounded-t-lg ${activeTab === "users" ? "bg-white" : "bg-black_l"} p-4 text-center text-md font-medium leading-[24px] shadow-t`}
             >
               Usuarios
             </h2>
             <h2
               onClick={() => setActiveTab("roles")}
-              className={`${activeTab === "roles" ? "bg-white" : "bg-gray_b"} w-[145px] cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-[24px]`}
+              className={`${activeTab === "roles" ? "bg-white" : "bg-black_l"} w-[145px] cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-[24px] shadow-t`}
             >
               Roles
             </h2>
             {addRol && (
               <h2
                 onClick={() => setActiveTab("newRoles")}
-                className={`${activeTab === "newRoles" ? "bg-white" : "bg-gray_b"} w-[145px] cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-[24px]`}
+                className={`${activeTab === "newRoles" ? "bg-white" : "bg-black_l"} w-[145px] cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-[24px] shadow-t`}
               >
                 Nuevo Rol
               </h2>
@@ -44,10 +67,7 @@ const PageUsers = () => {
                 alt="Search icon"
                 className="h-[32px] w-[32px] rounded-[30px] bg-white p-1"
               />
-              {/* aqui manejo los diferentes botones que permitiran agregar un usuario o un rol */}
-              {activeTab === "users" && (
-                <CompButtonAdd text="Agregar Usuario" />
-              )}
+              {activeTab === "users" && <CompButtonAdd text="Nuevo Usuario" />}
               {activeTab === "roles" && (
                 <CompButtonAdd
                   text="Agregar Rol"
@@ -57,8 +77,6 @@ const PageUsers = () => {
             </div>
           )}
         </div>
-        {/* Desde aqui empezaremos a trabajar con el renderizado condional teniendo en cuenta el valor del activeTab */}
-        {/* Si activeTab es igual a "users" se renderiza el siguiente bloque de codigo */}
         {activeTab === "users" && (
           <div className="rounded-tr-lg bg-white p-[20px] shadow-t">
             <table className="w-full">
@@ -82,7 +100,6 @@ const PageUsers = () => {
                         alt="chevron-down icon"
                         className="h-[20px] w-[20px] cursor-pointer"
                       />
-
                       <img
                         src="/assets/icons/chevron-down.svg"
                         alt="chevron-down icon"
@@ -106,17 +123,15 @@ const PageUsers = () => {
                     role={user.role}
                     editIconSrc={user.editIconSrc}
                     deleteIconSrc={user.deleteIconSrc}
+                    onEditClick={() => openModal()}
                   />
                 ))}
               </tbody>
             </table>
           </div>
         )}
-        {/* Si activeTab es igual a "roles" se renderiza el siguiente bloque de codigo */}
         {activeTab === "roles" && <CompTableRoles />}
-        {/* Si activeTab es igual a "roles" se renderiza el siguiente bloque de codigo */}
         {activeTab === "newRoles" && <CompFormAddRol />}
-        {/* Esto tiene que llevarse a un componente aparte para la paginacion  */}
         <div className="flex justify-center p-4">
           <div className="flex px-[6px]">
             <button className="rounded px-4 py-2">
@@ -132,9 +147,7 @@ const PageUsers = () => {
                   alt="Skipe field icon"
                 />
               </button>
-              <button className="rounded rounded-full bg-gray-400 px-4 py-2">
-                1
-              </button>
+              <button className="rounded-full bg-gray-400 px-4 py-2">1</button>
               <button className="rounded px-4 py-2">2</button>
               <button className="rounded px-4 py-2">3</button>
               <button className="rounded px-4 py-2">4</button>
@@ -157,6 +170,8 @@ const PageUsers = () => {
           </div>
         </div>
       </div>
+      <CompModalUsers isOpen={isModalOpen} onClose={closeModal} />{" "}
+      {/* Se renderiza el modal */}
     </div>
   );
 };

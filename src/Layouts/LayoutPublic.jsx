@@ -7,10 +7,20 @@ const LayoutPublic = () => {
   const currentPath = location.pathname;
 
   const isActive = (path) => {
-    return currentPath.startsWith(path);
+    if (path === "/home") {
+      return currentPath === path;
+    }
+
+    return currentPath.startsWith(`${path}/`) || currentPath === path;
   };
 
   const menuItems = [
+    {
+      name: "Inicio",
+      path: "/home",
+      icon: "/assets/icons/house-door.svg",
+      activeIcon: "/assets/icons/house-door-fill.svg",
+    },
     {
       name: "Empresas",
       path: "/home/empresas",
@@ -46,37 +56,39 @@ const LayoutPublic = () => {
   return (
     <div className="flex h-screen flex-col font-roboto">
       <div className="flex flex-1">
-        <aside className="h-screen max-h-screen w-[267px] bg-white">
-          <div className="flex justify-center">
-            <img
-              src="/assets/img/logo.png"
-              alt="Logo img"
-              className="mt-[10px] p-4"
-            />
+        <aside className="flex h-screen max-h-screen w-[267px] flex-col justify-between bg-white">
+          <div>
+            <div className="flex justify-center">
+              <img
+                src="/assets/img/logo.png"
+                alt="Logo img"
+                className="mt-[10px] p-4"
+              />
+            </div>
+            <div className="p-2">
+              {menuItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`flex h-[50px] w-[247px] items-center gap-[6px] rounded-[12px] px-[24px] py-[5px] ${
+                    isActive(item.path) ? "bg-red_m text-white" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-[10px]">
+                    <img
+                      src={isActive(item.path) ? item.activeIcon : item.icon}
+                      alt=""
+                      className="h-[20px] w-[20px] rounded"
+                    />
+                    <p className="text-sm font-light leading-[14px]">
+                      {item.name}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="p-2">
-            {menuItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={`flex h-[50px] w-[247px] items-center gap-[6px] rounded-[12px] px-[24px] py-[5px] ${
-                  isActive(item.path) ? "bg-red-500 text-white" : ""
-                }`}
-              >
-                <div className="flex items-center gap-[10px]">
-                  <img
-                    src={isActive(item.path) ? item.activeIcon : item.icon}
-                    alt=""
-                    className="h-[20px] w-[20px] rounded"
-                  />
-                  <p className="text-sm font-light leading-[14px]">
-                    {item.name}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-          <div className="mt-[12rem] flex justify-end pr-4">
+          <div className="flex justify-end py-4 pr-4">
             <img src="/assets/icons/arrow-left.svg" alt="" />
           </div>
         </aside>
@@ -84,18 +96,6 @@ const LayoutPublic = () => {
           <nav className="flex items-center justify-between bg-white p-[24px]">
             <Breadcrumbs />
             <div className="flex items-center gap-[38px]">
-              <div className="flex w-[250px] items-center gap-[10px] rounded-full bg-black_l px-[16px] py-[8px] shadow-bl">
-                <img
-                  src="/assets/icons/search.svg"
-                  alt="Search icon"
-                  className="h-[20px] w-[20px]"
-                />
-                <input
-                  type="text"
-                  placeholder="Buscar..."
-                  className="bg-transparent outline-none"
-                />
-              </div>
               <img
                 src="/assets/icons/gear.svg"
                 alt="Gear icon"

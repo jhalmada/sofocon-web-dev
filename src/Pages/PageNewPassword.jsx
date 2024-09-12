@@ -3,7 +3,7 @@ import CompInputPass from "../Components/Inputs/CompInputPass";
 
 const PageNewPassword = () => {
   return (
-    <>
+    <div className="w-full">
       <CompInputPass
         placeholder={"escribe tu nueva contraseña"}
         label={"Nueva contraseña"}
@@ -18,7 +18,7 @@ const PageNewPassword = () => {
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos. Debe coincidir con el campo anterior."
         }
       />
-      <div className="mt-8 flex w-[100%] justify-between">
+      <div className="flex w-[100%] items-center justify-between">
         <Link
           to={"/login"}
           className="mt-5 font-roboto text-xs font-medium text-[#555]"
@@ -26,12 +26,12 @@ const PageNewPassword = () => {
           <h4>VOLVER</h4>
         </Link>
         <Link to="/login/password-Changed">
-          <button className="h-[45px] w-[188px] rounded-[20px] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md shadow-gray-500">
+          <button className="mt-5 h-[45px] w-[188px] rounded-[20px] bg-[#E03030] font-roboto text-sm font-medium text-white shadow-md shadow-gray-500">
             CAMBIAR CONTRASEÑA
           </button>
         </Link>
       </div>
-    </>
+    </div>
   );
 };
 

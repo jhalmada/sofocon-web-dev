@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const PageRecoverPass = () => {
   return (
-    <>
+    <div className="w-full">
       <CompInput
         placeholder={"example@ejemail.com"}
         label={"Confirma tu correo"}
@@ -15,7 +15,7 @@ const PageRecoverPass = () => {
         Introduce tu dirección de correo electrónico y te enviaremos un enlace
         para restablecer tu contraseña.
       </p>
-      <div className="flex w-[100%] justify-between">
+      <div className="flex items-center justify-between">
         <Link
           to={"/login"}
           className="mt-5 font-roboto text-xs font-medium text-[#555]"
@@ -23,12 +23,12 @@ const PageRecoverPass = () => {
           <h4>VOLVER</h4>
         </Link>
         <Link to={"/login/new-password"}>
-          <button className="h-[45px] w-[147px] rounded-[20px] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md shadow-gray-500">
+          <button className="mt-5 h-[45px] w-[147px] rounded-[20px] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md shadow-gray-500">
             ENVIAR CODIGO
           </button>
         </Link>
       </div>
-    </>
+    </div>
   );
 };
 

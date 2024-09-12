@@ -10,11 +10,11 @@ const CompTableRoles = () => {
         <thead>
           <tr>
             <th className="p-2 text-left text-md font-semibold leading-[18px]"></th>
-            <th className="w-[60%] p-2 text-left text-md font-semibold leading-[18px]">
+            <th className="w-[40.4%] p-2 text-left text-md font-semibold leading-[18px]">
               Rol
             </th>
 
-            <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[18px]">
+            <th className="flex p-2 text-left text-md font-semibold leading-[18px]">
               Permisos
             </th>
             <th className="p-2 text-left text-md font-semibold leading-[18px]">
@@ -29,7 +29,7 @@ const CompTableRoles = () => {
                 <img
                   src={user.avatarSrc}
                   alt="Avatar icon"
-                  className="h-[30px] w-[27px]"
+                  className="h-[30px] w-[30px]"
                 />
               </td>
               <td className="p-2">{user.fullName}</td>
