@@ -8,6 +8,7 @@ export default {
         black_m: "#555555",
         black_l: "#9F9F9F",
         white: "#F8F8F8",
+        red_e: "#9A0000",
         red_b: "#E03030",
         red_m: "#F15151",
         red_l: "#F09393",
