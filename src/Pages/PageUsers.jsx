@@ -6,6 +6,7 @@ import CompTableRoles from "../Components/Tables/CompTableRoles";
 import CompButtonAdd from "../Components/Buttons/CompButtonAdd";
 import CompFormAddRol from "../Components/Forms/CompFormAddRol";
 import CompModalUsers from "../components/Modals/CompModalUsers";
+import Pagination from "../components/Pagination";
 
 const PageUsers = () => {
   const [activeTab, setActiveTab] = useState("users");
@@ -21,8 +22,8 @@ const PageUsers = () => {
   };
 
   return (
-    <div className="bg-gray">
-      <div className="p-4">
+    <div className="flex h-full flex-col justify-between bg-gray">
+      <div className="flex-grow p-6">
         <div className="mb-4 flex items-center">
           <img
             src="/assets/icons/chevron-left.svg"
@@ -30,7 +31,6 @@ const PageUsers = () => {
             className="-ml-1 h-[16px] w-[16px]"
           />
           <Link to={"/home"}>
-            {" "}
             <p className="text-sm font-medium leading-[16px]">Volver</p>
           </Link>
         </div>
@@ -132,43 +132,9 @@ const PageUsers = () => {
         )}
         {activeTab === "roles" && <CompTableRoles />}
         {activeTab === "newRoles" && <CompFormAddRol />}
-        <div className="flex justify-center p-4">
-          <div className="flex px-[6px]">
-            <button className="rounded px-4 py-2">
-              <img
-                src="/assets/icons/SkipPreviousFilled.svg"
-                alt="Skipe field icon"
-              />
-            </button>
-            <div className="flex space-x-2">
-              <button className="rounded px-4 py-2">
-                <img
-                  src="/assets/icons/ChevronLeftFilled.svg"
-                  alt="Skipe field icon"
-                />
-              </button>
-              <button className="rounded-full bg-gray-400 px-4 py-2">1</button>
-              <button className="rounded px-4 py-2">2</button>
-              <button className="rounded px-4 py-2">3</button>
-              <button className="rounded px-4 py-2">4</button>
-              <button className="rounded px-4 py-2">5</button>
-              <button className="rounded px-4 py-2">6</button>
-              <button className="rounded px-4 py-2">7</button>
-              <button className="rounded px-4 py-2">
-                <img
-                  src="/assets/icons/ChevronRightFilled.svg"
-                  alt="Skipe field icon"
-                />
-              </button>
-            </div>
-            <button className="rounded px-4 py-2">
-              <img
-                src="/assets/icons/SkipNextFilled.svg"
-                alt="Skipe field icon"
-              />
-            </button>
-          </div>
-        </div>
+      </div>
+      <div className="flex justify-center p-6">
+        <Pagination />
       </div>
       <CompModalUsers isOpen={isModalOpen} onClose={closeModal} />{" "}
       {/* Se renderiza el modal */}

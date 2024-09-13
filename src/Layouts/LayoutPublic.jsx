@@ -16,7 +16,7 @@ const LayoutPublic = () => {
   };
 
   //para manejar el abrir o cerrar el menu
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const menuItems = [
     {
@@ -66,7 +66,11 @@ const LayoutPublic = () => {
           <div>
             <div className="flex justify-center">
               <img
-                src="/assets/img/logo.png"
+                src={
+                  isOpen
+                    ? "/assets/icons/logo_open.svg"
+                    : "/assets/icons/logo_close.svg"
+                }
                 alt="Logo img"
                 className="mt-[10px] p-4"
               />
@@ -98,8 +102,8 @@ const LayoutPublic = () => {
           </div>
           <div
             style={{
-              transform: isOpen ? "rotate(0deg)" : "rotate(180deg)", // Rotación según el estado
-              transition: "transform 0.3s ease", // Transición suave
+              transform: isOpen ? "rotate(0deg)" : "rotate(180deg)",
+              transition: "transform 0.3s ease",
             }}
             className="flex cursor-pointer justify-end py-4 pr-4"
             onClick={() => setIsOpen(!isOpen)}
@@ -128,7 +132,7 @@ const LayoutPublic = () => {
               />
             </div>
           </nav>
-          <main>
+          <main className="h-full">
             <Outlet />
           </main>
         </div>

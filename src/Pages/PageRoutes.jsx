@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 const PageRoutes = () => {
   return (
-    <div className="bg-gray p-4">
+    <div className="h-full bg-gray p-6">
       <div className="mb-4 flex items-center">
         <img
           src="/assets/icons/chevron-left.svg"

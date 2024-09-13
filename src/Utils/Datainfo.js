@@ -9,6 +9,16 @@ const users = [
     editIconSrc: "/assets/icons/pencil-square.svg",
     deleteIconSrc: "/assets/icons/trash3.svg",
   },
+
+  {
+    avatarSrc: "/assets/icons/avatar.svg",
+    fullName: "Nombre completo",
+    email: "email@example.com",
+    password: "Contraseña",
+    role: "Rol",
+    editIconSrc: "/assets/icons/pencil-square.svg",
+    deleteIconSrc: "/assets/icons/trash3.svg",
+  },
   {
     avatarSrc: "/assets/icons/avatar.svg",
     fullName: "Nombre completo",
