@@ -67,6 +67,15 @@ const roles = [
     editIconSrc: "/assets/icons/pencil-square.svg",
     deleteIconSrc: "/assets/icons/trash3.svg",
   },
+  {
+    avatarSrc: icono,
+    fullName: "Administración",
+    email: "",
+    password: "",
+    permisos: ["Productos"],
+    editIconSrc: "/assets/icons/pencil-square.svg",
+    deleteIconSrc: "/assets/icons/trash3.svg",
+  },
 ];
 
 export { users, roles };

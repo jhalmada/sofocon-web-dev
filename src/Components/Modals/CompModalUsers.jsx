@@ -3,6 +3,7 @@ import CompButtonSave from "../Buttons/CompButtonSave";
 import CompCheckbox from "../Checkboxs/CompCheckbox";
 import CompInput from "../Inputs/CompInput";
 import CompInputPass from "../Inputs/CompInputPass";
+import CompSelects from "../Selects/CompSelects";
 const CompModalUsers = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
@@ -13,7 +14,7 @@ const CompModalUsers = ({ isOpen, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="absolute right-7 top-8 text-gray-500 hover:text-gray-700"
+          className="text-gray-500 hover:text-gray-700 absolute right-7 top-8"
           onClick={onClose}
         >
           <img
@@ -46,18 +47,7 @@ const CompModalUsers = ({ isOpen, onClose }) => {
             </div>
 
             <CompCheckbox text={"Asignar rol existente"} />
-            <div className="bg-gray flex items-center justify-between rounded-md px-2 py-1">
-              <select className="w-full bg-transparent font-semibold outline-none">
-                <option selected disabled>
-                  Rol
-                </option>
-
-                <option value="Admin">Admin/Gerente</option>
-                <option value="Vendedor">Vendedor</option>
-                <option value="Taller">Taller</option>
-                <option value="Administracion">Administración</option>
-              </select>
-            </div>
+            <CompSelects />
             <CompCheckbox text={"Asignar nuevo rol"} />
             <CompInput placeholder={"Escribe el nombre del rol..."} />
           </div>

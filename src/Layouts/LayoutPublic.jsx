@@ -72,10 +72,10 @@ const LayoutPublic = () => {
                     : "/assets/icons/logo_close.svg"
                 }
                 alt="Logo img"
-                className="mt-[10px] p-4"
+                className="mt-[10px] h-[85px] p-4"
               />
             </div>
-            <div className="p-2">
+            <div className="flex flex-col items-center justify-center p-2">
               {menuItems.map((item) => (
                 <Link
                   key={item.name}
@@ -101,14 +101,19 @@ const LayoutPublic = () => {
             </div>
           </div>
           <div
-            style={{
-              transform: isOpen ? "rotate(0deg)" : "rotate(180deg)",
-              transition: "transform 0.3s ease",
-            }}
             className="flex cursor-pointer justify-end py-4 pr-4"
             onClick={() => setIsOpen(!isOpen)}
           >
-            <img src="/assets/icons/arrow-left.svg" alt="" />
+            <img
+              src="/assets/icons/arrow-left.svg"
+              alt="arrow"
+              style={{
+                transform: isOpen ? "rotate(0deg)" : "rotate(180deg)",
+                transition: "transform 0.3s ease",
+                width: "40px",
+                height: "40px",
+              }}
+            />
           </div>
         </aside>
         <div className="flex flex-1 flex-col">
