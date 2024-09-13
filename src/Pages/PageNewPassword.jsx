@@ -10,7 +10,6 @@ const PageNewPassword = () => {
         msjError={
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos."
         }
-        labelSize="20px"
       />
       <CompInputPass
         placeholder={"escribe tu nueva contraseña"}
@@ -18,7 +17,6 @@ const PageNewPassword = () => {
         msjError={
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos. Debe coincidir con el campo anterior."
         }
-        labelSize="20px"
       />
       <div className="flex w-[100%] items-center justify-between">
         <Link
@@ -28,7 +26,7 @@ const PageNewPassword = () => {
           <h4>VOLVER</h4>
         </Link>
         <Link to="/login/password-Changed">
-          <button className="mt-5 h-[45px] w-[188px] rounded-[20px] bg-[#E03030] font-roboto text-sm font-medium text-white shadow-md shadow-gray-500">
+          <button className="shadow-gray-500 mt-5 h-11 w-[13.25rem] rounded-[1.3rem] bg-[#E03030] font-roboto text-sm font-medium text-white shadow-md">
             CAMBIAR CONTRASEÑA
           </button>
         </Link>

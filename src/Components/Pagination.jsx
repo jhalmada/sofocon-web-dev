@@ -1,6 +1,6 @@
 const Pagination = () => {
   return (
-    <div className="flex px-[6px]">
+    <div className="flex px-1.5">
       <button className="rounded px-4 py-2">
         <img
           src="/assets/icons/SkipPreviousFilled.svg"

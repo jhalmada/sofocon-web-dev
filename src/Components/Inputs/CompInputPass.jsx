@@ -1,15 +1,10 @@
 import { useState } from "react";
+import IconEye from "../../assets/Iconos/IconEye.svg";
+import IconEyeSlash from "../../assets/Iconos/IconEyeSlash.svg";
 
-const CompInputPass = ({
-  placeholder,
-  label,
-  msjError,
-  labelSize = "14px",
-  width = "100%",
-}) => {
+const CompInputPass = ({ placeholder, label, msjError }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [error, setError] = useState(false);
-  const colorError = "#9A0000";
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -19,50 +14,36 @@ const CompInputPass = ({
     <div className="text-left">
       <label
         htmlFor="password"
-        className="font-roboto font-medium"
-        style={{ color: error ? colorError : "black", fontSize: labelSize }}
+        className={`font-roboto font-medium ${error ? "text-red_e" : "text-black"} text-md`}
       >
         {label}
       </label>
-      <div className="relative mb-[35px] h-[45px]" style={{ width: width }}>
+      <div className="relative mb-9 h-11 w-full">
         <input
           type={isVisible ? "text" : "password"}
           placeholder={placeholder}
-          className={`relative h-[100%] w-[100%] rounded-md border p-[10px] pl-[10px] pr-[40px] font-roboto text-sm font-light placeholder-black_m ${error ? "placeholder-[#9A0000]" : "border-black placeholder-gray-400"} font-light leading-[16px]`}
+          className={`relative h-full w-full rounded-md border p-2.5 pl-2.5 pr-10 font-roboto text-sm font-light placeholder-black_m ${error ? "border-red_e placeholder-red_e" : "placeholder-gray-400 border-black"} font-light leading-4`}
           onFocus={() => setError(false)}
-          style={{
-            borderColor: error ? colorError : "black",
-          }}
         />
         <span
           onClick={toggleVisibility}
-          style={{
-            position: "absolute",
-            right: "10px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            cursor: "pointer",
-          }}
+          className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
         >
           {isVisible ? (
             <img
-              src="/src/assets/Iconos/IconEye.svg"
+              src={IconEye}
               alt="Ojo abierto"
-              style={{ width: "18px", height: "18px" }}
+              className="h-[1.13rem] w-[1.13rem]"
             />
           ) : (
             <img
-              src="/src/assets/Iconos/IconEyeSlash.svg"
+              src={IconEyeSlash}
               alt="Ojo cerrado"
-              style={{ width: "18px", height: "18px" }}
+              className="h-[1.13rem] w-[1.13rem]"
             />
           )}
         </span>
-        {error && (
-          <p className="font-roboto text-xs" style={{ color: colorError }}>
-            {msjError}
-          </p>
-        )}
+        {error && <p className="text-red_e font-roboto text-xs">{msjError}</p>}
       </div>
     </div>
   );

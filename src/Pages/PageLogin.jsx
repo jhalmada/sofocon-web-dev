@@ -11,16 +11,14 @@ const PageLogin = () => {
         msjError={
           "*Este campo debe contener una direccion de correo válida vinculada a la plataforma."
         }
-        labelSize="20px"
       />
       <CompInputPass
         placeholder={"escribe tu contraseña"}
         label={"Contraseña"}
-        labelSize="20px"
       />
       <div className="flex flex-col items-center">
         <Link to={"/home"}>
-          <button className="mt-[100px] h-[45px] w-[147px] rounded-[20px] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md shadow-gray-500">
+          <button className="shadow-gray-500 mt-[6.25rem] h-11 w-[9.1885rem] rounded-[1.25rem] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md">
             INGRESAR
           </button>
         </Link>
