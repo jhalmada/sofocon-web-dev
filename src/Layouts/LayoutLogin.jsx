@@ -17,7 +17,7 @@ const LayoutLogin = () => {
         <img
           src={LogoSofocon}
           alt="Elipse"
-          className="mb-10 h-[6.3125rem] w-[27.1875rem]"
+          className="mb-10 h-[6.3025rem] w-[17.1575rem]"
         />
         <Outlet />
       </div>
