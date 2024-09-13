@@ -10,7 +10,7 @@ const CompModalUsers = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div
-        className="relative max-h-screen w-[444px] max-w-[444px] overflow-auto rounded-lg bg-white p-8 shadow-lg"
+        className="relative max-h-screen w-[27.75rem] max-w-[27.75rem] overflow-auto rounded-lg bg-white p-8 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -41,7 +41,7 @@ const CompModalUsers = ({ isOpen, onClose }) => {
                 label={"Contraseña"}
                 placeholder={"Escribe la contraseña..."}
               />
-              <p className="-mt-6 text-xs leading-[14px] text-black_b">
+              <p className="-mt-6 text-xs leading-[.875rem] text-black_b">
                 *Este campo debe contener entre 8 y 20 caracteres alfanuméricos{" "}
               </p>
             </div>

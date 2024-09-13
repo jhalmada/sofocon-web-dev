@@ -5,19 +5,19 @@ const formatPermisos = (permisos) => {
 };
 const CompTableRoles = () => {
   return (
-    <div className="rounded-tr-lg bg-white p-[20px] shadow-t">
+    <div className="rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
         <thead>
           <tr>
-            <th className="p-2 text-left text-md font-semibold leading-[18px]"></th>
-            <th className="w-[40.4%] p-2 text-left text-md font-semibold leading-[18px]">
+            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]"></th>
+            <th className="w-[40.4%] p-2 text-left text-md font-semibold leading-[1.125rem]">
               Rol
             </th>
 
-            <th className="flex p-2 text-left text-md font-semibold leading-[18px]">
+            <th className="flex p-2 text-left text-md font-semibold leading-[1.125rem]">
               Permisos
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[18px]">
+            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
               Acción
             </th>
           </tr>
@@ -29,22 +29,22 @@ const CompTableRoles = () => {
                 <img
                   src={user.avatarSrc}
                   alt="Avatar icon"
-                  className="h-[30px] w-[30px]"
+                  className="h-8 w-8"
                 />
               </td>
               <td className="p-2">{user.fullName}</td>
               <td className="p-2">{formatPermisos(user.permisos)}</td>
               <td className="p-2">
-                <div className="flex gap-[20px]">
+                <div className="flex gap-5">
                   <img
                     src={user.editIconSrc}
                     alt="Edit icon"
-                    className="h-[20px] w-[20px]"
+                    className="h-5 w-5"
                   />
                   <img
                     src={user.deleteIconSrc}
                     alt="Delete icon"
-                    className="h-[20px] w-[20px]"
+                    className="h-5 w-5"
                   />
                 </div>
               </td>

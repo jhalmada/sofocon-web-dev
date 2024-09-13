@@ -10,9 +10,8 @@ const PageRecoverPass = () => {
         msjError={
           "*Este campo debe contener una direccion de correo válida vinculada a la plataforma."
         }
-        labelSize="20px"
       />
-      <p className="mt-4 max-w-[435px] font-roboto text-xs font-light">
+      <p className="mt-4 max-w-[27.1875rem] font-roboto text-xs font-light">
         Introduce tu dirección de correo electrónico y te enviaremos un enlace
         para restablecer tu contraseña.
       </p>
@@ -24,7 +23,7 @@ const PageRecoverPass = () => {
           <h4>VOLVER</h4>
         </Link>
         <Link to={"/login/new-password"}>
-          <button className="mt-5 h-[45px] w-[147px] rounded-[20px] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md shadow-gray-500">
+          <button className="shadow-gray-500 mt-5 h-11 w-[13.25rem] rounded-[1.3rem] bg-[#E03030] font-roboto text-sm font-medium text-white shadow-md">
             ENVIAR CODIGO
           </button>
         </Link>

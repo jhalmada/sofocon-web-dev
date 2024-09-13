@@ -12,6 +12,7 @@ export default {
         red_b: "#E03030",
         red_m: "#F15151",
         red_l: "#F09393",
+        red_e: "#9A0000",
         pink: "#F7CCCC",
         blue_b: "#4071D1",
         blue_l: "#81ACFF",

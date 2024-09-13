@@ -3,7 +3,7 @@ const CompCheckbox = ({ text }) => {
     <div className="flex items-center">
       <label className="relative flex cursor-pointer items-center">
         <input type="checkbox" className="peer sr-only" />
-        <div className="flex h-4 w-4 items-center justify-center rounded-full border-[.1rem] border-gray-300 bg-white transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-500">
+        <div className="border-gray-300 flex h-4 w-4 items-center justify-center rounded-full border-[.1rem] bg-white transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-500">
           <svg
             className="hidden h-4 w-4 text-white peer-checked:block"
             xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +19,7 @@ const CompCheckbox = ({ text }) => {
             />
           </svg>
         </div>
-        <p className="ml-2 text-sm font-light leading-[16px]">{text}</p>
+        <p className="ml-2 text-sm font-light leading-4">{text}</p>
       </label>
     </div>
   );

@@ -28,44 +28,44 @@ const PageUsers = () => {
           <img
             src="/assets/icons/chevron-left.svg"
             alt="arrow left"
-            className="-ml-1 h-[16px] w-[16px]"
+            className="-ml-1 h-4 w-4"
           />
           <Link to={"/home"}>
-            <p className="text-sm font-medium leading-[16px]">Volver</p>
+            <p className="text-sm font-medium leading-4">Volver</p>
           </Link>
         </div>
-        <h1 className="mb-5 text-xl font-medium leading-[24px] text-black_m">
+        <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Usuarios
         </h1>
         <div className="flex items-center justify-between">
           <div className="flex">
             <h2
               onClick={() => setActiveTab("users")}
-              className={`w-[145px] cursor-pointer rounded-t-lg ${activeTab === "users" ? "bg-white" : "bg-black_l"} p-4 text-center text-md font-medium leading-[24px] shadow-t`}
+              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === "users" ? "bg-white" : "bg-black_l"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Usuarios
             </h2>
             <h2
               onClick={() => setActiveTab("roles")}
-              className={`${activeTab === "roles" ? "bg-white" : "bg-black_l"} w-[145px] cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-[24px] shadow-t`}
+              className={`${activeTab === "roles" ? "bg-white" : "bg-black_l"} w-36 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Roles
             </h2>
             {addRol && (
               <h2
                 onClick={() => setActiveTab("newRoles")}
-                className={`${activeTab === "newRoles" ? "bg-white" : "bg-black_l"} w-[145px] cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-[24px] shadow-t`}
+                className={`${activeTab === "newRoles" ? "bg-white" : "bg-black_l"} w-36 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
               >
                 Nuevo Rol
               </h2>
             )}
           </div>
           {activeTab !== "newRoles" && (
-            <div className="flex h-[30px] items-center gap-[14px] rounded-[4px] px-[4px] py-[8px]">
+            <div className="flex h-8 items-center gap-[0.875rem] rounded px-1 py-2">
               <img
                 src="/assets/icons/search.svg"
                 alt="Search icon"
-                className="h-[32px] w-[32px] rounded-[30px] bg-white p-1"
+                className="h-8 w-8 rounded-[1.875rem] bg-white p-1"
               />
               {activeTab === "users" && <CompButtonAdd text="Nuevo Usuario" />}
               {activeTab === "roles" && (
@@ -78,36 +78,36 @@ const PageUsers = () => {
           )}
         </div>
         {activeTab === "users" && (
-          <div className="rounded-tr-lg bg-white p-[20px] shadow-t">
+          <div className="rounded-tr-lg bg-white p-5 shadow-t">
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[18px]"></th>
-                  <th className="p-2 text-left text-md font-semibold leading-[18px]">
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]"></th>
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Nombre Completo
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[18px]">
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Email
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[18px]">
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Contraseña
                   </th>
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[18px]">
+                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
                     <h3>Rol</h3>
                     <div className="flex gap-2">
                       <img
                         src="/assets/icons/filter-right.svg"
                         alt="chevron-down icon"
-                        className="h-[20px] w-[20px] cursor-pointer"
+                        className="h-5 w-5 cursor-pointer"
                       />
                       <img
                         src="/assets/icons/chevron-down.svg"
                         alt="chevron-down icon"
-                        className="h-[20px] w-[20px] cursor-pointer"
+                        className="h-5 w-5 cursor-pointer"
                       />
                     </div>
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[18px]">
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
                 </tr>
