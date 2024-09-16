@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import UserRow from "../components/UserRow";
 import { users } from "../Utils/Datainfo";
-import CompTableRoles from "../Components/Tables/CompTableRoles";
-import CompButtonAdd from "../Components/Buttons/CompButtonAdd";
-import CompFormAddRol from "../Components/Forms/CompFormAddRol";
+import CompTableRoles from "../components/Tables/CompTableRoles";
+import Button from "../components/Buttons/Button";
+import CompFormAddRol from "../components/Forms/CompFormAddRol";
 import CompModalUsers from "../components/Modals/CompModalUsers";
 import Pagination from "../components/Pagination";
 
+import PlusIcon from "../assets/Iconos/plus.svg";
 import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
 import SearchIcon from "../assets/Iconos/search.svg";
 import FilterRightIcon from "../assets/Iconos/filter-right.svg";
@@ -72,10 +73,13 @@ const UsersPage = () => {
                 alt="Search icon"
                 className="h-8 w-8 rounded-[1.875rem] bg-white p-1"
               />
-              {activeTab === "users" && <CompButtonAdd text="Nuevo Usuario" />}
+              {activeTab === "users" && (
+                <Button text="Nuevo Usuario" icon={PlusIcon} />
+              )}
               {activeTab === "roles" && (
-                <CompButtonAdd
+                <Button
                   text="Agregar Rol"
+                  icon={PlusIcon}
                   onClick={() => setAddRol(!addRol)}
                 />
               )}

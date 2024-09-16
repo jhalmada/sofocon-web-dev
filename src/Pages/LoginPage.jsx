@@ -1,5 +1,5 @@
 import CompInput from "../Components/Inputs/CompInput";
-import CompInputPass from "../Components/Inputs/CompInputPass";
+import CompInputPass from "../components/Inputs/CompInputPass";
 import { Link } from "react-router-dom";
 
 const LoginPage = () => {

@@ -26,11 +26,7 @@ const CompTableRoles = () => {
           {roles.map((user, index) => (
             <tr key={index}>
               <td className="p-2">
-                <img
-                  src={user.avatarSrc}
-                  alt="Avatar icon"
-                  className="h-8 w-8"
-                />
+                <img src={user.avatarSrc} alt="role icon" className="h-5 w-5" />
               </td>
               <td className="p-2">{user.fullName}</td>
               <td className="p-2">{formatPermisos(user.permisos)}</td>

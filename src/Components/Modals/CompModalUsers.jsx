@@ -1,5 +1,6 @@
-import CompButtonCancel from "../Buttons/CompButtonCancel";
-import CompButtonSave from "../Buttons/CompButtonSave";
+import CheckLgIcon from "../../assets/Iconos/check-lg.svg";
+import Button from "../Buttons/Button";
+
 import CompCheckbox from "../Checkboxs/CompCheckbox";
 import CompInput from "../Inputs/CompInput";
 import CompInputPass from "../Inputs/CompInputPass";
@@ -53,8 +54,8 @@ const CompModalUsers = ({ isOpen, onClose }) => {
         }
 
         <div className="mt-10 flex justify-between">
-          <CompButtonCancel text={"Cancelar"} />
-          <CompButtonSave text={"GUARDAR"} />
+          <Button text={"Cancelar"} type={"cancel"} />
+          <Button text={"GUARDAR"} type={"save"} icon={CheckLgIcon} />
         </div>
       </div>
     </div>
