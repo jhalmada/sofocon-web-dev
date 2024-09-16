@@ -47,7 +47,7 @@ const CompModalUsers = ({ isOpen, onClose }) => {
             </div>
 
             <CompCheckbox text={"Asignar rol existente"} />
-            <CompSelects />
+            <CompSelects option={"Rol"} />
             <CompCheckbox text={"Asignar nuevo rol"} />
             <CompInput placeholder={"Escribe el nombre del rol..."} />
           </div>

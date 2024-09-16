@@ -74,7 +74,9 @@ const UsersPage = () => {
                 className="h-8 w-8 rounded-[1.875rem] bg-white p-1"
               />
               {activeTab === "users" && (
-                <Button text="Nuevo Usuario" icon={PlusIcon} />
+                <Link to={"agregar_usuario"}>
+                  <Button text="Nuevo Usuario" icon={PlusIcon} />
+                </Link>
               )}
               {activeTab === "roles" && (
                 <Button
@@ -145,7 +147,7 @@ const UsersPage = () => {
       <div className="flex justify-center p-6">
         <Pagination />
       </div>
-      <CompModalUsers isOpen={isModalOpen} onClose={closeModal} />{" "}
+      <CompModalUsers isOpen={isModalOpen} onClose={closeModal} />
       {/* Se renderiza el modal */}
     </div>
   );

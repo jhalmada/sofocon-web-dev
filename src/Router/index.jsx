@@ -12,6 +12,7 @@ import RecoverPassPage from "../Pages/RecoverPassPage";
 import NewPasswordPage from "../Pages/NewPasswordPage";
 import PasswordPage from "../Pages/PasswordPage";
 import RedirectionPage from "../Pages/RedirectionPage";
+import AddUserPage from "../Pages/AddUserPage";
 
 export const router = createBrowserRouter([
   {
@@ -51,7 +52,14 @@ export const router = createBrowserRouter([
       {
         path: "usuarios",
         element: <UsersPage />,
+        children: [
+          {
+            path: "agregar_usuario",
+            element: <AddUserPage />,
+          },
+        ],
       },
+
       {
         path: "vendedores",
         element: <SellersPage />,

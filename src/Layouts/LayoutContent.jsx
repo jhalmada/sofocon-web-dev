@@ -1,7 +1,7 @@
+import { Link } from "react-router-dom";
 import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
 
-import { Link } from "react-router-dom";
-const SellersPage = () => {
+const LayoutContent = () => {
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -17,13 +17,13 @@ const SellersPage = () => {
         </div>
         <div></div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Vendedores
+          Usuarios
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-36 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
-              Vendedores
+              Nuevo usuario
             </span>
           </div>
         </div>
@@ -39,4 +39,4 @@ const SellersPage = () => {
   );
 };
 
-export default SellersPage;
+export default LayoutContent;

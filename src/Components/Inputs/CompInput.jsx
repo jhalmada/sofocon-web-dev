@@ -3,7 +3,7 @@ import { useState } from "react";
 const CompInput = ({ placeholder, label, msjError }) => {
   const [error, setError] = useState(false);
   return (
-    <div className="text-left">
+    <div className="w-full text-left">
       <label
         htmlFor="password"
         className={`font-roboto font-medium ${error ? "text-red_e" : "text-black"} text-md`}
@@ -17,7 +17,7 @@ const CompInput = ({ placeholder, label, msjError }) => {
           className={`relative h-full w-full rounded-md border p-2.5 pl-2.5 pr-10 font-roboto text-sm font-light placeholder-black_m ${error ? "border-red_e placeholder-red_e" : "placeholder-gray-400 border-black"} font-light leading-4`}
           onFocus={() => setError(false)}
         />
-        {error && <p className="text-red_e font-roboto text-xs">{msjError}</p>}
+        {error && <p className="font-roboto text-xs text-red_e">{msjError}</p>}
       </div>
     </div>
   );
