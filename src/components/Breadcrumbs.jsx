@@ -1,3 +1,4 @@
+import HouseDoorIcon from "../assets/Iconos/house-door.svg";
 import { Link, useLocation } from "react-router-dom";
 
 const Breadcrumbs = () => {
@@ -25,11 +26,7 @@ const Breadcrumbs = () => {
               className="flex items-center font-medium capitalize leading-[.875rem] text-black underline"
             >
               {index === 0 ? (
-                <img
-                  src="/assets/icons/house-door.svg"
-                  alt="Home"
-                  className="mr-1 h-4 w-4"
-                />
+                <img src={HouseDoorIcon} alt="Home" className="mr-1 h-4 w-4" />
               ) : null}
               {index === 0 ? "Home" : breadcrumb.name}
             </Link>

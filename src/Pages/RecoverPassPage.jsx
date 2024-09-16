@@ -1,7 +1,7 @@
 import CompInput from "../Components/Inputs/CompInput";
 import { Link } from "react-router-dom";
 
-const PageRecoverPass = () => {
+const RecoverPassPage = () => {
   return (
     <div className="w-full">
       <CompInput
@@ -32,4 +32,4 @@ const PageRecoverPass = () => {
   );
 };
 
-export default PageRecoverPass;
+export default RecoverPassPage;

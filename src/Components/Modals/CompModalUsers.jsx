@@ -4,6 +4,9 @@ import CompCheckbox from "../Checkboxs/CompCheckbox";
 import CompInput from "../Inputs/CompInput";
 import CompInputPass from "../Inputs/CompInputPass";
 import CompSelects from "../Selects/CompSelects";
+
+import XlgIcon from "../../assets/Iconos/x-lg.svg";
+
 const CompModalUsers = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
@@ -17,11 +20,7 @@ const CompModalUsers = ({ isOpen, onClose }) => {
           className="text-gray-500 hover:text-gray-700 absolute right-7 top-8"
           onClick={onClose}
         >
-          <img
-            src="/assets/icons/x-lg.svg"
-            alt="Close icon"
-            className="h-6 w-6"
-          />
+          <img src={XlgIcon} alt="Close icon" className="h-6 w-6" />
         </button>
         <h2 className="mb-8 text-xl font-semibold">Editar Usuario</h2>
         {

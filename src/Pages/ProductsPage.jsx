@@ -1,13 +1,10 @@
+import ChevronLeft from "../assets/Iconos/chevron-left.svg";
 import { Link } from "react-router-dom";
-const PageProducts = () => {
+const ProductsPage = () => {
   return (
     <div className="h-full bg-gray p-6">
       <div className="mb-4 flex items-center">
-        <img
-          src="/assets/icons/chevron-left.svg"
-          alt="arrow left"
-          className="-ml-1 h-4 w-4"
-        />
+        <img src={ChevronLeft} alt="arrow left" className="-ml-1 h-4 w-4" />
         <Link to={"/home"}>
           {" "}
           <p className="text-sm font-medium leading-4">Volver</p>
@@ -20,4 +17,4 @@ const PageProducts = () => {
   );
 };
 
-export default PageProducts;
+export default ProductsPage;

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const PagePassword = () => {
+const PasswordPage = () => {
   return (
     <div className="text-center">
       <h4 className="font-roboto text-2xl font-medium">
@@ -19,4 +19,4 @@ const PagePassword = () => {
   );
 };
 
-export default PagePassword;
+export default PasswordPage;

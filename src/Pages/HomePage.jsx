@@ -1,4 +1,4 @@
-const PageHome = () => {
+const HomePage = () => {
   return (
     <div className="h-full bg-gray p-6">
       <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
@@ -15,4 +15,4 @@ const PageHome = () => {
   );
 };
 
-export default PageHome;
+export default HomePage;

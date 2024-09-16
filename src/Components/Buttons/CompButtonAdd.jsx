@@ -1,3 +1,4 @@
+import PlusIcon from "../../assets/Iconos/plus.svg";
 const CompButtonAdd = ({ text, onClick }) => {
   return (
     <button
@@ -5,7 +6,7 @@ const CompButtonAdd = ({ text, onClick }) => {
       onClick={onClick}
     >
       <h2 className="text-md font-medium leading-6 text-white">{text}</h2>
-      <img src="/assets/icons/plus.svg" alt="plus-icon" className="h-8 w-8" />
+      <img src={PlusIcon} alt="plus icon" className="h-8 w-8" />
     </button>
   );
 };

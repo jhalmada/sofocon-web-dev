@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import CompInputPass from "../Components/Inputs/CompInputPass";
 
-const PageNewPassword = () => {
+const NewPasswordPage = () => {
   return (
     <div className="w-full">
       <CompInputPass
@@ -35,4 +35,4 @@ const PageNewPassword = () => {
   );
 };
 
-export default PageNewPassword;
+export default NewPasswordPage;

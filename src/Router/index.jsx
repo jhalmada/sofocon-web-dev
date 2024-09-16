@@ -1,17 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
 import LayoutPublic from "../Layouts/LayoutPublic";
-import PageHome from "../Pages/PageHome";
-import PageCompanies from "../Pages/PageCompanies";
-import PageUsers from "../Pages/PageUsers";
-import PageSellers from "../Pages/PageSellers";
-import PageRoutes from "../Pages/PageRoutes";
-import PageProducts from "../Pages/PageProducts";
-import PageLogin from "../Pages/PageLogin";
+import HomePage from "../Pages/HomePage";
+import CompaniesPage from "../Pages/CompaniesPage";
+import UsersPage from "../Pages/UsersPage";
+import SellersPage from "../Pages/SellersPage";
+import RoutesPage from "../Pages/RoutesPage";
+import ProductsPage from "../Pages/ProductsPage";
+import LoginPage from "../Pages/LoginPage";
 import LayoutLogin from "../Layouts/LayoutLogin";
-import PageRecoverPass from "../Pages/PageRecoverPass";
-import PageNewPassword from "../Pages/PageNewPassword";
-import PagePassword from "../Pages/PagePassword";
-import PageRedirection from "../Pages/PageRedirection";
+import RecoverPassPage from "../Pages/RecoverPassPage";
+import NewPasswordPage from "../Pages/NewPasswordPage";
+import PasswordPage from "../Pages/PasswordPage";
+import RedirectionPage from "../Pages/RedirectionPage";
 
 export const router = createBrowserRouter([
   {
@@ -20,19 +20,19 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <PageLogin />,
+        element: <LoginPage />,
       },
       {
         path: "recover",
-        element: <PageRecoverPass />,
+        element: <RecoverPassPage />,
       },
       {
         path: "new-password",
-        element: <PageNewPassword />,
+        element: <NewPasswordPage />,
       },
       {
         path: "password-Changed",
-        element: <PagePassword />,
+        element: <PasswordPage />,
       },
     ],
   },
@@ -42,32 +42,32 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <PageHome />,
+        element: <HomePage />,
       },
       {
         path: "empresas",
-        element: <PageCompanies />,
+        element: <CompaniesPage />,
       },
       {
         path: "usuarios",
-        element: <PageUsers />,
+        element: <UsersPage />,
       },
       {
         path: "vendedores",
-        element: <PageSellers />,
+        element: <SellersPage />,
       },
       {
         path: "rutas",
-        element: <PageRoutes />,
+        element: <RoutesPage />,
       },
       {
         path: "productos",
-        element: <PageProducts />,
+        element: <ProductsPage />,
       },
     ],
   },
   {
     path: "/",
-    element: <PageRedirection />,
+    element: <RedirectionPage />,
   },
 ]);

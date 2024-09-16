@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const PageRedirection = () => {
+const RedirectionPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,4 +14,4 @@ const PageRedirection = () => {
   );
 };
 
-export default PageRedirection;
+export default RedirectionPage;

@@ -3,12 +3,12 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import { menuItems } from "../Utils/Datainfo";
-import arrowIcon from "/assets/icons/arrow-left.svg";
-import LogoOpen from "/assets/icons/logo_open.svg";
-import LogoClose from "/assets/icons/logo_close.svg";
-import gearIcon from "/assets/icons/gear.svg";
-import bellIcon from "/assets/icons/bell.svg";
-import avatarIcon from "/assets/icons/avatar.svg";
+import arrowIcon from "../assets/Iconos/arrow-left.svg";
+import LogoOpen from "../assets/Iconos/logo_open.svg";
+import LogoClose from "../assets/Iconos/logo_close.svg";
+import gearIcon from "../assets/Iconos/gear.svg";
+import bellIcon from "../assets/Iconos/bell.svg";
+import avatarIcon from "../assets/Iconos/avatar.svg";
 
 const LayoutPublic = () => {
   const location = useLocation();

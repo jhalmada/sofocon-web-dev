@@ -8,7 +8,12 @@ import CompFormAddRol from "../Components/Forms/CompFormAddRol";
 import CompModalUsers from "../components/Modals/CompModalUsers";
 import Pagination from "../components/Pagination";
 
-const PageUsers = () => {
+import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
+import SearchIcon from "../assets/Iconos/search.svg";
+import FilterRightIcon from "../assets/Iconos/filter-right.svg";
+import ChevronDownIcon from "../assets/Iconos/chevron-down.svg";
+
+const UsersPage = () => {
   const [activeTab, setActiveTab] = useState("users");
   const [addRol, setAddRol] = useState(false);
 
@@ -26,7 +31,7 @@ const PageUsers = () => {
       <div className="flex-grow p-6">
         <div className="mb-4 flex items-center">
           <img
-            src="/assets/icons/chevron-left.svg"
+            src={ChevronLeftIcon}
             alt="arrow left"
             className="-ml-1 h-4 w-4"
           />
@@ -63,7 +68,7 @@ const PageUsers = () => {
           {activeTab !== "newRoles" && (
             <div className="flex h-8 items-center gap-[0.875rem] rounded px-1 py-2">
               <img
-                src="/assets/icons/search.svg"
+                src={SearchIcon}
                 alt="Search icon"
                 className="h-8 w-8 rounded-[1.875rem] bg-white p-1"
               />
@@ -96,12 +101,12 @@ const PageUsers = () => {
                     <h3>Rol</h3>
                     <div className="flex gap-2">
                       <img
-                        src="/assets/icons/filter-right.svg"
+                        src={FilterRightIcon}
                         alt="chevron-down icon"
                         className="h-5 w-5 cursor-pointer"
                       />
                       <img
-                        src="/assets/icons/chevron-down.svg"
+                        src={ChevronDownIcon}
                         alt="chevron-down icon"
                         className="h-5 w-5 cursor-pointer"
                       />
@@ -142,4 +147,4 @@ const PageUsers = () => {
   );
 };
 
-export default PageUsers;
+export default UsersPage;

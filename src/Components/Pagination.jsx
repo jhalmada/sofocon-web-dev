@@ -1,18 +1,17 @@
+import SkipPreviousFilledIcon from "../assets/Iconos/SkipPreviousFilled.svg";
+import ChevronLeftFilledIcon from "../assets/Iconos/ChevronLeftFilled.svg";
+import ChevronRightFilledIcon from "../assets/Iconos/ChevronRightFilled.svg";
+import SkipNextFilledIcon from "../assets/Iconos/SkipNextFilled.svg";
+
 const Pagination = () => {
   return (
     <div className="flex px-1.5">
       <button className="rounded px-4 py-2">
-        <img
-          src="/assets/icons/SkipPreviousFilled.svg"
-          alt="Skip previous icon"
-        />
+        <img src={SkipPreviousFilledIcon} alt="Skip previous icon" />
       </button>
       <div className="flex space-x-2">
         <button className="rounded px-4 py-2">
-          <img
-            src="/assets/icons/ChevronLeftFilled.svg"
-            alt="Chevron left icon"
-          />
+          <img src={ChevronLeftFilledIcon} alt="Chevron left icon" />
         </button>
         <button className="rounded-full bg-black_l px-4 py-2">1</button>
         <button className="rounded px-4 py-2">2</button>
@@ -22,14 +21,11 @@ const Pagination = () => {
         <button className="rounded px-4 py-2">6</button>
         <button className="rounded px-4 py-2">7</button>
         <button className="rounded px-4 py-2">
-          <img
-            src="/assets/icons/ChevronRightFilled.svg"
-            alt="Chevron right icon"
-          />
+          <img src={ChevronRightFilledIcon} alt="Chevron right icon" />
         </button>
       </div>
       <button className="rounded px-4 py-2">
-        <img src="/assets/icons/SkipNextFilled.svg" alt="Skip next icon" />
+        <img src={SkipNextFilledIcon} alt="Skip next icon" />
       </button>
     </div>
   );

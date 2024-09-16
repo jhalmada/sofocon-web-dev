@@ -2,7 +2,7 @@ import CompInput from "../Components/Inputs/CompInput";
 import CompInputPass from "../Components/Inputs/CompInputPass";
 import { Link } from "react-router-dom";
 
-const PageLogin = () => {
+const LoginPage = () => {
   return (
     <div className="w-full">
       <CompInput
@@ -34,4 +34,4 @@ const PageLogin = () => {
   );
 };
 
-export default PageLogin;
+export default LoginPage;
