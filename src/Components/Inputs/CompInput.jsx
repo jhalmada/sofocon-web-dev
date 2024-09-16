@@ -1,26 +1,71 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-const CompInput = ({ placeholder, label, msjError }) => {
+const Input = ({
+  placeholder,
+  label,
+  msjError,
+  type = "text",
+  icon1 = null,
+  icon2 = null,
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
   const [error, setError] = useState(false);
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
+  };
+
+  const inputType =
+    type === "password" ? (isVisible ? "text" : "password") : type;
+
   return (
     <div className="text-left">
       <label
-        htmlFor="password"
+        htmlFor={type}
         className={`font-roboto font-medium ${error ? "text-red_e" : "text-black"} text-md`}
       >
         {label}
       </label>
       <div className="relative mb-9 h-11 w-full">
         <input
-          type={"text"}
+          type={inputType}
           placeholder={placeholder}
-          className={`relative h-full w-full rounded-md border p-2.5 pl-2.5 pr-10 font-roboto text-sm font-light placeholder-black_m ${error ? "border-red_e placeholder-red_e" : "placeholder-gray-400 border-black"} font-light leading-4`}
+          className={`relative h-full w-full rounded-md border p-2.5 pl-2.5 pr-10 font-roboto text-sm font-light placeholder-black_m ${
+            error
+              ? "border-red_e placeholder-red_e"
+              : "placeholder-gray-400 border-black"
+          } font-light leading-4`}
           onFocus={() => setError(false)}
         />
-        {error && <p className="text-red_e font-roboto text-xs">{msjError}</p>}
+        {type === "password" && (
+          <span
+            onClick={toggleVisibility}
+            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
+          >
+            {isVisible ? (
+              <img
+                src={icon1}
+                alt="Visible Icon"
+                className="h-[1.13rem] w-[1.13rem]"
+              />
+            ) : (
+              <img
+                src={icon2}
+                alt="Hidden Icon"
+                className="h-[1.13rem] w-[1.13rem]"
+              />
+            )}
+          </span>
+        )}
+        {icon1 && type === "text" && (
+          <span className="absolute right-4 top-1/2 -translate-y-1/2">
+            <img src={icon1} alt="icon" className="h-[1.13rem] w-[1.13rem]" />
+          </span>
+        )}
+        {error && <p className="font-roboto text-xs text-red_e">{msjError}</p>}
       </div>
     </div>
   );
 };
 
-export default CompInput;
+export default Input;

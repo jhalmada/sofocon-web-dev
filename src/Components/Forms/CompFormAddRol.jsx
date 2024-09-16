@@ -11,8 +11,7 @@ const CompFormAddRol = () => {
         />
       </div>
       <div className="w-[55.6rem]">
-        <label htmlFor="">Asignar Permisos</label>
-        <CompSelects />
+        <CompSelects label={"Asignar Permisos"} />
       </div>
     </div>
   );

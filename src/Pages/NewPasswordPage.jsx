@@ -1,22 +1,30 @@
 import { Link } from "react-router-dom";
-import CompInputPass from "../components/Inputs/CompInputPass";
+import CompInput from "../Components/Inputs/CompInput";
+import IconEye from "../assets/Iconos/IconEye.svg";
+import IconEyeSlash from "../assets/Iconos/IconEyeSlash.svg";
 
 const NewPasswordPage = () => {
   return (
     <div className="w-full">
-      <CompInputPass
+      <CompInput
         placeholder={"escribe tu nueva contraseña"}
         label={"Nueva contraseña"}
         msjError={
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos."
         }
+        type={"password"}
+        icon1={IconEye}
+        icon2={IconEyeSlash}
       />
-      <CompInputPass
+      <CompInput
         placeholder={"escribe tu nueva contraseña"}
         label={"Confirma tu contraseña"}
         msjError={
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos. Debe coincidir con el campo anterior."
         }
+        type={"password"}
+        icon1={IconEye}
+        icon2={IconEyeSlash}
       />
       <div className="flex w-[100%] items-center justify-between">
         <Link

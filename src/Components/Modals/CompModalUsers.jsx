@@ -3,8 +3,9 @@ import Button from "../Buttons/Button";
 
 import CompCheckbox from "../Checkboxs/CompCheckbox";
 import CompInput from "../Inputs/CompInput";
-import CompInputPass from "../Inputs/CompInputPass";
 import CompSelects from "../Selects/CompSelects";
+import IconEye from "../../assets/Iconos/IconEye.svg";
+import IconEyeSlash from "../../assets/Iconos/IconEyeSlash.svg";
 
 import XlgIcon from "../../assets/Iconos/x-lg.svg";
 
@@ -37,9 +38,12 @@ const CompModalUsers = ({ isOpen, onClose }) => {
             />
 
             <div>
-              <CompInputPass
+              <CompInput
                 label={"Contraseña"}
                 placeholder={"Escribe la contraseña..."}
+                type="password"
+                icon1={IconEye}
+                icon2={IconEyeSlash}
               />
               <p className="-mt-6 text-xs leading-[.875rem] text-black_b">
                 *Este campo debe contener entre 8 y 20 caracteres alfanuméricos{" "}
