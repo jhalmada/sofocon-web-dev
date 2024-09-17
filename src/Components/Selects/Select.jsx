@@ -1,13 +1,8 @@
 import { roles } from "../../Utils/Datainfo";
 
-const CompSelects = ({
-  width = "100%",
-  label = null,
-  option,
-  selectedOption,
-}) => {
+const Select = ({ width = "100%", label = null, option, selectedOption }) => {
   return (
-    <div>
+    <>
       {label && <label className="font-roboto font-medium">{label}</label>}
       <div
         className="flex items-center justify-between rounded-md bg-gray px-2 py-1"
@@ -27,8 +22,8 @@ const CompSelects = ({
           ))}
         </select>
       </div>
-    </div>
+    </>
   );
 };
 
-export default CompSelects;
+export default Select;

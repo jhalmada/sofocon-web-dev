@@ -1,5 +1,5 @@
 import Input from "../Inputs/Input";
-import CompSelects from "../Selects/CompSelects";
+import Select from "../Selects/Select";
 
 const AddRole = () => {
   return (
@@ -11,7 +11,7 @@ const AddRole = () => {
         />
       </div>
       <div className="w-[55.6rem]">
-        <CompSelects label={"Asignar Permisos"} />
+        <Select label={"Asignar Permisos"} />
       </div>
     </div>
   );

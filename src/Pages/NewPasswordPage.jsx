@@ -31,10 +31,10 @@ const NewPasswordPage = () => {
           to={"/login"}
           className="mt-5 font-roboto text-xs font-medium text-[#555]"
         >
-          <h4>VOLVER</h4>
+          <h4 className="uppercase">VOLVER</h4>
         </Link>
-        <Link to="/login/password-Changed">
-          <button className="shadow-gray-500 mt-5 h-11 w-[13.25rem] rounded-[1.3rem] bg-[#E03030] font-roboto text-sm font-medium text-white shadow-md">
+        <Link to="/login/cambiar-contraseña">
+          <button className="shadow-gray-500 mt-5 h-11 w-[13.25rem] rounded-[1.3rem] bg-[#E03030] font-roboto text-sm font-medium uppercase text-white shadow-md">
             CAMBIAR CONTRASEÑA
           </button>
         </Link>

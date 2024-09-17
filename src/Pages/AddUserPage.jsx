@@ -11,7 +11,7 @@ const AddUserPage = () => {
               alt="arrow left"
               className="-ml-1 h-4 w-4"
             />
-            <Link to={"/home"}>
+            <Link to={"/inicio"}>
               <p className="text-sm font-medium leading-4">Volver</p>
             </Link>
           </div>

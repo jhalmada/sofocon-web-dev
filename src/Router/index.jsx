@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import LayoutPublic from "../Layouts/LayoutPublic";
+import Public from "../Layouts/Public";
 import HomePage from "../Pages/HomePage";
 import CompaniesPage from "../Pages/CompaniesPage";
 import UsersPage from "../Pages/UsersPage";
@@ -7,75 +7,88 @@ import SellersPage from "../Pages/SellersPage";
 import RoutesPage from "../Pages/RoutesPage";
 import ProductsPage from "../Pages/ProductsPage";
 import LoginPage from "../Pages/LoginPage";
-import LayoutLogin from "../Layouts/LayoutLogin";
-import RecoverPassPage from "../Pages/RecoverPassPage";
+import Login from "../Layouts/Login";
+import RecoverPasswordPage from "../Pages/RecoverPasswordPage";
 import NewPasswordPage from "../Pages/NewPasswordPage";
 import PasswordPage from "../Pages/PasswordPage";
 import RedirectionPage from "../Pages/RedirectionPage";
 import AddUserPage from "../Pages/AddUserPage";
 
+// Rutas path
+const LOGIN_ROUTE = "login";
+const RECOVER_ROUTE = "recuperar-contraseña";
+const NEW_PASSWORD_ROUTE = "nueva-contraseña";
+const PASSWORD_CHANGED_ROUTE = "cambiar-contraseña";
+const HOME_ROUTE = "/inicio";
+const COMPANIES_ROUTE = "empresas";
+const USERS_ROUTE = "usuarios";
+const ADD_USER_ROUTE = "agregar-usuario";
+const SELLERS_ROUTE = "vendedores";
+const ROUTES_ROUTE = "rutas";
+const PRODUCTS_ROUTE = "productos";
+const REDIRECTION_ROUTE = "/";
+
 export const router = createBrowserRouter([
   {
-    path: "login",
-    element: <LayoutLogin />,
+    path: LOGIN_ROUTE,
+    element: <Login />,
     children: [
       {
         index: true,
         element: <LoginPage />,
       },
       {
-        path: "recover",
-        element: <RecoverPassPage />,
+        path: RECOVER_ROUTE,
+        element: <RecoverPasswordPage />,
       },
       {
-        path: "new-password",
+        path: NEW_PASSWORD_ROUTE,
         element: <NewPasswordPage />,
       },
       {
-        path: "password-Changed",
+        path: PASSWORD_CHANGED_ROUTE,
         element: <PasswordPage />,
       },
     ],
   },
   {
-    path: "/home",
-    element: <LayoutPublic />,
+    path: HOME_ROUTE,
+    element: <Public />,
     children: [
       {
         index: true,
         element: <HomePage />,
       },
       {
-        path: "empresas",
+        path: COMPANIES_ROUTE,
         element: <CompaniesPage />,
       },
       {
-        path: "usuarios",
+        path: USERS_ROUTE,
         element: <UsersPage />,
         children: [
           {
-            path: "agregar_usuario",
+            path: ADD_USER_ROUTE,
             element: <AddUserPage />,
           },
         ],
       },
-
       {
-        path: "vendedores",
+        path: SELLERS_ROUTE,
         element: <SellersPage />,
       },
       {
-        path: "rutas",
+        path: ROUTES_ROUTE,
         element: <RoutesPage />,
       },
       {
-        path: "productos",
+        path: PRODUCTS_ROUTE,
         element: <ProductsPage />,
       },
     ],
   },
   {
-    path: "/",
+    path: REDIRECTION_ROUTE,
     element: <RedirectionPage />,
   },
 ]);

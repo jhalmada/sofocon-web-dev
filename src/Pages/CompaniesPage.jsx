@@ -1,7 +1,7 @@
 import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
 import { Link } from "react-router-dom";
 import Checkbox from "../Components/Checkboxs/Checkbox";
-import CompSelects from "../Components/Selects/CompSelects";
+import Select from "../Components/Selects/Select";
 import Input from "../Components/Inputs/Input";
 import Button from "../components/Buttons/Button";
 import IconEye from "../assets/Iconos/IconEye.svg";
@@ -23,7 +23,7 @@ const CompaniesPage = () => {
             alt="arrow left"
             className="-ml-1 h-4 w-4"
           />
-          <Link to={"/home"}>
+          <Link to={"/inicio"}>
             <p className="text-sm font-medium leading-4">Volver</p>
           </Link>
         </div>
@@ -67,11 +67,11 @@ const CompaniesPage = () => {
               </p>
             </div>
             <Checkbox text={"Asignar rol existente"} />
-            <CompSelects option={"Rol"} />
+            <Select option={"Rol"} />
             <Checkbox text={"Asignar nuevo rol"} />
             <div className="flex items-start space-x-10">
               <Input placeholder={"Escribe el nombre del rol..."} />
-              <CompSelects option={"Permisos"} />
+              <Select option={"Permisos"} />
             </div>
           </div>
           <div className="flex justify-end py-6">

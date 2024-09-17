@@ -3,7 +3,7 @@ import CheckLgIcon from "../../assets/Iconos/check-lg.svg";
 import Button from "../Buttons/Button";
 import Checkbox from "../Checkboxs/Checkbox";
 import Input from "../Inputs/Input";
-import CompSelects from "../Selects/CompSelects";
+import Select from "../Selects/Select";
 import IconEye from "../../assets/Iconos/IconEye.svg";
 import IconEyeSlash from "../../assets/Iconos/IconEyeSlash.svg";
 import XlgIcon from "../../assets/Iconos/x-lg.svg";
@@ -55,7 +55,7 @@ const ModalAddUser = ({ isOpen, onClose }) => {
             </div>
 
             <Checkbox text={"Asignar rol existente"} />
-            <CompSelects option={"Rol"} />
+            <Select option={"Rol"} />
             <Checkbox text={"Asignar nuevo rol"} />
             <Input placeholder={"Escribe el nombre del rol..."} />
           </div>

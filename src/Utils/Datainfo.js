@@ -97,37 +97,37 @@ const roles = [
 const menuItems = [
   {
     name: "Inicio",
-    path: "/home",
+    path: "/inicio",
     icon: houseIcon,
     activeIcon: houseActiveIcon,
   },
   {
     name: "Empresas",
-    path: "/home/empresas",
+    path: "/inicio/empresas",
     icon: shopIcon,
     activeIcon: shopActiveIcon,
   },
   {
     name: "Usuarios",
-    path: "/home/usuarios",
+    path: "/inicio/usuarios",
     icon: peopleIcon,
     activeIcon: peopleActiveIcon,
   },
   {
     name: "Vendedores",
-    path: "/home/vendedores",
+    path: "/inicio/vendedores",
     icon: briefcaseIcon,
     activeIcon: briefActiveIcon,
   },
   {
     name: "Rutas",
-    path: "/home/rutas",
+    path: "/inicio/rutas",
     icon: compassIcon,
     activeIcon: compassActiveIcon,
   },
   {
     name: "Productos",
-    path: "/home/productos",
+    path: "/inicio/productos",
     icon: boxIcon,
     activeIcon: boxActiveIcon,
   },
