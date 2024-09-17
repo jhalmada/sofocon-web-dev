@@ -1,21 +1,20 @@
-import CompInput from "../Inputs/CompInput";
+import Input from "../Inputs/Input";
 import CompSelects from "../Selects/CompSelects";
 
-const CompFormAddRol = () => {
+const AddRole = () => {
   return (
     <div className="rounded-tr-lg bg-white p-5 shadow-t">
       <div className="w-[55.6rem]">
-        <CompInput
+        <Input
           placeholder={"Escribe el nombre del rol"}
           label={"Nombre del rol"}
         />
       </div>
       <div className="w-[55.6rem]">
-        <label htmlFor="">Asignar Permisos</label>
-        <CompSelects />
+        <CompSelects label={"Asignar Permisos"} />
       </div>
     </div>
   );
 };
 
-export default CompFormAddRol;
+export default AddRole;

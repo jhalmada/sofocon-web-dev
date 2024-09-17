@@ -1,24 +1,31 @@
-import CompInput from "../Components/Inputs/CompInput";
-import CompInputPass from "../components/Inputs/CompInputPass";
+import Input from "../Components/Inputs/Input";
 import { Link } from "react-router-dom";
+import IconEye from "../assets/Iconos/IconEye.svg";
+import IconEyeSlash from "../assets/Iconos/IconEyeSlash.svg";
 
 const LoginPage = () => {
   return (
     <div className="w-full">
-      <CompInput
+      <Input
         placeholder={"escribe tu correo"}
         label={"Dirección de correo"}
         msjError={
           "*Este campo debe contener una direccion de correo válida vinculada a la plataforma."
         }
       />
-      <CompInputPass
+      <Input
         placeholder={"escribe tu contraseña"}
         label={"Contraseña"}
+        msjError={
+          "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos."
+        }
+        type={"password"}
+        icon1={IconEye}
+        icon2={IconEyeSlash}
       />
       <div className="flex flex-col items-center">
-        <Link to={"/home"}>
-          <button className="shadow-gray-500 mt-[6.25rem] h-11 w-[9.1885rem] rounded-[1.25rem] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md">
+        <Link to={"/home"} className="mt-[6.25rem]">
+          <button className="shadow-gray-500 h-11 w-[9.1885rem] rounded-[1.25rem] bg-[#D70000] font-roboto text-sm font-medium text-white shadow-md">
             INGRESAR
           </button>
         </Link>

@@ -4,8 +4,8 @@ import UserRow from "../components/UserRow";
 import { users } from "../Utils/Datainfo";
 import CompTableRoles from "../components/Tables/CompTableRoles";
 import Button from "../components/Buttons/Button";
-import CompFormAddRol from "../components/Forms/CompFormAddRol";
-import CompModalUsers from "../components/Modals/CompModalUsers";
+import AddRole from "../components/Forms/AddRole";
+import ModalAddUser from "../components/Modals/ModalAddUser";
 import Pagination from "../components/Pagination";
 
 import PlusIcon from "../assets/Iconos/plus.svg";
@@ -142,12 +142,12 @@ const UsersPage = () => {
           </div>
         )}
         {activeTab === "roles" && <CompTableRoles />}
-        {activeTab === "newRoles" && <CompFormAddRol />}
+        {activeTab === "newRoles" && <AddRole />}
       </div>
       <div className="flex justify-center p-6">
         <Pagination />
       </div>
-      <CompModalUsers isOpen={isModalOpen} onClose={closeModal} />
+      <ModalAddUser isOpen={isModalOpen} onClose={closeModal} />
       {/* Se renderiza el modal */}
     </div>
   );

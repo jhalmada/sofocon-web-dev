@@ -1,10 +1,10 @@
-import CompInput from "../Components/Inputs/CompInput";
+import Input from "../Components/Inputs/Input";
 import { Link } from "react-router-dom";
 
 const RecoverPassPage = () => {
   return (
     <div className="w-full">
-      <CompInput
+      <Input
         placeholder={"example@ejemail.com"}
         label={"Confirma tu correo"}
         msjError={

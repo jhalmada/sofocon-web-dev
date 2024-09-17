@@ -1,15 +1,20 @@
+import React from "react";
 import CheckLgIcon from "../../assets/Iconos/check-lg.svg";
 import Button from "../Buttons/Button";
-
-import CompCheckbox from "../Checkboxs/CompCheckbox";
-import CompInput from "../Inputs/CompInput";
-import CompInputPass from "../Inputs/CompInputPass";
+import Checkbox from "../Checkboxs/Checkbox";
+import Input from "../Inputs/Input";
 import CompSelects from "../Selects/CompSelects";
-
+import IconEye from "../../assets/Iconos/IconEye.svg";
+import IconEyeSlash from "../../assets/Iconos/IconEyeSlash.svg";
 import XlgIcon from "../../assets/Iconos/x-lg.svg";
 
-const CompModalUsers = ({ isOpen, onClose }) => {
+const ModalAddUser = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Formulario enviado");
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -24,42 +29,50 @@ const CompModalUsers = ({ isOpen, onClose }) => {
           <img src={XlgIcon} alt="Close icon" className="h-6 w-6" />
         </button>
         <h2 className="mb-8 text-xl font-semibold">Editar Usuario</h2>
-        {
+        <form onSubmit={handleSubmit}>
           <div className="space-y-6">
-            <CompInput
+            <Input
               label={"Nombre completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
             />
 
-            <CompInput
+            <Input
               label={"Correo electrónico"}
               placeholder={"Escribe el email del usuario..."}
             />
 
             <div>
-              <CompInputPass
+              <Input
                 label={"Contraseña"}
                 placeholder={"Escribe la contraseña..."}
+                type="password"
+                icon1={IconEye}
+                icon2={IconEyeSlash}
               />
               <p className="-mt-6 text-xs leading-[.875rem] text-black_b">
-                *Este campo debe contener entre 8 y 20 caracteres alfanuméricos{" "}
+                *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
               </p>
             </div>
 
-            <CompCheckbox text={"Asignar rol existente"} />
+            <Checkbox text={"Asignar rol existente"} />
             <CompSelects option={"Rol"} />
-            <CompCheckbox text={"Asignar nuevo rol"} />
-            <CompInput placeholder={"Escribe el nombre del rol..."} />
+            <Checkbox text={"Asignar nuevo rol"} />
+            <Input placeholder={"Escribe el nombre del rol..."} />
           </div>
-        }
 
-        <div className="mt-10 flex justify-between">
-          <Button text={"Cancelar"} type={"cancel"} />
-          <Button text={"GUARDAR"} type={"save"} icon={CheckLgIcon} />
-        </div>
+          <div className="mt-10 flex justify-between">
+            <Button text={"Cancelar"} color={"cancel"} type={"button"} />
+            <Button
+              text={"GUARDAR"}
+              color={"save"}
+              icon={CheckLgIcon}
+              type={"submit"}
+            />
+          </div>
+        </form>
       </div>
     </div>
   );
 };
 
-export default CompModalUsers;
+export default ModalAddUser;

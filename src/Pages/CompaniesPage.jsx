@@ -1,12 +1,19 @@
 import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
 import { Link } from "react-router-dom";
-import CompCheckbox from "../components/Checkboxs/CompCheckbox";
-import CompSelects from "../components/Selects/CompSelects";
-import CompInput from "../components/Inputs/CompInput";
-import CompInputPass from "../components/Inputs/CompInputPass";
+import Checkbox from "../Components/Checkboxs/Checkbox";
+import CompSelects from "../Components/Selects/CompSelects";
+import Input from "../Components/Inputs/Input";
 import Button from "../components/Buttons/Button";
+import IconEye from "../assets/Iconos/IconEye.svg";
+import IconEyeSlash from "../assets/Iconos/IconEyeSlash.svg";
 import ArrowRightIcon from "../assets/Iconos/arrow-right.svg";
+
 const CompaniesPage = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Formulario enviado");
+  };
+
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -20,10 +27,11 @@ const CompaniesPage = () => {
             <p className="text-sm font-medium leading-4">Volver</p>
           </Link>
         </div>
-        <div></div>
+
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Empresas
         </h1>
+
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
@@ -32,18 +40,25 @@ const CompaniesPage = () => {
             </span>
           </div>
         </div>
-        <div className="rounded-tr-lg bg-white px-14 py-5 shadow-t">
+
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-tr-lg bg-white px-14 py-5 shadow-t"
+        >
           <div className="space-y-6">
-            <CompInput
+            <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
             />
-            <CompInput
+            <Input
               label={"Correo electrónico"}
               placeholder={"Escribe el email del usuario..."}
             />
             <div className="pb-8">
-              <CompInputPass
+              <Input
+                type="password"
+                icon1={IconEye}
+                icon2={IconEyeSlash}
                 label={"Contraseña"}
                 placeholder={"Escribe la contraseña..."}
               />
@@ -51,18 +66,23 @@ const CompaniesPage = () => {
                 *Este campo debe contener entre 8 y 20 caracteres alfanuméricos{" "}
               </p>
             </div>
-            <CompCheckbox text={"Asignar rol existente"} />
+            <Checkbox text={"Asignar rol existente"} />
             <CompSelects option={"Rol"} />
-            <CompCheckbox text={"Asignar nuevo rol"} />
+            <Checkbox text={"Asignar nuevo rol"} />
             <div className="flex items-start space-x-10">
-              <CompInput placeholder={"Escribe el nombre del rol..."} />
-              <CompSelects option={"Permisos"} width="30%" />
+              <Input placeholder={"Escribe el nombre del rol..."} />
+              <CompSelects option={"Permisos"} />
             </div>
           </div>
-        </div>
-        <div className="flex justify-end py-6">
-          <Button text={"GUARDAR"} type={"save"} icon={ArrowRightIcon} />
-        </div>
+          <div className="flex justify-end py-6">
+            <Button
+              text={"GUARDAR"}
+              color={"save"}
+              type={"submit"}
+              icon={ArrowRightIcon}
+            />
+          </div>
+        </form>
       </div>
     </div>
   );
