@@ -29,7 +29,7 @@ const CompaniesPage = () => {
         </div>
 
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Empresas
+          Usuarios
         </h1>
 
         <div className="flex items-center justify-between">

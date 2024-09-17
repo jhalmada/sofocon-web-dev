@@ -4,7 +4,6 @@ import UserRow from "../components/UserRow";
 import { users } from "../Utils/Datainfo";
 import TableRole from "../components/Tables/TableRole";
 import Button from "../components/Buttons/Button";
-import AddRole from "../components/Forms/AddRole";
 import ModalAddUser from "../components/Modals/ModalAddUser";
 import Pagination from "../components/Pagination";
 
@@ -14,15 +13,11 @@ import SearchIcon from "../assets/Iconos/search.svg";
 import FilterRightIcon from "../assets/Iconos/filter-right.svg";
 import ChevronDownIcon from "../assets/Iconos/chevron-down.svg";
 
-// Define tab constants
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
-const NEW_ROLES_TAB = "newRoles";
 
 const UsersPage = () => {
   const [activeTab, setActiveTab] = useState(USER_TAB);
-  const [addRol, setAddRol] = useState(false);
-
   const [isModalOpen, setModalOpen] = useState(false);
 
   const openModal = () => {
@@ -63,36 +58,24 @@ const UsersPage = () => {
             >
               Roles
             </h2>
-            {addRol && (
-              <h2
-                onClick={() => setActiveTab(NEW_ROLES_TAB)}
-                className={`${activeTab === NEW_ROLES_TAB ? "bg-white" : "bg-black_l"} w-36 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
-              >
-                Nuevo Rol
-              </h2>
+          </div>
+          <div className="flex h-8 items-center gap-[0.875rem] rounded px-1 py-2">
+            <img
+              src={SearchIcon}
+              alt="Search icon"
+              className="h-8 w-8 rounded-[1.875rem] bg-white p-1"
+            />
+            {activeTab === USER_TAB && (
+              <Link to="agregar-usuario">
+                <Button text="Nuevo Usuario" icon={PlusIcon} />
+              </Link>
+            )}
+            {activeTab === ROLES_TAB && (
+              <Link to="agregar-rol">
+                <Button text="Agregar Rol" icon={PlusIcon} />
+              </Link>
             )}
           </div>
-          {activeTab !== NEW_ROLES_TAB && (
-            <div className="flex h-8 items-center gap-[0.875rem] rounded px-1 py-2">
-              <img
-                src={SearchIcon}
-                alt="Search icon"
-                className="h-8 w-8 rounded-[1.875rem] bg-white p-1"
-              />
-              {activeTab === USER_TAB && (
-                <Link to="agregar-usuario">
-                  <Button text="Nuevo Usuario" icon={PlusIcon} />
-                </Link>
-              )}
-              {activeTab === ROLES_TAB && (
-                <Button
-                  text="Agregar Rol"
-                  icon={PlusIcon}
-                  onClick={() => setAddRol(!addRol)}
-                />
-              )}
-            </div>
-          )}
         </div>
         {activeTab === USER_TAB && (
           <div className="rounded-tr-lg bg-white p-5 shadow-t">
@@ -148,7 +131,6 @@ const UsersPage = () => {
           </div>
         )}
         {activeTab === ROLES_TAB && <TableRole />}
-        {activeTab === NEW_ROLES_TAB && <AddRole />}
       </div>
       <div className="flex justify-center p-6">
         <Pagination />

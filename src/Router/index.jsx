@@ -13,6 +13,7 @@ import NewPasswordPage from "../Pages/NewPasswordPage";
 import PasswordPage from "../Pages/PasswordPage";
 import RedirectionPage from "../Pages/RedirectionPage";
 import AddUserPage from "../Pages/AddUserPage";
+import AddRolePage from "../Pages/AddRolePage";
 
 // Rutas path
 const LOGIN_ROUTE = "login";
@@ -23,6 +24,7 @@ const HOME_ROUTE = "/inicio";
 const COMPANIES_ROUTE = "empresas";
 const USERS_ROUTE = "usuarios";
 const ADD_USER_ROUTE = "agregar-usuario";
+const ADD_ROLE_ROUTE = "agregar-rol";
 const SELLERS_ROUTE = "vendedores";
 const ROUTES_ROUTE = "rutas";
 const PRODUCTS_ROUTE = "productos";
@@ -70,6 +72,10 @@ export const router = createBrowserRouter([
           {
             path: ADD_USER_ROUTE,
             element: <AddUserPage />,
+          },
+          {
+            path: ADD_ROLE_ROUTE,
+            element: <AddRolePage />,
           },
         ],
       },

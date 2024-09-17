@@ -11,7 +11,7 @@ const AddRole = () => {
         />
       </div>
       <div className="w-[55.6rem]">
-        <Select label={"Asignar Permisos"} />
+        <Select label={"Asignar Permisos"} option={"Permisos"} />
       </div>
     </div>
   );

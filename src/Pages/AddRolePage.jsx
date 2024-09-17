@@ -4,8 +4,7 @@ import Select from "../Components/Selects/Select";
 import Input from "../Components/Inputs/Input";
 import Button from "../components/Buttons/Button";
 import ArrowRightIcon from "../assets/Iconos/arrow-right.svg";
-
-const SellersPage = () => {
+const AddRolePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Formulario enviado");
@@ -63,4 +62,4 @@ const SellersPage = () => {
   );
 };
 
-export default SellersPage;
+export default AddRolePage;
