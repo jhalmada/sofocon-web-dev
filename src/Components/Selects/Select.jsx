@@ -1,6 +1,6 @@
 import { roles } from "../../Utils/Datainfo";
 
-const Select = ({ width = "100%", label = null, option, selectedOption }) => {
+const Select = ({ width = "100%", label = null, option }) => {
   return (
     <>
       {label && <label className="font-roboto font-medium">{label}</label>}
@@ -9,10 +9,10 @@ const Select = ({ width = "100%", label = null, option, selectedOption }) => {
         style={{ width: width }}
       >
         <select
+          defaultValue="Rol"
           className="w-full bg-transparent font-semibold outline-none"
-          defaultValue={selectedOption}
         >
-          <option value="" disabled>
+          <option value="Rol" disabled>
             {option}
           </option>
           {roles.map((role, index) => (

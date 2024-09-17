@@ -15,7 +15,7 @@ const CompaniesPage = () => {
   };
 
   return (
-    <div className="flex h-full flex-col justify-between bg-gray">
+    <div className="flex h-full flex-col justify-between overflow-auto bg-gray">
       <div className="flex-grow p-6">
         <div className="mb-4 flex items-center">
           <img
@@ -32,7 +32,6 @@ const CompaniesPage = () => {
           Empresas
         </h1>
 
-        {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-36 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
@@ -74,15 +73,16 @@ const CompaniesPage = () => {
               <Select option={"Permisos"} />
             </div>
           </div>
-          <div className="flex justify-end py-6">
-            <Button
-              text={"GUARDAR"}
-              color={"save"}
-              type={"submit"}
-              icon={ArrowRightIcon}
-            />
-          </div>
         </form>
+        <div className="flex justify-end py-6">
+          <Button
+            text={"GUARDAR"}
+            onClick={handleSubmit}
+            color={"save"}
+            type={"submit"}
+            icon={ArrowRightIcon}
+          />
+        </div>
       </div>
     </div>
   );

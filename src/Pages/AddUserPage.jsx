@@ -1,6 +1,16 @@
 import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
 import { Link } from "react-router-dom";
+import Checkbox from "../Components/Checkboxs/Checkbox";
+import Select from "../Components/Selects/Select";
+import Input from "../Components/Inputs/Input";
+import IconEye from "../assets/Iconos/IconEye.svg";
+import IconEyeSlash from "../assets/Iconos/IconEyeSlash.svg";
+
 const AddUserPage = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Formulario enviado");
+  };
   return (
     <div>
       <div className="flex h-full flex-col justify-between bg-gray">
@@ -27,13 +37,41 @@ const AddUserPage = () => {
               </span>
             </div>
           </div>
-          <div className="rounded-tr-lg bg-white p-5 shadow-t">
-            {" "}
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minima
-            dolore adipisci accusamus alias unde labore cumque odit explicabo
-            ullam reiciendis. Quibusdam nam maxime porro soluta voluptas iure
-            doloremque nostrum in.{" "}
-          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="rounded-tr-lg bg-white px-14 py-5 shadow-t"
+          >
+            <div className="space-y-6">
+              <Input
+                label={"Nombre Completo"}
+                placeholder={"Escribe el nombre completo del usuario..."}
+              />
+              <Input
+                label={"Correo electrónico"}
+                placeholder={"Escribe el email del usuario..."}
+              />
+              <div className="pb-8">
+                <Input
+                  type="password"
+                  icon1={IconEye}
+                  icon2={IconEyeSlash}
+                  label={"Contraseña"}
+                  placeholder={"Escribe la contraseña..."}
+                />
+                <p className="-mt-6 text-xs leading-[.875rem] text-black_b">
+                  *Este campo debe contener entre 8 y 20 caracteres
+                  alfanuméricos{" "}
+                </p>
+              </div>
+              <Checkbox text={"Asignar rol existente"} />
+              <Select option={"Rol"} />
+              <Checkbox text={"Asignar nuevo rol"} />
+              <div className="flex items-start space-x-10">
+                <Input placeholder={"Escribe el nombre del rol..."} />
+                <Select option={"Permisos"} />
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
