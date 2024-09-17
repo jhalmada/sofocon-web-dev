@@ -1,5 +1,4 @@
 import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
-
 import { Link } from "react-router-dom";
 const SellersPage = () => {
   return (
