@@ -28,7 +28,7 @@ const Breadcrumbs = () => {
               {index === 0 ? (
                 <img src={HouseDoorIcon} alt="Home" className="mr-1 h-4 w-4" />
               ) : null}
-              {index === 0 ? "Home" : breadcrumb.name}
+              {index === 0 ? "Inicio" : breadcrumb.name}
             </Link>
             {index < breadcrumbs.length - 1 && <span>/</span>}
           </li>

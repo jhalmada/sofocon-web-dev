@@ -10,12 +10,12 @@ import gearIcon from "../assets/Iconos/gear.svg";
 import bellIcon from "../assets/Iconos/bell.svg";
 import avatarIcon from "../assets/Iconos/avatar.svg";
 
-const LayoutPublic = () => {
+const Public = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
   const isActive = (path) => {
-    if (path === "/home") {
+    if (path === "/inicio") {
       return currentPath === path;
     }
 
@@ -93,4 +93,4 @@ const LayoutPublic = () => {
   );
 };
 
-export default LayoutPublic;
+export default Public;

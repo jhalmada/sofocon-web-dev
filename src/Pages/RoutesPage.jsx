@@ -5,8 +5,7 @@ const RoutesPage = () => {
     <div className="h-full bg-gray p-6">
       <div className="mb-4 flex items-center">
         <img src={ChevronLeft} alt="arrow left" className="-ml-1 h-4 w-4" />
-        <Link to={"/home"}>
-          {" "}
+        <Link to={"/inicio"}>
           <p className="text-sm font-medium leading-4">Volver</p>
         </Link>
       </div>

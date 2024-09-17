@@ -35,6 +35,9 @@ export default {
         lg: "20px",
         xl: "24px",
       },
+      backgroundImage: {
+        login: "url('assets/Login/ImgElipse2.png')",
+      },
     },
   },
   plugins: [],

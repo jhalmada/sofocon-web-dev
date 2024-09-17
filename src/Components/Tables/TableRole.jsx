@@ -3,7 +3,7 @@ import { roles } from "../../Utils/Datainfo";
 const formatPermisos = (permisos) => {
   return permisos.join("/");
 };
-const CompTableRoles = () => {
+const TableRole = () => {
   return (
     <div className="rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
@@ -52,4 +52,4 @@ const CompTableRoles = () => {
   );
 };
 
-export default CompTableRoles;
+export default TableRole;
