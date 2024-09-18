@@ -5,7 +5,7 @@ const RecoverPasswordPage = () => {
   return (
     <div className="w-full font-roboto">
       <Input
-        placeholder={"example@ejemail.com"}
+        placeholder={"Example@ejemail.com"}
         label={"Confirma tu correo"}
         msjError={
           "*Este campo debe contener una direccion de correo válida vinculada a la plataforma."

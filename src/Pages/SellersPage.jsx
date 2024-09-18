@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const SellersPage = () => {
   return (
-    <div className="flex h-full flex-col justify-between overflow-auto bg-gray">
+    <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
         <div className="mb-4 flex items-center">
           <img
@@ -15,11 +15,11 @@ const SellersPage = () => {
             <p className="text-sm font-medium leading-4">Volver</p>
           </Link>
         </div>
-
+        <div></div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Vendedores
         </h1>
-
+        {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-36 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
@@ -27,8 +27,13 @@ const SellersPage = () => {
             </span>
           </div>
         </div>
-
-        <form className="rounded-tr-lg bg-white px-14 py-5 shadow-t"></form>
+        <div className="rounded-tr-lg bg-white p-5 shadow-t">
+          {" "}
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minima
+          dolore adipisci accusamus alias unde labore cumque odit explicabo
+          ullam reiciendis. Quibusdam nam maxime porro soluta voluptas iure
+          doloremque nostrum in.{" "}
+        </div>
       </div>
     </div>
   );
