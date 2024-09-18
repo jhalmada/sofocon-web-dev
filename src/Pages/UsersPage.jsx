@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import UserRow from "../components/UserRow";
 import { users } from "../utils/Datainfo";
 import TableRole from "../components/tables/TableRole";
@@ -19,6 +20,8 @@ const ROLES_TAB = "roles";
 const UsersPage = () => {
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setModalOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const openModal = () => {
     setModalOpen(true);
