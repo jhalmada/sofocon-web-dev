@@ -1,4 +1,5 @@
-import { roles } from "../../Utils/Datainfo";
+import { roles } from "../../utils/Datainfo";
+
 //esta funcion nos va a permitir formatear los permisos de un rol para que se muestre como en el figma
 const formatPermisos = (permisos) => {
   return permisos.join("/");
@@ -26,7 +27,7 @@ const TableRole = () => {
           {roles.map((user, index) => (
             <tr key={index}>
               <td className="p-2">
-                <img src={user.avatarSrc} alt="role icon" className="h-5 w-5" />
+                <img src={user.avatarSrc} alt="role icon" className="h-6 w-6" />
               </td>
               <td className="p-2">{user.fullName}</td>
               <td className="p-2">{formatPermisos(user.permisos)}</td>

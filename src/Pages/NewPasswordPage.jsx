@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import Input from "../Components/Inputs/Input";
-import IconEye from "../assets/Iconos/IconEye.svg";
-import IconEyeSlash from "../assets/Iconos/IconEyeSlash.svg";
+import Input from "../components/inputs/Input";
+import IconEye from "../assets/icons/IconEye.svg";
+import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 
 const NewPasswordPage = () => {
   return (

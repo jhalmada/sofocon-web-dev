@@ -1,5 +1,5 @@
-import Input from "../Inputs/Input";
-import Select from "../Selects/Select";
+import Input from "../inputs/Input";
+import Select from "../selects/Select";
 
 const AddRole = () => {
   return (
@@ -11,7 +11,7 @@ const AddRole = () => {
         />
       </div>
       <div className="w-[55.6rem]">
-        <Select label={"Asignar Permisos"} />
+        <Select label={"Asignar Permisos"} option={"Permisos"} />
       </div>
     </div>
   );

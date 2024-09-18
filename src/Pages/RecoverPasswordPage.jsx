@@ -1,4 +1,4 @@
-import Input from "../Components/Inputs/Input";
+import Input from "../components/inputs/Input";
 import { Link } from "react-router-dom";
 
 const RecoverPasswordPage = () => {

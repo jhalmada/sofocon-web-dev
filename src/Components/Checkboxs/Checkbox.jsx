@@ -1,4 +1,4 @@
-import checkmark from "../../assets/Iconos/checkmark.svg";
+import checkmark from "../../assets/icons/checkmark.svg";
 const Checkbox = ({ text }) => {
   return (
     <div className="flex items-center">

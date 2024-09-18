@@ -1,10 +1,10 @@
-import LogoSofocon from "../assets/Iconos/LogoSofocon.png";
-import IconConfig from "../assets/Iconos/IconConfig.svg";
+import LogoSofocon from "../assets/icons/LogoSofocon.png";
+import IconConfig from "../assets/icons/IconConfig.svg";
 import { Outlet } from "react-router-dom";
 
 const Login = () => {
   return (
-    <div className="bg-login relative flex min-h-screen items-center justify-center bg-cover bg-center">
+    <div className="relative flex min-h-screen items-center justify-center bg-login bg-cover bg-center">
       <img
         src={IconConfig}
         className="absolute right-8 top-7 h-7 w-7 transform cursor-pointer transition-transform duration-1000 ease-in-out hover:rotate-180"
