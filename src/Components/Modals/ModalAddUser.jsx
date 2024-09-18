@@ -1,12 +1,11 @@
-import React from "react";
-import CheckLgIcon from "../../assets/Iconos/check-lg.svg";
-import Button from "../Buttons/Button";
-import Checkbox from "../Checkboxs/Checkbox";
-import Input from "../Inputs/Input";
-import Select from "../Selects/Select";
-import IconEye from "../../assets/Iconos/IconEye.svg";
-import IconEyeSlash from "../../assets/Iconos/IconEyeSlash.svg";
-import XlgIcon from "../../assets/Iconos/x-lg.svg";
+import CheckLgIcon from "../../assets/icons/check-lg.svg";
+import Button from "../buttons/Button";
+import Checkbox from "../checkboxs/Checkbox";
+import Input from "../inputs/Input";
+import Select from "../selects/Select";
+import IconEye from "../../assets/icons/IconEye.svg";
+import IconEyeSlash from "../../assets/icons/IconEyeSlash.svg";
+import XlgIcon from "../../assets/icons/x-lg.svg";
 
 const ModalAddUser = ({ isOpen, onClose }) => {
   if (!isOpen) return null;

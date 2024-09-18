@@ -1,7 +1,7 @@
-import SkipPreviousFilledIcon from "../assets/Iconos/SkipPreviousFilled.svg";
-import ChevronLeftFilledIcon from "../assets/Iconos/ChevronLeftFilled.svg";
-import ChevronRightFilledIcon from "../assets/Iconos/ChevronRightFilled.svg";
-import SkipNextFilledIcon from "../assets/Iconos/SkipNextFilled.svg";
+import SkipPreviousFilledIcon from "../assets/icons/SkipPreviousFilled.svg";
+import ChevronLeftFilledIcon from "../assets/icons/ChevronLeftFilled.svg";
+import ChevronRightFilledIcon from "../assets/icons/ChevronRightFilled.svg";
+import SkipNextFilledIcon from "../assets/icons/SkipNextFilled.svg";
 
 const Pagination = () => {
   return (

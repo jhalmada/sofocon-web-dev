@@ -1,7 +1,7 @@
-import Input from "../Components/Inputs/Input";
+import Input from "../components/inputs/Input";
 import { Link } from "react-router-dom";
-import IconEye from "../assets/Iconos/IconEye.svg";
-import IconEyeSlash from "../assets/Iconos/IconEyeSlash.svg";
+import IconEye from "../assets/icons/IconEye.svg";
+import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 
 const LoginPage = () => {
   return (

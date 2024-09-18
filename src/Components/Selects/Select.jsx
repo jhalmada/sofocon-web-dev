@@ -1,4 +1,4 @@
-import { roles } from "../../Utils/Datainfo";
+import { roles } from "../../utils/Datainfo";
 
 const Select = ({ width = "100%", label = null, option }) => {
   return (
