@@ -5,6 +5,8 @@ import Select from "../components/selects/Select";
 import Input from "../components/inputs/Input";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
+import Button from "../components/buttons/Button";
+import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 
 const AddUserPage = () => {
   const handleSubmit = (e) => {
@@ -70,6 +72,15 @@ const AddUserPage = () => {
             </div>
           </div>
         </form>
+        <div className="flex justify-end py-6">
+          <Button
+            text={"GUARDAR"}
+            onClick={handleSubmit}
+            color={"save"}
+            type={"submit"}
+            icon={ArrowRightIcon}
+          />
+        </div>
       </div>
     </div>
   );
