@@ -1,4 +1,11 @@
-const Button = ({ text, onClick, icon, color, type = "button" }) => {
+const Button = ({
+  text,
+  onClick,
+  icon,
+  color,
+  type = "button",
+  iconPosition = "right",
+}) => {
   const colorClasses = {
     default: "bg-blue_b text-white shadow-blur",
     save: "bg-red_b text-white shadow-blur",
@@ -9,7 +16,7 @@ const Button = ({ text, onClick, icon, color, type = "button" }) => {
 
   return (
     <button
-      className={`flex h-10 min-w-[10.8rem] items-center justify-between rounded-2xl px-5 py-1 ${buttonColorClass} gap-2`}
+      className={`flex h-10 min-w-[10.8rem] items-center justify-center rounded-2xl px-5 py-1 uppercase ${buttonColorClass} gap-2 ${iconPosition === "left" ? "flex-row-reverse" : "flex-row"}`}
       onClick={onClick}
       type={type}
     >

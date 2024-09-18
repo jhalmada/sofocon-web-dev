@@ -4,9 +4,13 @@ import UserRow from "../components/UserRow";
 import { users } from "../utils/Datainfo";
 import TableRole from "../components/tables/TableRole";
 import Button from "../components/buttons/Button";
-import ModalAddUser from "../components/modals/ModalAddUser";
+import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
-
+import Input from "../components/inputs/Input";
+import Select from "../components/selects/Select";
+import Checkbox from "../components/checkboxs/Checkbox";
+import IconEye from "../assets/icons/IconEye.svg";
+import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import PlusIcon from "../assets/icons/plus.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import SearchIcon from "../assets/icons/search.svg";
@@ -19,6 +23,9 @@ const ROLES_TAB = "roles";
 const UsersPage = () => {
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
+  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+    useState(false);
 
   const openModal = () => {
     setModalOpen(true);
@@ -26,6 +33,39 @@ const UsersPage = () => {
 
   const closeModal = () => {
     setModalOpen(false);
+    setConfirmCancelModalOpen(false);
+    setSaveConfirmationModalOpen(false);
+  };
+
+  const openConfirmCancelModal = () => {
+    setConfirmCancelModalOpen(true);
+  };
+
+  const closeConfirmCancelModal = () => {
+    setConfirmCancelModalOpen(false);
+  };
+
+  const openSaveConfirmationModal = () => {
+    setSaveConfirmationModalOpen(true);
+  };
+
+  const closeSaveConfirmationModal = () => {
+    setSaveConfirmationModalOpen(false);
+    closeModal();
+  };
+
+  const handleCancelClick = () => {
+    openConfirmCancelModal();
+  };
+
+  const handleConfirmCancel = () => {
+    closeConfirmCancelModal();
+    closeModal();
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    openSaveConfirmationModal();
   };
 
   return (
@@ -66,9 +106,11 @@ const UsersPage = () => {
               className="h-8 w-8 rounded-[1.875rem] bg-white p-1"
             />
             {activeTab === USER_TAB && (
-              <Link to="agregar-usuario">
-                <Button text="Nuevo Usuario" icon={PlusIcon} />
-              </Link>
+              <Button
+                text="Nuevo Usuario"
+                icon={PlusIcon}
+                onClick={openModal}
+              />
             )}
             {activeTab === ROLES_TAB && (
               <Link to="agregar-rol">
@@ -123,7 +165,7 @@ const UsersPage = () => {
                     role={user.role}
                     editIconSrc={user.editIconSrc}
                     deleteIconSrc={user.deleteIconSrc}
-                    onEditClick={() => openModal()}
+                    onEditClick={openModal}
                   />
                 ))}
               </tbody>
@@ -135,8 +177,61 @@ const UsersPage = () => {
       <div className="flex justify-center p-6">
         <Pagination />
       </div>
-      <ModalAddUser isOpen={isModalOpen} onClose={closeModal} />
-      {/* Se renderiza el modal */}
+      <ReusableModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="Editar Usuario"
+        onSubmit={handleSubmit}
+        buttons={["cancel", "save"]}
+        handleCancelClick={handleCancelClick}
+      >
+        <Input
+          label={"Nombre completo"}
+          placeholder={"Escribe el nombre completo del usuario..."}
+        />
+        <Input
+          label={"Correo electrónico"}
+          placeholder={"Escribe el email del usuario..."}
+        />
+        <div>
+          <Input
+            label={"Contraseña"}
+            placeholder={"Escribe la contraseña..."}
+            type="password"
+            icon1={IconEye}
+            icon2={IconEyeSlash}
+          />
+          <p className="-mt-6 text-xs leading-[.875rem] text-black_b">
+            *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
+          </p>
+        </div>
+        <Checkbox text={"Asignar rol existente"} />
+        <Select option={"Rol"} />
+        <Checkbox text={"Asignar nuevo rol"} />
+        <Input placeholder={"Escribe el nombre del rol..."} />
+      </ReusableModal>
+
+      <ReusableModal
+        isOpen={isConfirmCancelModalOpen}
+        onClose={closeConfirmCancelModal}
+        title="Cambios sin guardar"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
+      </ReusableModal>
+
+      <ReusableModal
+        isOpen={isSaveConfirmationModalOpen}
+        onClose={closeSaveConfirmationModal}
+        title="Cambios guardados"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={closeSaveConfirmationModal}
+      >
+        Los cambios fueron guardados exitosamente.
+      </ReusableModal>
     </div>
   );
 };
