@@ -106,11 +106,9 @@ const UsersPage = () => {
               className="h-8 w-8 rounded-[1.875rem] bg-white p-1"
             />
             {activeTab === USER_TAB && (
-              <Button
-                text="Nuevo Usuario"
-                icon={PlusIcon}
-                onClick={openModal}
-              />
+              <Link to={"agregar-usuario"}>
+                <Button text="Nuevo Usuario" icon={PlusIcon} />
+              </Link>
             )}
             {activeTab === ROLES_TAB && (
               <Link to="agregar-rol">

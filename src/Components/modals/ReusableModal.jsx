@@ -44,7 +44,7 @@ const ReusableModal = ({
               )}
               {buttons.includes("accept") && (
                 <Button
-                  text="Aceptar"
+                  text="ACEPTAR"
                   color="save"
                   icon={CheckLgIcon}
                   iconPosition="right"

@@ -16,7 +16,7 @@ const Button = ({
 
   return (
     <button
-      className={`flex h-10 min-w-[10.8rem] items-center justify-center rounded-2xl px-5 py-1 uppercase ${buttonColorClass} gap-2 ${iconPosition === "left" ? "flex-row-reverse" : "flex-row"}`}
+      className={`flex h-10 min-w-[10.8rem] items-center justify-center rounded-2xl px-5 py-1 ${buttonColorClass} gap-2 ${iconPosition === "left" ? "flex-row-reverse" : "flex-row"}`}
       onClick={onClick}
       type={type}
     >
