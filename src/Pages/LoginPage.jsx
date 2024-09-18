@@ -7,14 +7,14 @@ const LoginPage = () => {
   return (
     <div className="w-full">
       <Input
-        placeholder={"escribe tu correo"}
+        placeholder={"Escribe tu correo"}
         label={"Dirección de correo"}
         msjError={
           "*Este campo debe contener una direccion de correo válida vinculada a la plataforma."
         }
       />
       <Input
-        placeholder={"escribe tu contraseña"}
+        placeholder={"Escribe tu contraseña"}
         label={"Contraseña"}
         msjError={
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos."

@@ -7,7 +7,7 @@ const NewPasswordPage = () => {
   return (
     <div className="w-full">
       <Input
-        placeholder={"escribe tu nueva contraseña"}
+        placeholder={"Escribe tu nueva contraseña"}
         label={"Nueva contraseña"}
         msjError={
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos."
@@ -17,7 +17,7 @@ const NewPasswordPage = () => {
         icon2={IconEyeSlash}
       />
       <Input
-        placeholder={"escribe tu nueva contraseña"}
+        placeholder={"Escribe tu nueva contraseña"}
         label={"Confirma tu contraseña"}
         msjError={
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos. Debe coincidir con el campo anterior."
