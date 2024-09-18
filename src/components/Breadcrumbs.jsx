@@ -1,4 +1,4 @@
-import HouseDoorIcon from "../assets/Iconos/house-door.svg";
+import HouseDoorIcon from "../assets/icons/house-door.svg";
 import { Link, useLocation } from "react-router-dom";
 
 const Breadcrumbs = () => {

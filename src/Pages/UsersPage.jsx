@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import UserRow from "../components/UserRow";
-import { users } from "../Utils/Datainfo";
-import TableRole from "../components/Tables/TableRole";
-import Button from "../components/Buttons/Button";
-import ModalAddUser from "../components/Modals/ModalAddUser";
+import { users } from "../utils/Datainfo";
+import TableRole from "../components/tables/TableRole";
+import Button from "../components/buttons/Button";
+import ModalAddUser from "../components/modals/ModalAddUser";
 import Pagination from "../components/Pagination";
 
-import PlusIcon from "../assets/Iconos/plus.svg";
-import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
-import SearchIcon from "../assets/Iconos/search.svg";
-import FilterRightIcon from "../assets/Iconos/filter-right.svg";
-import ChevronDownIcon from "../assets/Iconos/chevron-down.svg";
+import PlusIcon from "../assets/icons/plus.svg";
+import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
+import SearchIcon from "../assets/icons/search.svg";
+import FilterRightIcon from "../assets/icons/filter-right.svg";
+import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";

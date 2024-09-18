@@ -1,9 +1,9 @@
-import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
+import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-import Select from "../Components/Selects/Select";
-import Input from "../Components/Inputs/Input";
-import Button from "../components/Buttons/Button";
-import ArrowRightIcon from "../assets/Iconos/arrow-right.svg";
+import Select from "../components/selects/Select";
+import Input from "../components/inputs/Input";
+import Button from "../components/buttons/Button";
+import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 
 const SellersPage = () => {
   const handleSubmit = (e) => {

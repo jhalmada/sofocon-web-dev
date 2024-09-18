@@ -1,12 +1,12 @@
-import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
+import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-import Checkbox from "../Components/Checkboxs/Checkbox";
-import Select from "../Components/Selects/Select";
-import Input from "../Components/Inputs/Input";
-import Button from "../components/Buttons/Button";
-import IconEye from "../assets/Iconos/IconEye.svg";
-import IconEyeSlash from "../assets/Iconos/IconEyeSlash.svg";
-import ArrowRightIcon from "../assets/Iconos/arrow-right.svg";
+import Checkbox from "../components/checkboxs/Checkbox";
+import Select from "../components/selects/Select";
+import Input from "../components/inputs/Input";
+import Button from "../components/buttons/Button";
+import IconEye from "../assets/icons/IconEye.svg";
+import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
+import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 
 const CompaniesPage = () => {
   const handleSubmit = (e) => {

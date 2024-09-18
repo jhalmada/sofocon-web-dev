@@ -1,4 +1,5 @@
-import { roles } from "../../Utils/Datainfo";
+import { roles } from "../../utils/Datainfo";
+
 //esta funcion nos va a permitir formatear los permisos de un rol para que se muestre como en el figma
 const formatPermisos = (permisos) => {
   return permisos.join("/");

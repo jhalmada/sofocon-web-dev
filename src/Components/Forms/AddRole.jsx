@@ -1,5 +1,5 @@
-import Input from "../Inputs/Input";
-import Select from "../Selects/Select";
+import Input from "../inputs/Input";
+import Select from "../selects/Select";
 
 const AddRole = () => {
   return (

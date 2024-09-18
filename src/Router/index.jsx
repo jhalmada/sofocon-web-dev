@@ -1,19 +1,19 @@
 import { createBrowserRouter } from "react-router-dom";
-import Public from "../Layouts/Public";
-import HomePage from "../Pages/HomePage";
-import CompaniesPage from "../Pages/CompaniesPage";
-import UsersPage from "../Pages/UsersPage";
-import SellersPage from "../Pages/SellersPage";
-import RoutesPage from "../Pages/RoutesPage";
-import ProductsPage from "../Pages/ProductsPage";
-import LoginPage from "../Pages/LoginPage";
-import Login from "../Layouts/Login";
-import RecoverPasswordPage from "../Pages/RecoverPasswordPage";
-import NewPasswordPage from "../Pages/NewPasswordPage";
-import PasswordPage from "../Pages/PasswordPage";
-import RedirectionPage from "../Pages/RedirectionPage";
-import AddUserPage from "../Pages/AddUserPage";
-import AddRolePage from "../Pages/AddRolePage";
+import Public from "../layouts/Public";
+import HomePage from "../pages/HomePage";
+import CompaniesPage from "../pages/CompaniesPage";
+import UsersPage from "../pages/UsersPage";
+import SellersPage from "../pages/SellersPage";
+import RoutesPage from "../pages/RoutesPage";
+import ProductsPage from "../pages/ProductsPage";
+import LoginPage from "../pages/LoginPage";
+import Login from "../layouts/Login";
+import RecoverPasswordPage from "../pages/RecoverPasswordPage";
+import NewPasswordPage from "../pages/NewPasswordPage";
+import PasswordPage from "../pages/PasswordPage";
+import RedirectionPage from "../pages/RedirectionPage";
+import AddUserPage from "../pages/AddUserPage";
+import AddRolePage from "../pages/AddRolePage";
 
 // Rutas path
 const LOGIN_ROUTE = "login";

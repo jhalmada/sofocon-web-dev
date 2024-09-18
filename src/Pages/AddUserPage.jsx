@@ -1,10 +1,10 @@
-import ChevronLeftIcon from "../assets/Iconos/chevron-left.svg";
+import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-import Checkbox from "../Components/Checkboxs/Checkbox";
-import Select from "../Components/Selects/Select";
-import Input from "../Components/Inputs/Input";
-import IconEye from "../assets/Iconos/IconEye.svg";
-import IconEyeSlash from "../assets/Iconos/IconEyeSlash.svg";
+import Checkbox from "../components/checkboxs/Checkbox";
+import Select from "../components/selects/Select";
+import Input from "../components/inputs/Input";
+import IconEye from "../assets/icons/IconEye.svg";
+import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 
 const AddUserPage = () => {
   const handleSubmit = (e) => {
