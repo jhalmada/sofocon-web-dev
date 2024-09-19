@@ -43,13 +43,17 @@ const AddRolePage = () => {
           onSubmit={handleSubmit}
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
-          <div className="space-y-6">
+          <div className="space-y-3">
             <Input
               label={"Nombre del rol"}
               placeholder={"Escribe el nombre del rol..."}
             />
 
-            <Select option={"Permisos"} />
+            <Select
+              label={"Asignar permisos"}
+              option={"Permisos"}
+              variant={"permisos"}
+            />
           </div>
         </form>
         <div className="flex justify-end py-6">

@@ -236,7 +236,7 @@ const UsersPage = () => {
             icon1={IconEye}
             icon2={IconEyeSlash}
           />
-          <p className="-mt-6 text-xs leading-[.875rem] text-black_b">
+          <p className="-mt-6 mb-10 text-xs leading-[.875rem] text-black_b">
             *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
           </p>
         </div>

@@ -128,7 +128,11 @@ const TableRole = () => {
           label={"Nombre del rol"}
           placeholder={"Escribe el nombre del rol..."}
         />
-        <Select label={"Asignar permisos"} option={"Permisos"} />
+        <Select
+          label={"Asignar permisos"}
+          option={"Permisos"}
+          variant={"permisos"}
+        />
       </ReusableModal>
 
       <ReusableModal

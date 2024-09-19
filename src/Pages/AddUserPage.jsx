@@ -45,7 +45,7 @@ const AddUserPage = () => {
           onSubmit={handleSubmit}
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
-          <div className="space-y-6">
+          <div className="space-y-3">
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
