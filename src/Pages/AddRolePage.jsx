@@ -53,13 +53,15 @@ const AddRolePage = () => {
           </div>
         </form>
         <div className="flex justify-end py-6">
-          <Button
-            text={"GUARDAR"}
-            onClick={handleSubmit}
-            color={"save"}
-            type={"submit"}
-            icon={ArrowRightIcon}
-          />
+          <div>
+            <Button
+              text={"GUARDAR"}
+              onClick={handleSubmit}
+              color={"save"}
+              type={"submit"}
+              icon={ArrowRightIcon}
+            />
+          </div>
         </div>
       </div>
     </div>

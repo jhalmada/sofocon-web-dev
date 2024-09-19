@@ -71,18 +71,20 @@ const AddUserPage = () => {
             <Checkbox text={"Asignar nuevo rol"} />
             <div className="flex items-start space-x-10">
               <Input placeholder={"Escribe el nombre del rol..."} />
-              <Select option={"Permisos"} />
+              <Select option={"Permisos"} variant="permisos" />
             </div>
           </div>
         </form>
         <div className="flex justify-end py-6">
-          <Button
-            text={"GUARDAR"}
-            onClick={handleSubmit}
-            color={"save"}
-            type={"submit"}
-            icon={ArrowRightIcon}
-          />
+          <div>
+            <Button
+              text={"GUARDAR"}
+              onClick={handleSubmit}
+              color={"save"}
+              type={"submit"}
+              icon={ArrowRightIcon}
+            />
+          </div>
         </div>
       </div>
     </div>
