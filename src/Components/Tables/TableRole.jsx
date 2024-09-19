@@ -134,12 +134,12 @@ const TableRole = () => {
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}
         onClose={closeConfirmCancelModal}
-        title="Cambios sin guardar"
+        title="Eliminar rol"
         variant="confirmation"
         buttons={["back", "accept"]}
         onAccept={handleConfirmCancelBackClick}
       >
-        Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
+        Este rol será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
 
       <ReusableModal
