@@ -1,19 +1,8 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link } from "react-router-dom";
-import Checkbox from "../components/checkboxs/Checkbox";
-import Select from "../components/selects/Select";
-import Input from "../components/inputs/Input";
-import Button from "../components/buttons/Button";
-import IconEye from "../assets/icons/IconEye.svg";
-import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
-import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+import { useNavigate } from "react-router-dom";
 
 const CompaniesPage = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Formulario enviado");
-  };
-
+  const navigate = useNavigate();
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -23,9 +12,12 @@ const CompaniesPage = () => {
             alt="arrow left"
             className="-ml-1 h-4 w-4"
           />
-          <Link to={"/inicio"}>
-            <p className="text-sm font-medium leading-4">Volver</p>
-          </Link>
+          <button
+            className="cursor-pointer text-sm font-medium leading-4"
+            onClick={() => navigate("/inicio")}
+          >
+            Volver
+          </button>
         </div>
         <div></div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">

@@ -13,6 +13,7 @@ const AddUserPage = () => {
     e.preventDefault();
     console.log("Formulario enviado");
   };
+
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -22,11 +23,13 @@ const AddUserPage = () => {
             alt="arrow left"
             className="-ml-1 h-4 w-4"
           />
-          <Link to={"/inicio"}>
-            <p className="text-sm font-medium leading-4">Volver</p>
+          <Link
+            to="/inicio/usuarios"
+            className="cursor-pointer text-sm font-medium leading-4"
+          >
+            Volver
           </Link>
         </div>
-        <div></div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Usuarios
         </h1>

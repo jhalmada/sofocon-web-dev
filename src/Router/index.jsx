@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Public from "../layouts/Public";
+import UsersLayout from "../layouts/Users";
 import HomePage from "../pages/HomePage";
 import CompaniesPage from "../pages/CompaniesPage";
 import UsersPage from "../pages/UsersPage";
@@ -29,9 +30,6 @@ import {
   SELLERS_ROUTE,
   USERS_ROUTE,
 } from "../Utils/Constants";
-
-
-
 
 export const router = createBrowserRouter([
   {
@@ -70,8 +68,12 @@ export const router = createBrowserRouter([
       },
       {
         path: USERS_ROUTE,
-        element: <UsersPage />,
+        element: <UsersLayout />,
         children: [
+          {
+            index: true,
+            element: <UsersPage />,
+          },
           {
             path: ADD_USER_ROUTE,
             element: <AddUserPage />,

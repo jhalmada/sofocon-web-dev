@@ -4,6 +4,7 @@ import Select from "../components/selects/Select";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+
 const AddRolePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,8 +19,11 @@ const AddRolePage = () => {
             alt="arrow left"
             className="-ml-1 h-4 w-4"
           />
-          <Link to={"/inicio"}>
-            <p className="text-sm font-medium leading-4">Volver</p>
+          <Link
+            to="/inicio/usuarios"
+            className="cursor-pointer text-sm font-medium leading-4"
+          >
+            Volver
           </Link>
         </div>
 

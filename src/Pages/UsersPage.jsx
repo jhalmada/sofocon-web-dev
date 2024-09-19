@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import UserRow from "../components/UserRow";
 import { users } from "../utils/Datainfo";
 import TableRole from "../components/tables/TableRole";
@@ -12,10 +12,10 @@ import Checkbox from "../components/checkboxs/Checkbox";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import PlusIcon from "../assets/icons/plus.svg";
-import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import SearchIcon from "../assets/icons/search.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
+import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
@@ -28,6 +28,7 @@ const UsersPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [newUser, setNewUser] = useState(NEW_USER_DEFAULT);
+
   const openModal = () => {
     setModalOpen(true);
   };
@@ -69,8 +70,12 @@ const UsersPage = () => {
     openSaveConfirmationModal();
   };
 
+  useEffect(() => {
+    setNewUser(NEW_USER_DEFAULT);
+  }, []);
+
   return (
-    <div className="flex h-full flex-col justify-between bg-gray">
+    <div className="flex h-full flex-col justify-between">
       {newUser === false && (
         <div className="flex-grow p-6">
           <div className="mb-4 flex items-center">
@@ -79,8 +84,11 @@ const UsersPage = () => {
               alt="arrow left"
               className="-ml-1 h-4 w-4"
             />
-            <Link to="/inicio">
-              <p className="text-sm font-medium leading-4">Volver</p>
+            <Link
+              to="/inicio"
+              className="cursor-pointer text-sm font-medium leading-4"
+            >
+              Volver
             </Link>
           </div>
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
@@ -172,11 +180,10 @@ const UsersPage = () => {
               </table>
             </div>
           )}
+
           {activeTab === ROLES_TAB && <TableRole />}
         </div>
       )}
-
-      <Outlet />
       <div className="flex justify-center p-6">
         <Pagination />
       </div>

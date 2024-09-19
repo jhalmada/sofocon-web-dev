@@ -1,7 +1,8 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SellersPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -11,9 +12,12 @@ const SellersPage = () => {
             alt="arrow left"
             className="-ml-1 h-4 w-4"
           />
-          <Link to={"/inicio"}>
-            <p className="text-sm font-medium leading-4">Volver</p>
-          </Link>
+          <button
+            className="cursor-pointer text-sm font-medium leading-4"
+            onClick={() => navigate("/inicio")}
+          >
+            Volver
+          </button>
         </div>
         <div></div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
