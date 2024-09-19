@@ -72,7 +72,7 @@ const Public = () => {
           </div>
         </aside>
         <div className="flex flex-1 flex-col overflow-auto">
-          <nav className="flex items-center justify-between bg-white p-6">
+          <nav className="flex h-[15vh] items-center justify-between bg-white p-6">
             <Breadcrumbs />
             <div className="flex items-center gap-9">
               <img src={gearIcon} alt="Gear icon" className="h-8 w-8" />

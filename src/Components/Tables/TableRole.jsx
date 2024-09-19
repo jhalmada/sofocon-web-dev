@@ -43,7 +43,7 @@ const TableRole = () => {
   };
 
   const handleCancelClick = () => {
-    openConfirmCancelModal();
+    closeModal();
   };
 
   const handleSubmit = (e) => {

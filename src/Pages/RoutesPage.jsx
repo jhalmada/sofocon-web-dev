@@ -30,7 +30,7 @@ const RoutesPage = () => {
             </span>
           </div>
         </div>
-        <div className="rounded-tr-lg bg-white p-5 shadow-t">
+        <div className="rounded-tr-lg bg-white p-5 py-10 shadow-t">
           {" "}
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minima
           dolore adipisci accusamus alias unde labore cumque odit explicabo

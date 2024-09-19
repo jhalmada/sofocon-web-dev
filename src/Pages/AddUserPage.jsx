@@ -43,7 +43,7 @@ const AddUserPage = () => {
         </div>
         <form
           onSubmit={handleSubmit}
-          className="rounded-tr-lg bg-white px-14 py-5 shadow-t"
+          className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
           <div className="space-y-6">
             <Input

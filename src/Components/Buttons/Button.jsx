@@ -15,14 +15,16 @@ const Button = ({
   const buttonColorClass = colorClasses[color] || colorClasses.default;
 
   return (
-    <button
-      className={`relative flex h-10 min-w-[10.8rem] items-center justify-center rounded-2xl px-5 py-1 ${buttonColorClass} gap-2 ${iconPosition === "left" ? "flex-row-reverse" : "flex-row"}`}
-      onClick={onClick}
-      type={type}
-    >
-      <span className="text-md font-medium leading-6">{text}</span>
-      {icon && <img src={icon} alt="icon" className="h-5 w-5" />}
-    </button>
+    <div className="flex w-full justify-center">
+      <button
+        className={`relative flex h-10 min-w-[10.2rem] items-center justify-center rounded-2xl px-5 py-1 ${buttonColorClass} gap-2 ${iconPosition === "left" ? "flex-row-reverse" : "flex-row"}`}
+        onClick={onClick}
+        type={type}
+      >
+        <span className="text-sm font-medium leading-6">{text}</span>
+        {icon && <img src={icon} alt="icon" className="h-5 w-5" />}
+      </button>
+    </div>
   );
 };
 

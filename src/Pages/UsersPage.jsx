@@ -9,13 +9,14 @@ import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
 import Select from "../components/selects/Select";
 import Checkbox from "../components/checkboxs/Checkbox";
+import SearchInput from "../components/inputs/SearchInput";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import PlusIcon from "../assets/icons/plus.svg";
-import SearchIcon from "../assets/icons/search.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
+import DownloadIcon from "../assets/icons/download.svg";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
@@ -113,35 +114,39 @@ const UsersPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Usuarios
           </h1>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <div className="flex">
               <h2
                 onClick={() => setActiveTab(USER_TAB)}
-                className={`w-36 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white" : "bg-black_l"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+                className={`w-36 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
               >
                 Usuarios
               </h2>
               <h2
                 onClick={() => setActiveTab(ROLES_TAB)}
-                className={`${activeTab === ROLES_TAB ? "bg-white" : "bg-black_l"} w-36 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+                className={`${activeTab === ROLES_TAB ? "bg-white" : "bg-gray"} w-36 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
               >
                 Roles
               </h2>
             </div>
-            <div className="flex h-8 items-center gap-[0.875rem] rounded px-1 py-2">
-              <img
-                src={SearchIcon}
-                alt="Search icon"
-                className="h-8 w-8 rounded-[1.875rem] bg-white p-1"
-              />
+            <div className="flex h-8 w-full items-center justify-between gap-[0.875rem] rounded p-2">
+              <SearchInput placeholder="Buscar..." />
+
               {activeTab === USER_TAB && (
-                <Link to={"agregar-usuario"} onClick={() => setNewUser(true)}>
-                  <Button text="Nuevo Usuario" icon={PlusIcon} />
-                </Link>
+                <div className="flex space-x-4">
+                  <Button
+                    text="Exportar lista"
+                    icon={DownloadIcon}
+                    color={"cancel"}
+                  />
+                  <Link to={"agregar-usuario"} onClick={() => setNewUser(true)}>
+                    <Button text="Nuevo Usuario" icon={PlusIcon} />
+                  </Link>
+                </div>
               )}
               {activeTab === ROLES_TAB && (
                 <Link to="agregar-rol" onClick={() => setNewUser(true)}>
-                  <Button text="Agregar Rol" icon={PlusIcon} />
+                  <Button text="Nuevo Rol" icon={PlusIcon} />
                 </Link>
               )}
             </div>
