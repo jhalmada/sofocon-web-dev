@@ -30,9 +30,9 @@ const ReusableModal = ({
         </button>
         <h2 className="mb-8 text-lg font-semibold">{title}</h2>
         {variant === "confirmation" ? (
-          <div className="text-center">
-            <p className="mb-6 text-start">{children}</p>
-            <div className="flex justify-center gap-4">
+          <div>
+            <p className="mb-6">{children}</p>
+            <div className="flex justify-between">
               {buttons.includes("back") && (
                 <Button
                   text="Volver"
@@ -58,7 +58,7 @@ const ReusableModal = ({
         ) : (
           <form onSubmit={onSubmit}>
             <div className="space-y-6">{children}</div>
-            <div className="mt-10 flex justify-between">
+            <div className="flex justify-between">
               {buttons.includes("cancel") && (
                 <Button
                   text="Cancelar"

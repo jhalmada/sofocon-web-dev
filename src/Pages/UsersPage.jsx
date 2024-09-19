@@ -27,6 +27,8 @@ const UsersPage = () => {
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [newUser, setNewUser] = useState(NEW_USER_DEFAULT);
 
   const openModal = () => {
@@ -37,6 +39,7 @@ const UsersPage = () => {
     setModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
+    setConfirmDeleteModalOpen(false);
   };
 
   const openConfirmCancelModal = () => {
@@ -54,6 +57,22 @@ const UsersPage = () => {
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
+  };
+
+  const openConfirmDeleteModal = (user) => {
+    setSelectedUser(user);
+    setConfirmDeleteModalOpen(true);
+  };
+
+  const closeConfirmDeleteModal = () => {
+    setConfirmDeleteModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleConfirmDelete = () => {
+    console.log("usuario eliminado");
+
+    closeConfirmDeleteModal();
   };
 
   const handleCancelClick = () => {
@@ -174,6 +193,7 @@ const UsersPage = () => {
                       editIconSrc={user.editIconSrc}
                       deleteIconSrc={user.deleteIconSrc}
                       onEditClick={openModal}
+                      onDeleteClick={() => openConfirmDeleteModal(user)}
                     />
                   ))}
                 </tbody>
@@ -241,6 +261,17 @@ const UsersPage = () => {
         onAccept={closeSaveConfirmationModal}
       >
         Los cambios fueron guardados exitosamente.
+      </ReusableModal>
+
+      <ReusableModal
+        isOpen={isConfirmDeleteModalOpen}
+        onClose={closeConfirmDeleteModal}
+        title="Eliminar usuario"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={handleConfirmDelete}
+      >
+        Este usuario será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );
