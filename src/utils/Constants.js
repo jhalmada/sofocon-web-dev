@@ -14,3 +14,7 @@ export const SELLERS_ROUTE = "vendedores";
 export const ROUTES_ROUTE = "rutas";
 export const PRODUCTS_ROUTE = "productos";
 export const REDIRECTION_ROUTE = "/";
+
+export const SOFOCON_JWT_TOKEN = 'SOFOCON_JWT_TOKEN';
+export const SOFOCON_JWT_REFRESH_TOKEN = 'SOFOCON_JWT_REFRESH_TOKEN';
+export const SOFOCON_PERMISSIONS = 'SOFOCON_PERMISSIONS';
