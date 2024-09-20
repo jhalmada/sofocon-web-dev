@@ -1,5 +1,5 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Checkbox from "../components/checkboxs/Checkbox";
 import Select from "../components/selects/Select";
 import Input from "../components/inputs/Input";
@@ -7,11 +7,37 @@ import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+import { useState } from "react";
+import AddUsers from "../Hooks/users/use.addUsers";
+import ReusableModal from "../components/modals/ReusableModal";
+import { USERS_ROUTE } from "../utils/Constants";
 
 const AddUserPage = () => {
-  const handleSubmit = (e) => {
+  const { postAddUsers, loading } = AddUsers();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const onPost = await postAddUsers({
+      firstName: name,
+      lastName: name,
+      email,
+      password,
+      role: "b3137878-2db6-41a0-a697-49638086ca83",
+    });
+    console.log(onPost);
+
+    if (onPost) {
+      setIsModalOpen(true);
+    }
     console.log("Formulario enviado");
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -49,10 +75,14 @@ const AddUserPage = () => {
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
+              onChange={(e) => setName(e.target.value)}
+              value={name}
             />
             <Input
               label={"Correo electrónico"}
               placeholder={"Escribe el email del usuario..."}
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
             />
             <div className="pb-8">
               <Input
@@ -61,9 +91,11 @@ const AddUserPage = () => {
                 icon2={IconEyeSlash}
                 label={"Contraseña"}
                 placeholder={"Escribe la contraseña..."}
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
               />
               <p className="-mt-6 text-xs leading-[.875rem] text-black_b">
-                *Este campo debe contener entre 8 y 20 caracteres alfanuméricos{" "}
+                *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
               </p>
             </div>
             <Checkbox text={"Asignar rol existente"} />
@@ -86,6 +118,18 @@ const AddUserPage = () => {
             />
           </div>
         </div>
+        {isModalOpen && (
+          <ReusableModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            title="Error al agregar usuario"
+            variant="confirmation"
+            buttons={["accept"]}
+            onAccept={handleCloseModal}
+          >
+            <p>Usuario o contraseña incorrectos</p>
+          </ReusableModal>
+        )}
       </div>
     </div>
   );

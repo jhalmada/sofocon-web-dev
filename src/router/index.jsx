@@ -15,8 +15,21 @@ import RoutesPage from "../pages/RoutesPage";
 import ProductsPage from "../pages/ProductsPage";
 import { Login } from "../layouts/Login";
 import RedirectionPage from "../pages/RedirectionPage";
-import { ADD_ROLE_ROUTE, ADD_USER_ROUTE, COMPANIES_ROUTE, HOME_ROUTE, LOGIN_ROUTE, NEW_PASSWORD_ROUTE, PASSWORD_CHANGED_ROUTE, PRODUCTS_ROUTE, RECOVER_ROUTE, REDIRECTION_ROUTE, ROUTES_ROUTE, SELLERS_ROUTE, USERS_ROUTE } from "../utils/Constants";
-
+import {
+  ADD_ROLE_ROUTE,
+  ADD_USER_ROUTE,
+  COMPANIES_ROUTE,
+  HOME_ROUTE,
+  LOGIN_ROUTE,
+  NEW_PASSWORD_ROUTE,
+  PASSWORD_CHANGED_ROUTE,
+  PRODUCTS_ROUTE,
+  RECOVER_ROUTE,
+  REDIRECTION_ROUTE,
+  ROUTES_ROUTE,
+  SELLERS_ROUTE,
+  USERS_ROUTE,
+} from "../utils/Constants";
 
 export const router = createBrowserRouter([
   {
