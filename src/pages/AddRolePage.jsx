@@ -4,6 +4,7 @@ import Select from "../components/selects/Select";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+
 const AddRolePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,8 +19,11 @@ const AddRolePage = () => {
             alt="arrow left"
             className="-ml-1 h-4 w-4"
           />
-          <Link to={"/inicio"}>
-            <p className="text-sm font-medium leading-4">Volver</p>
+          <Link
+            to="/inicio/usuarios"
+            className="cursor-pointer text-sm font-medium leading-4"
+          >
+            Volver
           </Link>
         </div>
 
@@ -37,25 +41,31 @@ const AddRolePage = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="rounded-tr-lg bg-white px-14 py-5 shadow-t"
+          className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
-          <div className="space-y-6">
+          <div className="space-y-3">
             <Input
               label={"Nombre del rol"}
               placeholder={"Escribe el nombre del rol..."}
             />
 
-            <Select option={"Permisos"} />
+            <Select
+              label={"Asignar permisos"}
+              option={"Permisos"}
+              variant={"permisos"}
+            />
           </div>
         </form>
         <div className="flex justify-end py-6">
-          <Button
-            text={"GUARDAR"}
-            onClick={handleSubmit}
-            color={"save"}
-            type={"submit"}
-            icon={ArrowRightIcon}
-          />
+          <div>
+            <Button
+              text={"GUARDAR"}
+              onClick={handleSubmit}
+              color={"save"}
+              type={"submit"}
+              icon={ArrowRightIcon}
+            />
+          </div>
         </div>
       </div>
     </div>

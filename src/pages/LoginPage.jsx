@@ -1,20 +1,68 @@
 import Input from "../components/inputs/Input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
+import { useState, useEffect } from "react";
+import { BASE_URL } from "../Utils/Constants";
+import useApiRequest from "../Hooks/useApiRequest";
+import { HOME_ROUTE } from "../Utils/Constants";
+import ReusableModal from "../components/modals/ReusableModal";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { sendRequest, error, data, loading } = useApiRequest(BASE_URL);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    await sendRequest({
+      endpoint: "/auth/login",
+      method: "POST",
+      body: {
+        email,
+        password,
+      },
+      headers: {
+        "origin-login": "dashboard",
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (data) {
+      localStorage.setItem("token", data.accessToken);
+      navigate(HOME_ROUTE);
+    } else if (error) {
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (error) {
+      setIsModalOpen(true);
+    }
+  }, [error]);
+
   return (
-    <div className="w-full">
+    <form className="w-full" onSubmit={handleSubmit}>
       <Input
-        placeholder={"escribe tu correo"}
+        placeholder={"Escribe tu correo"}
         label={"Dirección de correo"}
         msjError={
-          "*Este campo debe contener una direccion de correo válida vinculada a la plataforma."
+          "*Este campo debe contener una dirección de correo válida vinculada a la plataforma."
         }
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        errorApi={error}
       />
       <Input
-        placeholder={"escribe tu contraseña"}
+        placeholder={"Escribe tu contraseña"}
         label={"Contraseña"}
         msjError={
           "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos."
@@ -22,14 +70,30 @@ const LoginPage = () => {
         type={"password"}
         icon1={IconEye}
         icon2={IconEyeSlash}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        errorApi={error}
       />
       <div className="flex flex-col items-center">
-        <Link to={"/inicio"} className="mt-[6.25rem]">
-          <button className="shadow-gray-500 h-11 w-[9.1885rem] rounded-[1.25rem] bg-[#D70000] font-roboto text-sm font-medium uppercase text-white shadow-md">
-            INGRESAR
-          </button>
-        </Link>
-
+        <button
+          type="submit"
+          disabled={loading}
+          className={`shadow-gray-500 h-11 w-[9.1885rem] rounded-[1.25rem] font-roboto text-sm font-medium uppercase text-white shadow-md ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#D70000]"}`}
+        >
+          INGRESAR
+        </button>
+        {error && (
+          <ReusableModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            title="Error de inicio de sesión"
+            variant="confirmation"
+            buttons={["accept"]}
+            onAccept={handleCloseModal}
+          >
+            <p>{error}</p>
+          </ReusableModal>
+        )}
         <Link
           to={"recuperar-contraseña"}
           className="mt-5 font-roboto text-xs font-medium text-[#555]"
@@ -37,7 +101,7 @@ const LoginPage = () => {
           ¿Olvidaste tu contraseña?
         </Link>
       </div>
-    </div>
+    </form>
   );
 };
 
