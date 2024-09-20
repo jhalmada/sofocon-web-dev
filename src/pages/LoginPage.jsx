@@ -3,9 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import { useState, useEffect } from "react";
-import { BASE_URL } from "../Utils/Constants";
 import useApiRequest from "../Hooks/useApiRequest";
-import { HOME_ROUTE } from "../Utils/Constants";
+import { BASE_URL, HOME_ROUTE } from "../utils/Constants";
 import ReusableModal from "../components/modals/ReusableModal";
 
 const LoginPage = () => {
