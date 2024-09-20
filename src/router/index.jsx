@@ -15,8 +15,6 @@ import RoutesPage from "../pages/RoutesPage";
 import ProductsPage from "../pages/ProductsPage";
 import { Login } from "../layouts/Login";
 import RedirectionPage from "../pages/RedirectionPage";
-import AddUserPage from "../pages/AddUserPage";
-import AddRolePage from "../pages/AddRolePage";
 import {
   ADD_ROLE_ROUTE,
   ADD_USER_ROUTE,
