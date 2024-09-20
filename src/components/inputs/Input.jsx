@@ -9,9 +9,10 @@ const Input = ({
   icon2 = null,
   value,
   onChange,
+  errorApi = false,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(errorApi);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);

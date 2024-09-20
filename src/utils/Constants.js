@@ -1,0 +1,16 @@
+export const BASE_URL = "https://sofocon.api.novexisconsulting.xyz/api";
+
+//rutas de la aplicacion
+export const HOME_ROUTE = "/inicio";
+export const LOGIN_ROUTE = "login";
+export const RECOVER_ROUTE = "recuperar-contraseña";
+export const NEW_PASSWORD_ROUTE = "nueva-contraseña";
+export const PASSWORD_CHANGED_ROUTE = "cambiar-contraseña";
+export const COMPANIES_ROUTE = "empresas";
+export const USERS_ROUTE = "usuarios";
+export const ADD_USER_ROUTE = "agregar-usuario";
+export const ADD_ROLE_ROUTE = "agregar-rol";
+export const SELLERS_ROUTE = "vendedores";
+export const ROUTES_ROUTE = "rutas";
+export const PRODUCTS_ROUTE = "productos";
+export const REDIRECTION_ROUTE = "/";
