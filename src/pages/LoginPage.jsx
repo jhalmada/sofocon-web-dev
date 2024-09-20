@@ -2,23 +2,23 @@ import Input from "../components/inputs/Input";
 import { Link, useNavigate } from "react-router-dom";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useApiRequest from "../Hooks/useApiRequest";
 import ReusableModal from "../components/modals/ReusableModal";
 import { BASE_URL, HOME_ROUTE } from "../utils/Constants";
 import useLogin from "../Hooks/auth/use.login.js";
 
 const LoginPage = () => {
-  const {loading, onLogin} = useLogin();
+  const { loading, onLogin } = useLogin();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { sendRequest, error, data } = useApiRequest(BASE_URL);
+  const { error } = useApiRequest(BASE_URL);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loginResult = await onLogin({email, password});
+    const loginResult = await onLogin({ email, password });
     console.log(loginResult);
     if (!loginResult) {
       setIsModalOpen(true);

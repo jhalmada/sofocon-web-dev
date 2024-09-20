@@ -1,5 +1,4 @@
 const UserRow = ({
-  avatarSrc,
   fullName,
   email,
   role,
@@ -10,9 +9,6 @@ const UserRow = ({
 }) => {
   return (
     <tr>
-      <td>
-        <img src={avatarSrc} alt="Avatar icon" className="h-8 w-8" />
-      </td>
       <td className="p-2">{fullName}</td>
       <td className="p-2">{email}</td>
       <td className="p-2">{role}</td>

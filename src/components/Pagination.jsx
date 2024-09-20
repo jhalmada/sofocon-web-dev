@@ -3,30 +3,53 @@ import ChevronLeftFilledIcon from "../assets/icons/ChevronLeftFilled.svg";
 import ChevronRightFilledIcon from "../assets/icons/ChevronRightFilled.svg";
 import SkipNextFilledIcon from "../assets/icons/SkipNextFilled.svg";
 
-const Pagination = () => {
+const Pagination = ({ currentPage, totalPages, onPageChange, pageIndex }) => {
   return (
     <div className="flex px-1.5">
-      <button className="rounded px-4 py-2">
+      <button
+        className="rounded px-4 py-2"
+        onClick={() => onPageChange(1)}
+        disabled={currentPage === 1}
+      >
         <img src={SkipPreviousFilledIcon} alt="Skip previous icon" />
       </button>
       <div className="flex space-x-2">
-        <button className="rounded px-4 py-2">
+        <button
+          className="rounded px-4 py-2"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
           <img src={ChevronLeftFilledIcon} alt="Chevron left icon" />
         </button>
-        <button className="rounded-full bg-black_l px-4 py-2">1</button>
-        <button className="rounded px-4 py-2">2</button>
-        <button className="rounded px-4 py-2">3</button>
-        <button className="rounded px-4 py-2">4</button>
-        <button className="rounded px-4 py-2">5</button>
-        <button className="rounded px-4 py-2">6</button>
-        <button className="rounded px-4 py-2">7</button>
-        <button className="rounded px-4 py-2">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            className={`rounded-full px-4 py-2 ${currentPage === index + 1 ? "bg-black_l" : ""}`}
+            onClick={() => onPageChange(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
+        <button
+          className="rounded px-4 py-2"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
           <img src={ChevronRightFilledIcon} alt="Chevron right icon" />
         </button>
       </div>
-      <button className="rounded px-4 py-2">
+      <button
+        className="rounded px-4 py-2"
+        onClick={() => onPageChange(totalPages)}
+        disabled={currentPage === totalPages}
+      >
         <img src={SkipNextFilledIcon} alt="Skip next icon" />
       </button>
+      <select onChange={(e) => pageIndex(e.target.value)}>
+        <option value={1}>1</option>
+        <option value={2}>2</option>
+        <option value={3}>3</option>
+      </select>
     </div>
   );
 };

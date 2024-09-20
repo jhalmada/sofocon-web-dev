@@ -2,13 +2,20 @@ import { useState } from "react";
 import ReusableModal from "../modals/ReusableModal";
 import Select from "../selects/Select";
 import Input from "../inputs/Input";
-import { roles } from "../../utils/Datainfo";
+import useRoles from "../../Hooks/roles/use.roles";
+import Pagination from "../Pagination";
+import icono from "../../assets/users/ImgEscudo.png";
+import editIcon from "../../assets/icons/pencil-square.svg";
+import deleteIcon from "../../assets/icons/trash3.svg";
 
 const formatPermisos = (permisos) => {
   return permisos.join("/");
 };
 
 const TableRole = () => {
+  const [rolePage, setRolePage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const { RolesResponse, loading } = useRoles();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -16,6 +23,14 @@ const TableRole = () => {
 
   const [modalTitle, setModalTitle] = useState("");
   const [modalButtons, setModalButtons] = useState([]);
+
+  const totalRoles = RolesResponse ? RolesResponse.length : 0;
+  const totalPages = Math.ceil(totalRoles / rolePage);
+
+  const startIndex = (currentPage - 1) * rolePage;
+  const paginatedRoles = RolesResponse
+    ? RolesResponse.slice(startIndex, startIndex + rolePage)
+    : [];
 
   const openModal = () => {
     setModalOpen(true);
@@ -71,6 +86,13 @@ const TableRole = () => {
     closeModal();
   };
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const pageIndexChange = (e) => {
+    setRolePage(e);
+  };
   return (
     <div className="rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
@@ -89,23 +111,23 @@ const TableRole = () => {
           </tr>
         </thead>
         <tbody>
-          {roles.map((role, index) => (
+          {paginatedRoles.map((role, index) => (
             <tr key={index}>
               <td className="p-2">
-                <img src={role.avatarSrc} alt="role icon" className="h-6 w-6" />
+                <img src={icono} alt="role icon" className="h-6 w-6" />
               </td>
-              <td className="p-2">{role.fullName}</td>
-              <td className="p-2">{formatPermisos(role.permisos)}</td>
+              <td className="p-2">{role.name}</td>
+              <td className="p-2">{formatPermisos(role.permissions)}</td>
               <td className="p-2">
                 <div className="flex gap-5">
                   <img
-                    src={role.editIconSrc}
+                    src={editIcon}
                     alt="Edit icon"
                     className="h-5 w-5 cursor-pointer"
                     onClick={() => handleEditClick()}
                   />
                   <img
-                    src={role.deleteIconSrc}
+                    src={deleteIcon}
                     alt="Delete icon"
                     className="h-5 w-5 cursor-pointer"
                     onClick={() => handleDeleteClick()}
@@ -116,6 +138,7 @@ const TableRole = () => {
           ))}
         </tbody>
       </table>
+
       <ReusableModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -156,6 +179,14 @@ const TableRole = () => {
       >
         Los cambios fueron guardados exitosamente.
       </ReusableModal>
+      <div className="flex justify-center p-6">
+        <Pagination
+          pageIndex={pageIndexChange}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };
