@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import UserRow from "../components/UserRow";
-import { users } from "../utils/DataInfo";
 import TableRole from "../components/tables/TableRole";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
@@ -17,12 +16,17 @@ import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
+import useUsers from "../Hooks/users/use.users.js";
+import editIcon from "../assets/icons/pencil-square.svg";
+import deleteIcon from "../assets/icons/trash3.svg";
+import avatarIcon from "../assets/icons/avatar.svg";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
 const NEW_USER_DEFAULT = false;
 
 const UsersPage = () => {
+  const {usersResponse, loading} = useUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -163,9 +167,6 @@ const UsersPage = () => {
                     <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                       Email
                     </th>
-                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                      Contraseña
-                    </th>
                     <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
                       <h3>Rol</h3>
                       <div className="flex gap-2">
@@ -187,16 +188,16 @@ const UsersPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user, index) => (
+                  {usersResponse && usersResponse.result.map((user, index) => (
                     <UserRow
                       key={index}
-                      avatarSrc={user.avatarSrc}
-                      fullName={user.fullName}
+                      avatarSrc={avatarIcon}
+                      fullName={`${user.userInfo.firstName} ${user.userInfo.lastName}`}
                       email={user.email}
-                      password={user.password}
-                      role={user.role}
-                      editIconSrc={user.editIconSrc}
-                      deleteIconSrc={user.deleteIconSrc}
+                      password=""
+                      role={user.role.name}
+                      editIconSrc={editIcon}
+                      deleteIconSrc={deleteIcon}
                       onEditClick={openModal}
                       onDeleteClick={() => openConfirmDeleteModal(user)}
                     />
