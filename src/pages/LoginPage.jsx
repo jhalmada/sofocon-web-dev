@@ -6,9 +6,10 @@ import { useState, useEffect } from "react";
 import useApiRequest from "../Hooks/useApiRequest";
 import { BASE_URL, HOME_ROUTE } from "../utils/Constants";
 import useLogin from "../Hooks/auth/use.login.js";
+import ReusableModal from "../components/modals/ReusableModal.jsx";
 
 const LoginPage = () => {
-  const {loading, onLogin} = useLogin();
+  const { loading, onLogin } = useLogin();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,7 +18,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loginResult = await onLogin({email, password});
+    const loginResult = await onLogin({ email, password });
     console.log(loginResult);
     if (!loginResult) {
       setIsModalOpen(true);
