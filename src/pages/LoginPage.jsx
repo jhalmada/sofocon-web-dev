@@ -4,8 +4,8 @@ import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import { useState, useEffect } from "react";
 import useApiRequest from "../Hooks/useApiRequest";
-import { BASE_URL, HOME_ROUTE } from "../utils/Constants";
 import ReusableModal from "../components/modals/ReusableModal";
+import { BASE_URL, HOME_ROUTE } from "../utils/Constants";
 
 const LoginPage = () => {
   const navigate = useNavigate();
