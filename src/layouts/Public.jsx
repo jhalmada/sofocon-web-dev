@@ -2,13 +2,13 @@ import { Link, useLocation } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
-import { menuItems } from "../utils/Datainfo";
 import arrowIcon from "../assets/icons/arrow-left.svg";
 import LogoOpen from "../assets/icons/logo_open.svg";
 import LogoClose from "../assets/icons/logo_close.svg";
 import gearIcon from "../assets/icons/gear.svg";
 import bellIcon from "../assets/icons/bell.svg";
 import avatarIcon from "../assets/icons/avatar.svg";
+import { menuItems } from "../utils/DataInfo";
 
 const Public = () => {
   const location = useLocation();

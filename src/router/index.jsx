@@ -1,35 +1,22 @@
 import { createBrowserRouter } from "react-router-dom";
+import LoginPage from "../pages/LoginPage";
+import RecoverPasswordPage from "../pages/RecoverPasswordPage";
+import NewPasswordPage from "../pages/NewPasswordPage";
+import PasswordPage from "../pages/PasswordPage";
 import Public from "../layouts/Public";
 import UsersLayout from "../layouts/Users";
 import HomePage from "../pages/HomePage";
 import CompaniesPage from "../pages/CompaniesPage";
 import UsersPage from "../pages/UsersPage";
+import AddUserPage from "../pages/AddUserPage";
+import AddRolePage from "../pages/AddRolePage";
 import SellersPage from "../pages/SellersPage";
 import RoutesPage from "../pages/RoutesPage";
 import ProductsPage from "../pages/ProductsPage";
-import LoginPage from "../pages/LoginPage";
-import Login from "../layouts/Login";
-import RecoverPasswordPage from "../pages/RecoverPasswordPage";
-import NewPasswordPage from "../pages/NewPasswordPage";
-import PasswordPage from "../pages/PasswordPage";
+import { Login } from "../layouts/Login";
 import RedirectionPage from "../pages/RedirectionPage";
-import AddUserPage from "../pages/AddUserPage";
-import AddRolePage from "../pages/AddRolePage";
-import {
-  ADD_ROLE_ROUTE,
-  ADD_USER_ROUTE,
-  COMPANIES_ROUTE,
-  HOME_ROUTE,
-  LOGIN_ROUTE,
-  NEW_PASSWORD_ROUTE,
-  PASSWORD_CHANGED_ROUTE,
-  PRODUCTS_ROUTE,
-  RECOVER_ROUTE,
-  REDIRECTION_ROUTE,
-  ROUTES_ROUTE,
-  SELLERS_ROUTE,
-  USERS_ROUTE,
-} from "../Utils/Constants";
+import { ADD_ROLE_ROUTE, ADD_USER_ROUTE, COMPANIES_ROUTE, HOME_ROUTE, LOGIN_ROUTE, NEW_PASSWORD_ROUTE, PASSWORD_CHANGED_ROUTE, PRODUCTS_ROUTE, RECOVER_ROUTE, REDIRECTION_ROUTE, ROUTES_ROUTE, SELLERS_ROUTE, USERS_ROUTE } from "../utils/Constants";
+
 
 export const router = createBrowserRouter([
   {

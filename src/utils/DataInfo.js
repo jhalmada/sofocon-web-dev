@@ -1,4 +1,4 @@
-import icono from "../assets/Users/ImgEscudo.png";
+import icono from "../assets/users/ImgEscudo.png";
 import avatarIcon from "../assets/icons/avatar.svg";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";

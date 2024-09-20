@@ -36,7 +36,7 @@ export default {
         xl: "24px",
       },
       backgroundImage: {
-        login: "url('assets/Login/ImgElipse2.png')",
+        login: "url('assets/login/ImgElipse2.png')",
       },
     },
   },

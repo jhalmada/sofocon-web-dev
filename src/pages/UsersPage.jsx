@@ -17,17 +17,25 @@ import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
+import useUsers from "../Hooks/users/use.users.js";
+import editIcon from "../assets/icons/pencil-square.svg";
+import deleteIcon from "../assets/icons/trash3.svg";
+import avatarIcon from "../assets/icons/avatar.svg";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
+const NEW_USER_DEFAULT = false;
 
 const UsersPage = () => {
+  const {usersResponse, loading} = useUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [newUser, setNewUser] = useState(NEW_USER_DEFAULT);
 
   const openModal = () => {
     setModalOpen(true);
@@ -57,12 +65,14 @@ const UsersPage = () => {
     closeModal();
   };
 
-  const openConfirmDeleteModal = () => {
+  const openConfirmDeleteModal = (user) => {
+    setSelectedUser(user);
     setConfirmDeleteModalOpen(true);
   };
 
   const closeConfirmDeleteModal = () => {
     setConfirmDeleteModalOpen(false);
+    setSelectedUser(null);
   };
 
   const handleConfirmDelete = () => {
@@ -85,120 +95,122 @@ const UsersPage = () => {
     openSaveConfirmationModal();
   };
 
+  useEffect(() => {
+    setNewUser(NEW_USER_DEFAULT);
+  }, []);
+
   return (
     <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
-        <div className="mb-4 flex items-center">
-          <img
-            src={ChevronLeftIcon}
-            alt="arrow left"
-            className="-ml-1 h-4 w-4"
-          />
-          <Link
-            to="/inicio"
-            className="cursor-pointer text-sm font-medium leading-4"
-          >
-            Volver
-          </Link>
-        </div>
-        <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Usuarios
-        </h1>
-        <div className="flex items-center">
-          <div className="flex">
-            <h2
-              onClick={() => setActiveTab(USER_TAB)}
-              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+      {newUser === false && (
+        <div className="flex-grow p-6">
+          <div className="mb-4 flex items-center">
+            <img
+              src={ChevronLeftIcon}
+              alt="arrow left"
+              className="-ml-1 h-4 w-4"
+            />
+            <Link
+              to="/inicio"
+              className="cursor-pointer text-sm font-medium leading-4"
             >
-              Usuarios
-            </h2>
-            <h2
-              onClick={() => setActiveTab(ROLES_TAB)}
-              className={`${activeTab === ROLES_TAB ? "bg-white" : "bg-gray"} w-36 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
-            >
-              Roles
-            </h2>
+              Volver
+            </Link>
           </div>
-          <div className="flex h-8 w-full items-center justify-between gap-[0.875rem] rounded p-2">
-            <SearchInput placeholder="Buscar..." />
+          <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
+            Usuarios
+          </h1>
+          <div className="flex items-center">
+            <div className="flex">
+              <h2
+                onClick={() => setActiveTab(USER_TAB)}
+                className={`w-36 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              >
+                Usuarios
+              </h2>
+              <h2
+                onClick={() => setActiveTab(ROLES_TAB)}
+                className={`${activeTab === ROLES_TAB ? "bg-white" : "bg-gray"} w-36 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              >
+                Roles
+              </h2>
+            </div>
+            <div className="flex h-8 w-full items-center justify-between gap-[0.875rem] rounded p-2">
+              <SearchInput placeholder="Buscar..." />
 
-            {activeTab === USER_TAB && (
-              <div className="flex space-x-4">
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                />
-                <Link to={"agregar-usuario"} onClick={() => setNewUser(true)}>
-                  <Button text="Nuevo Usuario" icon={PlusIcon} />
-                </Link>
-              </div>
-            )}
-            {activeTab === ROLES_TAB && (
-              <Link to="agregar-rol" onClick={() => setNewUser(true)}>
-                <Button text="Nuevo Rol" icon={PlusIcon} />
-              </Link>
-            )}
-          </div>
-        </div>
-        {activeTab === USER_TAB && (
-          <div className="rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]"></th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre Completo
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Email
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Contraseña
-                  </th>
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <h3>Rol</h3>
-                    <div className="flex gap-2">
-                      <img
-                        src={FilterRightIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                      <img
-                        src={ChevronDownIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Acción
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user, index) => (
-                  <UserRow
-                    key={index}
-                    avatarSrc={user.avatarSrc}
-                    fullName={user.fullName}
-                    email={user.email}
-                    password={user.password}
-                    role={user.role}
-                    editIconSrc={user.editIconSrc}
-                    deleteIconSrc={user.deleteIconSrc}
-                    onEditClick={openModal}
-                    onDeleteClick={() => openConfirmDeleteModal(user)}
+              {activeTab === USER_TAB && (
+                <div className="flex space-x-4">
+                  <Button
+                    text="Exportar lista"
+                    icon={DownloadIcon}
+                    color={"cancel"}
                   />
-                ))}
-              </tbody>
-            </table>
+                  <Link to={"agregar-usuario"} onClick={() => setNewUser(true)}>
+                    <Button text="Nuevo Usuario" icon={PlusIcon} />
+                  </Link>
+                </div>
+              )}
+              {activeTab === ROLES_TAB && (
+                <Link to="agregar-rol" onClick={() => setNewUser(true)}>
+                  <Button text="Nuevo Rol" icon={PlusIcon} />
+                </Link>
+              )}
+            </div>
           </div>
-        )}
+          {activeTab === USER_TAB && (
+            <div className="rounded-tr-lg bg-white p-5 shadow-t">
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]"></th>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Nombre Completo
+                    </th>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Email
+                    </th>
+                    <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      <h3>Rol</h3>
+                      <div className="flex gap-2">
+                        <img
+                          src={FilterRightIcon}
+                          alt="chevron-down icon"
+                          className="h-5 w-5 cursor-pointer"
+                        />
+                        <img
+                          src={ChevronDownIcon}
+                          alt="chevron-down icon"
+                          className="h-5 w-5 cursor-pointer"
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Acción
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {usersResponse && usersResponse.result.map((user, index) => (
+                    <UserRow
+                      key={index}
+                      avatarSrc={avatarIcon}
+                      fullName={`${user.userInfo.firstName} ${user.userInfo.lastName}`}
+                      email={user.email}
+                      password=""
+                      role={user.role.name}
+                      editIconSrc={editIcon}
+                      deleteIconSrc={deleteIcon}
+                      onEditClick={openModal}
+                      onDeleteClick={() => openConfirmDeleteModal(user)}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-        {activeTab === ROLES_TAB && <TableRole />}
-      </div>
-
+          {activeTab === ROLES_TAB && <TableRole />}
+        </div>
+      )}
       <div className="flex justify-center p-6">
         <Pagination />
       </div>
