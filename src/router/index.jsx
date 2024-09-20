@@ -29,7 +29,7 @@ import {
   ROUTES_ROUTE,
   SELLERS_ROUTE,
   USERS_ROUTE,
-} from "../Utils/Constants";
+} from "../utils/Constants";
 
 export const router = createBrowserRouter([
   {
