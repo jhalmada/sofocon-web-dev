@@ -2,52 +2,34 @@ import Input from "../components/inputs/Input";
 import { Link, useNavigate } from "react-router-dom";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
-import { useState, useEffect } from "react";
-import { BASE_URL } from "../Utils/Constants";
+import { useState } from "react";
 import useApiRequest from "../Hooks/useApiRequest";
-import { HOME_ROUTE } from "../Utils/Constants";
 import ReusableModal from "../components/modals/ReusableModal";
+import { BASE_URL, HOME_ROUTE } from "../utils/Constants";
+import useLogin from "../Hooks/auth/use.login.js";
 
 const LoginPage = () => {
+  const { loading, onLogin } = useLogin();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { sendRequest, error, data, loading } = useApiRequest(BASE_URL);
+  const { error } = useApiRequest(BASE_URL);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    await sendRequest({
-      endpoint: "/auth/login",
-      method: "POST",
-      body: {
-        email,
-        password,
-      },
-      headers: {
-        "origin-login": "dashboard",
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (data) {
-      localStorage.setItem("token", data.accessToken);
-      navigate(HOME_ROUTE);
-    } else if (error) {
+    const loginResult = await onLogin({ email, password });
+    console.log(loginResult);
+    if (!loginResult) {
       setIsModalOpen(true);
+    } else {
+      navigate(HOME_ROUTE);
     }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
-  useEffect(() => {
-    if (error) {
-      setIsModalOpen(true);
-    }
-  }, [error]);
 
   return (
     <form className="w-full" onSubmit={handleSubmit}>
@@ -82,7 +64,7 @@ const LoginPage = () => {
         >
           INGRESAR
         </button>
-        {error && (
+        {isModalOpen && (
           <ReusableModal
             isOpen={isModalOpen}
             onClose={handleCloseModal}
@@ -91,7 +73,7 @@ const LoginPage = () => {
             buttons={["accept"]}
             onAccept={handleCloseModal}
           >
-            <p>{error}</p>
+            <p>Usuario o contraseña incorrectos</p>
           </ReusableModal>
         )}
         <Link
