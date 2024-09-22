@@ -1,5 +1,6 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
+
 import Select from "../components/selects/Select";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
@@ -7,7 +8,7 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import { Select, SelectItem } from "@nextui-org/select";
 import useAddroles from "../Hooks/roles/useAddroles";
-import { permisos } from "../utils/permisons";
+import { permisos } from "../utils/permissions";
 
 const AddRolePage = () => {
   const [name, setName] = useState("");
@@ -15,6 +16,7 @@ const AddRolePage = () => {
 
   const [values, setValues] = useState([]);
   const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const newRole = await postAddRoles({
       name,
@@ -25,6 +27,18 @@ const AddRolePage = () => {
     console.log(idRol);
   };
 
+  const handleSelectionChange = (e) => {
+    setValues(e.target.value.split(","));
+    const newRole = await postAddRoles({
+      name,
+      permissions: values
+    });
+    console.log("rol creado");
+    console.log(newRole);
+    console.log(idRol);
+
+  };
+ 
   const handleSelectionChange = (e) => {
     setValues(e.target.value.split(","));
   };
@@ -63,15 +77,24 @@ const AddRolePage = () => {
         >
           <div className="space-y-3">
             <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               label={"Nombre del rol"}
               placeholder={"Escribe el nombre del rol..."}
             />
-
             <Select
-              label={"Asignar permisos"}
-              option={"Permisos"}
-              variant={"permisos"}
-            />
+              labelPlacement="outside"
+              label="Asignar permisos"
+              selectionMode="multiple"
+              placeholder="Permisos"
+              selectedKeys={values}
+              className="max-w rounded-md border font-roboto font-medium"
+              onChange={handleSelectionChange}
+            >
+              {permisos.map((permiso) => (
+                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+              ))}
+            </Select>
           </div>
 
           <div className="flex justify-end py-6">
