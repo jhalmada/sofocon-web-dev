@@ -1,6 +1,6 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-import Select from "../components/selects/Select";
+
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
