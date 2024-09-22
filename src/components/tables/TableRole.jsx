@@ -7,13 +7,17 @@ import Pagination from "../Pagination";
 import icono from "../../assets/users/ImgEscudo.png";
 import editIcon from "../../assets/icons/pencil-square.svg";
 import deleteIcon from "../../assets/icons/trash3.svg";
+import { s } from "framer-motion/client";
+import useDeleteRoles from "../../Hooks/roles/useDeleteRoles";
 
 const formatPermisos = (permisos) => {
   return permisos.join("/");
 };
 
 const TableRole = () => {
-  const [rolePage, setRolePage] = useState(1);
+  const { isDeleted, isLoading, deleteUser } = useDeleteRoles();
+  const [roleId, setRoleId] = useState("");
+  const [rolePage, setRolePage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
   const { RolesResponse, loading } = useRoles();
   const [isModalOpen, setModalOpen] = useState(false);
@@ -76,7 +80,8 @@ const TableRole = () => {
     openConfirmCancelModal();
   };
 
-  const handleConfirmCancelBackClick = () => {
+  const handleConfirmCancelBackClick = (id) => {
+    deleteUser(id);
     closeConfirmCancelModal();
     closeModal();
   };
@@ -130,7 +135,10 @@ const TableRole = () => {
                     src={deleteIcon}
                     alt="Delete icon"
                     className="h-5 w-5 cursor-pointer"
-                    onClick={() => handleDeleteClick()}
+                    onClick={() => {
+                      handleDeleteClick();
+                      setRoleId(role.id);
+                    }}
                   />
                 </div>
               </td>
@@ -164,7 +172,7 @@ const TableRole = () => {
         title="Eliminar rol"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={handleConfirmCancelBackClick}
+        onAccept={() => handleConfirmCancelBackClick(roleId)}
       >
         Este rol será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
