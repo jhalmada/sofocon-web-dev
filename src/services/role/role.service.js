@@ -7,4 +7,6 @@ export class RolesService {
     await axios.post(RolesRoutes.postRoles, roleData);
   static deleteRoleApi = async (userId) =>
     await axios.delete(`${RolesRoutes.deleteRoles}/${userId}`);
+  static putRoleApi = async (roleData, userId) =>
+    await axios.patch(`${RolesRoutes.putRoles}/${userId}`, roleData);
 }

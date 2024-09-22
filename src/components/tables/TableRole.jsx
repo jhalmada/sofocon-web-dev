@@ -1,6 +1,5 @@
 import { useState } from "react";
 import ReusableModal from "../modals/ReusableModal";
-import Select from "../selects/Select";
 import Input from "../inputs/Input";
 import useRoles from "../../Hooks/roles/use.roles";
 import Pagination from "../Pagination";
@@ -9,6 +8,8 @@ import editIcon from "../../assets/icons/pencil-square.svg";
 import deleteIcon from "../../assets/icons/trash3.svg";
 import { s } from "framer-motion/client";
 import useDeleteRoles from "../../Hooks/roles/useDeleteRoles";
+import { Select, SelectItem } from "@nextui-org/select";
+import { permisos } from "../../utils/permisons";
 
 const formatPermisos = (permisos) => {
   return permisos.join("/");
@@ -16,6 +17,10 @@ const formatPermisos = (permisos) => {
 
 const TableRole = () => {
   const { isDeleted, isLoading, deleteUser } = useDeleteRoles();
+  const [values, setValues] = useState([]);
+  const handleSelectionChange = (e) => {
+    setValues(e.target.value.split(","));
+  };
   const [roleId, setRoleId] = useState("");
   const [rolePage, setRolePage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
@@ -160,10 +165,18 @@ const TableRole = () => {
           placeholder={"Escribe el nombre del rol..."}
         />
         <Select
-          label={"Asignar permisos"}
-          option={"Permisos"}
-          variant={"permisos"}
-        />
+          labelPlacement="outside"
+          label="Asignar permisos"
+          selectionMode="multiple"
+          placeholder="Permisos"
+          selectedKeys={values}
+          className="max-w rounded-md border font-roboto font-medium"
+          onChange={handleSelectionChange}
+        >
+          {permisos.map((permiso) => (
+            <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+          ))}
+        </Select>
       </ReusableModal>
 
       <ReusableModal
