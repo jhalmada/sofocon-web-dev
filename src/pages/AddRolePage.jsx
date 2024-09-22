@@ -1,46 +1,32 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
+import Select from "../components/selects/Select";
 import Input from "../components/inputs/Input";
+import Button from "../components/buttons/Button";
+import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import { Select, SelectItem } from "@nextui-org/select";
 import useAddroles from "../Hooks/roles/useAddroles";
-import { permisos } from "../utils/permissions";
-import ReusableModal from "../components/modals/ReusableModal";
-import Button from "../components/buttons/Button";
-import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+import { permisos } from "../utils/permisons";
 
 const AddRolePage = () => {
   const [name, setName] = useState("");
   const { postAddRoles, loading, idRol } = useAddroles();
+
   const [values, setValues] = useState([]);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
-
-  const handleSelectionChange = (e) => {
-    setValues(e.target.value.split(","));
-  };
-
-  const openSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(true);
-  };
-
-  const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
-  };
-
-  const handleConfirmSaveClick = () => {
-    closeSaveConfirmationModal();
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newRole = await postAddRoles({
       name,
       permissions: values,
     });
-    console.log("rol creado", newRole);
+    console.log("rol creado");
+    console.log(newRole);
     console.log(idRol);
-    openSaveConfirmationModal();
+  };
+
+  const handleSelectionChange = (e) => {
+    setValues(e.target.value.split(","));
   };
   return (
     <div className="flex h-full flex-col justify-between overflow-auto bg-gray">
@@ -77,24 +63,15 @@ const AddRolePage = () => {
         >
           <div className="space-y-3">
             <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
               label={"Nombre del rol"}
               placeholder={"Escribe el nombre del rol..."}
             />
+
             <Select
-              labelPlacement="outside"
-              label="Asignar permisos"
-              selectionMode="multiple"
-              placeholder="Permisos"
-              selectedKeys={values}
-              className="max-w rounded-md border font-roboto font-medium"
-              onChange={handleSelectionChange}
-            >
-              {permisos.map((permiso) => (
-                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-              ))}
-            </Select>
+              label={"Asignar permisos"}
+              option={"Permisos"}
+              variant={"permisos"}
+            />
           </div>
 
           <div className="flex justify-end py-6">

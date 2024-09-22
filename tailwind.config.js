@@ -1,11 +1,6 @@
 /** @type {import('tailwindcss').Config} */
-import { nextui } from "@nextui-org/react";
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -17,6 +12,7 @@ export default {
         red_b: "#E03030",
         red_m: "#F15151",
         red_l: "#F09393",
+        red_e: "#9A0000",
         pink: "#F7CCCC",
         blue_b: "#4071D1",
         blue_l: "#81ACFF",
@@ -44,6 +40,5 @@ export default {
       },
     },
   },
-  darkMode: "class",
-  plugins: [nextui()],
+  plugins: [],
 };

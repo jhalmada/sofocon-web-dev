@@ -7,7 +7,6 @@ import useApiRequest from "../Hooks/useApiRequest";
 import ReusableModal from "../components/modals/ReusableModal";
 import { BASE_URL, HOME_ROUTE } from "../utils/Constants";
 import useLogin from "../Hooks/auth/use.login.js";
-import { Button } from "@nextui-org/react";
 
 const LoginPage = () => {
   const { loading, onLogin } = useLogin();
@@ -57,17 +56,14 @@ const LoginPage = () => {
         onChange={(e) => setPassword(e.target.value)}
         errorApi={error}
       />
-
       <div className="flex flex-col items-center">
-        <Button
-          isLoading={loading}
-          disabled={loading}
+        <button
           type="submit"
-          color="primary"
+          disabled={loading}
           className={`shadow-gray-500 h-11 w-[9.1885rem] rounded-[1.25rem] font-roboto text-sm font-medium uppercase text-white shadow-md ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#D70000]"}`}
         >
-          Ingresar
-        </Button>
+          INGRESAR
+        </button>
         {isModalOpen && (
           <ReusableModal
             isOpen={isModalOpen}

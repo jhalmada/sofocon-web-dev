@@ -46,9 +46,9 @@ const Pagination = ({ currentPage, totalPages, onPageChange, pageIndex }) => {
         <img src={SkipNextFilledIcon} alt="Skip next icon" />
       </button>
       <select onChange={(e) => pageIndex(e.target.value)}>
-        <option value={5}>5</option>
-        <option value={10}>10</option>
-        <option value={15}>15</option>
+        <option value={1}>1</option>
+        <option value={2}>2</option>
+        <option value={3}>3</option>
       </select>
     </div>
   );

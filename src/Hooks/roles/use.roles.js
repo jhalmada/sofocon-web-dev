@@ -10,6 +10,7 @@ const useRoles = () => {
       setLoading(true);
       const { data } = await RolesService.getAllRolesApi();
       setRolesResponse(data);
+      console.log("response es" + data);
     } catch (e) {
       console.log(e);
     } finally {
