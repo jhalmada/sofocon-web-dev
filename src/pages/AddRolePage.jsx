@@ -1,16 +1,10 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-<<<<<<< HEAD
-
-=======
-import Select from "../components/selects/Select";
->>>>>>> parent of 7d0c4d5 (add function delete and add role)
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 
 const AddRolePage = () => {
-<<<<<<< HEAD
   const [name, setName] = useState("");
   const { postAddRoles, loading, idRol } = useAddroles();
 
@@ -28,11 +22,6 @@ const AddRolePage = () => {
 
   const handleSelectionChange = (e) => {
     setValues(e.target.value.split(","));
-=======
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Formulario enviado");
->>>>>>> parent of 7d0c4d5 (add function delete and add role)
   };
   return (
     <div className="flex h-full flex-col justify-between overflow-auto bg-gray">
@@ -77,20 +66,6 @@ const AddRolePage = () => {
               label={"Asignar permisos"}
               option={"Permisos"}
               variant={"permisos"}
-<<<<<<< HEAD
-=======
-            />
-          </div>
-        </form>
-        <div className="flex justify-end py-6">
-          <div>
-            <Button
-              text={"GUARDAR"}
-              onClick={handleSubmit}
-              color={"save"}
-              type={"submit"}
-              icon={ArrowRightIcon}
->>>>>>> parent of 7d0c4d5 (add function delete and add role)
             />
           </div>
 
