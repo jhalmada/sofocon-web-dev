@@ -1,18 +1,21 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-import Select from "../components/selects/Select";
+
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
-import { Select as NextUISelect, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@nextui-org/select";
 import useAddroles from "../Hooks/roles/useAddroles";
 import { permisos } from "../utils/permisons";
+import ReusableModal from "../components/modals/ReusableModal";
 
 const AddRolePage = () => {
   const [name, setName] = useState("");
   const { postAddRoles, loading, idRol } = useAddroles();
   const [values, setValues] = useState([]);
+  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+    useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,13 +23,24 @@ const AddRolePage = () => {
       name,
       permissions: values,
     });
+
     console.log("rol creado");
     console.log(newRole);
     console.log(idRol);
+
+    setSaveConfirmationModalOpen(true);
   };
 
-  const handleSelectionChange = (selectedKeys) => {
-    setValues(selectedKeys);
+  const handleSelectionChange = (e) => {
+    setValues(e.target.value.split(","));
+  };
+
+  const handleConfirmSaveClick = () => {
+    closeSaveConfirmationModal();
+  };
+
+  const closeSaveConfirmationModal = () => {
+    setSaveConfirmationModalOpen(false);
   };
 
   return (
@@ -69,7 +83,7 @@ const AddRolePage = () => {
               label={"Nombre del rol"}
               placeholder={"Escribe el nombre del rol..."}
             />
-            <NextUISelect
+            <Select
               labelPlacement="outside"
               label="Asignar permisos"
               selectionMode="multiple"
@@ -81,7 +95,7 @@ const AddRolePage = () => {
               {permisos.map((permiso) => (
                 <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
               ))}
-            </NextUISelect>
+            </Select>
           </div>
 
           <div className="flex justify-end py-6">
@@ -96,6 +110,7 @@ const AddRolePage = () => {
             </div>
           </div>
         </form>
+
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
