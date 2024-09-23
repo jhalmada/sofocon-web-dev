@@ -9,7 +9,7 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import AddUsers from "../Hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
-import { permisos } from "../utils/permissions";
+import { permisos } from "../utils/permisons";
 import { roles } from "../utils/DataInfo";
 import { Select, SelectItem } from "@nextui-org/select";
 
