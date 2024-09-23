@@ -1,6 +1,5 @@
 import { useState } from "react";
 import ReusableModal from "../modals/ReusableModal";
-import Select from "../selects/Select";
 import Input from "../inputs/Input";
 import useRoles from "../../Hooks/roles/use.roles";
 import Pagination from "../Pagination";
@@ -9,17 +8,28 @@ import editIcon from "../../assets/icons/pencil-square.svg";
 import deleteIcon from "../../assets/icons/trash3.svg";
 import { s } from "framer-motion/client";
 import useDeleteRoles from "../../Hooks/roles/useDeleteRoles";
+import { Select, SelectItem } from "@nextui-org/select";
+import { permisos } from "../../utils/permisons";
+import usePatchRoles from "../../Hooks/roles/usePatchRoles";
 
 const formatPermisos = (permisos) => {
   return permisos.join("/");
 };
 
 const TableRole = () => {
+  const { changedUser, isChanged } = usePatchRoles();
+  const [newName, setNewName] = useState("");
+
   const { isDeleted, isLoading, deleteUser } = useDeleteRoles();
+  const [values, setValues] = useState([]);
+  const handleSelectionChange = (e) => {
+    setValues(e.target.value.split(","));
+  };
+
   const [roleId, setRoleId] = useState("");
   const [rolePage, setRolePage] = useState(5);
-  const [currentPage, setCurrentPage] = useState(1);
   const { RolesResponse, loading } = useRoles();
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -30,7 +40,7 @@ const TableRole = () => {
 
   const totalRoles = RolesResponse ? RolesResponse.length : 0;
   const totalPages = Math.ceil(totalRoles / rolePage);
-
+  const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * rolePage;
   const paginatedRoles = RolesResponse
     ? RolesResponse.slice(startIndex, startIndex + rolePage)
@@ -67,6 +77,11 @@ const TableRole = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const roleData = {
+      name: newName,
+      permissions: values,
+    };
+    changedUser(roleData, roleId);
     openSaveConfirmationModal();
   };
 
@@ -129,7 +144,10 @@ const TableRole = () => {
                     src={editIcon}
                     alt="Edit icon"
                     className="h-5 w-5 cursor-pointer"
-                    onClick={() => handleEditClick()}
+                    onClick={() => {
+                      handleEditClick();
+                      setRoleId(role.id);
+                    }}
                   />
                   <img
                     src={deleteIcon}
@@ -158,12 +176,22 @@ const TableRole = () => {
         <Input
           label={"Nombre del rol"}
           placeholder={"Escribe el nombre del rol..."}
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
         />
         <Select
-          label={"Asignar permisos"}
-          option={"Permisos"}
-          variant={"permisos"}
-        />
+          labelPlacement="outside"
+          label="Asignar permisos"
+          selectionMode="multiple"
+          placeholder="Permisos"
+          selectedKeys={values}
+          className="max-w rounded-md border font-roboto font-medium"
+          onChange={handleSelectionChange}
+        >
+          {permisos.map((permiso) => (
+            <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+          ))}
+        </Select>
       </ReusableModal>
 
       <ReusableModal
