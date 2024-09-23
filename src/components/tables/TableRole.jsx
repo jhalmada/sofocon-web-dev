@@ -10,21 +10,26 @@ import { s } from "framer-motion/client";
 import useDeleteRoles from "../../Hooks/roles/useDeleteRoles";
 import { Select, SelectItem } from "@nextui-org/select";
 import { permisos } from "../../utils/permisons";
+import usePatchRoles from "../../Hooks/roles/usePatchRoles";
 
 const formatPermisos = (permisos) => {
   return permisos.join("/");
 };
 
 const TableRole = () => {
+  const { changedUser, isChanged } = usePatchRoles();
+  const [newName, setNewName] = useState("");
+
   const { isDeleted, isLoading, deleteUser } = useDeleteRoles();
   const [values, setValues] = useState([]);
   const handleSelectionChange = (e) => {
     setValues(e.target.value.split(","));
   };
+
   const [roleId, setRoleId] = useState("");
   const [rolePage, setRolePage] = useState(5);
-  const [currentPage, setCurrentPage] = useState(1);
   const { RolesResponse, loading } = useRoles();
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -35,7 +40,7 @@ const TableRole = () => {
 
   const totalRoles = RolesResponse ? RolesResponse.length : 0;
   const totalPages = Math.ceil(totalRoles / rolePage);
-
+  const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * rolePage;
   const paginatedRoles = RolesResponse
     ? RolesResponse.slice(startIndex, startIndex + rolePage)
@@ -72,6 +77,11 @@ const TableRole = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const roleData = {
+      name: newName,
+      permissions: values,
+    };
+    changedUser(roleData, roleId);
     openSaveConfirmationModal();
   };
 
@@ -134,7 +144,10 @@ const TableRole = () => {
                     src={editIcon}
                     alt="Edit icon"
                     className="h-5 w-5 cursor-pointer"
-                    onClick={() => handleEditClick()}
+                    onClick={() => {
+                      handleEditClick();
+                      setRoleId(role.id);
+                    }}
                   />
                   <img
                     src={deleteIcon}
@@ -163,6 +176,8 @@ const TableRole = () => {
         <Input
           label={"Nombre del rol"}
           placeholder={"Escribe el nombre del rol..."}
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
         />
         <Select
           labelPlacement="outside"
