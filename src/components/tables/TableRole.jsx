@@ -6,7 +6,6 @@ import Pagination from "../Pagination";
 import icono from "../../assets/users/ImgEscudo.png";
 import editIcon from "../../assets/icons/pencil-square.svg";
 import deleteIcon from "../../assets/icons/trash3.svg";
-import { s } from "framer-motion/client";
 import useDeleteRoles from "../../Hooks/roles/useDeleteRoles";
 import { Select, SelectItem } from "@nextui-org/select";
 import { permisos } from "../../utils/permisons";

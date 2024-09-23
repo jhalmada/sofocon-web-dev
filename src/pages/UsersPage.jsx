@@ -19,15 +19,17 @@ import DownloadIcon from "../assets/icons/download.svg";
 import useUsers from "../Hooks/users/use.users.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
+import usePutUsers from "../Hooks/users/usePutUsers.js";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
 
 const UsersPage = () => {
-  const [userPage, setUserPage] = useState(1);
+  const [userPage, setUserPage] = useState(5);
+  const { changedUser, isChanged } = usePutUsers();
   const { usersResponse, loading } = useUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -35,16 +37,30 @@ const UsersPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [isExistingRoleChecked, setIsExistingRoleChecked] = useState(false);
   const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
+  const [userId, setUserId] = useState("");
+  const [userData, setUserData] = useState({
+    userInfo: {
+      fullName: "Nicolas Vallejo",
+    },
+
+    role: {
+      id: "c32898da-86b7-44c1-a9e4-c9e9ae2023b9",
+    },
+  });
 
   const totalUsers = usersResponse ? usersResponse.result.length : 0;
   const totalPages = Math.ceil(totalUsers / userPage);
 
-  const startIndex = (currentPage - 1) * userPage;
+  const startIndex = currentPage * userPage;
   const paginatedUsers = usersResponse
     ? usersResponse.result.slice(startIndex, startIndex + userPage)
     : [];
 
-  const openModal = () => setModalOpen(true);
+  const openModal = (id) => {
+    setModalOpen(true);
+    setUserId(id);
+  };
+
   const closeModal = () => {
     setModalOpen(false);
     setConfirmCancelModalOpen(false);
@@ -79,6 +95,7 @@ const UsersPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    changedUser(userData, userId);
     openSaveConfirmationModal();
   };
 
@@ -186,10 +203,10 @@ const UsersPage = () => {
                     fullName={`${user.userInfo.fullName} `}
                     email={user.email}
                     password=""
-                    role={user.role.name}
+                    role={user?.role?.name}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
-                    onEditClick={openModal}
+                    onEditClick={() => openModal(user.id)}
                     onDeleteClick={openConfirmDeleteModal}
                   />
                 ))}

@@ -10,7 +10,7 @@ const Input = ({
   value,
   onChange,
   errorApi = false,
-  disabled = false, // Agrega la prop disabled
+  disabled = false,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [error, setError] = useState(errorApi);
@@ -36,7 +36,7 @@ const Input = ({
           placeholder={placeholder}
           onChange={onChange}
           value={value}
-          disabled={disabled} // Agrega la propiedad disabled
+          disabled={disabled}
           className={`relative h-full w-full rounded-md border p-2.5 pl-2.5 pr-10 font-roboto text-sm font-light placeholder-black_m outline-none ${
             error
               ? "border-red_e placeholder-red_e"

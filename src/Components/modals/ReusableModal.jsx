@@ -2,7 +2,6 @@ import Button from "../buttons/Button";
 import ChevronLeftIcon from "../../assets/icons/chevron-left.svg";
 import CheckLgIcon from "../../assets/icons/check-lg.svg";
 import XlgIcon from "../../assets/icons/x-lg.svg";
-import { div } from "framer-motion/client";
 
 const ReusableModal = ({
   isOpen,
