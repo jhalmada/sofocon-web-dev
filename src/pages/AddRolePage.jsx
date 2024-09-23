@@ -1,34 +1,34 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-//import Select from "../components/selects/Select";
+import Select from "../components/selects/Select";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Select as NextUISelect, SelectItem } from "@nextui-org/select";
 import useAddroles from "../Hooks/roles/useAddroles";
 import { permisos } from "../utils/permisons";
 
 const AddRolePage = () => {
   const [name, setName] = useState("");
-  const { postAddRoles, loading , idRol } = useAddroles();
-  
+  const { postAddRoles, loading, idRol } = useAddroles();
   const [values, setValues] = useState([]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newRole = await postAddRoles({
       name,
-      permissions: values
+      permissions: values,
     });
     console.log("rol creado");
     console.log(newRole);
     console.log(idRol);
+  };
 
+  const handleSelectionChange = (selectedKeys) => {
+    setValues(selectedKeys);
   };
- 
-  const handleSelectionChange = (e) => {
-    setValues(e.target.value.split(","));
-  };
+
   return (
     <div className="flex h-full flex-col justify-between overflow-auto bg-gray">
       <div className="flex-grow p-6">
@@ -69,7 +69,7 @@ const AddRolePage = () => {
               label={"Nombre del rol"}
               placeholder={"Escribe el nombre del rol..."}
             />
-            <Select
+            <NextUISelect
               labelPlacement="outside"
               label="Asignar permisos"
               selectionMode="multiple"
@@ -81,20 +81,31 @@ const AddRolePage = () => {
               {permisos.map((permiso) => (
                 <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
               ))}
-            </Select>
+            </NextUISelect>
+          </div>
+
+          <div className="flex justify-end py-6">
+            <div>
+              <Button
+                text={"GUARDAR"}
+                onClick={handleSubmit}
+                color={"save"}
+                type={"submit"}
+                icon={ArrowRightIcon}
+              />
+            </div>
           </div>
         </form>
-        <div className="flex justify-end py-6">
-          <div>
-            <Button
-              text={"GUARDAR"}
-              onClick={handleSubmit}
-              color={"save"}
-              type={"submit"}
-              icon={ArrowRightIcon}
-            />
-          </div>
-        </div>
+        <ReusableModal
+          isOpen={isSaveConfirmationModalOpen}
+          onClose={closeSaveConfirmationModal}
+          title="Cambios guardados"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={handleConfirmSaveClick}
+        >
+          Los cambios fueron guardados exitosamente.
+        </ReusableModal>
       </div>
     </div>
   );

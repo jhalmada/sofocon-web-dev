@@ -174,7 +174,7 @@ const UsersPage = () => {
                 {paginatedUsers.map((user, index) => (
                   <UserRow
                     key={index}
-                    fullName={`${user.userInfo.firstName} ${user.userInfo.lastName}`}
+                    fullName={`${user.userInfo.fullName} `}
                     email={user.email}
                     password=""
                     role={user.role.name}
