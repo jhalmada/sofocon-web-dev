@@ -57,6 +57,18 @@ const UsersPage = () => {
     : [];
 
   const openModal = (id) => {
+    const userToEdit = usersResponse.result.find((user) => user.id === id);
+    if (userToEdit) {
+      setUserData({
+        userInfo: {
+          fullName: userToEdit.userInfo.fullName,
+          email: userToEdit.email,
+        },
+        role: {
+          id: userToEdit.role.id,
+        },
+      });
+    }
     setModalOpen(true);
     setUserId(id);
   };
@@ -236,10 +248,30 @@ const UsersPage = () => {
         <Input
           label={"Nombre completo"}
           placeholder={"Escribe el nombre completo del usuario..."}
+          value={userData.userInfo.fullName}
+          onChange={(e) =>
+            setUserData((prev) => ({
+              ...prev,
+              userInfo: {
+                ...prev.userInfo,
+                fullName: e.target.value,
+              },
+            }))
+          }
         />
         <Input
           label={"Correo electrónico"}
           placeholder={"Escribe el email del usuario..."}
+          value={userData.userInfo.email}
+          onChange={(e) =>
+            setUserData((prev) => ({
+              ...prev,
+              userInfo: {
+                ...prev.userInfo,
+                email: e.target.value,
+              },
+            }))
+          }
         />
         <div>
           <Input
@@ -259,7 +291,11 @@ const UsersPage = () => {
             onChange={handleExistingRoleChange}
             disabled={isNewRoleChecked}
           />
-          <Select option={"Rol"} disabled={!isExistingRoleChecked} />
+          <Select
+            option={"Rol"}
+            disabled={!isExistingRoleChecked}
+            value={userData.role.id}
+          />
         </div>
         <div className="space-y-2">
           <Checkbox
