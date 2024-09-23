@@ -5,6 +5,7 @@ const Button = ({
   color,
   type = "button",
   iconPosition = "right",
+  width = "min-w-[10.2rem]",
 }) => {
   const colorClasses = {
     default: "bg-blue_b text-white shadow-blur",
@@ -15,9 +16,9 @@ const Button = ({
   const buttonColorClass = colorClasses[color] || colorClasses.default;
 
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex w-full justify-between">
       <button
-        className={`relative flex h-10 min-w-[10.2rem] items-center justify-center rounded-2xl px-5 py-1 ${buttonColorClass} gap-2 ${iconPosition === "left" ? "flex-row-reverse" : "flex-row"}`}
+        className={`relative flex h-10 ${width} items-center justify-center rounded-2xl px-5 py-1 ${buttonColorClass} gap-2 ${iconPosition === "left" ? "flex-row-reverse" : "flex-row"}`}
         onClick={onClick}
         type={type}
       >

@@ -2,6 +2,7 @@ import Button from "../buttons/Button";
 import ChevronLeftIcon from "../../assets/icons/chevron-left.svg";
 import CheckLgIcon from "../../assets/icons/check-lg.svg";
 import XlgIcon from "../../assets/icons/x-lg.svg";
+import { div } from "framer-motion/client";
 
 const ReusableModal = ({
   isOpen,
@@ -30,8 +31,8 @@ const ReusableModal = ({
         </button>
         <h2 className="mb-8 text-lg font-semibold">{title}</h2>
         {variant === "confirmation" ? (
-          <div>
-            <p className="mb-6">{children}</p>
+          <div className="space-y-8">
+            <p>{children}</p>
             <div className="flex justify-between">
               {buttons.includes("back") && (
                 <Button
@@ -40,6 +41,7 @@ const ReusableModal = ({
                   icon={ChevronLeftIcon}
                   iconPosition="left"
                   onClick={onClose}
+                  width="w-20"
                 />
               )}
               {buttons.includes("accept") && (
@@ -57,7 +59,7 @@ const ReusableModal = ({
           </div>
         ) : (
           <form onSubmit={onSubmit}>
-            <div className="space-y-3">{children}</div>
+            <div className="space-y-8">{children}</div>
             <div className="mt-10 flex justify-between">
               {buttons.includes("cancel") && (
                 <Button
@@ -66,16 +68,19 @@ const ReusableModal = ({
                   type="button"
                   onClick={handleCancelClick}
                   iconPosition="left"
+                  width="w-20"
                 />
               )}
               {buttons.includes("save") && (
-                <Button
-                  text="GUARDAR"
-                  color="save"
-                  type="submit"
-                  icon={CheckLgIcon}
-                  iconPosition="right"
-                />
+                <div>
+                  <Button
+                    text="GUARDAR"
+                    color="save"
+                    type="submit"
+                    icon={CheckLgIcon}
+                    iconPosition="right"
+                  />
+                </div>
               )}
             </div>
           </form>

@@ -33,6 +33,8 @@ const UsersPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [isExistingRoleChecked, setIsExistingRoleChecked] = useState(false);
+  const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
 
   const totalUsers = usersResponse ? usersResponse.result.length : 0;
   const totalPages = Math.ceil(totalUsers / userPage);
@@ -82,6 +84,19 @@ const UsersPage = () => {
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+  };
+  const handleExistingRoleChange = () => {
+    setIsExistingRoleChecked(!isExistingRoleChecked);
+    if (isExistingRoleChecked) {
+      setIsNewRoleChecked(false);
+    }
+  };
+
+  const handleNewRoleChange = () => {
+    setIsNewRoleChecked(!isNewRoleChecked);
+    if (isNewRoleChecked) {
+      setIsExistingRoleChecked(false);
+    }
   };
 
   return (
@@ -227,10 +242,25 @@ const UsersPage = () => {
             *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
           </p>
         </div>
-        <Checkbox text={"Asignar rol existente"} />
-        <Select option={"Rol"} />
-        <Checkbox text={"Asignar nuevo rol"} />
-        <Input placeholder={"Escribe el nombre del rol..."} />
+        <div className="space-y-2">
+          <Checkbox
+            text={"Asignar rol existente"}
+            onChange={handleExistingRoleChange}
+            disabled={isNewRoleChecked}
+          />
+          <Select option={"Rol"} disabled={!isExistingRoleChecked} />
+        </div>
+        <div className="space-y-2">
+          <Checkbox
+            text={"Asignar nuevo rol"}
+            onChange={handleNewRoleChange}
+            disabled={isExistingRoleChecked}
+          />
+          <Input
+            placeholder={"Escribe el nombre del rol..."}
+            disabled={!isNewRoleChecked}
+          />
+        </div>
       </ReusableModal>
 
       <ReusableModal
