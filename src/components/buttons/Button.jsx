@@ -16,7 +16,7 @@ const Button = ({
   const buttonColorClass = colorClasses[color] || colorClasses.default;
 
   return (
-    <div className="flex w-full justify-between">
+    <div className="flex justify-center">
       <button
         className={`relative flex h-10 ${width} items-center justify-center rounded-2xl px-5 py-1 ${buttonColorClass} gap-2 ${iconPosition === "left" ? "flex-row-reverse" : "flex-row"}`}
         onClick={onClick}

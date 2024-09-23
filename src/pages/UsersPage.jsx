@@ -87,16 +87,10 @@ const UsersPage = () => {
   };
   const handleExistingRoleChange = () => {
     setIsExistingRoleChecked(!isExistingRoleChecked);
-    if (isExistingRoleChecked) {
-      setIsNewRoleChecked(false);
-    }
   };
 
   const handleNewRoleChange = () => {
     setIsNewRoleChecked(!isNewRoleChecked);
-    if (isNewRoleChecked) {
-      setIsExistingRoleChecked(false);
-    }
   };
 
   return (

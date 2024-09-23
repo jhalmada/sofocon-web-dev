@@ -45,15 +45,17 @@ const ReusableModal = ({
                 />
               )}
               {buttons.includes("accept") && (
-                <Button
-                  text="ACEPTAR"
-                  color="save"
-                  icon={CheckLgIcon}
-                  iconPosition="right"
-                  onClick={() => {
-                    if (onAccept) onAccept();
-                  }}
-                />
+                <div className="w-full">
+                  <Button
+                    text="ACEPTAR"
+                    color="save"
+                    icon={CheckLgIcon}
+                    iconPosition="right"
+                    onClick={() => {
+                      if (onAccept) onAccept();
+                    }}
+                  />
+                </div>
               )}
             </div>
           </div>
