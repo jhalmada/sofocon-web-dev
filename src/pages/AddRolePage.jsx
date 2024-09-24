@@ -1,11 +1,11 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-import Select from "../components/selects/Select";
+
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
-import { Select as NextUISelect, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@nextui-org/select";
 import useAddroles from "../Hooks/roles/useAddroles";
 import { permisos } from "../utils/permisons";
 import ReusableModal from "../components/modals/ReusableModal";
@@ -87,7 +87,7 @@ const AddRolePage = () => {
               msjError={errors.name ? errors.name.message : ""}
             />
 
-            <NextUISelect
+            <Select
               labelPlacement="outside"
               label="Asignar permisos"
               selectionMode="multiple"
@@ -101,7 +101,7 @@ const AddRolePage = () => {
               {permisos.map((permiso) => (
                 <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
               ))}
-            </NextUISelect>
+            </Select>
             {errors.permissions && (
               <span className="font-roboto text-xs text-red_e">
                 {errors.permissions.message}
@@ -120,6 +120,7 @@ const AddRolePage = () => {
             </div>
           </div>
         </form>
+
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}

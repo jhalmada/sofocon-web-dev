@@ -1,6 +1,5 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-//import Checkbox from "../components/checkboxs/Checkbox";
 import Input from "../Components/inputs/Input";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
@@ -20,7 +19,6 @@ const AddUserPage = () => {
     register,
     handleSubmit,
     setValue,
-    getValues,
     formState: { errors },
   } = useForm();
   const { RolesResponse } = useRoles();
@@ -28,7 +26,6 @@ const AddUserPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [values, setValues] = useState(new Set([]));
 
   const [checkSelected, setCheckSelected] = useState("existente");
 
@@ -71,7 +68,7 @@ const AddUserPage = () => {
         });
     }
   };
-  
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };

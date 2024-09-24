@@ -6,6 +6,8 @@ export class UserService {
 
   static postAddUsersApi = async (userData) =>
     await axios.post(usersRoutes.postUsers, userData);
+  static putUserApi = async (userData, userId) =>
+    await axios.put(`${usersRoutes.putUsers}/${userId}`, userData);
 
   static deleteUserApi = async (userId) =>
     await axios.delete(`${usersRoutes.deleteUsers}/${userId}`);
