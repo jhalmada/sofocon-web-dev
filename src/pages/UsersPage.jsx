@@ -135,17 +135,21 @@ const UsersPage = () => {
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
-          fullName,
           email,
           password,
+          userInfo: {
+            fullName,
+          },
           role: { id: role },
         });
         break;
       default:
         handleUserCreation({
-          fullName,
           email,
           password,
+          fullName: {
+            fullName,
+          },
           role: {
             name: nameRole,
             permissions: [...permissions, "USER_ADMIN"],
