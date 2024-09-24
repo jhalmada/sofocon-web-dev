@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import UserRow from "../Components/UserRow";
-import TableRole from "../Components/tables/TableRole";
-import Button from "../Components/buttons/Button";
-import ReusableModal from "../Components/modals/ReusableModal";
-import Pagination from "../Components/Pagination";
-import Input from "../Components/inputs/Input";
-import Select from "../Components/selects/Select";
-import Checkbox from "../components/checkboxs/Checkbox";
+import UserRow from "../components/UserRow";
+import TableRole from "../components/tables/TableRole";
+import Button from "../components/buttons/Button";
+import ReusableModal from "../components/modals/ReusableModal";
+import Pagination from "../components/Pagination";
+import Input from "../components/inputs/Input";
+import { Select, SelectItem } from "@nextui-org/select";
+import { Checkbox } from "@nextui-org/react";
 import SearchInput from "../components/inputs/SearchInput";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
@@ -20,16 +20,20 @@ import useUsers from "../Hooks/users/use.users.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutUsers from "../Hooks/users/usePutUsers.js";
+import { useForm } from "react-hook-form";
+import useRoles from "../Hooks/roles/use.roles";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
 
 const UsersPage = () => {
   const [userPage, setUserPage] = useState(5);
+  const { changedUser, isChanged } = usePutUsers();
   const { usersResponse, loading } = useUsers();
+  const { RolesResponse } = useRoles();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [currentPage, setCurrentPage] = useState(0);
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
@@ -37,15 +41,8 @@ const UsersPage = () => {
   const [isExistingRoleChecked, setIsExistingRoleChecked] = useState(false);
   const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
   const [userId, setUserId] = useState("");
-  const [userData, setUserData] = useState({
-    userInfo: {
-      fullName: "Nicolas Vallejo",
-    },
-
-    role: {
-      id: "c32898da-86b7-44c1-a9e4-c9e9ae2023b9",
-    },
-  });
+  const [checkSelected, setCheckSelected] = useState("existente");
+  const [userData, setUserData] = useState(null);
 
   const totalUsers = usersResponse ? usersResponse.result.length : 0;
   const totalPages = Math.ceil(totalUsers / userPage);
@@ -54,10 +51,37 @@ const UsersPage = () => {
   const paginatedUsers = usersResponse
     ? usersResponse.result.slice(startIndex, startIndex + userPage)
     : [];
-  console.log(paginatedUsers);
-  const openModal = () => setModalOpen(true);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
+
+  const openModal = (id) => {
+    const userToEdit = usersResponse.result.find((user) => user.id === id);
+    if (userToEdit) {
+      setUserData({
+        userInfo: {
+          fullName: userToEdit.userInfo.fullName,
+          email: userToEdit.email,
+        },
+        role: {
+          id: userToEdit.role.id,
+        },
+      });
+      // Set form values
+      setValue("fullName", userToEdit.userInfo.fullName);
+      setValue("email", userToEdit.email);
+      setValue("role", userToEdit.role.id);
+    }
+    setIsModalOpen(true);
+    setUserId(id);
+  };
+
   const closeModal = () => {
-    setModalOpen(false);
+    setIsModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
@@ -88,11 +112,54 @@ const UsersPage = () => {
     closeModal();
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    changedUser(userData, userId);
-    openSaveConfirmationModal();
+  const handleUserCreation = async (userData) => {
+    try {
+      const newUser = await changedUser(userData, userId);
+      console.log(newUser);
+      if (newUser) {
+        setSaveConfirmationModalOpen(true);
+      } else {
+        console.error(
+          "No se recibió un nuevo usuario después de la actualización",
+        );
+      }
+    } catch (error) {
+      console.error("Error al actualizar el usuario:", error);
+      setIsModalOpen(true);
+    }
   };
+
+  const onSubmit = (data) => {
+    const { fullName, email, password, role, nameRole, permissions } = data;
+
+    switch (checkSelected) {
+      case "existente":
+        handleUserCreation({
+          fullName,
+          email,
+          password,
+          role: { id: role },
+        });
+        break;
+      default:
+        handleUserCreation({
+          fullName,
+          email,
+          password,
+          role: {
+            name: nameRole,
+            permissions: [...permissions, "USER_ADMIN"],
+            s,
+          },
+        });
+    }
+  };
+
+  // const onSubmit = (data) => {
+  //   e.preventDefault();
+  //   changedUser(userData, userId);
+  //   openSaveConfirmationModal();
+  // };
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -195,10 +262,10 @@ const UsersPage = () => {
                 {paginatedUsers.map((user, index) => (
                   <UserRow
                     key={index}
-                    fullName={user.userInfo.fullName}
+                    fullName={`${user.userInfo.fullName} `}
                     email={user.email}
                     password=""
-                    role={user?.role?.name || "Sin rol"}
+                    role={user?.role?.name}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     onEditClick={() => openModal(user.id)}
@@ -224,73 +291,97 @@ const UsersPage = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
         title="Editar Usuario"
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >
-        <Input
-          label={"Nombre completo"}
-          placeholder={"Escribe el nombre completo del usuario..."}
-          value={userData.userInfo.fullName}
-          onChange={(e) =>
-            setUserData((prev) => ({
-              ...prev,
-              userInfo: {
-                ...prev.userInfo,
-                fullName: e.target.value,
-              },
-            }))
-          }
-        />
-        <Input
-          label={"Correo electrónico"}
-          placeholder={"Escribe el email del usuario..."}
-          value={userData.userInfo.email}
-          onChange={(e) =>
-            setUserData((prev) => ({
-              ...prev,
-              userInfo: {
-                ...prev.userInfo,
-                email: e.target.value,
-              },
-            }))
-          }
-        />
-        <div>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Input
-            label={"Contraseña"}
-            placeholder={"Escribe la contraseña..."}
-            type="password"
-            icon1={IconEye}
-            icon2={IconEyeSlash}
-          />
-          <p className="-mt-6 mb-10 text-xs leading-[.875rem] text-black_b">
-            *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
-          </p>
-        </div>
-        <div className="space-y-2">
-          <Checkbox
-            text={"Asignar rol existente"}
-            onChange={handleExistingRoleChange}
-            disabled={isNewRoleChecked}
-          />
-          <Select
-            option={"Rol"}
-            disabled={!isExistingRoleChecked}
-            value={userData.role.id}
-          />
-        </div>
-        <div className="space-y-2">
-          <Checkbox
-            text={"Asignar nuevo rol"}
-            onChange={handleNewRoleChange}
-            disabled={isExistingRoleChecked}
+            label={"Nombre Completo"}
+            placeholder={"Escribe el nombre completo del usuario..."}
+            {...register("fullName", {
+              required: "El nombre completo es obligatorio",
+            })}
+            errorApi={errors.fullName}
+            msjError={errors.fullName ? errors.fullName.message : ""}
           />
           <Input
-            placeholder={"Escribe el nombre del rol..."}
-            disabled={!isNewRoleChecked}
+            label={"Correo electrónico"}
+            placeholder={"Escribe el email del usuario..."}
+            {...register("email", {
+              required: "El correo electrónico es obligatorio",
+            })}
+            errorApi={errors.email}
+            msjError={errors.email ? errors.email.message : ""}
           />
-        </div>
+          <div>
+            <Input
+              type="password"
+              label={"Contraseña"}
+              placeholder={"Escribe la contraseña..."}
+              icon1={IconEye}
+              icon2={IconEyeSlash}
+              {...register("password", {
+                required: "La contraseña es obligatoria",
+                minLength: {
+                  value: 8,
+                  message: "La contraseña debe tener al menos 8 caracteres",
+                },
+              })}
+              errorApi={errors.password}
+              msjError={errors.password ? errors.password.message : ""}
+            />
+            <p className="-mt-6 mb-10 text-xs leading-[.875rem] text-black_b">
+              *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
+            </p>
+          </div>
+          <div className="mb-4 space-y-2">
+            <Checkbox
+              defaultSelected={checkSelected === "existente"}
+              isSelected={checkSelected === "existente"}
+              onClick={() => setCheckSelected("existente")}
+              radius="full"
+            >
+              Asignar rol existente
+            </Checkbox>
+            <Select
+              isDisabled={checkSelected === "nuevo"}
+              {...register("role", {
+                required:
+                  checkSelected === "existente"
+                    ? "Debes seleccionar un rol"
+                    : false,
+              })}
+              onSelectionChange={(value) => setValue("role", value)}
+            >
+              {RolesResponse &&
+                RolesResponse.map((rol) => (
+                  <SelectItem key={rol.id}>{rol.name}</SelectItem>
+                ))}
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Checkbox
+              radius="full"
+              isSelected={checkSelected === "nuevo"}
+              onClick={() => setCheckSelected("nuevo")}
+            >
+              Asignar nuevo rol
+            </Checkbox>
+            <Input
+              label={"Nombre del rol"}
+              disabled={checkSelected === "existente"}
+              placeholder={"Escribe el nombre del rol..."}
+              {...register("nameRole", {
+                required:
+                  checkSelected === "nuevo"
+                    ? "Debes ingresar el nombre del rol"
+                    : false,
+              })}
+              error={errors.nameRole?.message}
+            />
+          </div>
+        </form>
       </ReusableModal>
 
       <ReusableModal

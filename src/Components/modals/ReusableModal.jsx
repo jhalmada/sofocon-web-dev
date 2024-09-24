@@ -46,6 +46,7 @@ const ReusableModal = ({
               {buttons.includes("accept") && (
                 <div className="w-full">
                   <Button
+                    type="onSubmit"
                     text="ACEPTAR"
                     color="save"
                     icon={CheckLgIcon}

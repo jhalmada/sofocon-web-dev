@@ -87,7 +87,7 @@ const AddRolePage = () => {
               msjError={errors.name ? errors.name.message : ""}
             />
 
-            <NextUISelect
+            <Select
               labelPlacement="outside"
               label="Asignar permisos"
               selectionMode="multiple"
@@ -101,7 +101,7 @@ const AddRolePage = () => {
               {permisos.map((permiso) => (
                 <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
               ))}
-            </NextUISelect>
+            </Select>
             {errors.permissions && (
               <span className="font-roboto text-xs text-red_e">
                 {errors.permissions.message}

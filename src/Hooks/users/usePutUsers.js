@@ -9,7 +9,7 @@ const usePutusers = () => {
     try {
       setIsLoading(true);
       await UserService.putUserApi(userData, userId);
-      setIsChanged(true);
+      return true;
     } catch (error) {
       console.error("Error al modificar el usuario: ", error);
     } finally {
