@@ -1,15 +1,48 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-import Select from "../components/selects/Select";
+
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+import { useState } from "react";
+import { Select, SelectItem } from "@nextui-org/select";
+import useAddroles from "../Hooks/roles/useAddroles";
+import { permisos } from "../utils/permisons";
+import ReusableModal from "../components/modals/ReusableModal";
+import { useForm } from "react-hook-form"; // Importamos React Hook Form
 
 const AddRolePage = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Formulario enviado");
+  const { postAddRoles, loading, idRol } = useAddroles();
+  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+    useState(false);
+
+  // Inicializamos useForm para manejar los inputs
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    // Aquí obtendremos los datos del formulario
+    const newRole = await postAddRoles({
+      name: data.name,
+      permissions: [...data.permissions, "USER_ADMIN"],
+    });
+    console.log("rol creado", newRole);
+    console.log(idRol);
+    setSaveConfirmationModalOpen(true);
   };
+
+  const closeSaveConfirmationModal = () => {
+    setSaveConfirmationModalOpen(false);
+  };
+
+  const handleConfirmSaveClick = () => {
+    setSaveConfirmationModalOpen(false);
+  };
+
   return (
     <div className="flex h-full flex-col justify-between overflow-auto bg-gray">
       <div className="flex-grow p-6">
@@ -40,33 +73,64 @@ const AddRolePage = () => {
         </div>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)} // Usamos handleSubmit de React Hook Form
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
-          <div className="space-y-3">
+          <div className="flex flex-col">
             <Input
+              {...register("name", {
+                required: "El nombre del rol es obligatorio",
+              })}
               label={"Nombre del rol"}
               placeholder={"Escribe el nombre del rol..."}
+              errorApi={errors.name}
+              msjError={errors.name ? errors.name.message : ""}
             />
 
             <Select
-              label={"Asignar permisos"}
-              option={"Permisos"}
-              variant={"permisos"}
-            />
+              labelPlacement="outside"
+              label="Asignar permisos"
+              selectionMode="multiple"
+              placeholder="Permisos"
+              className="max-w mt-10 rounded-md border font-roboto font-medium"
+              {...register("permissions", {
+                required: "Debes asignar al menos un permiso",
+              })}
+              onSelectionChange={(values) => setValue("permissions", values)} // Usamos setValue para sincronizar con React Hook Form
+            >
+              {permisos.map((permiso) => (
+                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+              ))}
+            </Select>
+            {errors.permissions && (
+              <span className="font-roboto text-xs text-red_e">
+                {errors.permissions.message}
+              </span>
+            )}
+          </div>
+
+          <div className="flex justify-end py-6">
+            <div>
+              <Button
+                text={"GUARDAR"}
+                color={"save"}
+                type={"submit"}
+                icon={ArrowRightIcon}
+              />
+            </div>
           </div>
         </form>
-        <div className="flex justify-end py-6">
-          <div>
-            <Button
-              text={"GUARDAR"}
-              onClick={handleSubmit}
-              color={"save"}
-              type={"submit"}
-              icon={ArrowRightIcon}
-            />
-          </div>
-        </div>
+
+        <ReusableModal
+          isOpen={isSaveConfirmationModalOpen}
+          onClose={closeSaveConfirmationModal}
+          title="Cambios guardados"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={handleConfirmSaveClick}
+        >
+          Los cambios fueron guardados exitosamente.
+        </ReusableModal>
       </div>
     </div>
   );

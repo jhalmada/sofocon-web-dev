@@ -1,17 +1,84 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-import Checkbox from "../components/checkboxs/Checkbox";
-import Select from "../components/selects/Select";
-import Input from "../components/inputs/Input";
+import Input from "../Components/inputs/Input";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
-import Button from "../components/buttons/Button";
+import Button from "../Components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+import { useState } from "react";
+import AddUsers from "../Hooks/users/use.addUsers";
+import ReusableModal from "../Components/modals/ReusableModal";
+import { permisos } from "../utils/permisons";
+import { Select, SelectItem } from "@nextui-org/select";
+import useRoles from "../Hooks/roles/use.roles";
+import { Checkbox } from "@nextui-org/react";
+import { useForm } from "react-hook-form";
 
 const AddUserPage = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Formulario enviado");
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
+  const { RolesResponse } = useRoles();
+  const { postAddUsers, loading } = AddUsers();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+    useState(false);
+
+  const [checkSelected, setCheckSelected] = useState("existente");
+
+  const handleUserCreation = async (userData) => {
+    try {
+      const newUser = await postAddUsers(userData);
+      console.log(newUser);
+      if (newUser) {
+        setSaveConfirmationModalOpen(true);
+      } else {
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error al crear el usuario:", error);
+      setIsModalOpen(true);
+    }
+  };
+
+  const onSubmit = (data) => {
+    const { fullName, email, password, role, nameRole, permissions } = data;
+
+    switch (checkSelected) {
+      case "existente":
+        handleUserCreation({
+          fullName,
+          email,
+          password,
+          role: { id: role }, // Pasamos el rol existente
+        });
+        break;
+      default:
+        handleUserCreation({
+          fullName,
+          email,
+          password,
+          role: {
+            name: nameRole,
+            permissions: [...permissions, "USER_ADMIN"], // Permisos asignados
+          },
+        });
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const closeSaveConfirmationModal = () => {
+    setSaveConfirmationModalOpen(false);
+  };
+
+  const handleConfirmSaveClick = () => {
+    closeSaveConfirmationModal();
   };
 
   return (
@@ -42,50 +109,184 @@ const AddUserPage = () => {
           </div>
         </div>
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
           <div className="space-y-3">
+            {/* Nombre Completo */}
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
+              {...register("fullName", {
+                required: "El nombre completo es obligatorio",
+              })}
+              errorApi={errors.fullName}
+              msjError={errors.fullName ? errors.fullName.message : ""}
             />
+
+            {/* Correo electrónico */}
             <Input
               label={"Correo electrónico"}
               placeholder={"Escribe el email del usuario..."}
+              {...register("email", {
+                required: "El correo electrónico es obligatorio",
+              })}
+              errorApi={errors.email}
+              msjError={errors.email ? errors.email.message : ""}
             />
+
+            {/* Contraseña */}
             <div className="pb-8">
               <Input
                 type="password"
-                icon1={IconEye}
-                icon2={IconEyeSlash}
                 label={"Contraseña"}
                 placeholder={"Escribe la contraseña..."}
+                icon1={IconEye}
+                icon2={IconEyeSlash}
+                {...register("password", {
+                  required: "La contraseña es obligatoria",
+                  minLength: {
+                    value: 8,
+                    message: "La contraseña debe tener al menos 8 caracteres",
+                  },
+                })}
+                errorApi={errors.password}
+                msjError={errors.password ? errors.password.message : ""}
               />
-              <p className="-mt-6 text-xs leading-[.875rem] text-black_b">
-                *Este campo debe contener entre 8 y 20 caracteres alfanuméricos{" "}
+              <p className="mt-5 text-xs leading-[.875rem] text-black_b">
+                *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
               </p>
             </div>
-            <Checkbox text={"Asignar rol existente"} />
-            <Select option={"Rol"} />
-            <Checkbox text={"Asignar nuevo rol"} />
-            <div className="flex items-start space-x-10">
-              <Input placeholder={"Escribe el nombre del rol..."} />
-              <Select option={"Permisos"} variant="permisos" />
+
+            {/* Asignar rol existente */}
+            <Checkbox
+              defaultSelected={checkSelected === "existente"}
+              isSelected={checkSelected === "existente"}
+              onClick={() => setCheckSelected("existente")}
+              radius="full"
+            >
+              Asignar rol existente
+            </Checkbox>
+
+            <Select
+              isDisabled={checkSelected === "nuevo"}
+              labelPlacement="outside"
+              label="Selecciona un rol"
+              className="max-w mt-10 rounded-md border font-roboto font-medium"
+              {...register("role", {
+                required:
+                  checkSelected === "existente"
+                    ? "Debes seleccionar un rol"
+                    : false,
+              })}
+              onSelectionChange={(value) => setValue("role", value)}
+            >
+              {RolesResponse &&
+                RolesResponse.map((rol) => (
+                  <SelectItem key={rol.id}>{rol.name}</SelectItem>
+                ))}
+            </Select>
+            {errors.role && errors.role.message ? (
+              <span className="font-roboto text-xs text-red_e">
+                {errors.role.message}
+              </span>
+            ) : (
+              ""
+            )}
+
+            {/* Asignar nuevo rol */}
+            <div className="flex flex-col">
+              <Checkbox
+                radius="full"
+                isSelected={checkSelected === "nuevo"}
+                onClick={() => setCheckSelected("nuevo")}
+              >
+                Asignar nuevo rol
+              </Checkbox>
+
+              <div className="flex w-full flex-row justify-between">
+                <div className="w-[48%]">
+                  <Input
+                    label={"Nombre del rol"}
+                    disabled={checkSelected === "existente"}
+                    placeholder={"Escribe el nombre del rol..."}
+                    {...register("nameRole", {
+                      required:
+                        checkSelected === "nuevo"
+                          ? "Debes ingresar el nombre del rol"
+                          : false,
+                    })}
+                    errorApi={errors.nameRole}
+                    msjError={errors.nameRole ? errors.nameRole.message : ""}
+                  />
+                </div>
+
+                <div className="mt-5 w-[48%]">
+                  <Select
+                    isDisabled={checkSelected === "existente"}
+                    labelPlacement="outside"
+                    label="Asignar permisos"
+                    placeholder="Permisos"
+                    selectionMode="multiple"
+                    className="max-w rounded-md border font-roboto font-medium"
+                    {...register("permissions", {
+                      required:
+                        checkSelected === "nuevo"
+                          ? "Debes asignar permisos"
+                          : false,
+                    })}
+                    onSelectionChange={(values) =>
+                      setValue("permissions", values)
+                    }
+                  >
+                    {permisos.map((permiso) => (
+                      <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+                    ))}
+                  </Select>
+                  {errors.permissions && errors.permissions.message ? (
+                    <span className="font-roboto text-xs text-red_e">
+                      {errors.permissions.message}
+                    </span>
+                  ) : (
+                    " "
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        </form>
-        <div className="flex justify-end py-6">
-          <div>
+
+          <div className="flex w-full">
             <Button
               text={"GUARDAR"}
-              onClick={handleSubmit}
               color={"save"}
               type={"submit"}
               icon={ArrowRightIcon}
             />
           </div>
-        </div>
+        </form>
+        <ReusableModal
+          isOpen={isSaveConfirmationModalOpen}
+          onClose={closeSaveConfirmationModal}
+          title="Cambios guardados"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={handleConfirmSaveClick}
+        >
+          Los cambios fueron guardados exitosamente.
+        </ReusableModal>
+
+        {isModalOpen && (
+          <ReusableModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            title="Error al agregar usuario"
+            variant="confirmation"
+            buttons={["accept"]}
+            onAccept={handleCloseModal}
+          >
+            Ha ocurrido un error mientras se creaba el usuario
+          </ReusableModal>
+        )}
       </div>
     </div>
   );

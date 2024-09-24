@@ -5,6 +5,7 @@ const Select = ({
   label = null,
   option,
   variant = "roles",
+  disabled = false,
 }) => {
   return (
     <>
@@ -16,6 +17,7 @@ const Select = ({
         <select
           defaultValue="Rol"
           className="w-full cursor-pointer bg-transparent font-semibold outline-none"
+          disabled={disabled} // Agrega la propiedad disabled
         >
           <option value="Rol" disabled>
             {option}

@@ -1,9 +1,15 @@
 import checkmark from "../../assets/icons/checkmark.svg";
-const Checkbox = ({ text }) => {
+
+const Checkbox = ({ text, onChange, disabled }) => {
   return (
     <div className="flex items-center">
       <label className="relative flex cursor-pointer items-center">
-        <input type="checkbox" className="peer sr-only" />
+        <input
+          type="checkbox"
+          className="peer sr-only"
+          onChange={onChange}
+          disabled={disabled}
+        />
         <div className="border-gray-300 flex h-4 w-4 items-center justify-center rounded-full border-[.1rem] bg-white transition-colors peer-checked:border-blue_b peer-checked:bg-blue_b">
           <img
             src={checkmark}
