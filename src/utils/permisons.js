@@ -1,9 +1,6 @@
 export const permisos = [
-  { key: "APP", label: "APP" },
-  { key: "RUTAS", label: "RUTAS" },
-  { key: "EMPRESAS", label: "EMPRESAS" },
-  { key: "VENDEDORES", label: "VENDEDORES" },
-  { key: "PRODUCTOS", label: "PRODUCTOS" },
-  { key: "VENTAS", label: "VENTAS" },
-  { key: "CLIENTES", label: "CLIENTES" },
+  { key: "ACCESS_APP", label: "APP" },
+  { key: "SECTION_ROUTES", label: "RUTAS" },
+  { key: "SECTION_ADMINISTRATION", label: "EMPRESAS" },
+  { key: "SECTION_SELLER", label: "VENDEDORES" },
 ];
