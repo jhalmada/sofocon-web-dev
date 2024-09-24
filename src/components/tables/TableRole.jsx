@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReusableModal from "../modals/ReusableModal";
 import Input from "../inputs/Input";
 import useRoles from "../../Hooks/roles/use.roles";
@@ -6,26 +6,28 @@ import Pagination from "../Pagination";
 import icono from "../../assets/users/ImgEscudo.png";
 import editIcon from "../../assets/icons/pencil-square.svg";
 import deleteIcon from "../../assets/icons/trash3.svg";
-import { s } from "framer-motion/client";
 import useDeleteRoles from "../../Hooks/roles/useDeleteRoles";
 import { Select, SelectItem } from "@nextui-org/select";
 import { permisos } from "../../utils/permisons";
 import usePatchRoles from "../../Hooks/roles/usePatchRoles";
+import { useForm } from "react-hook-form";
 
-const formatPermisos = (permisos) => {
-  return permisos.join("/");
+const formatPermisos = (permisos, excludeWords = ["USER_ADMIN"]) => {
+  return permisos.filter((p) => !excludeWords.includes(p)).join("/");
 };
 
 const TableRole = () => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
+
   const { changedUser, isChanged } = usePatchRoles();
   const [newName, setNewName] = useState("");
 
   const { isDeleted, isLoading, deleteUser } = useDeleteRoles();
-  const [values, setValues] = useState([]);
-  const handleSelectionChange = (e) => {
-    setValues(e.target.value.split(","));
-  };
-
   const [roleId, setRoleId] = useState("");
   const [rolePage, setRolePage] = useState(5);
   const { RolesResponse, loading } = useRoles();
@@ -75,11 +77,10 @@ const TableRole = () => {
     closeModal();
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = (data) => {
     const roleData = {
-      name: newName,
-      permissions: values,
+      name: data.name,
+      permissions: [...data.permissions, "USER_ADMIN"],
     };
     changedUser(roleData, roleId);
     openSaveConfirmationModal();
@@ -169,29 +170,41 @@ const TableRole = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
         title={modalTitle}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         buttons={modalButtons}
         handleCancelClick={handleCancelClick}
       >
-        <Input
-          label={"Nombre del rol"}
-          placeholder={"Escribe el nombre del rol..."}
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-        />
-        <Select
-          labelPlacement="outside"
-          label="Asignar permisos"
-          selectionMode="multiple"
-          placeholder="Permisos"
-          selectedKeys={values}
-          className="max-w rounded-md border font-roboto font-medium"
-          onChange={handleSelectionChange}
-        >
-          {permisos.map((permiso) => (
-            <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-          ))}
-        </Select>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+          <Input
+            {...register("name", {
+              required: "El nombre del rol es obligatorio",
+            })}
+            label={"Nombre del rol"}
+            placeholder={"Escribe el nombre del rol..."}
+            errorApi={errors.name}
+            msjError={errors.name ? errors.name.message : ""}
+          />
+          <Select
+            labelPlacement="outside"
+            label="Asignar permisos"
+            selectionMode="multiple"
+            placeholder="Permisos"
+            className="max-w mt-10 rounded-md border font-roboto font-medium"
+            {...register("permissions", {
+              required: "Debes asignar al menos un permiso",
+            })}
+            onSelectionChange={(values) => setValue("permissions", values)}
+          >
+            {permisos.map((permiso) => (
+              <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+            ))}
+          </Select>
+          {errors.permissions && (
+            <span className="font-roboto text-xs text-red_e">
+              {errors.permissions.message}
+            </span>
+          )}
+        </form>
       </ReusableModal>
 
       <ReusableModal

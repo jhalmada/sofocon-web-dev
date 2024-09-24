@@ -8,25 +8,39 @@ import { useState } from "react";
 import { Select as NextUISelect, SelectItem } from "@nextui-org/select";
 import useAddroles from "../Hooks/roles/useAddroles";
 import { permisos } from "../utils/permisons";
+import ReusableModal from "../components/modals/ReusableModal";
+import { useForm } from "react-hook-form"; // Importamos React Hook Form
 
 const AddRolePage = () => {
-  const [name, setName] = useState("");
   const { postAddRoles, loading, idRol } = useAddroles();
-  const [values, setValues] = useState([]);
+  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+    useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Inicializamos useForm para manejar los inputs
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    // Aquí obtendremos los datos del formulario
     const newRole = await postAddRoles({
-      name,
-      permissions: values,
+      name: data.name,
+      permissions: [...data.permissions, "USER_ADMIN"],
     });
-    console.log("rol creado");
-    console.log(newRole);
+    console.log("rol creado", newRole);
     console.log(idRol);
+    setSaveConfirmationModalOpen(true);
   };
 
-  const handleSelectionChange = (selectedKeys) => {
-    setValues(selectedKeys);
+  const closeSaveConfirmationModal = () => {
+    setSaveConfirmationModalOpen(false);
+  };
+
+  const handleConfirmSaveClick = () => {
+    setSaveConfirmationModalOpen(false);
   };
 
   return (
@@ -59,36 +73,46 @@ const AddRolePage = () => {
         </div>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)} // Usamos handleSubmit de React Hook Form
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
-          <div className="space-y-3">
+          <div className="flex flex-col">
             <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              {...register("name", {
+                required: "El nombre del rol es obligatorio",
+              })}
               label={"Nombre del rol"}
               placeholder={"Escribe el nombre del rol..."}
+              errorApi={errors.name}
+              msjError={errors.name ? errors.name.message : ""}
             />
+
             <NextUISelect
               labelPlacement="outside"
               label="Asignar permisos"
               selectionMode="multiple"
               placeholder="Permisos"
-              selectedKeys={values}
-              className="max-w rounded-md border font-roboto font-medium"
-              onChange={handleSelectionChange}
+              className="max-w mt-10 rounded-md border font-roboto font-medium"
+              {...register("permissions", {
+                required: "Debes asignar al menos un permiso",
+              })}
+              onSelectionChange={(values) => setValue("permissions", values)} // Usamos setValue para sincronizar con React Hook Form
             >
               {permisos.map((permiso) => (
                 <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
               ))}
             </NextUISelect>
+            {errors.permissions && (
+              <span className="font-roboto text-xs text-red_e">
+                {errors.permissions.message}
+              </span>
+            )}
           </div>
 
           <div className="flex justify-end py-6">
             <div>
               <Button
                 text={"GUARDAR"}
-                onClick={handleSubmit}
                 color={"save"}
                 type={"submit"}
                 icon={ArrowRightIcon}

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import UserRow from "../components/UserRow";
-import TableRole from "../components/tables/TableRole";
-import Button from "../components/buttons/Button";
-import ReusableModal from "../components/modals/ReusableModal";
-import Pagination from "../components/Pagination";
-import Input from "../components/inputs/Input";
-import Select from "../components/selects/Select";
+import UserRow from "../Components/UserRow";
+import TableRole from "../Components/tables/TableRole";
+import Button from "../Components/buttons/Button";
+import ReusableModal from "../Components/modals/ReusableModal";
+import Pagination from "../Components/Pagination";
+import Input from "../Components/inputs/Input";
+import Select from "../Components/selects/Select";
 import Checkbox from "../components/checkboxs/Checkbox";
 import SearchInput from "../components/inputs/SearchInput";
 import IconEye from "../assets/icons/IconEye.svg";
@@ -24,7 +24,7 @@ const USER_TAB = "users";
 const ROLES_TAB = "roles";
 
 const UsersPage = () => {
-  const [userPage, setUserPage] = useState(1);
+  const [userPage, setUserPage] = useState(5);
   const { usersResponse, loading } = useUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,7 +41,7 @@ const UsersPage = () => {
   const paginatedUsers = usersResponse
     ? usersResponse.result.slice(startIndex, startIndex + userPage)
     : [];
-
+  console.log(paginatedUsers);
   const openModal = () => setModalOpen(true);
   const closeModal = () => {
     setModalOpen(false);
@@ -174,10 +174,10 @@ const UsersPage = () => {
                 {paginatedUsers.map((user, index) => (
                   <UserRow
                     key={index}
-                    fullName={`${user.userInfo.fullName} `}
+                    fullName={user.userInfo.fullName}
                     email={user.email}
                     password=""
-                    role={user.role.name}
+                    role={user?.role?.name || "Sin rol"}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     onEditClick={openModal}
