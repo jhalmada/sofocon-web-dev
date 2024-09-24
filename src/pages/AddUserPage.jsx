@@ -173,7 +173,9 @@ const AddUserPage = () => {
 
             <Select
               isDisabled={checkSelected === "nuevo"}
+              labelPlacement="outside"
               label="Selecciona un rol"
+              className="max-w mt-10 rounded-md border font-roboto font-medium"
               {...register("role", {
                 required:
                   checkSelected === "existente"
@@ -187,6 +189,13 @@ const AddUserPage = () => {
                   <SelectItem key={rol.id}>{rol.name}</SelectItem>
                 ))}
             </Select>
+            {errors.role && errors.role.message ? (
+              <span className="font-roboto text-xs text-red_e">
+                {errors.role.message}
+              </span>
+            ) : (
+              ""
+            )}
 
             {/* Asignar nuevo rol */}
             <div className="flex flex-col">
@@ -198,7 +207,7 @@ const AddUserPage = () => {
                 Asignar nuevo rol
               </Checkbox>
 
-              <div className="flex w-full flex-row justify-around">
+              <div className="flex w-full flex-row justify-between">
                 <div className="w-[48%]">
                   <Input
                     label={"Nombre del rol"}
@@ -210,15 +219,19 @@ const AddUserPage = () => {
                           ? "Debes ingresar el nombre del rol"
                           : false,
                     })}
-                    error={errors.nameRole?.message}
+                    errorApi={errors.nameRole}
+                    msjError={errors.nameRole ? errors.nameRole.message : ""}
                   />
                 </div>
 
                 <div className="mt-5 w-[48%]">
                   <Select
                     isDisabled={checkSelected === "existente"}
+                    labelPlacement="outside"
                     label="Asignar permisos"
+                    placeholder="Permisos"
                     selectionMode="multiple"
+                    className="max-w rounded-md border font-roboto font-medium"
                     {...register("permissions", {
                       required:
                         checkSelected === "nuevo"
@@ -233,17 +246,19 @@ const AddUserPage = () => {
                       <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
                     ))}
                   </Select>
-                  {errors.permissions && (
-                    <span className="text-red-500">
+                  {errors.permissions && errors.permissions.message ? (
+                    <span className="font-roboto text-xs text-red_e">
                       {errors.permissions.message}
                     </span>
+                  ) : (
+                    " "
                   )}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex w-full">
             <Button
               text={"GUARDAR"}
               color={"save"}

@@ -19,13 +19,16 @@ import DownloadIcon from "../assets/icons/download.svg";
 import useUsers from "../Hooks/users/use.users.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
+import useDeleteUsers from "../Hooks/users/useDeleteUsers.js";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
 
 const UsersPage = () => {
   const [userPage, setUserPage] = useState(5);
+  const [userId, setUserId] = useState(null);
   const { usersResponse, loading } = useUsers();
+  const { deleteUser, isDeleted, isLoading } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -61,11 +64,14 @@ const UsersPage = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-  const openConfirmDeleteModal = () => setConfirmDeleteModalOpen(true);
+  const openConfirmDeleteModal = (id) => {
+    setUserId(id);
+    setConfirmDeleteModalOpen(true);
+  };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
-    console.log("usuario eliminado");
+    deleteUser(userId);
     closeConfirmDeleteModal();
   };
 
@@ -181,7 +187,7 @@ const UsersPage = () => {
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     onEditClick={openModal}
-                    onDeleteClick={openConfirmDeleteModal}
+                    onDeleteClick={() => openConfirmDeleteModal(user.id)}
                   />
                 ))}
               </tbody>
@@ -261,7 +267,7 @@ const UsersPage = () => {
         title="Eliminar usuario"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={handleConfirmDelete}
+        onAccept={() => handleConfirmDelete(userId)}
       >
         Este usuario será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
