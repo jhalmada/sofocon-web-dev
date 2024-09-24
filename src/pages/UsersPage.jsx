@@ -35,7 +35,7 @@ const UsersPage = () => {
   const { RolesResponse } = useRoles();
   const { deleteUser, isDeleted, isLoading } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -43,14 +43,13 @@ const UsersPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [isExistingRoleChecked, setIsExistingRoleChecked] = useState(false);
   const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
-  const [userId, setUserId] = useState("");
   const [checkSelected, setCheckSelected] = useState("existente");
   const [userData, setUserData] = useState(null);
 
   const totalUsers = usersResponse ? usersResponse.result.length : 0;
   const totalPages = Math.ceil(totalUsers / userPage);
 
-  const startIndex = currentPage * userPage;
+  const startIndex = (currentPage - 1) * userPage;
   const paginatedUsers = usersResponse
     ? usersResponse.result.slice(startIndex, startIndex + userPage)
     : [];
@@ -165,23 +164,9 @@ const UsersPage = () => {
     }
   };
 
-  // const onSubmit = (data) => {
-  //   e.preventDefault();
-  //   changedUser(userData, userId);
-  //   openSaveConfirmationModal();
-  // };
-
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
-  const handleExistingRoleChange = () => {
-    setIsExistingRoleChecked(!isExistingRoleChecked);
-  };
-
-  const handleNewRoleChange = () => {
-    setIsNewRoleChecked(!isNewRoleChecked);
-  };
-
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -337,13 +322,23 @@ const UsersPage = () => {
                   value: 8,
                   message: "La contraseña debe tener al menos 8 caracteres",
                 },
+                validate: {
+                  hasUpperCase: (value) =>
+                    /[A-Z]/.test(value) ||
+                    "Debes incluir al menos una mayúscula",
+                  hasLowerCase: (value) =>
+                    /[a-z]/.test(value) ||
+                    "Debes incluir al menos una minúscula",
+                  hasNumber: (value) =>
+                    /\d/.test(value) || "Debes incluir al menos un número",
+                  hasSpecialChar: (value) =>
+                    /[!@#$%^&*()_+\-=\[\]{}|;':"\\/,.<>?]/.test(value) ||
+                    "Debes incluir al menos un carácter especial",
+                },
               })}
               errorApi={errors.password}
               msjError={errors.password ? errors.password.message : ""}
             />
-            <p className="-mt-6 mb-10 text-xs leading-[.875rem] text-black_b">
-              *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
-            </p>
           </div>
           <div className="mb-4 space-y-2">
             <Checkbox
