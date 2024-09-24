@@ -19,10 +19,10 @@ import DownloadIcon from "../assets/icons/download.svg";
 import useUsers from "../hooks/users/use.users.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import usePutUsers from "../Hooks/users/usePutUsers.js";
+import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
-import useRoles from "../Hooks/roles/use.roles";
-import useDeleteUsers from "../Hooks/users/useDeleteUsers.js";
+import useRoles from "../hooks/roles/use.roles";
+import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";

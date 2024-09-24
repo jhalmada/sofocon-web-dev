@@ -6,7 +6,7 @@ import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import { Select, SelectItem } from "@nextui-org/select";
-import useAddroles from "../Hooks/roles/useAddroles";
+import useAddroles from "../hooks/roles/useAddroles";
 import { permisos } from "../utils/permisons";
 import ReusableModal from "../components/modals/ReusableModal";
 import { useForm } from "react-hook-form"; // Importamos React Hook Form

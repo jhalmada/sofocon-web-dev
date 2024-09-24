@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
-import ReusableModal from "../modals/ReusableModal";
-import Input from "../inputs/Input";
-import useRoles from "../../Hooks/roles/use.roles";
+import { useState } from "react";
 import Pagination from "../Pagination";
 import icono from "../../assets/users/ImgEscudo.png";
 import editIcon from "../../assets/icons/pencil-square.svg";
 import deleteIcon from "../../assets/icons/trash3.svg";
-import useDeleteRoles from "../../Hooks/roles/useDeleteRoles";
+import useDeleteRoles from "../../hooks/roles/useDeleteRoles";
 import { Select, SelectItem } from "@nextui-org/select";
 import { permisos } from "../../utils/permisons";
-import usePatchRoles from "../../Hooks/roles/usePatchRoles";
+import usePatchRoles from "../../hooks/roles/usePatchRoles";
 import { useForm } from "react-hook-form";
+import useRoles from "../../hooks/roles/use.roles";
+import ReusableModal from "../modals/ReusableModal";
+import Input from "../inputs/Input";
 
 const formatPermisos = (permisos, excludeWords = ["USER_ADMIN"]) => {
   return permisos.filter((p) => !excludeWords.includes(p)).join("/");
