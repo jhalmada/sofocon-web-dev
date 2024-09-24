@@ -1,40 +1,40 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-import Checkbox from "../components/checkboxs/Checkbox";
-import Input from "../components/inputs/Input";
+//import Checkbox from "../components/checkboxs/Checkbox";
+import Input from "../Components/inputs/Input";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
-import Button from "../components/buttons/Button";
+import Button from "../Components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import AddUsers from "../Hooks/users/use.addUsers";
-import ReusableModal from "../components/modals/ReusableModal";
+import ReusableModal from "../Components/modals/ReusableModal";
 import { permisos } from "../utils/permisons";
-import { roles } from "../utils/DataInfo";
 import { Select, SelectItem } from "@nextui-org/select";
+import useRoles from "../Hooks/roles/use.roles";
+import { Checkbox } from "@nextui-org/react";
+import { useForm } from "react-hook-form";
 
 const AddUserPage = () => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm();
+  const { RolesResponse } = useRoles();
   const { postAddUsers, loading } = AddUsers();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [values, setValues] = useState([]);
+  const [values, setValues] = useState(new Set([]));
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [checkSelected, setCheckSelected] = useState("existente");
 
+  const handleUserCreation = async (userData) => {
     try {
-      const newUser = await postAddUsers({
-        firstName: name,
-        lastName: name,
-        email,
-        password,
-        role: "b3137878-2db6-41a0-a697-49638086ca83",
-      });
-
+      const newUser = await postAddUsers(userData);
       console.log(newUser);
       if (newUser) {
         setSaveConfirmationModalOpen(true);
@@ -47,8 +47,29 @@ const AddUserPage = () => {
     }
   };
 
-  const handleSelectionChange = (e) => {
-    setValues(e.target.value.split(","));
+  const onSubmit = (data) => {
+    const { fullName, email, password, role, nameRole, permissions } = data;
+
+    switch (checkSelected) {
+      case "existente":
+        handleUserCreation({
+          fullName,
+          email,
+          password,
+          role: { id: role }, // Pasamos el rol existente
+        });
+        break;
+      default:
+        handleUserCreation({
+          fullName,
+          email,
+          password,
+          role: {
+            name: nameRole,
+            permissions: [...permissions, "USER_ADMIN"], // Permisos asignados
+          },
+        });
+    }
   };
 
   const handleCloseModal = () => {
@@ -91,82 +112,144 @@ const AddUserPage = () => {
           </div>
         </div>
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
           <div className="space-y-3">
+            {/* Nombre Completo */}
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
-              onChange={(e) => setName(e.target.value)}
-              value={name}
+              {...register("fullName", {
+                required: "El nombre completo es obligatorio",
+              })}
+              errorApi={errors.fullName}
+              msjError={errors.fullName ? errors.fullName.message : ""}
             />
+
+            {/* Correo electrónico */}
             <Input
               label={"Correo electrónico"}
               placeholder={"Escribe el email del usuario..."}
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
+              {...register("email", {
+                required: "El correo electrónico es obligatorio",
+              })}
+              errorApi={errors.email}
+              msjError={errors.email ? errors.email.message : ""}
             />
+
+            {/* Contraseña */}
             <div className="pb-8">
               <Input
                 type="password"
-                icon1={IconEye}
-                icon2={IconEyeSlash}
                 label={"Contraseña"}
                 placeholder={"Escribe la contraseña..."}
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
+                icon1={IconEye}
+                icon2={IconEyeSlash}
+                {...register("password", {
+                  required: "La contraseña es obligatoria",
+                  minLength: {
+                    value: 8,
+                    message: "La contraseña debe tener al menos 8 caracteres",
+                  },
+                })}
+                errorApi={errors.password}
+                msjError={errors.password ? errors.password.message : ""}
               />
-              <p className="-mt-6 text-xs leading-[.875rem] text-black_b">
+              <p className="mt-5 text-xs leading-[.875rem] text-black_b">
                 *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
               </p>
             </div>
-            <Checkbox text={"Asignar rol existente"} />
-            <Select
-              labelPlacement="outside"
-              selectionMode="multiple"
-              placeholder="Rol"
-              selectedKeys={values}
-              className="max-w rounded-md border font-roboto font-medium"
-              onChange={handleSelectionChange}
+
+            {/* Asignar rol existente */}
+            <Checkbox
+              defaultSelected={checkSelected === "existente"}
+              isSelected={checkSelected === "existente"}
+              onClick={() => setCheckSelected("existente")}
+              radius="full"
             >
-              {roles.map((rol, index) => (
-                <SelectItem key={index}>{rol.fullName}</SelectItem>
-              ))}
+              Asignar rol existente
+            </Checkbox>
+
+            <Select
+              isDisabled={checkSelected === "nuevo"}
+              label="Selecciona un rol"
+              {...register("role", {
+                required:
+                  checkSelected === "existente"
+                    ? "Debes seleccionar un rol"
+                    : false,
+              })}
+              onSelectionChange={(value) => setValue("role", value)}
+            >
+              {RolesResponse &&
+                RolesResponse.map((rol) => (
+                  <SelectItem key={rol.id}>{rol.name}</SelectItem>
+                ))}
             </Select>
 
-            <div className="flex items-center space-x-10">
-              <div className="mt-9 flex w-full flex-col space-y-2">
-                <Checkbox text={"Asignar nuevo rol"} />
-                <Input placeholder={"Escribe el nombre del rol..."} />
-              </div>
-              <div className="w-full">
-                <Select
-                  labelPlacement="outside"
-                  label="Asignar permisos"
-                  selectionMode="multiple"
-                  placeholder="Permisos"
-                  selectedKeys={values}
-                  className="max-w rounded-md border font-roboto font-medium"
-                  onChange={handleSelectionChange}
-                >
-                  {permisos.map((permiso) => (
-                    <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-                  ))}
-                </Select>
+            {/* Asignar nuevo rol */}
+            <div className="flex flex-col">
+              <Checkbox
+                radius="full"
+                isSelected={checkSelected === "nuevo"}
+                onClick={() => setCheckSelected("nuevo")}
+              >
+                Asignar nuevo rol
+              </Checkbox>
+
+              <div className="flex w-full flex-row justify-around">
+                <div className="w-[48%]">
+                  <Input
+                    label={"Nombre del rol"}
+                    disabled={checkSelected === "existente"}
+                    placeholder={"Escribe el nombre del rol..."}
+                    {...register("nameRole", {
+                      required:
+                        checkSelected === "nuevo"
+                          ? "Debes ingresar el nombre del rol"
+                          : false,
+                    })}
+                    error={errors.nameRole?.message}
+                  />
+                </div>
+
+                <div className="mt-5 w-[48%]">
+                  <Select
+                    isDisabled={checkSelected === "existente"}
+                    label="Asignar permisos"
+                    selectionMode="multiple"
+                    {...register("permissions", {
+                      required:
+                        checkSelected === "nuevo"
+                          ? "Debes asignar permisos"
+                          : false,
+                    })}
+                    onSelectionChange={(values) =>
+                      setValue("permissions", values)
+                    }
+                  >
+                    {permisos.map((permiso) => (
+                      <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+                    ))}
+                  </Select>
+                  {errors.permissions && (
+                    <span className="text-red-500">
+                      {errors.permissions.message}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
+
           <div className="flex justify-end">
-            <div>
-              <Button
-                text={"GUARDAR"}
-                onClick={handleSubmit}
-                color={"save"}
-                type={"submit"}
-                icon={ArrowRightIcon}
-              />
-            </div>
+            <Button
+              text={"GUARDAR"}
+              color={"save"}
+              type={"submit"}
+              icon={ArrowRightIcon}
+            />
           </div>
         </form>
         <ReusableModal

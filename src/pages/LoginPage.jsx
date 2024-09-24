@@ -8,23 +8,34 @@ import ReusableModal from "../components/modals/ReusableModal";
 import { BASE_URL, HOME_ROUTE } from "../utils/Constants";
 import useLogin from "../Hooks/auth/use.login.js";
 import { Button } from "@nextui-org/react";
+import { useForm } from "react-hook-form";
 
 const LoginPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const { loading, onLogin } = useLogin();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const { error } = useApiRequest(BASE_URL);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const loginResult = await onLogin({ email, password });
-    console.log(loginResult);
-    if (!loginResult) {
-      setIsModalOpen(true);
-    } else {
-      navigate(HOME_ROUTE);
+  const onSubmit = async (data) => {
+    try {
+      const loginResult = await onLogin(data);
+      console.log(loginResult);
+      if (!loginResult) {
+        // Mostrar mensaje de error
+        setIsModalOpen(true);
+      } else {
+        navigate(HOME_ROUTE);
+      }
+    } catch (error) {
+      console.error(error);
+      // Mostrar mensaje de error
+      alert("Ocurrió un error durante el inicio de sesión");
     }
   };
 
@@ -33,28 +44,46 @@ const LoginPage = () => {
   };
 
   return (
-    <form className="w-full" onSubmit={handleSubmit}>
+    <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
       <Input
         placeholder={"Escribe tu correo"}
         label={"Dirección de correo"}
-        msjError={
-          "*Este campo debe contener una dirección de correo válida vinculada a la plataforma."
-        }
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        errorApi={error}
+        {...register("email", {
+          required: {
+            value: true,
+            message: "Campo obligatorio",
+          },
+          pattern: {
+            value:
+              /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
+            message: "Formato de email incorrecto",
+          },
+        })} // Add this line
+        errorApi={errors.email}
+        msjError={errors.email ? errors.email.message : ""}
       />
+      {console.log(errors.email)}
       <Input
         placeholder={"Escribe tu contraseña"}
         label={"Contraseña"}
-        msjError={
-          "*Este campo debe contener entre 8 y 20 caracteres alfanuméricos."
-        }
         type={"password"}
         icon1={IconEye}
         icon2={IconEyeSlash}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        {...register("password", {
+          required: {
+            value: true,
+            message: "Campo obligatorio",
+          },
+          minLength: {
+            value: 8,
+            message: "La contraseña debe contener al menos 8 caracteres.",
+          },
+          maxLength: {
+            value: 20,
+            message: "La contraseña no puede exceder los 20 caracteres.",
+          },
+        })}
+        msjError={errors.password ? errors.password.message : ""}
         errorApi={error}
       />
 
