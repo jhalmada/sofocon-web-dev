@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
-import Button from "../Components/buttons/Button";
+import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import AddUsers from "../hooks/users/use.addUsers";
