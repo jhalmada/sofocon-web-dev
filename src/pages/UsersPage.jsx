@@ -183,9 +183,12 @@ const UsersPage = () => {
             Volver
           </Link>
         </div>
-        <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Usuarios
-        </h1>
+        <div className="flex justify-between">
+          <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
+            Usuarios
+          </h1>
+          <SearchInput placeholder="Buscar..." />
+        </div>
         <div className="flex items-center">
           <div className="flex">
             <h2
@@ -201,8 +204,7 @@ const UsersPage = () => {
               Roles
             </h2>
           </div>
-          <div className="flex h-8 w-full items-center justify-between gap-[0.875rem] rounded p-2">
-            <SearchInput placeholder="Buscar..." />
+          <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
             {activeTab === USER_TAB && (
               <div className="flex space-x-4">
                 <Button
@@ -234,8 +236,8 @@ const UsersPage = () => {
                     Email
                   </th>
                   <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <h3>Rol</h3>
                     <div className="flex gap-2">
+                      <h3>Rol</h3>
                       <img
                         src={FilterRightIcon}
                         alt="chevron-down icon"

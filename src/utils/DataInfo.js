@@ -6,14 +6,16 @@ import houseIcon from "../assets/icons/house-door.svg";
 import shopIcon from "../assets/icons/shop-window.svg";
 import peopleIcon from "../assets/icons/people.svg";
 import briefcaseIcon from "../assets/icons/briefcase.svg";
+import briefActiveIcon from "../assets/icons/briefcase-fill.svg";
 import compassIcon from "../assets/icons/compass.svg";
 import boxIcon from "../assets/icons/box-seam.svg";
-import briefActiveIcon from "../assets/icons/briefcase-fill.svg";
-import compassActiveIcon from "../assets/icons/compass-fill.svg";
 import boxActiveIcon from "../assets/icons/box-seam-fill.svg";
+import compassActiveIcon from "../assets/icons/compass-fill.svg";
 import houseActiveIcon from "../assets/icons/house-door-fill.svg";
 import peopleActiveIcon from "../assets/icons/people-fill.svg";
 import shopActiveIcon from "../assets/icons/shop-window-fill.svg";
+import clipboardIcon from "../assets/icons/clipboard-check.svg";
+import clipboardActiveIcon from "../assets/icons/clipboard-check-fill.svg";
 
 const users = [
   {
@@ -130,6 +132,12 @@ const menuItems = [
     path: "/inicio/productos",
     icon: boxIcon,
     activeIcon: boxActiveIcon,
+  },
+  {
+    name: "Facturación",
+    path: "/inicio/facturacion",
+    icon: clipboardIcon,
+    activeIcon: clipboardActiveIcon,
   },
 ];
 

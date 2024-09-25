@@ -5,31 +5,37 @@ import NewPasswordPage from "../pages/NewPasswordPage";
 import PasswordPage from "../pages/PasswordPage";
 import Public from "../layouts/Public";
 import UsersLayout from "../layouts/Users";
+import CompaniesLayout from "../layouts/Companies";
 import HomePage from "../pages/HomePage";
 import CompaniesPage from "../pages/CompaniesPage";
+import AddCompaniePage from "../pages/AddCompaniesPage";
 import UsersPage from "../pages/UsersPage";
 import AddUserPage from "../pages/AddUserPage";
 import AddRolePage from "../pages/AddRolePage";
 import SellersPage from "../pages/SellersPage";
 import RoutesPage from "../pages/RoutesPage";
 import ProductsPage from "../pages/ProductsPage";
+
 import { Login } from "../layouts/Login";
 import RedirectionPage from "../pages/RedirectionPage";
 import {
   ADD_ROLE_ROUTE,
   ADD_USER_ROUTE,
+  ADD_COMPANIE_ROUTE,
   COMPANIES_ROUTE,
   HOME_ROUTE,
   LOGIN_ROUTE,
   NEW_PASSWORD_ROUTE,
   PASSWORD_CHANGED_ROUTE,
   PRODUCTS_ROUTE,
+  FACTURATION_ROUTE,
   RECOVER_ROUTE,
   REDIRECTION_ROUTE,
   ROUTES_ROUTE,
   SELLERS_ROUTE,
   USERS_ROUTE,
 } from "../utils/Constants";
+import FacturationPage from "../pages/FacturationPage";
 
 export const router = createBrowserRouter([
   {
@@ -64,7 +70,17 @@ export const router = createBrowserRouter([
       },
       {
         path: COMPANIES_ROUTE,
-        element: <CompaniesPage />,
+        element: <CompaniesLayout />,
+        children: [
+          {
+            index: true,
+            element: <CompaniesPage />,
+          },
+          {
+            path: ADD_COMPANIE_ROUTE,
+            element: <AddCompaniePage />,
+          },
+        ],
       },
       {
         path: USERS_ROUTE,
@@ -95,6 +111,10 @@ export const router = createBrowserRouter([
       {
         path: PRODUCTS_ROUTE,
         element: <ProductsPage />,
+      },
+      {
+        path: FACTURATION_ROUTE,
+        element: <FacturationPage />,
       },
     ],
   },

@@ -10,11 +10,13 @@ export const COMPANIES_ROUTE = "empresas";
 export const USERS_ROUTE = "usuarios";
 export const ADD_USER_ROUTE = "agregar-usuario";
 export const ADD_ROLE_ROUTE = "agregar-rol";
+export const ADD_COMPANIE_ROUTE = "agregar-empresa";
 export const SELLERS_ROUTE = "vendedores";
 export const ROUTES_ROUTE = "rutas";
 export const PRODUCTS_ROUTE = "productos";
+export const FACTURATION_ROUTE = "facturacion";
 export const REDIRECTION_ROUTE = "/";
 
-export const SOFOCON_JWT_TOKEN = 'SOFOCON_JWT_TOKEN';
-export const SOFOCON_JWT_REFRESH_TOKEN = 'SOFOCON_JWT_REFRESH_TOKEN';
-export const SOFOCON_PERMISSIONS = 'SOFOCON_PERMISSIONS';
+export const SOFOCON_JWT_TOKEN = "SOFOCON_JWT_TOKEN";
+export const SOFOCON_JWT_REFRESH_TOKEN = "SOFOCON_JWT_REFRESH_TOKEN";
+export const SOFOCON_PERMISSIONS = "SOFOCON_PERMISSIONS";
