@@ -29,11 +29,11 @@ const ROLES_TAB = "roles";
 
 const UsersPage = () => {
   const [userPage, setUserPage] = useState(5);
-  const { changedUser, isChanged } = usePutUsers();
+  const { changedUser } = usePutUsers();
   const [userId, setUserId] = useState(null);
-  const { usersResponse, loading } = useUsers();
+  const { usersResponse } = useUsers();
   const { RolesResponse } = useRoles();
-  const { deleteUser, isDeleted, isLoading } = useDeleteUsers();
+  const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,8 +41,6 @@ const UsersPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [isExistingRoleChecked, setIsExistingRoleChecked] = useState(false);
-  const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [userData, setUserData] = useState(null);
 
@@ -158,7 +156,6 @@ const UsersPage = () => {
           role: {
             name: nameRole,
             permissions: [...permissions, "USER_ADMIN"],
-            s,
           },
         });
     }
@@ -322,18 +319,16 @@ const UsersPage = () => {
                   value: 8,
                   message: "La contraseña debe tener al menos 8 caracteres",
                 },
+                maxLength: {
+                  value: 20,
+                  message: "La contraseña debe tener menos de 20 caracteres",
+                },
                 validate: {
-                  hasUpperCase: (value) =>
-                    /[A-Z]/.test(value) ||
-                    "Debes incluir al menos una mayúscula",
-                  hasLowerCase: (value) =>
-                    /[a-z]/.test(value) ||
-                    "Debes incluir al menos una minúscula",
                   hasNumber: (value) =>
                     /\d/.test(value) || "Debes incluir al menos un número",
-                  hasSpecialChar: (value) =>
-                    /[!@#$%^&*()_+\-=\[\]{}|;':"\\/,.<>?]/.test(value) ||
-                    "Debes incluir al menos un carácter especial",
+                  hasLetter: (value) =>
+                    /[a-zA-Z]/.test(value) ||
+                    "Debes incluir al menos una letra",
                 },
               })}
               errorApi={errors.password}
