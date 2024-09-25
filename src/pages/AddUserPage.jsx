@@ -6,7 +6,7 @@ import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
-import AddUsers from "../Hooks/users/use.addUsers";
+import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
 import { permisos } from "../utils/permisons";
 import { Select, SelectItem } from "@nextui-org/select";
