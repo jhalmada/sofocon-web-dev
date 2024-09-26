@@ -8,8 +8,8 @@ import UsersLayout from "../layouts/Users";
 import CompaniesLayout from "../layouts/Companies";
 import HomePage from "../pages/HomePage";
 import CompaniesPage from "../pages/CompaniesPage";
-import AddCompaniePage from "../pages/AddCompaniePage";
 import UsersPage from "../pages/UsersPage";
+import AddCompaniePage from "../pages/AddCompaniePage";
 import AddUserPage from "../pages/AddUserPage";
 import AddRolePage from "../pages/AddRolePage";
 import SellersPage from "../pages/SellersPage";
@@ -22,20 +22,24 @@ import {
   ADD_ROLE_ROUTE,
   ADD_USER_ROUTE,
   ADD_COMPANIE_ROUTE,
+  ADD_NOTE_ROUTE,
   COMPANIES_ROUTE,
   HOME_ROUTE,
   LOGIN_ROUTE,
   NEW_PASSWORD_ROUTE,
   PASSWORD_CHANGED_ROUTE,
   PRODUCTS_ROUTE,
-  FACTURATION_ROUTE,
+  ORDERS_ROUTE,
   RECOVER_ROUTE,
   REDIRECTION_ROUTE,
   ROUTES_ROUTE,
   SELLERS_ROUTE,
   USERS_ROUTE,
+  NOTES_ROUTE,
 } from "../utils/Constants";
-import FacturationPage from "../pages/FacturationPage";
+import OrdersPage from "../pages/OrdersPage";
+import NotesPage from "../pages/NotesPage";
+import AddNotePage from "../pages/AddNotePage";
 
 export const router = createBrowserRouter([
   {
@@ -80,6 +84,16 @@ export const router = createBrowserRouter([
             path: ADD_COMPANIE_ROUTE,
             element: <AddCompaniePage />,
           },
+          {
+            path: NOTES_ROUTE,
+            element: <NotesPage />,
+            children: [
+              {
+                path: ADD_NOTE_ROUTE,
+                element: <AddNotePage />,
+              },
+            ],
+          },
         ],
       },
       {
@@ -113,8 +127,8 @@ export const router = createBrowserRouter([
         element: <ProductsPage />,
       },
       {
-        path: FACTURATION_ROUTE,
-        element: <FacturationPage />,
+        path: ORDERS_ROUTE,
+        element: <OrdersPage />,
       },
     ],
   },

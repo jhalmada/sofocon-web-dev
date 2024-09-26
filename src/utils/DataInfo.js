@@ -134,8 +134,8 @@ const menuItems = [
     activeIcon: boxActiveIcon,
   },
   {
-    name: "Facturación",
-    path: "/inicio/facturacion",
+    name: "Órdenes",
+    path: "/inicio/ordenes",
     icon: clipboardIcon,
     activeIcon: clipboardActiveIcon,
   },

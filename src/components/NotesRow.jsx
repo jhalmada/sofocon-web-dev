@@ -1,13 +1,7 @@
-import { Link } from "react-router-dom";
-
-const CompanieRow = ({
+const NotesRow = ({
   name,
-  departament,
-  direction,
-  sellers,
-  notes,
-  nextVisits,
-  state,
+  content,
+  date,
   editIconSrc,
   deleteIconSrc,
   onEditClick,
@@ -16,14 +10,8 @@ const CompanieRow = ({
   return (
     <tr>
       <td className="p-2">{name}</td>
-      <td className="p-2">{departament}</td>
-      <td className="p-2">{direction}</td>
-      <td className="p-2">{sellers}</td>
-      <Link to={"notas"}>
-        <td className="cursor-pointer p-2 underline">{notes}</td>
-      </Link>
-      <td className="p-2">{nextVisits}</td>
-      <td className="p-2">{state}</td>
+      <td className="p-2">{content}</td>
+      <td className="p-2">{date}</td>
       <td className="p-2">
         <div className="flex gap-5">
           <img
@@ -44,4 +32,4 @@ const CompanieRow = ({
   );
 };
 
-export default CompanieRow;
+export default NotesRow;

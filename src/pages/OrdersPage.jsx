@@ -1,6 +1,6 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-const FacturationPage = () => {
+const OrdersPage = () => {
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -19,13 +19,13 @@ const FacturationPage = () => {
         </Link>
 
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Facturación
+          Órdenes
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-36 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
-              Facturación
+              Órdenes
             </span>
           </div>
         </div>
@@ -41,4 +41,4 @@ const FacturationPage = () => {
   );
 };
 
-export default FacturationPage;
+export default OrdersPage;
