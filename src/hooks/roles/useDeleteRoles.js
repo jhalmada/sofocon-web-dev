@@ -5,11 +5,12 @@ const useDeleteRoles = () => {
   const [isDeleted, setIsDeleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const deleteUser = useCallback(async (userId) => {
+  const deleteUser = useCallback(async (userId, setModified) => {
     try {
       setIsLoading(true);
       await RolesService.deleteRoleApi(userId);
       setIsDeleted(true);
+      setModified((prev) => !prev);
     } catch (error) {
       console.error("Error al eliminar rol: ", error);
     } finally {

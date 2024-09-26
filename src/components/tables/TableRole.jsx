@@ -24,13 +24,12 @@ const TableRole = () => {
     formState: { errors },
   } = useForm();
 
-  const { changedUser, isChanged } = usePatchRoles();
-  const [newName, setNewName] = useState("");
+  const { changedUser } = usePatchRoles();
 
-  const { isDeleted, isLoading, deleteUser } = useDeleteRoles();
+  const { deleteUser } = useDeleteRoles();
   const [roleId, setRoleId] = useState("");
   const [rolePage, setRolePage] = useState(5);
-  const { RolesResponse, loading } = useRoles();
+  const { RolesResponse, setRolModified } = useRoles();
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -42,13 +41,18 @@ const TableRole = () => {
 
   const totalRoles = RolesResponse ? RolesResponse.length : 0;
   const totalPages = Math.ceil(totalRoles / rolePage);
-  const [currentPage, setCurrentPage] = useState(1);
-  const startIndex = (currentPage - 1) * rolePage;
+  const [currentPage, setCurrentPage] = useState(0);
+  const startIndex = currentPage * rolePage;
   const paginatedRoles = RolesResponse
     ? RolesResponse.slice(startIndex, startIndex + rolePage)
     : [];
 
-  const openModal = () => {
+  const openModal = (id) => {
+    const roleEdit = RolesResponse.find((role) => role.id === id);
+    if (roleEdit) {
+      setValue("name", roleEdit.name);
+      setValue("permissions", roleEdit.permissions);
+    }
     setModalOpen(true);
   };
 
@@ -82,12 +86,12 @@ const TableRole = () => {
       name: data.name,
       permissions: [...data.permissions, "USER_ADMIN"],
     };
-    changedUser(roleData, roleId);
+    changedUser(roleData, roleId, setRolModified);
     openSaveConfirmationModal();
   };
 
-  const handleEditClick = () => {
-    openModal();
+  const handleEditClick = (id) => {
+    openModal(id);
     setModalTitle("Editar Rol");
     setModalButtons(["cancel", "save"]);
   };
@@ -97,7 +101,7 @@ const TableRole = () => {
   };
 
   const handleConfirmCancelBackClick = (id) => {
-    deleteUser(id);
+    deleteUser(id, setRolModified);
     closeConfirmCancelModal();
     closeModal();
   };
@@ -146,7 +150,7 @@ const TableRole = () => {
                     alt="Edit icon"
                     className="h-5 w-5 cursor-pointer"
                     onClick={() => {
-                      handleEditClick();
+                      handleEditClick(role.id);
                       setRoleId(role.id);
                     }}
                   />
