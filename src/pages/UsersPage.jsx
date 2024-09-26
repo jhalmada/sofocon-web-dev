@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import UserRow from "../components/UserRow";
-import TableRole from "../components/tables/TableRole";
-import Button from "../components/buttons/Button";
-import ReusableModal from "../components/modals/ReusableModal";
-import Pagination from "../components/Pagination";
-import Input from "../components/inputs/Input";
+import UserRow from "../components/UserRow.jsx";
+import TableRole from "../components/tables/TableRole.jsx";
+import Button from "../components/buttons/Button.jsx";
+import ReusableModal from "../components/modals/ReusableModal.jsx";
+import Pagination from "../components/Pagination.jsx";
+import Input from "../components/inputs/Input.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/react";
-import SearchInput from "../components/inputs/SearchInput";
+import SearchInput from "../components/inputs/SearchInput.jsx";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import PlusIcon from "../assets/icons/plus.svg";
@@ -21,7 +21,7 @@ import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
-import useRoles from "../hooks/roles/use.roles";
+import useRoles from "../hooks/roles/use.roles.js";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 
 const USER_TAB = "users";
@@ -29,11 +29,11 @@ const ROLES_TAB = "roles";
 
 const UsersPage = () => {
   const [userPage, setUserPage] = useState(5);
-  const { changedUser, isChanged } = usePutUsers();
+  const { changedUser } = usePutUsers();
   const [userId, setUserId] = useState(null);
-  const { usersResponse, loading } = useUsers();
+  const { usersResponse } = useUsers();
   const { RolesResponse } = useRoles();
-  const { deleteUser, isDeleted, isLoading } = useDeleteUsers();
+  const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,8 +41,6 @@ const UsersPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [isExistingRoleChecked, setIsExistingRoleChecked] = useState(false);
-  const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [userData, setUserData] = useState(null);
 
@@ -158,7 +156,6 @@ const UsersPage = () => {
           role: {
             name: nameRole,
             permissions: [...permissions, "USER_ADMIN"],
-            s,
           },
         });
     }
@@ -322,18 +319,16 @@ const UsersPage = () => {
                   value: 8,
                   message: "La contraseña debe tener al menos 8 caracteres",
                 },
+                maxLength: {
+                  value: 20,
+                  message: "La contraseña debe tener menos de 20 caracteres",
+                },
                 validate: {
-                  hasUpperCase: (value) =>
-                    /[A-Z]/.test(value) ||
-                    "Debes incluir al menos una mayúscula",
-                  hasLowerCase: (value) =>
-                    /[a-z]/.test(value) ||
-                    "Debes incluir al menos una minúscula",
                   hasNumber: (value) =>
                     /\d/.test(value) || "Debes incluir al menos un número",
-                  hasSpecialChar: (value) =>
-                    /[!@#$%^&*()_+\-=\[\]{}|;':"\\/,.<>?]/.test(value) ||
-                    "Debes incluir al menos un carácter especial",
+                  hasLetter: (value) =>
+                    /[a-zA-Z]/.test(value) ||
+                    "Debes incluir al menos una letra",
                 },
               })}
               errorApi={errors.password}
