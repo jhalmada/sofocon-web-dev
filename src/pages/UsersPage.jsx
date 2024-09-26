@@ -170,19 +170,19 @@ const UsersPage = () => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
-        <div className="mb-4 flex items-center">
-          <img
-            src={ChevronLeftIcon}
-            alt="arrow left"
-            className="-ml-1 h-4 w-4"
-          />
-          <Link
-            to="/inicio"
-            className="cursor-pointer text-sm font-medium leading-4"
-          >
+        <Link
+          to="/inicio"
+          className="cursor-pointer text-sm font-medium leading-4"
+        >
+          <div className="mb-4 flex items-center">
+            <img
+              src={ChevronLeftIcon}
+              alt="arrow left"
+              className="-ml-1 h-4 w-4"
+            />
             Volver
-          </Link>
-        </div>
+          </div>
+        </Link>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Usuarios
@@ -225,7 +225,7 @@ const UsersPage = () => {
           </div>
         </div>
         {activeTab === USER_TAB && (
-          <div className="rounded-tr-lg bg-white p-5 shadow-t">
+          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
             <table className="w-full">
               <thead>
                 <tr>

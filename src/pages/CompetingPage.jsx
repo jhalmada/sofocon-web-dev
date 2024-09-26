@@ -1,16 +1,19 @@
 import { useState } from "react";
-import Pagination from "../Pagination";
-import icono from "../../assets/users/ImgEscudo.png";
-import editIcon from "../../assets/icons/pencil-square.svg";
-import deleteIcon from "../../assets/icons/trash3.svg";
-import useDeleteRoles from "../../hooks/roles/useDeleteRoles";
+import Pagination from "../components/Pagination";
+
+import useDeleteRoles from "../hooks/roles/useDeleteRoles";
 import { Select, SelectItem } from "@nextui-org/select";
-import { permisos } from "../../utils/permisons";
-import usePatchRoles from "../../hooks/roles/usePatchRoles";
+import { permisos } from "../utils/permisons";
+import usePatchRoles from "../hooks/roles/usePatchRoles";
 import { useForm } from "react-hook-form";
-import useRoles from "../../hooks/roles/use.roles";
-import ReusableModal from "../modals/ReusableModal";
-import Input from "../inputs/Input";
+import useRoles from "../hooks/roles/use.roles";
+import ReusableModal from "../components/modals/ReusableModal";
+import Input from "../components/inputs/Input";
+import CompetingRow from "../components/CompetingRow";
+import editIcon from "../assets/icons/pencil-square.svg";
+import deleteIcon from "../assets/icons/trash3.svg";
+import FilterRightIcon from "../assets/icons/filter-right.svg";
+import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 
 const formatPermisos = (permisos, excludeWords = ["USER_ADMIN"]) => {
   return permisos.filter((p) => !excludeWords.includes(p)).join("/");
@@ -115,16 +118,44 @@ const CompetingPage = () => {
     setRolePage(e);
   };
   return (
-    <div className="rounded-tr-lg bg-white p-5 shadow-t">
+    <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
         <thead>
           <tr>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]"></th>
-            <th className="w-[40.4%] p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Rol
+            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+              Nombre
             </th>
-            <th className="flex p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Permisos
+
+            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+              Departamento
+            </th>
+            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+              Dirección
+            </th>
+
+            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+              Vendedores
+            </th>
+            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+              Notas
+            </th>
+            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+              Próx. visita
+            </th>
+            <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
+              <div className="flex gap-2">
+                <h3>Estado</h3>
+                <img
+                  src={FilterRightIcon}
+                  alt="chevron-down icon"
+                  className="h-5 w-5 cursor-pointer"
+                />
+                <img
+                  src={ChevronDownIcon}
+                  alt="chevron-down icon"
+                  className="h-5 w-5 cursor-pointer"
+                />
+              </div>
             </th>
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
               Acción
@@ -133,35 +164,20 @@ const CompetingPage = () => {
         </thead>
         <tbody>
           {paginatedRoles.map((role, index) => (
-            <tr key={index}>
-              <td className="p-2">
-                <img src={icono} alt="role icon" className="h-6 w-6" />
-              </td>
-              <td className="p-2">{role.name}</td>
-              <td className="p-2">{formatPermisos(role.permissions)}</td>
-              <td className="p-2">
-                <div className="flex gap-5">
-                  <img
-                    src={editIcon}
-                    alt="Edit icon"
-                    className="h-5 w-5 cursor-pointer"
-                    onClick={() => {
-                      handleEditClick();
-                      setRoleId(role.id);
-                    }}
-                  />
-                  <img
-                    src={deleteIcon}
-                    alt="Delete icon"
-                    className="h-5 w-5 cursor-pointer"
-                    onClick={() => {
-                      handleDeleteClick();
-                      setRoleId(role.id);
-                    }}
-                  />
-                </div>
-              </td>
-            </tr>
+            <CompetingRow
+              key={index}
+              name={"Nombre empresa"}
+              departament={"Departamento"}
+              direction={"Dirección"}
+              sellers={"Nombre vendedores"}
+              notes={"Ver notas"}
+              nextVisits={"24/09/2024"}
+              state={"Frecuente"}
+              editIconSrc={editIcon}
+              deleteIconSrc={deleteIcon}
+              onEditClick={() => openModal(user.id)}
+              onDeleteClick={() => openConfirmDeleteModal(user.id)}
+            />
           ))}
         </tbody>
       </table>

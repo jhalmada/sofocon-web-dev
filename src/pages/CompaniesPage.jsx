@@ -1,16 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import UserRow from "../components/UserRow";
-import TableRole from "../components/tables/TableRole";
+
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox } from "@nextui-org/react";
 import SearchInput from "../components/inputs/SearchInput";
-import IconEye from "../assets/icons/IconEye.svg";
-import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
@@ -24,6 +20,8 @@ import { useForm } from "react-hook-form";
 import useRoles from "../hooks/roles/use.roles";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import CompanieRow from "../components/CompanieRow.jsx";
+import CompetingPage from "./CompetingPage.jsx";
+import { Calendar } from "@nextui-org/react";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -171,19 +169,19 @@ const CompaniesPage = () => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
-        <div className="mb-4 flex items-center">
-          <img
-            src={ChevronLeftIcon}
-            alt="arrow left"
-            className="-ml-1 h-4 w-4"
-          />
-          <Link
-            to="/inicio"
-            className="cursor-pointer text-sm font-medium leading-4"
-          >
+        <Link
+          to="/inicio"
+          className="cursor-pointer text-sm font-medium leading-4"
+        >
+          <div className="mb-4 flex items-center">
+            <img
+              src={ChevronLeftIcon}
+              alt="arrow left"
+              className="-ml-1 h-4 w-4"
+            />
             Volver
-          </Link>
-        </div>
+          </div>
+        </Link>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Empresas
@@ -208,13 +206,13 @@ const CompaniesPage = () => {
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
             {activeTab === COMPANIE_TAB && (
-              <div className="flex space-x-4">
+              <div className="flex gap-[.6rem]">
                 <Button
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
                 />
-                <Link to={"agregar-usuario"}>
+                <Link to={"agregar-empresa"}>
                   <Button text="Nueva Empresa" icon={PlusIcon} />
                 </Link>
                 <Link to={"agregar-ruta"}>
@@ -222,10 +220,22 @@ const CompaniesPage = () => {
                 </Link>
               </div>
             )}
+            {activeTab === COMPETING_TAB && (
+              <div className="flex gap-[.6rem]">
+                <Button
+                  text="Exportar lista"
+                  icon={DownloadIcon}
+                  color={"cancel"}
+                />
+                <Link to={"agregar-empresa"}>
+                  <Button text="Nueva Empresa" icon={PlusIcon} />
+                </Link>
+              </div>
+            )}
           </div>
         </div>
         {activeTab === COMPANIE_TAB && (
-          <div className="rounded-tr-lg bg-white p-5 shadow-t">
+          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
             <table className="w-full">
               <thead>
                 <tr>
@@ -238,6 +248,7 @@ const CompaniesPage = () => {
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Dirección
                   </th>
+
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Vendedores
                   </th>
@@ -273,7 +284,7 @@ const CompaniesPage = () => {
                     key={index}
                     name={"Nombre empresa"}
                     departament={"Departamento"}
-                    direction={"Calle Nombre, 123"}
+                    direction={"Dirección"}
                     sellers={"Nombre vendedores"}
                     notes={"Ver notas"}
                     nextVisits={"24/09/2024"}
@@ -296,111 +307,61 @@ const CompaniesPage = () => {
             </div>
           </div>
         )}
-        {activeTab === COMPETING_TAB && <TableRole />}
+        {activeTab === COMPETING_TAB && <CompetingPage />}
       </div>
 
       <ReusableModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Editar Usuario"
+        title="Editar Empresa"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <Input
-            label={"Nombre Completo"}
-            placeholder={"Escribe el nombre completo del usuario..."}
-            {...register("fullName", {
-              required: "El nombre completo es obligatorio",
-            })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
+            label={"Nombre de la empresa"}
+            placeholder={"Escribe el nombre del local..."}
           />
-          <Input
-            label={"Correo electrónico"}
-            placeholder={"Escribe el email del usuario..."}
-            {...register("email", {
-              required: "El correo electrónico es obligatorio",
-            })}
-            errorApi={errors.email}
-            msjError={errors.email ? errors.email.message : ""}
-          />
+          <Input label={"Departamento/Barrio"} placeholder={"Escribir..."} />
           <div>
             <Input
-              type="password"
-              label={"Contraseña"}
-              placeholder={"Escribe la contraseña..."}
-              icon1={IconEye}
-              icon2={IconEyeSlash}
-              {...register("password", {
-                required: "La contraseña es obligatoria",
-                minLength: {
-                  value: 8,
-                  message: "La contraseña debe tener al menos 8 caracteres",
-                },
-                validate: {
-                  hasUpperCase: (value) =>
-                    /[A-Z]/.test(value) ||
-                    "Debes incluir al menos una mayúscula",
-                  hasLowerCase: (value) =>
-                    /[a-z]/.test(value) ||
-                    "Debes incluir al menos una minúscula",
-                  hasNumber: (value) =>
-                    /\d/.test(value) || "Debes incluir al menos un número",
-                  hasSpecialChar: (value) =>
-                    /[!@#$%^&*()_+\-=\[\]{}|;':"\\/,.<>?]/.test(value) ||
-                    "Debes incluir al menos un carácter especial",
-                },
-              })}
-              errorApi={errors.password}
-              msjError={errors.password ? errors.password.message : ""}
+              label={"Dirección"}
+              placeholder={"Escribe la dirección del local..."}
+            />
+
+            <Input
+              label={"Referente"}
+              placeholder={"Escribe el nombre del referente..."}
+            />
+            <Input
+              label={"Contacto"}
+              placeholder={"Escribe el teléfono del contacto..."}
+            />
+            <Input
+              label={"R.U.T./CI"}
+              placeholder={"Escribe los datos fiscales de la empresa..."}
             />
           </div>
+          <div className="space-y-2">
+            <span>Notas</span>
+            <Button text="Nueva Nota" icon={PlusIcon} width="w-full" />
+          </div>
           <div className="mb-4 space-y-2">
-            <Checkbox
-              defaultSelected={checkSelected === "existente"}
-              isSelected={checkSelected === "existente"}
-              onClick={() => setCheckSelected("existente")}
-              radius="full"
-            >
-              Asignar rol existente
-            </Checkbox>
-            <Select
-              isDisabled={checkSelected === "nuevo"}
-              {...register("role", {
-                required:
-                  checkSelected === "existente"
-                    ? "Debes seleccionar un rol"
-                    : false,
-              })}
-              onSelectionChange={(value) => setValue("role", value)}
-            >
-              {RolesResponse &&
-                RolesResponse.map((rol) => (
-                  <SelectItem key={rol.id}>{rol.name}</SelectItem>
-                ))}
+            <label className="text-gray-700 block text-sm font-medium">
+              Asignar estado:
+            </label>
+            <Select labelPlacement="outside" label="Estado">
+              <SelectItem>Frecuente</SelectItem>
+              <SelectItem>Potencial</SelectItem>
+              <SelectItem>De Baja</SelectItem>
+              <SelectItem>Potencial/Competencia</SelectItem>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Checkbox
-              radius="full"
-              isSelected={checkSelected === "nuevo"}
-              onClick={() => setCheckSelected("nuevo")}
-            >
-              Asignar nuevo rol
-            </Checkbox>
-            <Input
-              label={"Nombre del rol"}
-              disabled={checkSelected === "existente"}
-              placeholder={"Escribe el nombre del rol..."}
-              {...register("nameRole", {
-                required:
-                  checkSelected === "nuevo"
-                    ? "Debes ingresar el nombre del rol"
-                    : false,
-              })}
-              error={errors.nameRole?.message}
+          <div className="flex justify-center">
+            <Calendar
+              aria-label="Date (Show Month and Year Picker)"
+              showMonthAndYearPickers
             />
           </div>
         </form>

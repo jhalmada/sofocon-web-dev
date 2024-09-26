@@ -115,7 +115,7 @@ const TableRole = () => {
     setRolePage(e);
   };
   return (
-    <div className="rounded-tr-lg bg-white p-5 shadow-t">
+    <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
         <thead>
           <tr>

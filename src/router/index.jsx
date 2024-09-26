@@ -8,7 +8,7 @@ import UsersLayout from "../layouts/Users";
 import CompaniesLayout from "../layouts/Companies";
 import HomePage from "../pages/HomePage";
 import CompaniesPage from "../pages/CompaniesPage";
-import AddCompaniePage from "../pages/AddCompaniesPage";
+import AddCompaniePage from "../pages/AddCompaniePage";
 import UsersPage from "../pages/UsersPage";
 import AddUserPage from "../pages/AddUserPage";
 import AddRolePage from "../pages/AddRolePage";
