@@ -9,8 +9,6 @@ import Input from "../components/inputs/Input.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/react";
 import SearchInput from "../components/inputs/SearchInput.jsx";
-import IconEye from "../assets/icons/IconEye.svg";
-import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
@@ -23,19 +21,26 @@ import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
 import useRoles from "../hooks/roles/use.roles.js";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
+import { permisos } from "../utils/permisons";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
 
 const UsersPage = () => {
-  const [userPage, setUserPage] = useState(5);
   const { changedUser } = usePutUsers();
   const [userId, setUserId] = useState(null);
-  const { usersResponse } = useUsers();
-  const { RolesResponse } = useRoles();
+  const {
+    usersResponse,
+    setItemsPerPage,
+    totalPage,
+    setPage,
+    page,
+    itemsPerPage,
+    setModified,
+  } = useUsers();
+  const { RolesResponse, setRolModified } = useRoles();
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -43,14 +48,6 @@ const UsersPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [userData, setUserData] = useState(null);
-
-  const totalUsers = usersResponse ? usersResponse.result.length : 0;
-  const totalPages = Math.ceil(totalUsers / userPage);
-
-  const startIndex = (currentPage - 1) * userPage;
-  const paginatedUsers = usersResponse
-    ? usersResponse.result.slice(startIndex, startIndex + userPage)
-    : [];
 
   const {
     register,
@@ -60,7 +57,8 @@ const UsersPage = () => {
   } = useForm();
 
   const openModal = (id) => {
-    const userToEdit = usersResponse.result.find((user) => user.id === id);
+    const userToEdit = usersResponse.find((user) => user.id === id);
+    console.log(userToEdit);
     if (userToEdit) {
       setUserData({
         userInfo: {
@@ -75,6 +73,7 @@ const UsersPage = () => {
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
       setValue("role", userToEdit.role.id);
+      console.log(userToEdit);
     }
     setIsModalOpen(true);
     setUserId(id);
@@ -87,13 +86,8 @@ const UsersPage = () => {
     setConfirmDeleteModalOpen(false);
   };
 
-  const pageIndexChange = (e) => {
-    setUserPage(e);
-  };
-
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
-  const openSaveConfirmationModal = () => setSaveConfirmationModalOpen(true);
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
@@ -105,7 +99,7 @@ const UsersPage = () => {
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
-    deleteUser(userId);
+    deleteUser(userId, setModified);
     closeConfirmDeleteModal();
   };
 
@@ -117,7 +111,7 @@ const UsersPage = () => {
 
   const handleUserCreation = async (userData) => {
     try {
-      const newUser = await changedUser(userData, userId);
+      const newUser = await changedUser(userData, userId, setModified);
       console.log(newUser);
       if (newUser) {
         setSaveConfirmationModalOpen(true);
@@ -159,10 +153,6 @@ const UsersPage = () => {
           },
         });
     }
-  };
-
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
   };
   return (
     <div className="flex h-full flex-col justify-between">
@@ -251,7 +241,7 @@ const UsersPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedUsers.map((user, index) => (
+                {usersResponse.map((user, index) => (
                   <UserRow
                     key={index}
                     fullName={`${user.userInfo.fullName} `}
@@ -260,7 +250,9 @@ const UsersPage = () => {
                     role={user?.role?.name}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
-                    onEditClick={() => openModal(user.id)}
+                    onEditClick={() => {
+                      openModal(user.id), console.log("se presiono");
+                    }}
                     onDeleteClick={() => openConfirmDeleteModal(user.id)}
                   />
                 ))}
@@ -268,10 +260,11 @@ const UsersPage = () => {
             </table>
             <div className="flex justify-center p-6">
               <Pagination
-                pageIndex={pageIndexChange}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
+                pageIndex={setItemsPerPage}
+                currentPage={page}
+                totalPages={totalPage}
+                onPageChange={setPage}
+                itemPerPage={itemsPerPage}
               />
             </div>
           </div>
@@ -306,35 +299,6 @@ const UsersPage = () => {
             errorApi={errors.email}
             msjError={errors.email ? errors.email.message : ""}
           />
-          <div>
-            <Input
-              type="password"
-              label={"Contraseña"}
-              placeholder={"Escribe la contraseña..."}
-              icon1={IconEye}
-              icon2={IconEyeSlash}
-              {...register("password", {
-                required: "La contraseña es obligatoria",
-                minLength: {
-                  value: 8,
-                  message: "La contraseña debe tener al menos 8 caracteres",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "La contraseña debe tener menos de 20 caracteres",
-                },
-                validate: {
-                  hasNumber: (value) =>
-                    /\d/.test(value) || "Debes incluir al menos un número",
-                  hasLetter: (value) =>
-                    /[a-zA-Z]/.test(value) ||
-                    "Debes incluir al menos una letra",
-                },
-              })}
-              errorApi={errors.password}
-              msjError={errors.password ? errors.password.message : ""}
-            />
-          </div>
           <div className="mb-4 space-y-2">
             <Checkbox
               defaultSelected={checkSelected === "existente"}
@@ -360,26 +324,59 @@ const UsersPage = () => {
                 ))}
             </Select>
           </div>
-          <div className="space-y-2">
-            <Checkbox
-              radius="full"
-              isSelected={checkSelected === "nuevo"}
-              onClick={() => setCheckSelected("nuevo")}
-            >
-              Asignar nuevo rol
-            </Checkbox>
-            <Input
-              label={"Nombre del rol"}
-              disabled={checkSelected === "existente"}
-              placeholder={"Escribe el nombre del rol..."}
-              {...register("nameRole", {
-                required:
-                  checkSelected === "nuevo"
-                    ? "Debes ingresar el nombre del rol"
-                    : false,
-              })}
-              error={errors.nameRole?.message}
-            />
+          <Checkbox
+            radius="full"
+            isSelected={checkSelected === "nuevo"}
+            onClick={() => setCheckSelected("nuevo")}
+          >
+            Asignar nuevo rol
+          </Checkbox>
+
+          <div className="flex w-full flex-row justify-between">
+            <div className="w-[48%]">
+              <Input
+                label={"Nombre del rol"}
+                disabled={checkSelected === "existente"}
+                placeholder={"Escribe el nombre del rol..."}
+                {...register("nameRole", {
+                  required:
+                    checkSelected === "nuevo"
+                      ? "Debes ingresar el nombre del rol"
+                      : false,
+                })}
+                errorApi={errors.nameRole}
+                msjError={errors.nameRole ? errors.nameRole.message : ""}
+              />
+            </div>
+
+            <div className="mt-5 w-[48%]">
+              <Select
+                isDisabled={checkSelected === "existente"}
+                labelPlacement="outside"
+                label="Asignar permisos"
+                placeholder="Permisos"
+                selectionMode="multiple"
+                className="max-w rounded-md border font-roboto font-medium"
+                {...register("permissions", {
+                  required:
+                    checkSelected === "nuevo"
+                      ? "Debes asignar permisos"
+                      : false,
+                })}
+                onSelectionChange={(values) => setValue("permissions", values)}
+              >
+                {permisos.map((permiso) => (
+                  <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+                ))}
+              </Select>
+              {errors.permissions && errors.permissions.message ? (
+                <span className="font-roboto text-xs text-red_e">
+                  {errors.permissions.message}
+                </span>
+              ) : (
+                " "
+              )}
+            </div>
           </div>
         </form>
       </ReusableModal>
