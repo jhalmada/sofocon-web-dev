@@ -14,6 +14,8 @@ import boxActiveIcon from "../assets/icons/box-seam-fill.svg";
 import houseActiveIcon from "../assets/icons/house-door-fill.svg";
 import peopleActiveIcon from "../assets/icons/people-fill.svg";
 import shopActiveIcon from "../assets/icons/shop-window-fill.svg";
+import clipboardChek from "../assets/icons/clipboard-check.svg";
+import clipboardChekActive from "../assets/icons/clipboard-check.svg";
 
 const users = [
   {
@@ -130,6 +132,12 @@ const menuItems = [
     path: "/inicio/productos",
     icon: boxIcon,
     activeIcon: boxActiveIcon,
+  },
+  {
+    name: "Ordenes",
+    path: "/inicio/ordenes",
+    icon: clipboardChek,
+    activeIcon: clipboardChekActive,
   },
 ];
 

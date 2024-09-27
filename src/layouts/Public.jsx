@@ -37,7 +37,7 @@ const Public = () => {
                 className="mt-2.5 h-20 p-4"
               />
             </div>
-            <div className="flex flex-col items-center justify-center p-2">
+            <div className="flex h-[30.625rem] flex-col items-center justify-between p-2">
               {menuItems.map((item) => (
                 <Link
                   key={item.name}
@@ -72,12 +72,12 @@ const Public = () => {
           </div>
         </aside>
         <div className="flex flex-1 flex-col overflow-auto">
-          <nav className="flex h-[15vh] items-center justify-between bg-white p-6">
+          <nav className="flex h-[4.375rem] items-center justify-between bg-white p-6">
             <Breadcrumbs />
             <div className="flex items-center gap-9">
-              <img src={gearIcon} alt="Gear icon" className="h-8 w-8" />
-              <img src={bellIcon} alt="Bell icon" className="h-8 w-8" />
-              <img src={avatarIcon} alt="Avatar icon" className="h-10 w-10" />
+              <img src={gearIcon} alt="Gear icon" className="h-6 w-6" />
+              <img src={bellIcon} alt="Bell icon" className="h-6 w-6" />
+              <img src={avatarIcon} alt="Avatar icon" className="h-7 w-7" />
             </div>
           </nav>
           <main className="flex-grow overflow-auto">
