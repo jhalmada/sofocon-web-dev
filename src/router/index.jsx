@@ -5,6 +5,7 @@ import NewPasswordPage from "../pages/NewPasswordPage";
 import PasswordPage from "../pages/PasswordPage";
 import Public from "../layouts/Public";
 import UsersLayout from "../layouts/Users";
+import NotesLayout from "../layouts/Notes";
 import CompaniesLayout from "../layouts/Companies";
 import HomePage from "../pages/HomePage";
 import CompaniesPage from "../pages/CompaniesPage";
@@ -86,8 +87,12 @@ export const router = createBrowserRouter([
           },
           {
             path: NOTES_ROUTE,
-            element: <NotesPage />,
+            element: <NotesLayout />,
             children: [
+              {
+                index: true,
+                element: <NotesPage />,
+              },
               {
                 path: ADD_NOTE_ROUTE,
                 element: <AddNotePage />,

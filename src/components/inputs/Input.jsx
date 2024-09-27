@@ -26,10 +26,10 @@ const Input = forwardRef(
       type === "password" ? (isVisible ? "text" : "password") : type;
 
     return (
-      <div className="my-5 w-full">
+      <div className="w-full">
         <label
           htmlFor={name} // Cambiado para usar `name`
-          className={`font-roboto font-medium ${errorApi || msjError ? "text-red_e" : "text-black"} text-md`}
+          className={`font-roboto font-light ${errorApi || msjError ? "text-red_e" : "text-black"} text-sm`}
         >
           {label}
         </label>

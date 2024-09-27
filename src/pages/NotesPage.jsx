@@ -17,8 +17,9 @@ import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
 import useRoles from "../hooks/roles/use.roles";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
-import { Calendar } from "@nextui-org/react";
+import { Calendar, Checkbox } from "@nextui-org/react";
 import NotesRow from "../components/NotesRow.jsx";
+import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 
 const NOTES_TAB = "notes";
 
@@ -207,7 +208,7 @@ const NotesPage = () => {
         {activeTab === NOTES_TAB && (
           <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
             <table className="w-full">
-              <thead className="bg-blue-400">
+              <thead>
                 <tr>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Nombre
@@ -237,7 +238,7 @@ const NotesPage = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-red-500">
+              <tbody>
                 {paginatedUsers.map((user, index) => (
                   <NotesRow
                     key={index}
@@ -266,60 +267,57 @@ const NotesPage = () => {
       </div>
 
       <ReusableModal
+        width="w-[46rem]"
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Editar Empresa"
+        title="Editar Nota"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <Input
-            label={"Nombre de la empresa"}
-            placeholder={"Escribe el nombre del local..."}
-          />
-          <Input label={"Departamento/Barrio"} placeholder={"Escribir..."} />
-          <div>
-            <Input
-              label={"Dirección"}
-              placeholder={"Escribe la dirección del local..."}
-            />
+        <div className="flex flex-col">
+          <Input label={"Nombre de nota"} placeholder={"Escribir..."} />
+          <Input label={"Contenido"} placeholder={"Escribir..."} />
 
-            <Input
-              label={"Referente"}
-              placeholder={"Escribe el nombre del referente..."}
-            />
-            <Input
-              label={"Contacto"}
-              placeholder={"Escribe el teléfono del contacto..."}
-            />
-            <Input
-              label={"R.U.T./CI"}
-              placeholder={"Escribe los datos fiscales de la empresa..."}
-            />
+          {errors.permissions && (
+            <span className="font-roboto text-xs text-red_e">
+              {errors.permissions.message}
+            </span>
+          )}
+        </div>
+        <div className="flex gap-[4.4rem]">
+          <div>
+            <Checkbox
+              defaultSelected={checkSelected === "existente"}
+              isSelected={checkSelected === "existente"}
+              onClick={() => setCheckSelected("existente")}
+              radius="full"
+            >
+              <span className="text-sm font-light leading-[1rem] text-black_b">
+                Asignar fecha
+              </span>
+            </Checkbox>
+            <div className="flex w-full">
+              <Calendar
+                aria-label="Date (Show Month and Year Picker)"
+                showMonthAndYearPickers
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <span>Notas</span>
-            <Button text="Nueva Nota" icon={PlusIcon} width="w-full" />
+
+          <div className="w-full">
+            <Checkbox
+              defaultSelected={checkSelected === "existente"}
+              isSelected={checkSelected === "existente"}
+              onClick={() => setCheckSelected("existente")}
+              radius="full"
+            >
+              <span className="text-sm font-light leading-[1rem] text-black_m">
+                Destacar como recordatorio
+              </span>
+            </Checkbox>
           </div>
-          <div className="mb-4 space-y-2">
-            <label className="text-gray-700 block text-sm font-medium">
-              Asignar estado:
-            </label>
-            <Select labelPlacement="outside" label="Estado">
-              <SelectItem>Frecuente</SelectItem>
-              <SelectItem>Potencial</SelectItem>
-              <SelectItem>De Baja</SelectItem>
-              <SelectItem>Potencial/Competencia</SelectItem>
-            </Select>
-          </div>
-          <div className="flex justify-center">
-            <Calendar
-              aria-label="Date (Show Month and Year Picker)"
-              showMonthAndYearPickers
-            />
-          </div>
-        </form>
+        </div>
       </ReusableModal>
 
       <ReusableModal

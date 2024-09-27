@@ -3,6 +3,8 @@ import geoaltIcon from "../assets/icons/geo-alt.svg";
 import { Link } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import PlusIcon from "../assets/icons/plus.svg";
+import PlusFillIcon from "../assets/icons/plus-fill.svg";
+
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
@@ -68,6 +70,15 @@ const AddCompaniePage = () => {
         });
     }
   };
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setConfirmCancelModalOpen(false);
+    setSaveConfirmationModalOpen(false);
+    setConfirmDeleteModalOpen(false);
+  };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -80,6 +91,7 @@ const AddCompaniePage = () => {
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
   };
+  const handleCancelClick = () => openConfirmCancelModal();
 
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
@@ -110,7 +122,7 @@ const AddCompaniePage = () => {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="rounded-tr-lg bg-white px-14 py-2 shadow-t"
+          className="rounded-tr-lg bg-white px-14 py-4 shadow-t"
         >
           <div>
             <Input
@@ -122,9 +134,12 @@ const AddCompaniePage = () => {
               label={"Dirección"}
               placeholder={"Escribe la dirección del local..."}
             />
-            <div className="flex w-[8rem] cursor-pointer">
-              <img src={geoaltIcon} alt="geo Icon" />
-              <span className="text-xs leading-[.88rem] underline">
+            <div
+              onClick={() => openModal()}
+              className="flex w-[8rem] cursor-pointer"
+            >
+              <img src={geoaltIcon} alt="geo Icon" className="-mt-3 mb-3" />
+              <span className="-mt-3 mb-3 text-xs leading-[.88rem] underline">
                 Marcar en el mapa
               </span>
             </div>
@@ -164,7 +179,13 @@ const AddCompaniePage = () => {
             <div className="flex">
               <div className="space-y-2">
                 <span>Notas</span>
-                <Button text="Nueva Nota" icon={PlusIcon} width="w-40" />
+                <Button
+                  text="Nueva Nota"
+                  icon={PlusFillIcon}
+                  iconPosition={"left"}
+                  width="w-40"
+                  color={"cancel"}
+                />
               </div>
               <div className="flex w-full justify-end">
                 <Calendar
@@ -194,6 +215,27 @@ const AddCompaniePage = () => {
             />
           </div>
         </form>
+        <ReusableModal
+          width="w-[46rem]"
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title="Marcar ubicación en el mapa"
+          onSubmit={handleSubmit(onSubmit)}
+          buttons={["cancel", "save"]}
+          handleCancelClick={handleCancelClick}
+        >
+          <div className="flex flex-col">
+            <Input label={"Nombre de nota"} placeholder={"Escribir..."} />
+            <Input label={"Contenido"} placeholder={"Escribir..."} />
+
+            {errors.permissions && (
+              <span className="font-roboto text-xs text-red_e">
+                {errors.permissions.message}
+              </span>
+            )}
+          </div>
+          <div className="flex gap-[4.4rem]"></div>
+        </ReusableModal>
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
