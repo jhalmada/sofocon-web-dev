@@ -22,6 +22,7 @@ import {
   HOME_ROUTE,
   LOGIN_ROUTE,
   NEW_PASSWORD_ROUTE,
+  ORDERS_ROUTE,
   PASSWORD_CHANGED_ROUTE,
   PRODUCTS_ROUTE,
   RECOVER_ROUTE,
@@ -30,6 +31,7 @@ import {
   SELLERS_ROUTE,
   USERS_ROUTE,
 } from "../utils/Constants";
+import OrdersPage from "../pages/OrdersPage";
 
 export const router = createBrowserRouter([
   {
@@ -95,6 +97,10 @@ export const router = createBrowserRouter([
       {
         path: PRODUCTS_ROUTE,
         element: <ProductsPage />,
+      },
+      {
+        path: ORDERS_ROUTE,
+        element: <OrdersPage />,
       },
     ],
   },

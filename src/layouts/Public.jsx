@@ -1,7 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { Outlet } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import arrowIcon from "../assets/icons/arrow-left.svg";
 import LogoOpen from "../assets/icons/logo_open.svg";
 import LogoClose from "../assets/icons/logo_close.svg";
@@ -9,10 +9,18 @@ import gearIcon from "../assets/icons/gear.svg";
 import bellIcon from "../assets/icons/bell.svg";
 import avatarIcon from "../assets/icons/avatar.svg";
 import { menuItems } from "../utils/DataInfo";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react";
+import { useAuthContext } from "../hooks/context/AuthContext";
 
 const Public = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const navigate = useNavigate();
 
   const isActive = (path) => {
     if (path === "/inicio") {
@@ -22,6 +30,14 @@ const Public = () => {
   };
 
   const [isOpen, setIsOpen] = useState(true);
+
+  const { logout, userToken } = useAuthContext();
+
+  useEffect(() => {
+    if (userToken === null) {
+      navigate("/");
+    }
+  }, [userToken]);
 
   return (
     <div className="flex h-screen flex-col font-roboto">
@@ -77,7 +93,21 @@ const Public = () => {
             <div className="flex items-center gap-9">
               <img src={gearIcon} alt="Gear icon" className="h-6 w-6" />
               <img src={bellIcon} alt="Bell icon" className="h-6 w-6" />
-              <img src={avatarIcon} alt="Avatar icon" className="h-7 w-7" />
+              <Dropdown>
+                <DropdownTrigger>
+                  <img src={avatarIcon} alt="Avatar icon" className="h-7 w-7" />
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Static Actions">
+                  <DropdownItem
+                    key="log out"
+                    className="text-danger"
+                    color="danger"
+                    onClick={() => logout()}
+                  >
+                    Cerrar Sesion
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </div>
           </nav>
           <main className="flex-grow overflow-auto">

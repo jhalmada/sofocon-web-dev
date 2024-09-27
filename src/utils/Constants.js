@@ -13,6 +13,7 @@ export const ADD_ROLE_ROUTE = "agregar-rol";
 export const SELLERS_ROUTE = "vendedores";
 export const ROUTES_ROUTE = "rutas";
 export const PRODUCTS_ROUTE = "productos";
+export const ORDERS_ROUTE = "ordenes";
 export const REDIRECTION_ROUTE = "/";
 
 export const SOFOCON_JWT_TOKEN = 'SOFOCON_JWT_TOKEN';

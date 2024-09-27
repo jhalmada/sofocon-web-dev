@@ -15,7 +15,7 @@ import houseActiveIcon from "../assets/icons/house-door-fill.svg";
 import peopleActiveIcon from "../assets/icons/people-fill.svg";
 import shopActiveIcon from "../assets/icons/shop-window-fill.svg";
 import clipboardChek from "../assets/icons/clipboard-check.svg";
-import clipboardChekActive from "../assets/icons/clipboard-check.svg";
+import clipboardChekActive from "../assets/icons/clipboard-checkActive.svg";
 
 const users = [
   {
