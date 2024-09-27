@@ -1,21 +1,25 @@
 import { useCallback, useState } from "react";
 import { UserService } from "../../services/user/user.service";
+import useUsers from "./use.users";
+import { p } from "framer-motion/client";
 
 const useDeleteUsers = () => {
   const [isDeleted, setIsDeleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const deleteUser = useCallback(async (userId) => {
+  const deleteUser = async (userId, setModified) => {
     try {
       setIsLoading(true);
       await UserService.deleteUserApi(userId);
       setIsDeleted(true);
+      setModified((prev) => !prev);
+      console.log("Usuario eliminado con éxito");
     } catch (error) {
       console.error("Error al eliminar el usuario: ", error);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  };
 
   return { deleteUser, isDeleted, isLoading };
 };

@@ -1,5 +1,5 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
@@ -21,6 +21,7 @@ const AddUserPage = () => {
     setValue,
     formState: { errors },
   } = useForm();
+  const navigate = useNavigate();
   const { RolesResponse } = useRoles();
   const { postAddUsers, loading } = AddUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +29,7 @@ const AddUserPage = () => {
     useState(false);
 
   const [checkSelected, setCheckSelected] = useState("existente");
+  const [mnsError, setMnsError] = useState("");
 
   const handleUserCreation = async (userData) => {
     try {
@@ -39,8 +41,12 @@ const AddUserPage = () => {
         setIsModalOpen(true);
       }
     } catch (error) {
-      console.error("Error al crear el usuario:", error);
-      setIsModalOpen(true);
+      if (error.response.status === 409) {
+        setMnsError("El correo electrónico ya se encuentra registrado");
+        setIsModalOpen(true);
+      } else {
+        setMnsError("Error al crear el usuario");
+      }
     }
   };
 
@@ -76,9 +82,10 @@ const AddUserPage = () => {
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
   };
-
+  // Función para cerrar el modal de confirmación de guardado
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
+    navigate("/inicio/usuarios");
   };
 
   return (
@@ -126,14 +133,23 @@ const AddUserPage = () => {
 
             {/* Correo electrónico */}
             <Input
-              label={"Correo electrónico"}
-              placeholder={"Escribe el email del usuario..."}
+              placeholder={"Escribe tu correo"}
+              label={"Dirección de correo"}
               {...register("email", {
-                required: "El correo electrónico es obligatorio",
-              })}
+                required: {
+                  value: true,
+                  message: "Campo obligatorio",
+                },
+                pattern: {
+                  value:
+                    /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
+                  message: "Formato de email incorrecto",
+                },
+              })} // Add this line
               errorApi={errors.email}
               msjError={errors.email ? errors.email.message : ""}
             />
+            {console.log(errors.email)}
 
             {/* Contraseña */}
             <div className="pb-8">
@@ -148,6 +164,17 @@ const AddUserPage = () => {
                   minLength: {
                     value: 8,
                     message: "La contraseña debe tener al menos 8 caracteres",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "La contraseña debe tener menos de 20 caracteres",
+                  },
+                  validate: {
+                    hasNumber: (value) =>
+                      /\d/.test(value) || "Debes incluir al menos un número",
+                    hasLetter: (value) =>
+                      /[a-zA-Z]/.test(value) ||
+                      "Debes incluir al menos una letra",
                   },
                 })}
                 errorApi={errors.password}
@@ -284,7 +311,7 @@ const AddUserPage = () => {
             buttons={["accept"]}
             onAccept={handleCloseModal}
           >
-            Ha ocurrido un error mientras se creaba el usuario
+            {mnsError}
           </ReusableModal>
         )}
       </div>

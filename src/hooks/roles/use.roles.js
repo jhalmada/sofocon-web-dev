@@ -4,6 +4,7 @@ import { RolesService } from "../../services/role/role.service.js";
 const useRoles = () => {
   const [RolesResponse, setRolesResponse] = useState();
   const [loading, setLoading] = useState(false);
+  const [Rolmodified, setRolModified] = useState(false);
 
   const getAllRoles = useCallback(async () => {
     try {
@@ -19,8 +20,8 @@ const useRoles = () => {
 
   useEffect(() => {
     getAllRoles();
-  }, [getAllRoles]);
-  return { RolesResponse, loading };
+  }, [getAllRoles, Rolmodified]);
+  return { RolesResponse, loading, setRolModified };
 };
 
 export default useRoles;

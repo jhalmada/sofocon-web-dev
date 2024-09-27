@@ -5,10 +5,11 @@ const usePutusers = () => {
   const [isChanged, setIsChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const changedUser = async (userData, userId) => {
+  const changedUser = async (userData, userId, setModified) => {
     try {
       setIsLoading(true);
       await UserService.putUserApi(userData, userId);
+      setModified((prev) => !prev);
       return true;
     } catch (error) {
       console.error("Error al modificar el usuario: ", error);
