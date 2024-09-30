@@ -127,18 +127,12 @@ const CompetingPage = () => {
             </th>
 
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Departamento
+              Dirección
             </th>
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Barrio
+              Empresa actual
             </th>
 
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Vendedores
-            </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Notas
-            </th>
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
               Próx. visita
             </th>
@@ -167,10 +161,9 @@ const CompetingPage = () => {
             <CompetingRow
               key={index}
               name={"Nombre empresa"}
-              departament={"Nombre dpto"}
-              direction={"Barrio"}
+              direction={"Calle Nombre, 123"}
+              currentCompany={"Nombre de la competencia"}
               sellers={"Nombre vendedores"}
-              notes={"Ver notas"}
               nextVisits={"24/09/2024"}
               state={"Frecuente"}
               editIconSrc={editIcon}

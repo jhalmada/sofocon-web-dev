@@ -144,7 +144,7 @@ const TableRole = () => {
               <td className="p-2">{role.name}</td>
               <td className="p-2">{formatPermisos(role.permissions)}</td>
               <td className="p-2">
-                <div className="flex gap-5">
+                <div className="flex gap-4">
                   <img
                     src={editIcon}
                     alt="Edit icon"

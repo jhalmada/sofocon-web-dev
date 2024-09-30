@@ -32,17 +32,21 @@ const ReusableModal = ({
         <h2 className="mb-8 text-lg font-semibold">{title}</h2>
         {variant === "confirmation" ? (
           <div className="space-y-8">
-            <p>{children}</p>
+            <p className="space-y-6 text-sm font-medium leading-[1rem]">
+              {children}
+            </p>
             <div className="flex justify-between">
               {buttons.includes("back") && (
-                <Button
-                  text="Volver"
-                  color="cancel"
-                  icon={ChevronLeftIcon}
-                  iconPosition="left"
-                  onClick={onClose}
-                  width="w-20"
-                />
+                <div>
+                  <Button
+                    text="Volver"
+                    color="cancel"
+                    icon={ChevronLeftIcon}
+                    iconPosition="left"
+                    onClick={onClose}
+                    width="w-20"
+                  />
+                </div>
               )}
               {buttons.includes("accept") && (
                 <div className="w-full">

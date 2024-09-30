@@ -33,23 +33,18 @@ const CompaniesPage = () => {
   const { changedUser, isChanged } = usePutUsers();
   const [userId, setUserId] = useState(null);
   const { usersResponse, loading } = useUsers();
-  const { RolesResponse } = useRoles();
-  const { deleteUser, isDeleted, isLoading } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [isExistingRoleChecked, setIsExistingRoleChecked] = useState(false);
-  const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
-  const [userData, setUserData] = useState(null);
 
   const totalUsers = usersResponse ? usersResponse.length : 0;
   const totalPages = Math.ceil(totalUsers / userPage);
-
   const startIndex = (currentPage - 1) * userPage;
   const paginatedUsers = usersResponse
     ? usersResponse.slice(startIndex, startIndex + userPage)
@@ -62,32 +57,17 @@ const CompaniesPage = () => {
     formState: { errors },
   } = useForm();
 
-  const openModal = (id) => {
-    const userToEdit = usersResponse.find((user) => user.id === id);
-    if (userToEdit) {
-      setUserData({
-        userInfo: {
-          fullName: userToEdit.userInfo.fullName,
-          email: userToEdit.email,
-        },
-        role: {
-          id: userToEdit.role.id,
-        },
-      });
-      // Set form values
-      setValue("fullName", userToEdit.userInfo.fullName);
-      setValue("email", userToEdit.email);
-      setValue("role", userToEdit.role.id);
-    }
+  const openModal = () => {
     setIsModalOpen(true);
-    setUserId(id);
+    setIsExportModalOpen(true);
+  };
+  const openExportModal = () => {
+    setIsExportModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setConfirmCancelModalOpen(false);
-    setSaveConfirmationModalOpen(false);
-    setConfirmDeleteModalOpen(false);
+    setIsExportModalOpen(false);
   };
 
   const pageIndexChange = (e) => {
@@ -213,6 +193,7 @@ const CompaniesPage = () => {
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
+                  onClick={() => openExportModal()}
                 />
                 <Link to={"agregar-empresa"}>
                   <Button text="Nueva Empresa" icon={PlusIcon} />
@@ -377,6 +358,31 @@ const CompaniesPage = () => {
             </div>
           </div>
         </form>
+      </ReusableModal>
+
+      <ReusableModal
+        isOpen={isExportModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-5">
+          <Button
+            text="Descargar archivo XML"
+            icon={DownloadIcon}
+            color={"selected"}
+            shadow="shadow-blur"
+          />
+        </div>
+        <Button
+          text="Descargar archivo PDF"
+          icon={DownloadIcon}
+          color={"cancel"}
+          shadow="shadow-blur"
+        />
       </ReusableModal>
 
       <ReusableModal

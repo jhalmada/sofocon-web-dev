@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import watchIcon from "../assets/icons/watch.svg";
 const CompanieRow = ({
   name,
   departament,
@@ -23,10 +23,13 @@ const CompanieRow = ({
       <td className="p-2">{departament}</td>
       <td className="p-2">{direction}</td>
       <td className="p-2">{sellers}</td>
-      <td className="p-2">{nextVisits}</td>
-      <td className="p-2">{state}</td>
+      <div className="flex">
+        <td className="p-2">{nextVisits}</td>
+        <img src={watchIcon} alt="watch icon" />
+      </div>
+      <td className="p-2 text-md font-semibold leading-[1.16rem]">{state}</td>
       <td className="p-2">
-        <div className="flex justify-center gap-5">
+        <div className="flex justify-center gap-4">
           <Link to={"notas"}>
             <img
               src={notesIcon}

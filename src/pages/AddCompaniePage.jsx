@@ -155,6 +155,7 @@ const AddCompaniePage = () => {
                   isSelected={checkSelected === "existente"}
                   onClick={() => setCheckSelected("existente")}
                   radius="full"
+                  className="font-light"
                 >
                   Asignar R.U.T.:
                 </Checkbox>
@@ -166,6 +167,7 @@ const AddCompaniePage = () => {
                   isSelected={checkSelected === "existente"}
                   onClick={() => setCheckSelected("existente")}
                   radius="full"
+                  className="font-light"
                 >
                   Asignar CI:
                 </Checkbox>
@@ -184,7 +186,10 @@ const AddCompaniePage = () => {
                   color={"cancel"}
                 />
               </div>
-              <div className="flex w-[28.3rem]">
+              <div className="h-full w-[28.3rem]">
+                <label className="text-sm font-light text-black">
+                  Próxima visita
+                </label>
                 <DatePicker className="rounded-lg border" />
               </div>
             </div>

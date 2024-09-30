@@ -292,6 +292,7 @@ const NotesPage = () => {
               isSelected={checkSelected === "existente"}
               onClick={() => setCheckSelected("existente")}
               radius="full"
+              className="font-light"
             >
               <span className="text-sm font-light leading-[1rem] text-black_b">
                 Asignar fecha
@@ -311,6 +312,7 @@ const NotesPage = () => {
               isSelected={checkSelected === "existente"}
               onClick={() => setCheckSelected("existente")}
               radius="full"
+              className="font-light"
             >
               <span className="text-sm font-light leading-[1rem] text-black_m">
                 Destacar como recordatorio
