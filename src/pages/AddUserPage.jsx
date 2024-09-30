@@ -133,14 +133,23 @@ const AddUserPage = () => {
 
             {/* Correo electrónico */}
             <Input
-              label={"Correo electrónico"}
-              placeholder={"Escribe el email del usuario..."}
+              placeholder={"Escribe tu correo"}
+              label={"Dirección de correo"}
               {...register("email", {
-                required: "El correo electrónico es obligatorio",
-              })}
+                required: {
+                  value: true,
+                  message: "Campo obligatorio",
+                },
+                pattern: {
+                  value:
+                    /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
+                  message: "Formato de email incorrecto",
+                },
+              })} // Add this line
               errorApi={errors.email}
               msjError={errors.email ? errors.email.message : ""}
             />
+            {console.log(errors.email)}
 
             {/* Contraseña */}
             <div className="pb-8">

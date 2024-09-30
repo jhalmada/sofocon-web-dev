@@ -291,14 +291,24 @@ const UsersPage = () => {
             msjError={errors.fullName ? errors.fullName.message : ""}
           />
           <Input
-            label={"Correo electrónico"}
-            placeholder={"Escribe el email del usuario..."}
+            placeholder={"Escribe tu correo"}
+            label={"Dirección de correo"}
             {...register("email", {
-              required: "El correo electrónico es obligatorio",
-            })}
+              required: {
+                value: true,
+                message: "Campo obligatorio",
+              },
+              pattern: {
+                value:
+                  /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
+                message: "Formato de email incorrecto",
+              },
+            })} // Add this line
             errorApi={errors.email}
             msjError={errors.email ? errors.email.message : ""}
           />
+          {console.log(errors.email)}
+
           <div className="mb-4 space-y-2">
             <Checkbox
               defaultSelected={checkSelected === "existente"}

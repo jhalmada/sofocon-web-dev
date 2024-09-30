@@ -5,9 +5,11 @@ import {
   SOFOCON_JWT_TOKEN,
   SOFOCON_JWT_REFRESH_TOKEN,
 } from "../../utils/Constants.js";
+import { useAuthContext } from "../context/AuthContext.jsx";
 
 const useLogin = () => {
   const [loading, setLoading] = useState(false);
+  const { setUserToken } = useAuthContext();
 
   const onLogin = async (params) => {
     try {
@@ -16,6 +18,7 @@ const useLogin = () => {
       localStorage.setItem(SOFOCON_JWT_TOKEN, data.access_token);
       localStorage.setItem(SOFOCON_JWT_REFRESH_TOKEN, data.refresh_token);
       localStorage.setItem(SOFOCON_PERMISSIONS, data.permissions);
+      setUserToken(data.access_token);
       return true;
     } catch (e) {
       return false;
