@@ -13,7 +13,7 @@ const NotesRow = ({
       <td className="p-2">{content}</td>
       <td className="p-2">{date}</td>
       <td className="p-2">
-        <div className="flex gap-5">
+        <div className="flex justify-center gap-5">
           <img
             src={editIconSrc}
             alt="Edit icon"

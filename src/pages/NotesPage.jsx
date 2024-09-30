@@ -17,7 +17,7 @@ import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
 import useRoles from "../hooks/roles/use.roles";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
-import { Calendar, Checkbox } from "@nextui-org/react";
+import { Checkbox, DatePicker } from "@nextui-org/react";
 import NotesRow from "../components/NotesRow.jsx";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 
@@ -42,12 +42,12 @@ const NotesPage = () => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const [userData, setUserData] = useState(null);
 
-  const totalUsers = usersResponse ? usersResponse.result.length : 0;
+  const totalUsers = usersResponse ? usersResponse.length : 0;
   const totalPages = Math.ceil(totalUsers / userPage);
 
   const startIndex = (currentPage - 1) * userPage;
   const paginatedUsers = usersResponse
-    ? usersResponse.result.slice(startIndex, startIndex + userPage)
+    ? usersResponse.slice(startIndex, startIndex + userPage)
     : [];
 
   const {
@@ -58,7 +58,7 @@ const NotesPage = () => {
   } = useForm();
 
   const openModal = (id) => {
-    const userToEdit = usersResponse.result.find((user) => user.id === id);
+    const userToEdit = usersResponse.find((user) => user.id === id);
     if (userToEdit) {
       setUserData({
         userInfo: {
@@ -233,7 +233,7 @@ const NotesPage = () => {
                     </div>
                   </th>
 
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
                 </tr>
@@ -297,15 +297,15 @@ const NotesPage = () => {
                 Asignar fecha
               </span>
             </Checkbox>
-            <div className="flex w-full">
-              <Calendar
-                aria-label="Date (Show Month and Year Picker)"
-                showMonthAndYearPickers
+            <div className="flex w-[18rem]">
+              <DatePicker
+                label="Birth date"
+                className="max-w-[18rem] rounded-[.5rem] border"
               />
             </div>
           </div>
 
-          <div className="w-full">
+          <div className="w-[12.6rem]">
             <Checkbox
               defaultSelected={checkSelected === "existente"}
               isSelected={checkSelected === "existente"}

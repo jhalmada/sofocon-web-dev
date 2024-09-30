@@ -2,18 +2,15 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import geoaltIcon from "../assets/icons/geo-alt.svg";
 import { Link } from "react-router-dom";
 import Input from "../components/inputs/Input";
-import PlusIcon from "../assets/icons/plus.svg";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
-
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
-import { permisos } from "../utils/permisons";
 import { Select, SelectItem } from "@nextui-org/select";
 import useRoles from "../hooks/roles/use.roles";
-import { Calendar, Checkbox } from "@nextui-org/react";
+import { Calendar, Checkbox, DatePicker } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 
 const AddCompaniePage = () => {
@@ -73,6 +70,7 @@ const AddCompaniePage = () => {
   const openModal = () => {
     setIsModalOpen(true);
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setConfirmCancelModalOpen(false);
@@ -80,21 +78,19 @@ const AddCompaniePage = () => {
     setConfirmDeleteModalOpen(false);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
+    closeModal();
   };
 
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
   };
-  const handleCancelClick = () => openConfirmCancelModal();
+
+  const handleCancelClick = () => closeModal();
 
   return (
-    <div className="flex h-full flex-col justify-between bg-gray">
+    <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
         <Link
           to="/inicio/empresas"
@@ -176,9 +172,10 @@ const AddCompaniePage = () => {
                 <Input placeholder={"Escribe los 8 caracteres del CI..."} />
               </div>
             </div>
-            <div className="flex">
+            <div className="flex justify-between">
               <div className="space-y-2">
                 <span>Notas</span>
+
                 <Button
                   text="Nueva Nota"
                   icon={PlusFillIcon}
@@ -187,18 +184,19 @@ const AddCompaniePage = () => {
                   color={"cancel"}
                 />
               </div>
-              <div className="flex w-full justify-end">
-                <Calendar
-                  aria-label="Date (Show Month and Year Picker)"
-                  showMonthAndYearPickers
-                />
+              <div className="flex w-[28.3rem]">
+                <DatePicker className="rounded-lg border" />
               </div>
             </div>
 
-            <label className="text-gray-700 -mb-4 mt-6 block text-sm font-medium">
+            <label className="text-gray-700 mt-6 block text-sm font-medium">
               Asignar estado:
             </label>
-            <Select labelPlacement="outside" label="Estado">
+            <Select
+              labelPlacement="outside"
+              label="Estado"
+              className="rounded-lg border"
+            >
               <SelectItem>Frecuente</SelectItem>
               <SelectItem>Potencial</SelectItem>
               <SelectItem>De Baja</SelectItem>
@@ -216,7 +214,7 @@ const AddCompaniePage = () => {
           </div>
         </form>
         <ReusableModal
-          width="w-[46rem]"
+          width="w-[45.37rem]"
           isOpen={isModalOpen}
           onClose={closeModal}
           title="Marcar ubicación en el mapa"
@@ -225,16 +223,11 @@ const AddCompaniePage = () => {
           handleCancelClick={handleCancelClick}
         >
           <div className="flex flex-col">
-            <Input label={"Nombre de nota"} placeholder={"Escribir..."} />
-            <Input label={"Contenido"} placeholder={"Escribir..."} />
-
-            {errors.permissions && (
-              <span className="font-roboto text-xs text-red_e">
-                {errors.permissions.message}
-              </span>
-            )}
+            <Input label={"Dirección"} placeholder={"Escribir..."} />
+            <div className="flex h-[15rem] items-center justify-center bg-blue_l text-2xl text-white">
+              Mapa
+            </div>
           </div>
-          <div className="flex gap-[4.4rem]"></div>
         </ReusableModal>
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
@@ -246,19 +239,6 @@ const AddCompaniePage = () => {
         >
           Los cambios fueron guardados exitosamente.
         </ReusableModal>
-
-        {isModalOpen && (
-          <ReusableModal
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-            title="Error al agregar usuario"
-            variant="confirmation"
-            buttons={["accept"]}
-            onAccept={handleCloseModal}
-          >
-            Ha ocurrido un error mientras se creaba el usuario
-          </ReusableModal>
-        )}
       </div>
     </div>
   );

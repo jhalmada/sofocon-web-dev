@@ -44,7 +44,7 @@ const AddRolePage = () => {
   };
 
   return (
-    <div className="flex h-full flex-col justify-between overflow-auto bg-gray">
+    <div className="flex min-h-full flex-col justify-between overflow-auto bg-gray">
       <div className="flex-grow p-6">
         <Link
           to="/inicio/usuarios"
@@ -92,7 +92,7 @@ const AddRolePage = () => {
               label="Asignar permisos"
               selectionMode="multiple"
               placeholder="Permisos"
-              className="max-w mt-10 rounded-md border font-roboto font-medium"
+              className="max-w mt-10 rounded-lg border font-roboto font-medium"
               {...register("permissions", {
                 required: "Debes asignar al menos un permiso",
               })}

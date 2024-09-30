@@ -2,24 +2,17 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
-import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
 import { Select, SelectItem } from "@nextui-org/select";
-import SearchInput from "../components/inputs/SearchInput";
 import PlusIcon from "../assets/icons/plus.svg";
-import FilterRightIcon from "../assets/icons/filter-right.svg";
-import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import useUsers from "../hooks/users/use.users.js";
-import editIcon from "../assets/icons/pencil-square.svg";
-import deleteIcon from "../assets/icons/trash3.svg";
+
 import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
 import useRoles from "../hooks/roles/use.roles";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
-import { Calendar, Checkbox } from "@nextui-org/react";
-import NotesRow from "../components/NotesRow.jsx";
-import { permisos } from "../utils/permisons.js";
+import { Checkbox, DatePicker } from "@nextui-org/react";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 
 const NOTES_TAB = "notes";
@@ -38,17 +31,15 @@ const AddNotesPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [isExistingRoleChecked, setIsExistingRoleChecked] = useState(false);
-  const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [userData, setUserData] = useState(null);
 
-  const totalUsers = usersResponse ? usersResponse.result.length : 0;
+  const totalUsers = usersResponse ? usersResponse.length : 0;
   const totalPages = Math.ceil(totalUsers / userPage);
 
   const startIndex = (currentPage - 1) * userPage;
   const paginatedUsers = usersResponse
-    ? usersResponse.result.slice(startIndex, startIndex + userPage)
+    ? usersResponse.slice(startIndex, startIndex + userPage)
     : [];
 
   const {
@@ -59,7 +50,7 @@ const AddNotesPage = () => {
   } = useForm();
 
   const openModal = (id) => {
-    const userToEdit = usersResponse.result.find((user) => user.id === id);
+    const userToEdit = usersResponse.find((user) => user.id === id);
     if (userToEdit) {
       setUserData({
         userInfo: {
@@ -84,10 +75,6 @@ const AddNotesPage = () => {
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
-  };
-
-  const pageIndexChange = (e) => {
-    setUserPage(e);
   };
 
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
@@ -223,15 +210,12 @@ const AddNotesPage = () => {
                   Asignar fecha
                 </span>
               </Checkbox>
-              <div className="flex w-full">
-                <Calendar
-                  aria-label="Date (Show Month and Year Picker)"
-                  showMonthAndYearPickers
-                />
+              <div className="flex w-[18rem]">
+                <DatePicker className="rounded-lg border" />
               </div>
             </div>
 
-            <div className="w-full">
+            <div className="w-[12.6rem]">
               <Checkbox
                 defaultSelected={checkSelected === "existente"}
                 isSelected={checkSelected === "existente"}
@@ -257,63 +241,6 @@ const AddNotesPage = () => {
           </div>
         </form>
       </div>
-
-      <ReusableModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title="Editar Empresa"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <Input
-            label={"Nombre de la empresa"}
-            placeholder={"Escribe el nombre del local..."}
-          />
-          <Input label={"Departamento/Barrio"} placeholder={"Escribir..."} />
-          <div>
-            <Input
-              label={"Dirección"}
-              placeholder={"Escribe la dirección del local..."}
-            />
-
-            <Input
-              label={"Referente"}
-              placeholder={"Escribe el nombre del referente..."}
-            />
-            <Input
-              label={"Contacto"}
-              placeholder={"Escribe el teléfono del contacto..."}
-            />
-            <Input
-              label={"R.U.T./CI"}
-              placeholder={"Escribe los datos fiscales de la empresa..."}
-            />
-          </div>
-          <div className="space-y-2">
-            <span>Notas</span>
-            <Button text="Nueva Nota" icon={PlusIcon} width="w-full" />
-          </div>
-          <div className="mb-4 space-y-2">
-            <label className="text-gray-700 block text-sm font-medium">
-              Asignar estado:
-            </label>
-            <Select labelPlacement="outside" label="Estado">
-              <SelectItem>Frecuente</SelectItem>
-              <SelectItem>Potencial</SelectItem>
-              <SelectItem>De Baja</SelectItem>
-              <SelectItem>Potencial/Competencia</SelectItem>
-            </Select>
-          </div>
-          <div className="flex justify-center">
-            <Calendar
-              aria-label="Date (Show Month and Year Picker)"
-              showMonthAndYearPickers
-            />
-          </div>
-        </form>
-      </ReusableModal>
 
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}

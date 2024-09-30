@@ -130,7 +130,7 @@ const CompetingPage = () => {
               Departamento
             </th>
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Dirección
+              Barrio
             </th>
 
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
@@ -157,7 +157,7 @@ const CompetingPage = () => {
                 />
               </div>
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-md font-semibold leading-[1.125rem]">
               Acción
             </th>
           </tr>
@@ -167,8 +167,8 @@ const CompetingPage = () => {
             <CompetingRow
               key={index}
               name={"Nombre empresa"}
-              departament={"Departamento"}
-              direction={"Dirección"}
+              departament={"Nombre dpto"}
+              direction={"Barrio"}
               sellers={"Nombre vendedores"}
               notes={"Ver notas"}
               nextVisits={"24/09/2024"}
@@ -205,7 +205,7 @@ const CompetingPage = () => {
             label="Asignar permisos"
             selectionMode="multiple"
             placeholder="Permisos"
-            className="max-w mt-10 rounded-md border font-roboto font-medium"
+            className="max-w mt-10 rounded-lg border font-roboto font-medium"
             {...register("permissions", {
               required: "Debes asignar al menos un permiso",
             })}

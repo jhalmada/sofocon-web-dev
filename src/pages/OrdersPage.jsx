@@ -2,7 +2,7 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
 const OrdersPage = () => {
   return (
-    <div className="flex h-full flex-col justify-between bg-gray">
+    <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
         <Link
           to="/inicio/usuarios"

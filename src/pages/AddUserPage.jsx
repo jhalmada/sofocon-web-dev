@@ -89,7 +89,7 @@ const AddUserPage = () => {
   };
 
   return (
-    <div className="flex h-full flex-col justify-between bg-gray">
+    <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
         <Link
           to="/inicio/usuarios"
@@ -199,7 +199,7 @@ const AddUserPage = () => {
               isDisabled={checkSelected === "nuevo"}
               labelPlacement="outside"
               label="Selecciona un rol"
-              className="max-w mt-10 rounded-md border font-roboto font-medium"
+              className="max-w mt-10 rounded-lg border font-roboto font-medium"
               {...register("role", {
                 required:
                   checkSelected === "existente"
@@ -255,7 +255,7 @@ const AddUserPage = () => {
                     label="Asignar permisos"
                     placeholder="Permisos"
                     selectionMode="multiple"
-                    className="max-w rounded-md border font-roboto font-medium"
+                    className="max-w rounded-lg border font-roboto font-medium"
                     {...register("permissions", {
                       required:
                         checkSelected === "nuevo"

@@ -21,7 +21,9 @@ import useRoles from "../hooks/roles/use.roles";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
-import { Calendar } from "@nextui-org/react";
+import notesIcon from "../assets/icons/sticky-fill.svg";
+import { DatePicker } from "@nextui-org/react";
+import PlusFillIcon from "../assets/icons/plus-fill.svg";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -45,12 +47,12 @@ const CompaniesPage = () => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const [userData, setUserData] = useState(null);
 
-  const totalUsers = usersResponse ? usersResponse.result.length : 0;
+  const totalUsers = usersResponse ? usersResponse.length : 0;
   const totalPages = Math.ceil(totalUsers / userPage);
 
   const startIndex = (currentPage - 1) * userPage;
   const paginatedUsers = usersResponse
-    ? usersResponse.result.slice(startIndex, startIndex + userPage)
+    ? usersResponse.slice(startIndex, startIndex + userPage)
     : [];
 
   const {
@@ -61,7 +63,7 @@ const CompaniesPage = () => {
   } = useForm();
 
   const openModal = (id) => {
-    const userToEdit = usersResponse.result.find((user) => user.id === id);
+    const userToEdit = usersResponse.find((user) => user.id === id);
     if (userToEdit) {
       setUserData({
         userInfo: {
@@ -246,15 +248,13 @@ const CompaniesPage = () => {
                     Departamento
                   </th>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Dirección
+                    Barrio
                   </th>
 
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Vendedores
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Notas
-                  </th>
+
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Próx. visita
                   </th>
@@ -273,7 +273,7 @@ const CompaniesPage = () => {
                       />
                     </div>
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
                 </tr>
@@ -283,14 +283,14 @@ const CompaniesPage = () => {
                   <CompanieRow
                     key={index}
                     name={"Nombre empresa"}
-                    departament={"Departamento"}
-                    direction={"Dirección"}
-                    sellers={"Nombre vendedores"}
-                    notes={"Ver notas"}
+                    departament={"Nombre dpto"}
+                    direction={"Barrio"}
+                    sellers={"Vendedores"}
                     nextVisits={"24/09/2024"}
                     state={"Frecuente"}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
+                    notesIcon={notesIcon}
                     onEditClick={() => openModal(user.id)}
                     onDeleteClick={() => openConfirmDeleteModal(user.id)}
                   />
@@ -329,7 +329,6 @@ const CompaniesPage = () => {
               label={"Dirección"}
               placeholder={"Escribe la dirección del local..."}
             />
-
             <Input
               label={"Referente"}
               placeholder={"Escribe el nombre del referente..."}
@@ -343,26 +342,39 @@ const CompaniesPage = () => {
               placeholder={"Escribe los datos fiscales de la empresa..."}
             />
           </div>
-          <div className="space-y-2">
-            <span>Notas</span>
-            <Button text="Nueva Nota" icon={PlusIcon} width="w-full" />
+          <div className="flex flex-col">
+            <label className="text-sm font-light text-black">
+              Próxima visita
+            </label>
+            <DatePicker className="rounded-lg border" />
           </div>
+
           <div className="mb-4 space-y-2">
-            <label className="text-gray-700 block text-sm font-medium">
+            <label className="text-gray-700 mb-5 block text-sm font-medium">
               Asignar estado:
             </label>
-            <Select labelPlacement="outside" label="Estado">
+            <Select
+              labelPlacement="outside"
+              label="Estado"
+              className="rounded-lg border"
+            >
               <SelectItem>Frecuente</SelectItem>
               <SelectItem>Potencial</SelectItem>
               <SelectItem>De Baja</SelectItem>
               <SelectItem>Potencial/Competencia</SelectItem>
             </Select>
           </div>
-          <div className="flex justify-center">
-            <Calendar
-              aria-label="Date (Show Month and Year Picker)"
-              showMonthAndYearPickers
-            />
+          <div className="space-y-2">
+            <span>Notas</span>
+            <div className="flex">
+              <Button
+                text="Nueva Nota"
+                icon={PlusFillIcon}
+                iconPosition={"left"}
+                width="w-40"
+                color={"cancel"}
+              />
+            </div>
           </div>
         </form>
       </ReusableModal>

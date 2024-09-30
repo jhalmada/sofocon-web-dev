@@ -5,27 +5,35 @@ const CompanieRow = ({
   departament,
   direction,
   sellers,
-  notes,
+
   nextVisits,
   state,
   editIconSrc,
   deleteIconSrc,
+  notesIcon,
   onEditClick,
   onDeleteClick,
 }) => {
+  const openNotes = () => {
+    window.location.href = "/ruta-a-la-empresa-o-nota"; // Cambia esto por la URL a la que quieres redirigir
+  };
   return (
     <tr>
       <td className="p-2">{name}</td>
       <td className="p-2">{departament}</td>
       <td className="p-2">{direction}</td>
       <td className="p-2">{sellers}</td>
-      <Link to={"notas"}>
-        <td className="cursor-pointer p-2 underline">{notes}</td>
-      </Link>
       <td className="p-2">{nextVisits}</td>
       <td className="p-2">{state}</td>
       <td className="p-2">
-        <div className="flex gap-5">
+        <div className="flex justify-center gap-5">
+          <Link to={"notas"}>
+            <img
+              src={notesIcon}
+              alt="notes icon"
+              className="h-5 w-5 cursor-pointer"
+            />
+          </Link>
           <img
             src={editIconSrc}
             alt="Edit icon"

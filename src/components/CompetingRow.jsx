@@ -21,7 +21,7 @@ const CompetingRow = ({
       <td className="p-2">{nextVisits}</td>
       <td className="p-2">{state}</td>
       <td className="p-2">
-        <div className="flex gap-5">
+        <div className="flex justify-center gap-5">
           <img
             src={editIconSrc}
             alt="Edit icon"

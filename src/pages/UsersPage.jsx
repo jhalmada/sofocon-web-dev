@@ -237,7 +237,7 @@ const UsersPage = () => {
                       />
                     </div>
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
                 </tr>
@@ -368,7 +368,7 @@ const UsersPage = () => {
                 label="Asignar permisos"
                 placeholder="Permisos"
                 selectionMode="multiple"
-                className="max-w rounded-md border font-roboto font-medium"
+                className="max-w rounded-lg border font-roboto font-medium"
                 {...register("permissions", {
                   required:
                     checkSelected === "nuevo"
