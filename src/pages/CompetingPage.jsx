@@ -1,7 +1,5 @@
 import { useState } from "react";
 import Pagination from "../components/Pagination";
-
-import useDeleteRoles from "../hooks/roles/useDeleteRoles";
 import { Select, SelectItem } from "@nextui-org/select";
 import { permisos } from "../utils/permisons";
 import usePatchRoles from "../hooks/roles/usePatchRoles";
@@ -14,10 +12,11 @@ import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
-
-const formatPermisos = (permisos, excludeWords = ["USER_ADMIN"]) => {
-  return permisos.filter((p) => !excludeWords.includes(p)).join("/");
-};
+import notesIcon from "../assets/icons/sticky-fill.svg";
+import DownloadIcon from "../assets/icons/download.svg";
+import PlusFillIcon from "../assets/icons/plus-fill.svg";
+import Button from "../components/buttons/Button";
+import { DatePicker } from "@nextui-org/react";
 
 const CompetingPage = () => {
   const {
@@ -28,15 +27,14 @@ const CompetingPage = () => {
   } = useForm();
 
   const { changedUser, isChanged } = usePatchRoles();
-  const [newName, setNewName] = useState("");
-
-  const { isDeleted, isLoading, deleteUser } = useDeleteRoles();
   const [roleId, setRoleId] = useState("");
   const [rolePage, setRolePage] = useState(5);
   const { RolesResponse, loading } = useRoles();
 
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
 
@@ -52,11 +50,12 @@ const CompetingPage = () => {
     : [];
 
   const openModal = () => {
-    setModalOpen(true);
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setModalOpen(false);
+    setIsModalOpen(false);
+    setIsExportModalOpen(false);
   };
 
   const openConfirmCancelModal = () => {
@@ -74,6 +73,15 @@ const CompetingPage = () => {
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
+  };
+  const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
+
+  const handleConfirmDelete = () => {
+    deleteUser();
+    closeConfirmDeleteModal();
+  };
+  const openConfirmDeleteModal = () => {
+    setConfirmDeleteModalOpen(true);
   };
 
   const handleCancelClick = () => {
@@ -101,6 +109,10 @@ const CompetingPage = () => {
 
   const handleConfirmCancelBackClick = (id) => {
     deleteUser(id);
+    closeConfirmCancelModal();
+    closeModal();
+  };
+  const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
   };
@@ -168,8 +180,9 @@ const CompetingPage = () => {
               state={"Frecuente"}
               editIconSrc={editIcon}
               deleteIconSrc={deleteIcon}
-              onEditClick={() => openModal(user.id)}
-              onDeleteClick={() => openConfirmDeleteModal(user.id)}
+              notesIcon={notesIcon}
+              onEditClick={() => openModal()}
+              onDeleteClick={() => openConfirmDeleteModal()}
             />
           ))}
         </tbody>
@@ -215,16 +228,111 @@ const CompetingPage = () => {
           )}
         </form>
       </ReusableModal>
-
       <ReusableModal
-        isOpen={isConfirmCancelModalOpen}
-        onClose={closeConfirmCancelModal}
-        title="Eliminar rol"
+        isOpen={isExportModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={() => handleConfirmCancelBackClick(roleId)}
+        onAccept={handleConfirmCancel}
       >
-        Este rol será eliminado de forma permanente. ¿Desea continuar?
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-5">
+          <Button
+            text="Descargar archivo XML"
+            icon={DownloadIcon}
+            color={"selected"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+          />
+        </div>
+        <Button
+          text="Descargar archivo PDF"
+          icon={DownloadIcon}
+          color={"cancel"}
+          shadow="shadow-blur"
+          iconPosition={"left"}
+        />
+      </ReusableModal>
+
+      <ReusableModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="Editar Empresa"
+        onSubmit={handleSubmit(onSubmit)}
+        buttons={["cancel", "save"]}
+        handleCancelClick={handleCancelClick}
+      >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <Input
+            label={"Nombre de la empresa"}
+            placeholder={"Escribe el nombre del local..."}
+          />
+          <Input label={"Departamento/Barrio"} placeholder={"Escribir..."} />
+          <div>
+            <Input
+              label={"Dirección"}
+              placeholder={"Escribe la dirección del local..."}
+            />
+            <Input
+              label={"Referente"}
+              placeholder={"Escribe el nombre del referente..."}
+            />
+            <Input
+              label={"Contacto"}
+              placeholder={"Escribe el teléfono del contacto..."}
+            />
+            <Input
+              label={"R.U.T./CI"}
+              placeholder={"Escribe los datos fiscales de la empresa..."}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className="text-sm font-light text-black">
+              Próxima visita
+            </label>
+            <DatePicker className="rounded-lg border" />
+          </div>
+
+          <div className="mb-4 space-y-2">
+            <label className="text-gray-700 mb-5 block text-sm font-medium">
+              Asignar estado:
+            </label>
+            <Select
+              labelPlacement="outside"
+              label="Estado"
+              className="rounded-lg border"
+            >
+              <SelectItem>Frecuente</SelectItem>
+              <SelectItem>Potencial</SelectItem>
+              <SelectItem>De Baja</SelectItem>
+              <SelectItem>Potencial/Competencia</SelectItem>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <span>Notas</span>
+            <div className="flex">
+              <Button
+                text="Nueva Nota"
+                icon={PlusFillIcon}
+                iconPosition={"left"}
+                width="w-40"
+                color={"cancel"}
+              />
+            </div>
+          </div>
+        </form>
+      </ReusableModal>
+
+      <ReusableModal
+        isOpen={isConfirmDeleteModalOpen}
+        onClose={closeConfirmDeleteModal}
+        title="Eliminar usuario"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={() => handleConfirmDelete(userId)}
+      >
+        Este usuario será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
 
       <ReusableModal

@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
+
 const CompanieRow = ({
   name,
   departament,
   direction,
   sellers,
-
   nextVisits,
   state,
   editIconSrc,
@@ -13,16 +13,16 @@ const CompanieRow = ({
   notesIcon,
   onEditClick,
   onDeleteClick,
+  onClick,
 }) => {
-  const openNotes = () => {
-    window.location.href = "/ruta-a-la-empresa-o-nota"; // Cambia esto por la URL a la que quieres redirigir
-  };
   return (
     <tr>
       <td className="p-2">{name}</td>
       <td className="p-2">{departament}</td>
       <td className="p-2">{direction}</td>
-      <td className="p-2">{sellers}</td>
+      <td onClick={onClick} className="cursor-pointer p-2 underline">
+        {sellers}
+      </td>
       <div className="flex">
         <td className="p-2">{nextVisits}</td>
         <img src={watchIcon} alt="watch icon" />

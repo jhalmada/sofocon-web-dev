@@ -24,7 +24,7 @@ const ReusableModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="text-gray-500 hover:text-gray-700 absolute right-7 top-8 h-4 w-4"
+          className="text-gray-500 hover:text-gray-700 absolute right-10 top-8 h-4 w-4"
           onClick={onClose}
         >
           <img src={XlgIcon} alt="Close icon" className="h-6 w-6" />

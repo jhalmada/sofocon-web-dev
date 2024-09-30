@@ -7,18 +7,19 @@ const Button = ({
   type = "button",
   iconPosition = "right",
   width = "min-w-[10.2rem]",
+  justify = "justify-center",
 }) => {
   const colorClasses = {
     default: "bg-blue_b text-white shadow-blur",
     save: "bg-red_b text-white shadow-blur",
     cancel: "bg-white text-gray-800 ",
-    selected: "bg-gray text-black_b shadow-blur",
+    selected: "bg-gray text-black_b shadow-blur justify-between",
   };
 
   const buttonColorClass = colorClasses[color] || colorClasses.default;
 
   return (
-    <div className="flex justify-center">
+    <div className={`flex ${justify} `}>
       <button
         className={`relative flex h-10 ${width} items-center justify-center rounded-2xl px-5 py-1 ${buttonColorClass} gap-2 ${iconPosition === "left" ? "flex-row-reverse" : "flex-row"} ${shadow}`}
         onClick={onClick}

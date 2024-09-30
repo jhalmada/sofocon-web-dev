@@ -17,13 +17,12 @@ import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
-import useRoles from "../hooks/roles/use.roles";
-import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
 import notesIcon from "../assets/icons/sticky-fill.svg";
 import { DatePicker } from "@nextui-org/react";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
+import closeIcon from "../assets/icons/x-lg.svg";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -37,6 +36,7 @@ const CompaniesPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
@@ -59,15 +59,19 @@ const CompaniesPage = () => {
 
   const openModal = () => {
     setIsModalOpen(true);
-    setIsExportModalOpen(true);
   };
+
   const openExportModal = () => {
     setIsExportModalOpen(true);
+  };
+  const openSellersModal = () => {
+    setIsSellersModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setIsExportModalOpen(false);
+    setIsSellersModalOpen(false);
   };
 
   const pageIndexChange = (e) => {
@@ -209,6 +213,7 @@ const CompaniesPage = () => {
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
+                  onClick={() => openExportModal()}
                 />
                 <Link to={"agregar-empresa"}>
                   <Button text="Nueva Empresa" icon={PlusIcon} />
@@ -269,6 +274,7 @@ const CompaniesPage = () => {
                     sellers={"Vendedores"}
                     nextVisits={"24/09/2024"}
                     state={"Frecuente"}
+                    onClick={() => openSellersModal()}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     notesIcon={notesIcon}
@@ -375,6 +381,7 @@ const CompaniesPage = () => {
             icon={DownloadIcon}
             color={"selected"}
             shadow="shadow-blur"
+            iconPosition={"left"}
           />
         </div>
         <Button
@@ -382,9 +389,52 @@ const CompaniesPage = () => {
           icon={DownloadIcon}
           color={"cancel"}
           shadow="shadow-blur"
+          iconPosition={"left"}
         />
       </ReusableModal>
 
+      <ReusableModal
+        isOpen={isSellersModalOpen}
+        onClose={closeModal}
+        title="Nombre Empresa"
+        onSubmit={handleSubmit(onSubmit)}
+        buttons={["cancel", "save"]}
+        handleCancelClick={handleCancelClick}
+      >
+        <div className="space-y-2">
+          <p className="text-sm font-light leading-[1rem] text-black_b">
+            Vendedores asignados
+          </p>
+          <Button
+            text="Vendedor 1"
+            icon={closeIcon}
+            color={"selected"}
+            width="w-full"
+          />
+          <Button
+            text="Vendedor 2"
+            icon={closeIcon}
+            color={"selected"}
+            width="w-full"
+          />
+          <Button
+            text="Vendedor 3"
+            icon={closeIcon}
+            color={"selected"}
+            width="w-full"
+          />
+        </div>
+        <div>
+          <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
+            Agregar vendedores
+          </p>
+          <SearchInput
+            placeholder="Buscar..."
+            border="border"
+            rounded="rounded-[0.375rem]"
+          />
+        </div>
+      </ReusableModal>
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}
         onClose={closeConfirmCancelModal}
