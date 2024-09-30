@@ -6,6 +6,7 @@ import { BASE_URL } from "./utils/Constants.js";
 import axios from "axios";
 import { SOFOCON_JWT_TOKEN } from "./utils/Constants.js";
 import { NextUIProvider } from "@nextui-org/react";
+import AuthProvider from "./hooks/context/AuthContext.jsx";
 
 axios.defaults.baseURL = BASE_URL;
 axios.defaults.headers["origin-login"] = "dashboard";
@@ -25,6 +26,8 @@ axios.interceptors.request.use(
 
 createRoot(document.getElementById("root")).render(
   <NextUIProvider>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </NextUIProvider>,
 );

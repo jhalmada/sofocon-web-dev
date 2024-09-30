@@ -1,23 +1,24 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const OrdersPage = () => {
+  const navigate = useNavigate();
   return (
-    <div className="flex min-h-full flex-col justify-between bg-gray">
+    <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio/usuarios"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
+        <div className="mb-4 flex items-center">
+          <img
+            src={ChevronLeftIcon}
+            alt="arrow left"
+            className="-ml-1 h-4 w-4"
+          />
+          <button
+            className="cursor-pointer text-sm font-medium leading-4"
+            onClick={() => navigate("/inicio")}
+          >
             Volver
-          </div>
-        </Link>
-
+          </button>
+        </div>
+        <div></div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Órdenes
         </h1>
@@ -29,7 +30,7 @@ const OrdersPage = () => {
             </span>
           </div>
         </div>
-        <div className="rounded-tr-lg bg-white p-5 shadow-t">
+        <div className="rounded-tr-lg bg-white p-5 py-10 shadow-t">
           {" "}
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minima
           dolore adipisci accusamus alias unde labore cumque odit explicabo
