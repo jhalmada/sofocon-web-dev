@@ -14,7 +14,7 @@ const SearchInput = ({
       <input
         type="text"
         placeholder={placeholder || "Buscar..."}
-        className="h-10 min-w-64 bg-white pl-10 pr-10 outline-none"
+        className={`h-10 min-w-64 bg-white pl-10 pr-10 outline-none ${rounded}`}
       />
       <img
         src={SearchIcon}
