@@ -136,7 +136,7 @@ const TableRole = () => {
         </thead>
         <tbody>
           {paginatedRoles.map((role, index) => (
-            <tr key={index}>
+            <tr key={index} className="border-b border-gray">
               <td className="p-2">
                 <img src={icono} alt="role icon" className="h-6 w-6" />
               </td>

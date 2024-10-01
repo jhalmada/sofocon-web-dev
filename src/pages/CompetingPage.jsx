@@ -344,7 +344,7 @@ const CompetingPage = () => {
           </div>
 
           <div className="mb-4 space-y-2">
-            <label className="text-gray-700 mb-5 block text-sm font-medium">
+            <label className="text-gray-700 block text-sm font-light">
               Asignar estado:
             </label>
             <Select

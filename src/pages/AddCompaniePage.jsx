@@ -194,14 +194,10 @@ const AddCompaniePage = () => {
               </div>
             </div>
 
-            <label className="text-gray-700 mt-6 block text-sm font-medium">
+            <label className="text-gray-700 mt-5 block text-sm font-light">
               Asignar estado:
             </label>
-            <Select
-              labelPlacement="outside"
-              label="Estado"
-              className="rounded-lg border"
-            >
+            <Select placeholder="Estado" className="rounded-lg border">
               <SelectItem>Frecuente</SelectItem>
               <SelectItem>Potencial</SelectItem>
               <SelectItem>De Baja</SelectItem>

@@ -8,7 +8,7 @@ const UserRow = ({
   onDeleteClick,
 }) => {
   return (
-    <tr>
+    <tr className="border-b border-gray">
       <td className="p-2">{fullName}</td>
       <td className="p-2">{email}</td>
       <td className="p-2">{role}</td>
