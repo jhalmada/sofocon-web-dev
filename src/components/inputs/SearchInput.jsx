@@ -5,7 +5,7 @@ import ChevronDownIcon from "../../assets/icons/chevron-down.svg";
 
 const SearchInput = ({
   placeholder,
-  visibility = "block",
+  visibility = "hidden",
   border = "none",
   rounded = "rounded-[2rem]",
 }) => {

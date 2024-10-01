@@ -276,8 +276,24 @@ const NotesPage = () => {
         handleCancelClick={handleCancelClick}
       >
         <div className="flex flex-col">
-          <Input label={"Nombre de nota"} placeholder={"Escribir..."} />
-          <Input label={"Contenido"} placeholder={"Escribir..."} />
+          <Input
+            label={"Nombre de nota"}
+            placeholder={"Escribir..."}
+            {...register("title", {
+              required: "El nombre es obligatorio",
+            })}
+            errorApi={errors.title}
+            msjError={errors.title ? errors.title.message : ""}
+          />
+          <Input
+            label={"Contenido"}
+            placeholder={"Escribir..."}
+            {...register("description", {
+              required: "El contenido es obligatorio",
+            })}
+            errorApi={errors.description}
+            msjError={errors.description ? errors.description.message : ""}
+          />
 
           {errors.permissions && (
             <span className="font-roboto text-xs text-red_e">
@@ -302,6 +318,11 @@ const NotesPage = () => {
               <DatePicker
                 label="Birth date"
                 className="max-w-[18rem] rounded-[.5rem] border"
+                {...register("date", {
+                  required: "La fecha es obligatoria",
+                })}
+                errorApi={errors.date}
+                msjError={errors.date ? errors.date.message : ""}
               />
             </div>
           </div>

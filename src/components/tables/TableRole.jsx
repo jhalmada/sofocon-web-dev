@@ -192,7 +192,7 @@ const TableRole = () => {
             label="Asignar permisos"
             selectionMode="multiple"
             placeholder="Permisos"
-            className="max-w mt-10 rounded-md border font-roboto font-medium"
+            className="max-w mt-10 rounded-md border font-roboto font-light"
             {...register("permissions", {
               required: "Debes asignar al menos un permiso",
             })}

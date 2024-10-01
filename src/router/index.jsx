@@ -1,25 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-import LoginPage from "../pages/LoginPage";
-import RecoverPasswordPage from "../pages/RecoverPasswordPage";
-import NewPasswordPage from "../pages/NewPasswordPage";
-import PasswordPage from "../pages/PasswordPage";
-import Public from "../layouts/Public";
-import UsersLayout from "../layouts/Users";
-import NotesLayout from "../layouts/Notes";
-import CompaniesLayout from "../layouts/Companies";
-import HomePage from "../pages/HomePage";
-import CompaniesPage from "../pages/CompaniesPage";
-import UsersPage from "../pages/UsersPage";
-import NotesPage from "../pages/NotesPage";
-import AddCompaniePage from "../pages/AddCompaniePage";
-import AddUserPage from "../pages/AddUserPage";
-import AddRolePage from "../pages/AddRolePage";
-import AddNotePage from "../pages/AddNotePage";
-import SellersPage from "../pages/SellersPage";
-import RoutesPage from "../pages/RoutesPage";
-import ProductsPage from "../pages/ProductsPage";
-import { Login } from "../layouts/Login";
-import RedirectionPage from "../pages/RedirectionPage";
 import {
   ADD_ROLE_ROUTE,
   ADD_USER_ROUTE,
@@ -39,6 +18,26 @@ import {
   USERS_ROUTE,
   NOTES_ROUTE,
 } from "../utils/Constants";
+import LoginPage from "../pages/LoginPage";
+import RecoverPasswordPage from "../pages/RecoverPasswordPage";
+import NewPasswordPage from "../pages/NewPasswordPage";
+import PasswordPage from "../pages/PasswordPage";
+import Public from "../layouts/Public";
+import UsersLayout from "../layouts/Users";
+import NotesLayout from "../layouts/Notes";
+import CompaniesLayout from "../layouts/Companies";
+import HomePage from "../pages/HomePage";
+import CompaniesPage from "../pages/CompaniesPage";
+import UsersPage from "../pages/UsersPage";
+import AddCompaniePage from "../pages/AddCompaniePage";
+import AddUserPage from "../pages/AddUserPage";
+import AddRolePage from "../pages/AddRolePage";
+import AddNotePage from "../pages/AddNotePage";
+import SellersPage from "../pages/SellersPage";
+import RoutesPage from "../pages/RoutesPage";
+import ProductsPage from "../pages/ProductsPage";
+import { Login } from "../layouts/Login";
+import RedirectionPage from "../pages/RedirectionPage";
 import OrdersPage from "../pages/OrdersPage";
 import NotesPage from "../pages/NotesPage";
 import AddNotesPage from "../pages/AddNotePage";

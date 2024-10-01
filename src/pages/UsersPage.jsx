@@ -301,7 +301,7 @@ const UsersPage = () => {
           />
           {console.log(errors.email)}
 
-          <div className="mb-4 space-y-2">
+          <div className="space-y-4">
             <Checkbox
               defaultSelected={checkSelected === "existente"}
               isSelected={checkSelected === "existente"}
@@ -312,6 +312,7 @@ const UsersPage = () => {
               Asignar rol existente
             </Checkbox>
             <Select
+              className="rounded-lg border"
               isDisabled={checkSelected === "nuevo"}
               {...register("role", {
                 required:
@@ -326,61 +327,51 @@ const UsersPage = () => {
                   <SelectItem key={rol.id}>{rol.name}</SelectItem>
                 ))}
             </Select>
-          </div>
-          <Checkbox
-            radius="full"
-            isSelected={checkSelected === "nuevo"}
-            onClick={() => setCheckSelected("nuevo")}
-            className="font-light"
-          >
-            Asignar nuevo rol
-          </Checkbox>
 
-          <div className="flex w-full flex-row justify-between">
-            <div className="w-[48%]">
-              <Input
-                label={"Nombre del rol"}
-                disabled={checkSelected === "existente"}
-                placeholder={"Escribe el nombre del rol..."}
-                {...register("nameRole", {
-                  required:
-                    checkSelected === "nuevo"
-                      ? "Debes ingresar el nombre del rol"
-                      : false,
-                })}
-                errorApi={errors.nameRole}
-                msjError={errors.nameRole ? errors.nameRole.message : ""}
-              />
-            </div>
+            <Checkbox
+              radius="full"
+              isSelected={checkSelected === "nuevo"}
+              onClick={() => setCheckSelected("nuevo")}
+              className="font-light"
+            >
+              Asignar nuevo rol
+            </Checkbox>
 
-            <div className="mt-5 w-[48%]">
-              <Select
-                isDisabled={checkSelected === "existente"}
-                labelPlacement="outside"
-                label="Asignar permisos"
-                placeholder="Permisos"
-                selectionMode="multiple"
-                className="max-w rounded-lg border font-roboto font-medium"
-                {...register("permissions", {
-                  required:
-                    checkSelected === "nuevo"
-                      ? "Debes asignar permisos"
-                      : false,
-                })}
-                onSelectionChange={(values) => setValue("permissions", values)}
-              >
-                {permisos.map((permiso) => (
-                  <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-                ))}
-              </Select>
-              {errors.permissions && errors.permissions.message ? (
-                <span className="font-roboto text-xs text-red_e">
-                  {errors.permissions.message}
-                </span>
-              ) : (
-                " "
-              )}
-            </div>
+            <Input
+              disabled={checkSelected === "existente"}
+              placeholder={"Escribe el nombre del rol..."}
+              {...register("nameRole", {
+                required:
+                  checkSelected === "nuevo"
+                    ? "Debes ingresar el nombre del rol"
+                    : false,
+              })}
+              errorApi={errors.nameRole}
+              msjError={errors.nameRole ? errors.nameRole.message : ""}
+            />
+
+            <Select
+              isDisabled={checkSelected === "existente"}
+              placeholder="Permisos"
+              selectionMode="multiple"
+              className="max-w rounded-lg border font-roboto font-medium"
+              {...register("permissions", {
+                required:
+                  checkSelected === "nuevo" ? "Debes asignar permisos" : false,
+              })}
+              onSelectionChange={(values) => setValue("permissions", values)}
+            >
+              {permisos.map((permiso) => (
+                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+              ))}
+            </Select>
+            {errors.permissions && errors.permissions.message ? (
+              <span className="font-roboto text-xs text-red_e">
+                {errors.permissions.message}
+              </span>
+            ) : (
+              " "
+            )}
           </div>
         </form>
       </ReusableModal>

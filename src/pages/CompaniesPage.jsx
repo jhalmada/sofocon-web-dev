@@ -22,6 +22,7 @@ import { DatePicker } from "@nextui-org/react";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
+import closeIcon from "../assets/icons/x-lg.svg";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -55,7 +56,12 @@ const CompaniesPage = () => {
     formState: { errors },
   } = useForm();
 
-  const openModal = (id) => {};
+  const openModal = (id) => {
+    setIsModalOpen(true);
+  };
+  const openSellersModal = (id) => {
+    setIsSellersModalOpen(true);
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -215,6 +221,7 @@ const CompaniesPage = () => {
                     notesIcon={notesIcon}
                     onEditClick={() => openModal(companie.id)}
                     onDeleteClick={() => openConfirmDeleteModal(companie.id)}
+                    onClick={() => openSellersModal(companie.id)}
                   />
                 ))}
               </tbody>
@@ -241,35 +248,84 @@ const CompaniesPage = () => {
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
             label={"Nombre de la empresa"}
             placeholder={"Escribe el nombre del local..."}
+            {...register("name", {
+              required: "El nombre es obligatorio",
+            })}
+            errorApi={errors.name}
+            msjError={errors.name ? errors.name.message : ""}
           />
-          <Input label={"Departamento/Barrio"} placeholder={"Escribir..."} />
+          <Input
+            label={"Departamento"}
+            placeholder={"Escribir..."}
+            {...register("departament", {
+              required: "El departamento es obligatorio",
+            })}
+            errorApi={errors.departament}
+            msjError={errors.departament ? errors.departament.message : ""}
+          />
+          <Input
+            label={"Barrio"}
+            placeholder={"Escribir..."}
+            {...register("neighborhood", {
+              required: "El barrio es obligatorio",
+            })}
+            errorApi={errors.neighborhood}
+            msjError={errors.neighborhood ? errors.neighborhood.message : ""}
+          />
           <div>
             <Input
               label={"Dirección"}
               placeholder={"Escribe la dirección del local..."}
+              {...register("address", {
+                required: "La dirección es obligatoria",
+              })}
+              errorApi={errors.address}
+              msjError={errors.address ? errors.address.message : ""}
             />
             <Input
               label={"Referente"}
               placeholder={"Escribe el nombre del referente..."}
+              {...register("managerName", {
+                required: "El referente es obligatorio",
+              })}
+              errorApi={errors.managerName}
+              msjError={errors.managerName ? errors.managerName.message : ""}
             />
             <Input
               label={"Contacto"}
               placeholder={"Escribe el teléfono del contacto..."}
+              {...register("phone", {
+                required: "El teléfono es obligatorio",
+              })}
+              errorApi={errors.phone}
+              msjError={errors.phone ? errors.phone.message : ""}
             />
             <Input
               label={"R.U.T./CI"}
               placeholder={"Escribe los datos fiscales de la empresa..."}
+              {...register("rut", {
+                required: "El R.U.T. es obligatorio",
+              })}
+              errorApi={errors.rut}
+              msjError={errors.rut ? errors.rut.message : ""}
             />
           </div>
           <div className="flex flex-col">
             <label className="text-sm font-light text-black">
               Próxima visita
             </label>
-            <DatePicker className="rounded-lg border" />
+            <DatePicker
+              className="rounded-lg border"
+              {...register("nextVisit", {
+                required: "la fecha es obligatoria",
+              })}
+              errorApi={errors.nextVisit}
+              msjError={errors.nextVisit ? errors.nextVisit.message : ""}
+            />
           </div>
 
           <div className="mb-4 space-y-2">
@@ -280,6 +336,11 @@ const CompaniesPage = () => {
               labelPlacement="outside"
               label="Estado"
               className="rounded-lg border"
+              {...register("status", {
+                required: "El estado es obligatorio",
+              })}
+              errorApi={errors.status}
+              msjError={errors.status ? errors.status.message : ""}
             >
               <SelectItem>Frecuente</SelectItem>
               <SelectItem>Potencial</SelectItem>
@@ -296,6 +357,11 @@ const CompaniesPage = () => {
                 iconPosition={"left"}
                 width="w-40"
                 color={"cancel"}
+                {...register("note", {
+                  required: "La nota es obligatoria",
+                })}
+                errorApi={errors.note}
+                msjError={errors.note ? errors.note.message : ""}
               />
             </div>
           </div>
@@ -368,6 +434,7 @@ const CompaniesPage = () => {
             placeholder="Buscar..."
             border="border"
             rounded="rounded-[0.375rem]"
+            visibility="block"
           />
         </div>
       </ReusableModal>
@@ -401,7 +468,7 @@ const CompaniesPage = () => {
         buttons={["back", "accept"]}
         onAccept={() => handleConfirmDelete(companyId)}
       >
-        Esta empresa será eliminado de forma permanente. ¿Desea continuar?
+        Esta empresa será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );
