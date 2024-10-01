@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CompaniesService } from "../../services/companies/companies.service.js";
 const useCompanies = () => {
-  const [usersResponse, setUsersResponse] = useState([]);
+  const [companiesResponse, setCompaniesResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -15,7 +15,7 @@ const useCompanies = () => {
         itemsPerPage,
       });
       setTotalPage(data.pagination.totalPages);
-      setUsersResponse(data.result);
+      setCompaniesResponse(data.result);
       console.log(data);
     } catch (e) {
       console.log(e);
@@ -28,7 +28,7 @@ const useCompanies = () => {
     getAllCompanies();
   }, [page, itemsPerPage, modified]);
   return {
-    usersResponse,
+    companiesResponse,
     loading,
     setItemsPerPage,
     totalPage,

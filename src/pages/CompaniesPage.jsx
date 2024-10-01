@@ -12,10 +12,10 @@ import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
-import useUsers from "../hooks/users/use.users.js";
+import useCompanies from "../hooks/companies/useCompanies.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import usePutUsers from "../hooks/users/usePutUsers.js";
+
 import { useForm } from "react-hook-form";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
@@ -28,12 +28,20 @@ const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
 
 const CompaniesPage = () => {
-  const [userPage, setUserPage] = useState(5);
-  const { changedUser, isChanged } = usePutUsers();
-  const [userId, setUserId] = useState(null);
-  const { usersResponse, loading } = useUsers();
+  // Hooks y lógica del componente funcional
+  const {
+    companiesResponse,
+    setItemsPerPage,
+    totalPage,
+    setPage,
+    page,
+    itemsPerPage,
+    setModified,
+  } = useCompanies();
+
+  const [companyId, setCompanyId] = useState(null);
+  const { loading } = useCompanies();
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
@@ -43,13 +51,6 @@ const CompaniesPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
 
-  const totalUsers = usersResponse ? usersResponse.length : 0;
-  const totalPages = Math.ceil(totalUsers / userPage);
-  const startIndex = (currentPage - 1) * userPage;
-  const paginatedUsers = usersResponse
-    ? usersResponse.slice(startIndex, startIndex + userPage)
-    : [];
-
   const {
     register,
     handleSubmit,
@@ -57,8 +58,11 @@ const CompaniesPage = () => {
     formState: { errors },
   } = useForm();
 
-  const openModal = () => {
+  const openModal = (id) => {
+    const companyEdit = companiesResponse.find((company) => company.id === id);
+    console.log(companyEdit);
     setIsModalOpen(true);
+    setCompanyId(id);
   };
 
   const openExportModal = () => {
@@ -75,7 +79,7 @@ const CompaniesPage = () => {
   };
 
   const pageIndexChange = (e) => {
-    setUserPage(e);
+    setPage(e);
   };
 
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
@@ -86,13 +90,13 @@ const CompaniesPage = () => {
     closeModal();
   };
   const openConfirmDeleteModal = (id) => {
-    setUserId(id);
+    setCompanyId(id);
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
-    deleteUser(userId);
+    // Lógica para eliminar la empresa
     closeConfirmDeleteModal();
   };
 
@@ -102,19 +106,19 @@ const CompaniesPage = () => {
     closeModal();
   };
 
-  const handleUserCreation = async (userData) => {
+  const handleCompanyCreation = async (companyData) => {
     try {
-      const newUser = await changedUser(userData, userId);
-      console.log(newUser);
-      if (newUser) {
+      const newCompany = await usePutCompanies(companyData, companyId);
+      console.log(newCompany);
+      if (newCompany) {
         setSaveConfirmationModalOpen(true);
       } else {
         console.error(
-          "No se recibió un nuevo usuario después de la actualización",
+          "No se recibió una nueva empresa después de la actualización",
         );
       }
     } catch (error) {
-      console.error("Error al actualizar el usuario:", error);
+      console.error("Error al actualizar la empresa:", error);
       setIsModalOpen(true);
     }
   };
@@ -124,34 +128,31 @@ const CompaniesPage = () => {
 
     switch (checkSelected) {
       case "existente":
-        handleUserCreation({
+        handleCompanyCreation({
           email,
           password,
-          userInfo: {
+          companyInfo: {
             fullName,
           },
           role: { id: role },
         });
         break;
       default:
-        handleUserCreation({
+        handleCompanyCreation({
           email,
           password,
-          fullName: {
+          companyInfo: {
             fullName,
-          },
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-            s,
           },
         });
     }
   };
 
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
+    setPage(newPage);
   };
+
+  // La declaración `return` debe estar dentro del cuerpo del componente funcional
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -265,7 +266,7 @@ const CompaniesPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedUsers.map((user, index) => (
+                {companiesResponse.map((company, index) => (
                   <CompanieRow
                     key={index}
                     name={"Nombre empresa"}
@@ -278,18 +279,19 @@ const CompaniesPage = () => {
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     notesIcon={notesIcon}
-                    onEditClick={() => openModal(user.id)}
-                    onDeleteClick={() => openConfirmDeleteModal(user.id)}
+                    onEditClick={() => openModal(company.id)}
+                    onDeleteClick={() => openConfirmDeleteModal(company.id)}
                   />
                 ))}
               </tbody>
             </table>
             <div className="flex justify-center p-6">
               <Pagination
-                pageIndex={pageIndexChange}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
+                pageIndex={setItemsPerPage}
+                currentPage={page}
+                totalPages={totalPage}
+                onPageChange={setPage}
+                itemPerPage={itemsPerPage}
               />
             </div>
           </div>
@@ -463,7 +465,7 @@ const CompaniesPage = () => {
         title="Eliminar usuario"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete(userId)}
+        onAccept={() => handleConfirmDelete(companyId)}
       >
         Este usuario será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>

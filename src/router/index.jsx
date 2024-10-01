@@ -10,13 +10,14 @@ import CompaniesLayout from "../layouts/Companies";
 import HomePage from "../pages/HomePage";
 import CompaniesPage from "../pages/CompaniesPage";
 import UsersPage from "../pages/UsersPage";
+import NotesPage from "../pages/NotesPage";
 import AddCompaniePage from "../pages/AddCompaniePage";
 import AddUserPage from "../pages/AddUserPage";
 import AddRolePage from "../pages/AddRolePage";
+import AddNotePage from "../pages/AddNotePage";
 import SellersPage from "../pages/SellersPage";
 import RoutesPage from "../pages/RoutesPage";
 import ProductsPage from "../pages/ProductsPage";
-
 import { Login } from "../layouts/Login";
 import RedirectionPage from "../pages/RedirectionPage";
 import {
@@ -31,7 +32,6 @@ import {
   ORDERS_ROUTE,
   PASSWORD_CHANGED_ROUTE,
   PRODUCTS_ROUTE,
-  ORDERS_ROUTE,
   RECOVER_ROUTE,
   REDIRECTION_ROUTE,
   ROUTES_ROUTE,

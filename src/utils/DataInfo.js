@@ -136,8 +136,8 @@ const menuItems = [
   {
     name: "Órdenes",
     path: "/inicio/ordenes",
-    icon: clipboardIcon,
-    activeIcon: clipboardActiveIcon,
+    icon: clipboardChek,
+    activeIcon: clipboardChekActive,
   },
 ];
 
