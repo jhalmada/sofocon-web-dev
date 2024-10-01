@@ -12,23 +12,23 @@ import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
-import useCompanies from "../hooks/companies/useCompanies.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-
 import { useForm } from "react-hook-form";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
 import notesIcon from "../assets/icons/sticky-fill.svg";
 import { DatePicker } from "@nextui-org/react";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
-import closeIcon from "../assets/icons/x-lg.svg";
+import useCompanies from "../hooks/companies/useCompanies.js";
+import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
 
 const CompaniesPage = () => {
-  // Hooks y lógica del componente funcional
+  const [companyId, setCompanyId] = useState(null);
+  const { deleteCompany } = useDeleteCompanies();
   const {
     companiesResponse,
     setItemsPerPage,
@@ -38,9 +38,7 @@ const CompaniesPage = () => {
     itemsPerPage,
     setModified,
   } = useCompanies();
-
-  const [companyId, setCompanyId] = useState(null);
-  const { loading } = useCompanies();
+  console.log(companiesResponse);
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -49,7 +47,6 @@ const CompaniesPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
 
   const {
     register,
@@ -58,19 +55,7 @@ const CompaniesPage = () => {
     formState: { errors },
   } = useForm();
 
-  const openModal = (id) => {
-    const companyEdit = companiesResponse.find((company) => company.id === id);
-    console.log(companyEdit);
-    setIsModalOpen(true);
-    setCompanyId(id);
-  };
-
-  const openExportModal = () => {
-    setIsExportModalOpen(true);
-  };
-  const openSellersModal = () => {
-    setIsSellersModalOpen(true);
-  };
+  const openModal = (id) => {};
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -78,13 +63,8 @@ const CompaniesPage = () => {
     setIsSellersModalOpen(false);
   };
 
-  const pageIndexChange = (e) => {
-    setPage(e);
-  };
-
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
-  const openSaveConfirmationModal = () => setSaveConfirmationModalOpen(true);
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
@@ -96,7 +76,7 @@ const CompaniesPage = () => {
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
-    // Lógica para eliminar la empresa
+    deleteCompany(companyId, setModified);
     closeConfirmDeleteModal();
   };
 
@@ -106,53 +86,8 @@ const CompaniesPage = () => {
     closeModal();
   };
 
-  const handleCompanyCreation = async (companyData) => {
-    try {
-      const newCompany = await usePutCompanies(companyData, companyId);
-      console.log(newCompany);
-      if (newCompany) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        console.error(
-          "No se recibió una nueva empresa después de la actualización",
-        );
-      }
-    } catch (error) {
-      console.error("Error al actualizar la empresa:", error);
-      setIsModalOpen(true);
-    }
-  };
+  const onSubmit = (data) => {};
 
-  const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-
-    switch (checkSelected) {
-      case "existente":
-        handleCompanyCreation({
-          email,
-          password,
-          companyInfo: {
-            fullName,
-          },
-          role: { id: role },
-        });
-        break;
-      default:
-        handleCompanyCreation({
-          email,
-          password,
-          companyInfo: {
-            fullName,
-          },
-        });
-    }
-  };
-
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
-  };
-
-  // La declaración `return` debe estar dentro del cuerpo del componente funcional
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -266,21 +201,20 @@ const CompaniesPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {companiesResponse.map((company, index) => (
+                {companiesResponse.map((companie, index) => (
                   <CompanieRow
                     key={index}
-                    name={"Nombre empresa"}
-                    departament={"Nombre dpto"}
-                    direction={"Barrio"}
+                    name={companie.name}
+                    departament={companie.departament}
+                    direction={companie.address}
                     sellers={"Vendedores"}
                     nextVisits={"24/09/2024"}
-                    state={"Frecuente"}
-                    onClick={() => openSellersModal()}
+                    state={companie.status}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     notesIcon={notesIcon}
-                    onEditClick={() => openModal(company.id)}
-                    onDeleteClick={() => openConfirmDeleteModal(company.id)}
+                    onEditClick={() => openModal(companie.id)}
+                    onDeleteClick={() => openConfirmDeleteModal(companie.id)}
                   />
                 ))}
               </tbody>
@@ -291,7 +225,7 @@ const CompaniesPage = () => {
                 currentPage={page}
                 totalPages={totalPage}
                 onPageChange={setPage}
-                itemPerPage={itemsPerPage}
+                itemsPerPage={itemsPerPage}
               />
             </div>
           </div>
@@ -462,12 +396,12 @@ const CompaniesPage = () => {
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
-        title="Eliminar usuario"
+        title="Eliminar Empresa"
         variant="confirmation"
         buttons={["back", "accept"]}
         onAccept={() => handleConfirmDelete(companyId)}
       >
-        Este usuario será eliminado de forma permanente. ¿Desea continuar?
+        Esta empresa será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

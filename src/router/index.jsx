@@ -40,6 +40,8 @@ import {
   NOTES_ROUTE,
 } from "../utils/Constants";
 import OrdersPage from "../pages/OrdersPage";
+import NotesPage from "../pages/NotesPage";
+import AddNotesPage from "../pages/AddNotePage";
 
 export const router = createBrowserRouter([
   {
@@ -94,7 +96,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: ADD_NOTE_ROUTE,
-                element: <AddNotePage />,
+                element: <AddNotesPage />,
               },
             ],
           },
