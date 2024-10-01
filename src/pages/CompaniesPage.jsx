@@ -18,11 +18,13 @@ import { useForm } from "react-hook-form";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
 import notesIcon from "../assets/icons/sticky-fill.svg";
-import { DatePicker } from "@nextui-org/react";
+import { Checkbox, DatePicker } from "@nextui-org/react";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 import closeIcon from "../assets/icons/x-lg.svg";
+import { BASE_URL } from "../utils/Constants.js";
+import { getClientsExcel } from "../services/companies/companies.routes.js";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -58,6 +60,9 @@ const CompaniesPage = () => {
 
   const openModal = (id) => {
     setIsModalOpen(true);
+  };
+  const openExportModal = (id) => {
+    setIsExportModalOpen(true);
   };
   const openSellersModal = (id) => {
     setIsSellersModalOpen(true);
@@ -249,9 +254,23 @@ const CompaniesPage = () => {
         handleCancelClick={handleCancelClick}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <Input
+              label={"Nombre de la empresa"}
+              placeholder={"Escribe el nombre del local..."}
+              {...register("name", {
+                required: "El nombre es obligatorio",
+              })}
+              errorApi={errors.name}
+              msjError={errors.name ? errors.name.message : ""}
+            />
+            <Checkbox radius="full" className="text-sm font-light">
+              Cliente de la competencia
+            </Checkbox>
+          </div>
           <Input
-            label={"Nombre de la empresa"}
-            placeholder={"Escribe el nombre del local..."}
+            label={"Empresa actual"}
+            placeholder={"Nombre..."}
             {...register("name", {
               required: "El nombre es obligatorio",
             })}
@@ -329,12 +348,11 @@ const CompaniesPage = () => {
           </div>
 
           <div className="mb-4 space-y-2">
-            <label className="text-gray-700 mb-5 block text-sm font-medium">
+            <label className="text-gray-700 block text-sm font-light">
               Asignar estado:
             </label>
             <Select
-              labelPlacement="outside"
-              label="Estado"
+              placeholder="Estado"
               className="rounded-lg border"
               {...register("status", {
                 required: "El estado es obligatorio",
@@ -378,13 +396,15 @@ const CompaniesPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-5">
-          <Button
-            text="Descargar archivo XML"
-            icon={DownloadIcon}
-            color={"selected"}
-            shadow="shadow-blur"
-            iconPosition={"left"}
-          />
+          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"selected"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
         </div>
         <Button
           text="Descargar archivo PDF"

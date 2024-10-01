@@ -17,20 +17,22 @@ const CompanieRow = ({
 }) => {
   return (
     <tr>
-      <td className="p-2">{name}</td>
-      <td className="p-2">{departament}</td>
-      <td className="p-2">{direction}</td>
-      <td onClick={onClick} className="cursor-pointer p-2 underline">
-        {sellers}
-      </td>
       <div className="flex">
-        <td className="p-2">{nextVisits}</td>
         <img
           src={watchIcon}
           alt="watch icon"
           title="Cliente próximo a vencer"
         />
+        <td className="p-2">{name}</td>
       </div>
+      <td className="p-2">{departament}</td>
+      <td className="max-w-[15rem] p-2">{direction}</td>
+      <td onClick={onClick} className="cursor-pointer p-2 underline">
+        {sellers}
+      </td>
+
+      <td className="p-2">{nextVisits}</td>
+
       <td className="p-2 text-md font-semibold leading-[1.16rem]">{state}</td>
       <td className="p-2">
         <div className="flex justify-center gap-4">

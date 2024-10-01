@@ -348,8 +348,7 @@ const CompetingPage = () => {
               Asignar estado:
             </label>
             <Select
-              labelPlacement="outside"
-              label="Estado"
+              placeholder="Estado"
               className="rounded-lg border"
               {...register("status", {
                 required: "El estado es obligatorio",
