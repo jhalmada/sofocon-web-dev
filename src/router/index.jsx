@@ -28,9 +28,9 @@ import {
   HOME_ROUTE,
   LOGIN_ROUTE,
   NEW_PASSWORD_ROUTE,
+  ORDERS_ROUTE,
   PASSWORD_CHANGED_ROUTE,
   PRODUCTS_ROUTE,
-  ORDERS_ROUTE,
   RECOVER_ROUTE,
   REDIRECTION_ROUTE,
   ROUTES_ROUTE,
@@ -40,7 +40,7 @@ import {
 } from "../utils/Constants";
 import OrdersPage from "../pages/OrdersPage";
 import NotesPage from "../pages/NotesPage";
-import AddNotePage from "../pages/AddNotePage";
+import AddNotesPage from "../pages/AddNotePage";
 
 export const router = createBrowserRouter([
   {
@@ -95,7 +95,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: ADD_NOTE_ROUTE,
-                element: <AddNotePage />,
+                element: <AddNotesPage />,
               },
             ],
           },

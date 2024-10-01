@@ -47,7 +47,6 @@ const UsersPage = () => {
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
-  const [userData, setUserData] = useState(null);
 
   const {
     register,
@@ -60,19 +59,10 @@ const UsersPage = () => {
     const userToEdit = usersResponse.find((user) => user.id === id);
     console.log(userToEdit);
     if (userToEdit) {
-      setUserData({
-        userInfo: {
-          fullName: userToEdit.userInfo.fullName,
-          email: userToEdit.email,
-        },
-        role: {
-          id: userToEdit.role.id,
-        },
-      });
       // Set form values
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
-      setValue("role", userToEdit.role.id);
+      setValue("role", userToEdit?.role?.id || "");
       console.log(userToEdit);
     }
     setIsModalOpen(true);

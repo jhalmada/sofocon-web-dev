@@ -51,7 +51,6 @@ const TableRole = () => {
     const roleEdit = RolesResponse.find((role) => role.id === id);
     if (roleEdit) {
       setValue("name", roleEdit.name);
-      setValue("permissions", roleEdit.permissions);
     }
     setModalOpen(true);
   };
