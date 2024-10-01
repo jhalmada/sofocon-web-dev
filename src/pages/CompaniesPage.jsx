@@ -12,48 +12,39 @@ import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
-import useUsers from "../hooks/users/use.users.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
-import useRoles from "../hooks/roles/use.roles";
-import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
 import notesIcon from "../assets/icons/sticky-fill.svg";
 import { DatePicker } from "@nextui-org/react";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
+import useCompanies from "../hooks/companies/useCompanies.js";
+import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
 
 const CompaniesPage = () => {
-  const [userPage, setUserPage] = useState(5);
-  const { changedUser, isChanged } = usePutUsers();
-  const [userId, setUserId] = useState(null);
-  const { usersResponse, loading } = useUsers();
-  const { RolesResponse } = useRoles();
-  const { deleteUser, isDeleted, isLoading } = useDeleteUsers();
+  const [companyId, setCompanyId] = useState(null);
+  const { deleteCompany } = useDeleteCompanies();
+  const {
+    companiesResponse,
+    setItemsPerPage,
+    totalPage,
+    setPage,
+    page,
+    itemsPerPage,
+    setModified,
+  } = useCompanies();
+  console.log(companiesResponse);
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [isExistingRoleChecked, setIsExistingRoleChecked] = useState(false);
-  const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [userData, setUserData] = useState(null);
-
-  const totalUsers = usersResponse ? usersResponse.length : 0;
-  const totalPages = Math.ceil(totalUsers / userPage);
-
-  const startIndex = (currentPage - 1) * userPage;
-  const paginatedUsers = usersResponse
-    ? usersResponse.slice(startIndex, startIndex + userPage)
-    : [];
 
   const {
     register,
@@ -62,26 +53,7 @@ const CompaniesPage = () => {
     formState: { errors },
   } = useForm();
 
-  const openModal = (id) => {
-    const userToEdit = usersResponse.find((user) => user.id === id);
-    if (userToEdit) {
-      setUserData({
-        userInfo: {
-          fullName: userToEdit.userInfo.fullName,
-          email: userToEdit.email,
-        },
-        role: {
-          id: userToEdit.role.id,
-        },
-      });
-      // Set form values
-      setValue("fullName", userToEdit.userInfo.fullName);
-      setValue("email", userToEdit.email);
-      setValue("role", userToEdit.role.id);
-    }
-    setIsModalOpen(true);
-    setUserId(id);
-  };
+  const openModal = (id) => {};
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -90,25 +62,20 @@ const CompaniesPage = () => {
     setConfirmDeleteModalOpen(false);
   };
 
-  const pageIndexChange = (e) => {
-    setUserPage(e);
-  };
-
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
-  const openSaveConfirmationModal = () => setSaveConfirmationModalOpen(true);
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
   const openConfirmDeleteModal = (id) => {
-    setUserId(id);
+    setCompanyId(id);
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
-    deleteUser(userId);
+    deleteCompany(companyId, setModified);
     closeConfirmDeleteModal();
   };
 
@@ -118,56 +85,8 @@ const CompaniesPage = () => {
     closeModal();
   };
 
-  const handleUserCreation = async (userData) => {
-    try {
-      const newUser = await changedUser(userData, userId);
-      console.log(newUser);
-      if (newUser) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        console.error(
-          "No se recibió un nuevo usuario después de la actualización",
-        );
-      }
-    } catch (error) {
-      console.error("Error al actualizar el usuario:", error);
-      setIsModalOpen(true);
-    }
-  };
+  const onSubmit = (data) => {};
 
-  const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          email,
-          password,
-          userInfo: {
-            fullName,
-          },
-          role: { id: role },
-        });
-        break;
-      default:
-        handleUserCreation({
-          email,
-          password,
-          fullName: {
-            fullName,
-          },
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-            s,
-          },
-        });
-    }
-  };
-
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -279,30 +198,31 @@ const CompaniesPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedUsers.map((user, index) => (
+                {companiesResponse.map((companie, index) => (
                   <CompanieRow
                     key={index}
-                    name={"Nombre empresa"}
-                    departament={"Nombre dpto"}
-                    direction={"Barrio"}
+                    name={companie.name}
+                    departament={companie.departament}
+                    direction={companie.address}
                     sellers={"Vendedores"}
                     nextVisits={"24/09/2024"}
-                    state={"Frecuente"}
+                    state={companie.status}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     notesIcon={notesIcon}
-                    onEditClick={() => openModal(user.id)}
-                    onDeleteClick={() => openConfirmDeleteModal(user.id)}
+                    onEditClick={() => openModal(companie.id)}
+                    onDeleteClick={() => openConfirmDeleteModal(companie.id)}
                   />
                 ))}
               </tbody>
             </table>
             <div className="flex justify-center p-6">
               <Pagination
-                pageIndex={pageIndexChange}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
+                pageIndex={setItemsPerPage}
+                currentPage={page}
+                totalPages={totalPage}
+                onPageChange={setPage}
+                itemsPerPage={itemsPerPage}
               />
             </div>
           </div>
@@ -404,12 +324,12 @@ const CompaniesPage = () => {
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
-        title="Eliminar usuario"
+        title="Eliminar Empresa"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete(userId)}
+        onAccept={() => handleConfirmDelete(companyId)}
       >
-        Este usuario será eliminado de forma permanente. ¿Desea continuar?
+        Esta empresa será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

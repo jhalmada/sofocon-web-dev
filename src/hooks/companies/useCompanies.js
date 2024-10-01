@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CompaniesService } from "../../services/companies/companies.service.js";
 const useCompanies = () => {
-  const [usersResponse, setUsersResponse] = useState([]);
+  const [companiesResponse, setCompaniesResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -19,7 +19,7 @@ const useCompanies = () => {
       });
       //aqui haces con el resultado lo que necesites
       setTotalPage(data.pagination.totalPages);
-      setUsersResponse(data.result);
+      setCompaniesResponse(data.result);
       console.log(data);
     } catch (e) {
       console.log(e);
@@ -27,12 +27,12 @@ const useCompanies = () => {
       setLoading(false);
     }
   };
-  //que permite actualizar las lista de empresa
+  //que permite actualizar las lista de empresa cada vez que se modifica el paginado, o se elimina una empresa
   useEffect(() => {
     getAllCompanies();
   }, [page, itemsPerPage, modified]);
   return {
-    usersResponse,
+    companiesResponse,
     loading,
     setItemsPerPage,
     totalPage,

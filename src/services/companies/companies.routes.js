@@ -1,4 +1,4 @@
-export const getClients = "/clients";
-export const postClients = "/clients";
-export const deleteClients = "/clients";
-export const putClients = "/clients";
+export const getClients = "/client";
+export const postClients = "/client";
+export const deleteClients = "/client";
+export const putClients = "/client";

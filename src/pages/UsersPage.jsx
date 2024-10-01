@@ -38,7 +38,7 @@ const UsersPage = () => {
     itemsPerPage,
     setModified,
   } = useUsers();
-  const { RolesResponse, setRolModified } = useRoles();
+  const { RolesResponse } = useRoles();
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
