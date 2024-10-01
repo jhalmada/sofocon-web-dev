@@ -25,7 +25,11 @@ const CompanieRow = ({
       </td>
       <div className="flex">
         <td className="p-2">{nextVisits}</td>
-        <img src={watchIcon} alt="watch icon" />
+        <img
+          src={watchIcon}
+          alt="watch icon"
+          title="Cliente próximo a vencer"
+        />
       </div>
       <td className="p-2 text-md font-semibold leading-[1.16rem]">{state}</td>
       <td className="p-2">
