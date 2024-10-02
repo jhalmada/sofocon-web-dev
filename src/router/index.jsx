@@ -4,6 +4,7 @@ import {
   ADD_USER_ROUTE,
   ADD_COMPANIE_ROUTE,
   ADD_NOTE_ROUTE,
+  ADD_ROUTE_ROUTE,
   COMPANIES_ROUTE,
   HOME_ROUTE,
   LOGIN_ROUTE,
@@ -26,13 +27,13 @@ import Public from "../layouts/Public";
 import UsersLayout from "../layouts/Users";
 import NotesLayout from "../layouts/Notes";
 import CompaniesLayout from "../layouts/Companies";
+import RoutesLayout from "../layouts/Routes";
 import HomePage from "../pages/HomePage";
 import CompaniesPage from "../pages/CompaniesPage";
 import UsersPage from "../pages/UsersPage";
 import AddCompaniePage from "../pages/AddCompaniePage";
 import AddUserPage from "../pages/AddUserPage";
 import AddRolePage from "../pages/AddRolePage";
-import AddNotePage from "../pages/AddNotePage";
 import SellersPage from "../pages/SellersPage";
 import RoutesPage from "../pages/RoutesPage";
 import ProductsPage from "../pages/ProductsPage";
@@ -41,6 +42,7 @@ import RedirectionPage from "../pages/RedirectionPage";
 import OrdersPage from "../pages/OrdersPage";
 import NotesPage from "../pages/NotesPage";
 import AddNotesPage from "../pages/AddNotePage";
+import AddRoutesPage from "../pages/AddRoutesPage";
 
 export const router = createBrowserRouter([
   {
@@ -125,7 +127,17 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES_ROUTE,
-        element: <RoutesPage />,
+        element: <RoutesLayout />,
+        children: [
+          {
+            index: true,
+            element: <RoutesPage />,
+          },
+          {
+            path: ADD_ROUTE_ROUTE,
+            element: <AddRoutesPage />,
+          },
+        ],
       },
       {
         path: PRODUCTS_ROUTE,

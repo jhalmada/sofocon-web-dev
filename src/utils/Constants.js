@@ -15,6 +15,7 @@ export const ADD_COMPANIE_ROUTE = "agregar-empresa";
 export const ADD_NOTE_ROUTE = "agregar-nota";
 export const SELLERS_ROUTE = "vendedores";
 export const ROUTES_ROUTE = "rutas";
+export const ADD_ROUTE_ROUTE = "agregar-ruta";
 export const PRODUCTS_ROUTE = "productos";
 export const ORDERS_ROUTE = "ordenes";
 export const REDIRECTION_ROUTE = "/";

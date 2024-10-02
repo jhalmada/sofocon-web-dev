@@ -26,7 +26,12 @@ const CompanieRow = ({
         <td className="p-2">{name}</td>
       </div>
       <td className="p-2">{departament}</td>
-      <td className="max-w-[15rem] p-2">{direction}</td>
+      <td
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={direction}
+      >
+        {direction}
+      </td>
       <td onClick={onClick} className="cursor-pointer p-2 underline">
         {sellers}
       </td>
