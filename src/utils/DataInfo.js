@@ -110,17 +110,12 @@ const menuItems = [
     activeIcon: shopActiveIcon,
   },
   {
-    name: "Usuarios",
-    path: "/inicio/usuarios",
+    name: "Personal",
+    path: "/inicio/personal",
     icon: peopleIcon,
     activeIcon: peopleActiveIcon,
   },
-  {
-    name: "Vendedores",
-    path: "/inicio/vendedores",
-    icon: briefcaseIcon,
-    activeIcon: briefActiveIcon,
-  },
+
   {
     name: "Rutas",
     path: "/inicio/rutas",

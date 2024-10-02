@@ -47,7 +47,7 @@ const AddRolePage = () => {
     <div className="flex min-h-full flex-col justify-between overflow-auto bg-gray">
       <div className="flex-grow p-6">
         <Link
-          to="/inicio/usuarios"
+          to="/inicio/personal"
           className="cursor-pointer text-sm font-medium leading-4"
         >
           <div className="mb-4 flex items-center">

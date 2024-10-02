@@ -22,6 +22,8 @@ import { useForm } from "react-hook-form";
 import useRoles from "../hooks/roles/use.roles.js";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { permisos } from "../utils/permisons";
+import { BASE_URL } from "../utils/Constants.js";
+import { getClientsExcel } from "../services/companies/companies.routes.js";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
@@ -42,6 +44,7 @@ const UsersPage = () => {
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
@@ -69,8 +72,13 @@ const UsersPage = () => {
     setUserId(id);
   };
 
+  const openExportModal = (id) => {
+    setIsExportModalOpen(true);
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
+    setIsExportModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
@@ -162,7 +170,7 @@ const UsersPage = () => {
         </Link>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Usuarios
+            Personal
           </h1>
           <SearchInput placeholder="Buscar..." />
         </div>
@@ -188,6 +196,7 @@ const UsersPage = () => {
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
+                  onClick={() => openExportModal()}
                 />
                 <Link to={"agregar-usuario"}>
                   <Button text="Nuevo Usuario" icon={PlusIcon} />
@@ -374,6 +383,35 @@ const UsersPage = () => {
             )}
           </div>
         </form>
+      </ReusableModal>
+
+      <ReusableModal
+        isOpen={isExportModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-5">
+          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"selected"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+        </div>
+        <Button
+          text="Descargar archivo PDF"
+          icon={DownloadIcon}
+          color={"cancel"}
+          shadow="shadow-blur"
+          iconPosition={"left"}
+        />
       </ReusableModal>
 
       <ReusableModal
