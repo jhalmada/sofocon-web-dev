@@ -14,7 +14,7 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
 import notesIcon from "../assets/icons/sticky-fill.svg";
@@ -53,6 +53,7 @@ const CompaniesPage = () => {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
   } = useForm();
 
@@ -92,7 +93,18 @@ const CompaniesPage = () => {
     closeModal();
   };
 
-  const onSubmit = (data) => {};
+  const onSubmit = (data) => {
+    console.log("siasd");
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Meses están indexados desde 0
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
 
   return (
     <div className="flex h-full flex-col justify-between">
@@ -139,7 +151,7 @@ const CompaniesPage = () => {
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
-                  onClick={() => openExportModal()}
+                  //onClick={() => openExportModal()}
                 />
                 <Link to={"agregar-empresa"}>
                   <Button text="Nueva Empresa" icon={PlusIcon} />
@@ -155,7 +167,7 @@ const CompaniesPage = () => {
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
-                  onClick={() => openExportModal()}
+                  // onClick={() => openExportModal()}
                 />
                 <Link to={"agregar-empresa"}>
                   <Button text="Nueva Empresa" icon={PlusIcon} />
@@ -214,7 +226,7 @@ const CompaniesPage = () => {
                     departament={companie.departament}
                     direction={companie.address}
                     sellers={"Vendedores"}
-                    nextVisits={"24/09/2024"}
+                    nextVisits={formatDate(companie.nextVisit)}
                     state={companie.status}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
@@ -318,35 +330,56 @@ const CompaniesPage = () => {
             <label className="text-sm font-light text-black">
               Próxima visita
             </label>
-            <DatePicker
-              className="rounded-lg border"
-              {...register("nextVisit", {
-                required: "la fecha es obligatoria",
-              })}
-              errorApi={errors.nextVisit}
-              msjError={errors.nextVisit ? errors.nextVisit.message : ""}
+            <Controller
+              name={"nextVisit"}
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
+                  {...field}
+                  label={""}
+                  placeholder="Seleccione una fecha"
+                />
+              )}
+              rules={{
+                required: {
+                  value: true,
+                  message: "La fecha es obligatoria",
+                },
+              }}
             />
+            <p className="font-roboto text-xs text-red_e">
+              {errors.nextVisit ? errors.nextVisit.message : ""}
+            </p>
           </div>
 
           <div className="mb-4 space-y-2">
-            <label className="text-gray-700 mb-5 block text-sm font-medium">
+            <label
+              className={`mb-2 block text-sm font-medium ${errors.status ? "text-red_e" : "text-gray-700"}`}
+            >
               Asignar estado:
             </label>
             <Select
-              labelPlacement="outside"
-              label="Estado"
-              className="rounded-lg border"
+              placeholder="estado"
+              className={`${errors.status ? "text-red_e" : ""} ${errors.status ? "border-red_e" : ""} rounded-lg border`}
               {...register("status", {
-                required: "El estado es obligatorio",
+                required: {
+                  value: true,
+                  message: "El estado es obligatorio",
+                },
               })}
-              errorApi={errors.status}
-              msjError={errors.status ? errors.status.message : ""}
+              onSelectionChange={(value) => setValue("status", value)}
             >
-              <SelectItem>Frecuente</SelectItem>
-              <SelectItem>Potencial</SelectItem>
-              <SelectItem>De Baja</SelectItem>
-              <SelectItem>Potencial/Competencia</SelectItem>
+              <SelectItem value={"Frecuente"}>Frecuente</SelectItem>
+              <SelectItem value={"Potencial"}>Potencial</SelectItem>
+              <SelectItem value={"de Baja"}>De Baja</SelectItem>
+              <SelectItem value={"Potencial/Competencia"}>
+                Potencial/Competencia
+              </SelectItem>
             </Select>
+            <p className="font-roboto text-xs text-red_e">
+              {errors.status ? errors.status.message : ""}
+            </p>
           </div>
           <div className="space-y-2">
             <span>Notas</span>
@@ -357,11 +390,6 @@ const CompaniesPage = () => {
                 iconPosition={"left"}
                 width="w-40"
                 color={"cancel"}
-                {...register("note", {
-                  required: "La nota es obligatoria",
-                })}
-                errorApi={errors.note}
-                msjError={errors.note ? errors.note.message : ""}
               />
             </div>
           </div>

@@ -1,69 +1,96 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import geoaltIcon from "../assets/icons/geo-alt.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
-import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import useRoles from "../hooks/roles/use.roles";
-import { Calendar, Checkbox, DatePicker } from "@nextui-org/react";
-import { useForm } from "react-hook-form";
+import { Checkbox, DatePicker } from "@nextui-org/react";
+import { Controller, useForm } from "react-hook-form";
+import useAddCompany from "../hooks/companies/useAddCompanies";
 
 const AddCompaniePage = () => {
   const {
     register,
     handleSubmit,
     setValue,
+    setError,
+    control,
     formState: { errors },
   } = useForm();
-  const { RolesResponse } = useRoles();
-  const { postAddUsers, loading } = AddUsers();
+  const navigate = useNavigate();
+  const { postAddCompany } = useAddCompany();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
 
-  const [checkSelected, setCheckSelected] = useState("existente");
+  const [checkSelected, setCheckSelected] = useState("RUT");
 
-  const handleUserCreation = async (userData) => {
+  const handleCompanyCreation = async (companyData) => {
+    console.log("entra aqui");
     try {
-      const newUser = await postAddUsers(userData);
-      console.log(newUser);
-      if (newUser) {
+      const newCompany = await postAddCompany(companyData);
+      console.log(newCompany);
+      console.log("Empresa creada exitosamente");
+      if (newCompany) {
         setSaveConfirmationModalOpen(true);
       } else {
         setIsModalOpen(true);
       }
     } catch (error) {
-      console.error("Error al crear el usuario:", error);
+      console.error("Error al crear la empresa:", error);
       setIsModalOpen(true);
     }
   };
 
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-
+    const {
+      nextVisit,
+      name,
+      department,
+      managerName,
+      phone,
+      status,
+      address,
+      neighborhood,
+    } = data;
+    const newdata = new Date(
+      nextVisit.year,
+      nextVisit.month - 1,
+      nextVisit.day,
+    );
+    console.log(newdata);
+    //formate la fecha para que sea aceptada por el back
+    const formattedDate = newdata.toISOString();
+    console.log("aui si llega");
     switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          fullName,
-          email,
-          password,
-          role: { id: role }, // Pasamos el rol existente
+      case "RUT":
+        handleCompanyCreation({
+          name,
+          department,
+          managerName,
+          phone,
+          status,
+          address,
+          neighborhood,
+          nextVisit: newdata,
+          rut: data.rut,
         });
         break;
       default:
-        handleUserCreation({
-          fullName,
-          email,
-          password,
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"], // Permisos asignados
-          },
+        handleCompanyCreation({
+          name,
+          department,
+          managerName,
+          phone,
+          status,
+          address,
+          neighborhood,
+          nextVisit: formattedDate,
+          rut: data.rut,
         });
     }
   };
@@ -73,9 +100,9 @@ const AddCompaniePage = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setConfirmCancelModalOpen(false);
+    //setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
-    setConfirmDeleteModalOpen(false);
+    //setConfirmDeleteModalOpen(false);
   };
 
   const closeSaveConfirmationModal = () => {
@@ -84,6 +111,7 @@ const AddCompaniePage = () => {
   };
 
   const handleConfirmSaveClick = () => {
+    navigate("/inicio/empresas");
     closeSaveConfirmationModal();
   };
 
@@ -122,20 +150,84 @@ const AddCompaniePage = () => {
         >
           <div>
             <Input
-              label={"Nombre del local"}
+              label={"Nombre de la empresa"}
               placeholder={"Escribe el nombre del local..."}
+              {...register("name", {
+                required: "Este campo es requerido",
+                minLength: {
+                  value: 2,
+                  message: "El nombre debe contener al menos 2 caracteres.",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El nombre no puede exceder los 50 caracteres.",
+                },
+              })}
+              errorApi={errors.name}
+              msjError={errors.name ? errors.name.message : ""}
             />
+            <div className="flex gap-4">
+              <Input
+                label={"Dirección"}
+                placeholder={"Escribir..."}
+                {...register("address", {
+                  required: "Este campo es requerido",
+                  minLength: {
+                    value: 2,
+                    message: "El nombre debe contener al menos 2 caracteres.",
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: "El nombre no puede exceder los 50 caracteres.",
+                  },
+                })}
+                errorApi={errors.address}
+                msjError={errors.address ? errors.address.message : ""}
+              />
+              <Input
+                label={"Departamento"}
+                placeholder={"Escribir..."}
+                {...register("department", {
+                  required: "Este campo es requerido",
+                  minLength: {
+                    value: 2,
+                    message: "El nombre debe contener al menos 2 caracteres.",
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: "El nombre no puede exceder los 50 caracteres.",
+                  },
+                })}
+                errorApi={errors.department}
+                msjError={errors.department ? errors.department.message : ""}
+              />
+              <Input
+                label={"Barrio"}
+                placeholder={"Escribir..."}
+                {...register("neighborhood", {
+                  required: "Este campo es requerido",
+                  minLength: {
+                    value: 2,
+                    message: "El nombre debe contener al menos 2 caracteres.",
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: "El nombre no puede exceder los 50 caracteres.",
+                  },
+                })}
+                errorApi={errors.neighborhood}
+                msjError={
+                  errors.neighborhood ? errors.neighborhood.message : ""
+                }
+              />
+            </div>
 
-            <Input
-              label={"Dirección"}
-              placeholder={"Escribe la dirección del local..."}
-            />
             <div
               onClick={() => openModal()}
-              className="flex w-[8rem] cursor-pointer"
+              className="mb-2 flex w-[8rem] cursor-pointer justify-center"
             >
-              <img src={geoaltIcon} alt="geo Icon" className="-mt-3 mb-3" />
-              <span className="-mt-3 mb-3 text-xs leading-[.88rem] underline">
+              <img src={geoaltIcon} alt="geo Icon" />
+              <span className="text-xs leading-[.88rem] underline">
                 Marcar en el mapa
               </span>
             </div>
@@ -143,35 +235,104 @@ const AddCompaniePage = () => {
             <Input
               label={"Referente"}
               placeholder={"Escribe el nombre del referente..."}
+              {...register("managerName", {
+                required: "Este campo es requerido",
+                minLength: {
+                  value: 2,
+                  message: "El nombre debe contener al menos 2 caracteres.",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El nombre no puede exceder los 50 caracteres.",
+                },
+              })}
+              errorApi={errors.managerName}
+              msjError={errors.managerName ? errors.managerName.message : ""}
             />
             <Input
+              type={"number"}
               label={"Contacto"}
               placeholder={"Escribe el teléfono del contacto..."}
+              {...register("phone", {
+                required: "Este campo es requerido",
+                minLength: {
+                  value: 15,
+                  message: "Ingrese los 15 digitos de su numero.",
+                },
+                maxLength: {
+                  value: 15,
+                  message: "Ingrese solo los 15 digitos de su numero.",
+                },
+              })}
+              errorApi={errors.phone}
+              msjError={errors.phone ? errors.phone.message : ""}
             />
             <div className="flex gap-[.63rem]">
               <div className="w-full">
                 <Checkbox
-                  defaultSelected={checkSelected === "existente"}
-                  isSelected={checkSelected === "existente"}
-                  onClick={() => setCheckSelected("existente")}
+                  defaultSelected={checkSelected === "RUT"}
+                  isSelected={checkSelected === "RUT"}
+                  onClick={() => setCheckSelected("RUT")}
                   radius="full"
                   className="font-light"
                 >
                   Asignar R.U.T.:
                 </Checkbox>
-                <Input placeholder={"Escribe los 12 caracteres del RUT..."} />
+                <Input
+                  type={"number"}
+                  isSelected={checkSelected === "RUT"}
+                  disabled={checkSelected !== "RUT"}
+                  placeholder={"Escribe los 12 caracteres del RUT..."}
+                  {...register("rut", {
+                    required:
+                      checkSelected === "RUT" && "Este campo es requerido",
+                    minLength: {
+                      value: 12,
+                      message: "Ingrese los 12 digitos de su RUT.",
+                    },
+                    maxLength: {
+                      value: 12,
+                      message: "Ingrese solo los 12 digitos de su RUT.",
+                    },
+                  })}
+                  errorApi={checkSelected === "RUT" && errors.rut}
+                  msjError={
+                    checkSelected === "RUT" && errors.rut
+                      ? errors.rut.message
+                      : ""
+                  }
+                />
               </div>
               <div className="w-full">
                 <Checkbox
-                  defaultSelected={checkSelected === "existente"}
-                  isSelected={checkSelected === "existente"}
-                  onClick={() => setCheckSelected("existente")}
+                  isSelected={checkSelected === "CI"}
+                  onClick={() => setCheckSelected("CI")}
                   radius="full"
                   className="font-light"
                 >
                   Asignar CI:
                 </Checkbox>
-                <Input placeholder={"Escribe los 8 caracteres del CI..."} />
+                <Input
+                  type={"number"}
+                  disabled={checkSelected !== "CI"}
+                  placeholder={"Escribe los 8 caracteres del CI..."}
+                  {...register("ci", {
+                    required:
+                      checkSelected === "CI" && "Este campo es requerido",
+                    minLength: {
+                      value: 8,
+                      message: "Ingrese los 8 digitos de su CI.",
+                    },
+                    maxLength: {
+                      value: 8,
+                      message: "Ingrese solo los 8 digitos de su CI.",
+                    },
+                  })}
+                  errorApi={checkSelected === "CI" && errors.ci}
+                  msjError={
+                    checkSelected === "CI" && errors.ci ? errors.ci.message : ""
+                  }
+                />
               </div>
             </div>
             <div className="flex justify-between">
@@ -187,26 +348,60 @@ const AddCompaniePage = () => {
                 />
               </div>
               <div className="h-full w-[28.3rem]">
-                <label className="text-sm font-light text-black">
+                <label
+                  className={`${errors.nextVisit ? "text-red_e" : "text-black"} text-sm font-light`}
+                >
                   Próxima visita
                 </label>
-                <DatePicker className="rounded-lg border" />
+                <Controller
+                  name={"nextVisit"}
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
+                      {...field}
+                      label={""}
+                      placeholder="Seleccione una fecha"
+                      format="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+                    />
+                  )}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Este campo es requerido",
+                    },
+                  }}
+                />
+                <p className="font-roboto text-xs text-red_e">
+                  {errors.nextVisit ? errors.nextVisit.message : ""}
+                </p>
               </div>
             </div>
 
-            <label className="text-gray-700 mt-6 block text-sm font-medium">
+            <label
+              className={`${errors.status ? "text-red_e" : "text-gray-700"} mt-6 block text-sm font-medium`}
+            >
               Asignar estado:
             </label>
             <Select
-              labelPlacement="outside"
-              label="Estado"
-              className="rounded-lg border"
+              placeholder="Seleccionar estado"
+              className={`rounded-lg border ${errors.status ? "border-red_e" : ""}`}
+              {...register("status", {
+                required: "Este campo es requerido",
+              })}
+              onSelectionChange={(values) => setValue("status", values)}
             >
-              <SelectItem>Frecuente</SelectItem>
-              <SelectItem>Potencial</SelectItem>
-              <SelectItem>De Baja</SelectItem>
-              <SelectItem>Potencial/Competencia</SelectItem>
+              <SelectItem key={"Frecuente"}>Frecuente</SelectItem>
+              <SelectItem key={"Potencial"}>Potencial</SelectItem>
+              <SelectItem key={"de Baja"}>De Baja</SelectItem>
+              <SelectItem key={"Potencial/Competencia"}>
+                Potencial/Competencia
+              </SelectItem>
             </Select>
+            <p className="mt-1 font-roboto text-xs text-red_e">
+              {errors.status ? errors.status.message : ""}
+              {console.log(errors.status)}
+            </p>
           </div>
 
           <div className="flex w-full justify-end py-6">
