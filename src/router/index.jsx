@@ -42,7 +42,7 @@ import RedirectionPage from "../pages/RedirectionPage";
 import OrdersPage from "../pages/OrdersPage";
 import NotesPage from "../pages/NotesPage";
 import AddNotesPage from "../pages/AddNotePage";
-import AddRoutesPage from "../pages/AddRoutesPage";
+import AddRoutePage from "../pages/AddRoutePage";
 
 export const router = createBrowserRouter([
   {
@@ -135,7 +135,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ADD_ROUTE_ROUTE,
-            element: <AddRoutesPage />,
+            element: <AddRoutePage />,
           },
         ],
       },

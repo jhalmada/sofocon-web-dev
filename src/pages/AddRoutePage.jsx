@@ -13,7 +13,7 @@ import useRoles from "../hooks/roles/use.roles";
 import { Calendar, Checkbox, DatePicker } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 
-const AddCompaniePage = () => {
+const AddRoutePage = () => {
   const {
     register,
     handleSubmit,
@@ -106,13 +106,13 @@ const AddCompaniePage = () => {
           </div>
         </Link>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Empresas
+          Rutas
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-38 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
-              Nueva empresa
+              Nueva ruta
             </span>
           </div>
         </div>
@@ -122,84 +122,101 @@ const AddCompaniePage = () => {
         >
           <div>
             <Input
-              label={"Nombre del local"}
-              placeholder={"Escribe el nombre del local..."}
+              label={"Nombre"}
+              placeholder={"Escribir..."}
+              {...register("name", {
+                required: "El nombre es obligatorio",
+              })}
+              errorApi={errors.name}
+              msjError={errors.name ? errors.name.message : ""}
             />
 
-            <Input
-              label={"Dirección"}
-              placeholder={"Escribe la dirección del local..."}
-            />
-            <div
-              onClick={() => openModal()}
-              className="flex w-[8rem] cursor-pointer"
-            >
-              <img src={geoaltIcon} alt="geo Icon" className="-mt-3 mb-3" />
-              <span className="-mt-3 mb-3 text-xs leading-[.88rem] underline">
-                Marcar en el mapa
-              </span>
-            </div>
+            <Input label={"Zona"} placeholder={"Escribir..."} />
 
-            <Input
-              label={"Referente"}
-              placeholder={"Escribe el nombre del referente..."}
-            />
-            <Input
-              label={"Contacto"}
-              placeholder={"Escribe el teléfono del contacto..."}
-            />
-            <div className="flex gap-[.63rem]">
-              <div className="w-full">
-                <Checkbox
-                  defaultSelected={checkSelected === "existente"}
-                  isSelected={checkSelected === "existente"}
-                  onClick={() => setCheckSelected("existente")}
-                  radius="full"
-                  className="font-light"
-                >
-                  Asignar R.U.T.:
-                </Checkbox>
-                <Input placeholder={"Escribe los 12 caracteres del RUT..."} />
-              </div>
-              <div className="w-full">
-                <Checkbox
-                  defaultSelected={checkSelected === "existente"}
-                  isSelected={checkSelected === "existente"}
-                  onClick={() => setCheckSelected("existente")}
-                  radius="full"
-                  className="font-light"
-                >
-                  Asignar CI:
-                </Checkbox>
-                <Input placeholder={"Escribe los 8 caracteres del CI..."} />
-              </div>
-            </div>
-            <label className="text-gray-700 block text-sm font-light">
-              Asignar estado:
-            </label>
-            <Select placeholder="Estado" className="mb-4 rounded-lg border">
-              <SelectItem>Frecuente</SelectItem>
-              <SelectItem>Potencial</SelectItem>
-              <SelectItem>De Baja</SelectItem>
-              <SelectItem>Potencial/Competencia</SelectItem>
-            </Select>
-
-            <div className="h-full w-[28.3rem]">
-              <label className="text-sm font-light text-black">
-                Próxima visita
+            <div className="mb-4 space-y-2">
+              <label className="text-gray-700 block text-sm font-light">
+                Asignar estado:
               </label>
-              <DatePicker className="rounded-lg border" />
+              <Select
+                placeholder="Estado"
+                className="rounded-lg border"
+                {...register("status", {
+                  required: "El estado es obligatorio",
+                })}
+                errorApi={errors.status}
+                msjError={errors.status ? errors.status.message : ""}
+              >
+                <SelectItem>Frecuente</SelectItem>
+                <SelectItem>Potencial</SelectItem>
+                <SelectItem>De Baja</SelectItem>
+                <SelectItem>Potencial/Competencia</SelectItem>
+              </Select>
+            </div>
+            <div className="mb-4 space-y-2">
+              <label className="text-gray-700 block text-sm font-light">
+                Asignar vendedores
+              </label>
+              <Select
+                placeholder="Vendedores"
+                className="rounded-lg border"
+                {...register("status", {
+                  required: "El estado es obligatorio",
+                })}
+                errorApi={errors.status}
+                msjError={errors.status ? errors.status.message : ""}
+              >
+                <SelectItem>vendedor 1</SelectItem>
+                <SelectItem>vendedor 2</SelectItem>
+                <SelectItem>vendedor 3</SelectItem>
+                <SelectItem>vendedor 4</SelectItem>
+              </Select>
             </div>
 
-            <div className="mt-4 flex flex-col items-start space-y-2">
-              <span>Notas</span>
+            <div className="mb-2 flex flex-col items-start">
+              <span className="text-gray-700 block text-sm font-light">
+                Asignar nuevo vendedor
+              </span>
+
               <Button
-                text="Nueva Nota"
+                text="Nueva vendedor"
                 icon={PlusFillIcon}
                 iconPosition={"left"}
-                width="w-40"
+                width="w-50"
                 color={"cancel"}
               />
+            </div>
+            <div className="mb-4 space-y-2">
+              <label className="text-gray-700 block text-sm font-light">
+                Asignar empresas
+              </label>
+              <Select
+                placeholder="Empresas"
+                className="rounded-lg border"
+                {...register("status", {
+                  required: "El estado es obligatorio",
+                })}
+                errorApi={errors.status}
+                msjError={errors.status ? errors.status.message : ""}
+              >
+                <SelectItem>empresa 1</SelectItem>
+                <SelectItem>empresa 2</SelectItem>
+                <SelectItem>empresa 3</SelectItem>
+                <SelectItem>empresa 4</SelectItem>
+              </Select>
+            </div>
+            <div className="mb-2 flex flex-col items-start">
+              <span className="text-gray-700 block text-sm font-light">
+                Asignar nueva empresa
+              </span>
+              <Link to={"/inicio/empresas/agregar-empresa"}>
+                <Button
+                  text="Nueva Empresa"
+                  icon={PlusFillIcon}
+                  iconPosition={"left"}
+                  width="w-50"
+                  color={"cancel"}
+                />
+              </Link>
             </div>
           </div>
 
@@ -243,4 +260,4 @@ const AddCompaniePage = () => {
   );
 };
 
-export default AddCompaniePage;
+export default AddRoutePage;
