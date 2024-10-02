@@ -233,7 +233,7 @@ const RoutesPage = () => {
                     zone="zona de la ruta"
                     companies="214"
                     sellers="35"
-                    state="activo"
+                    state="Activo"
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     onEditClick={() => {

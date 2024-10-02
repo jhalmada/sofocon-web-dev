@@ -1,3 +1,5 @@
+import { Select, SelectItem } from "@nextui-org/select";
+
 const RouteRow = ({
   name,
   zone,
@@ -15,7 +17,14 @@ const RouteRow = ({
       <td className="p-2">{zone}</td>
       <td className="p-2">{companies}</td>
       <td className="p-2">{sellers}</td>
-      <td className="p-2 text-md font-semibold leading-[1.16rem]">{state}</td>
+
+      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+        <Select placeholder={state} className="mb-4 rounded-lg border">
+          <SelectItem>Inactivo</SelectItem>
+          <SelectItem>Activo</SelectItem>
+        </Select>
+      </td>
+
       <td className="p-2">
         <div className="flex justify-center gap-4">
           <img
