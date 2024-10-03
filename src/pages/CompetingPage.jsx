@@ -55,14 +55,10 @@ const CompetingPage = () => {
               Nombre
             </th>
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Departamento
+              Dirección
             </th>
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Barrio
-            </th>
-
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Vendedores
+              Empresa actual
             </th>
 
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
@@ -83,29 +79,22 @@ const CompetingPage = () => {
                 />
               </div>
             </th>
-            <th className="p-2 text-md font-semibold leading-[1.125rem]">
-              Acción
-            </th>
           </tr>
         </thead>
         <tbody>
           {companiesResponse
             .filter((comp) => comp.status === "Potencial/Competencia")
             .map((companie, index) => (
-              <CompanieRow
+              <CompetingRow
                 key={index}
                 name={companie.name}
-                departament={companie.department}
                 direction={companie.address}
-                sellers={"Vendedores"}
+                currentCompany={companie.name}
                 nextVisits={formatDate(companie.nextVisit)}
                 state={companie.status}
                 editIconSrc={editIcon}
                 deleteIconSrc={deleteIcon}
                 notesIcon={notesIcon}
-                // onEditClick={() => openModal(companie.id)}
-                // onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-                // onClick={() => openSellersModal(companie.id)}
               />
             ))}
         </tbody>
