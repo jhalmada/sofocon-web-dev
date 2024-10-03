@@ -1,17 +1,17 @@
-const UserRow = ({
-  fullName,
-  email,
-  role,
+const NotesRow = ({
+  name,
+  content,
+  date,
   editIconSrc,
   deleteIconSrc,
   onEditClick,
   onDeleteClick,
 }) => {
   return (
-    <tr className="border-b border-gray">
-      <td className="p-2">{fullName}</td>
-      <td className="p-2">{email}</td>
-      <td className="p-2">{role}</td>
+    <tr>
+      <td className="p-2">{name}</td>
+      <td className="p-2">{content}</td>
+      <td className="p-2">{date}</td>
       <td className="p-2">
         <div className="flex justify-center gap-4">
           <img
@@ -32,4 +32,4 @@ const UserRow = ({
   );
 };
 
-export default UserRow;
+export default NotesRow;

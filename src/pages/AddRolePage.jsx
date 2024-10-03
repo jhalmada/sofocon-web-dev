@@ -44,21 +44,21 @@ const AddRolePage = () => {
   };
 
   return (
-    <div className="flex h-full flex-col justify-between overflow-auto bg-gray">
+    <div className="flex min-h-full flex-col justify-between overflow-auto bg-gray">
       <div className="flex-grow p-6">
-        <div className="mb-4 flex items-center">
-          <img
-            src={ChevronLeftIcon}
-            alt="arrow left"
-            className="-ml-1 h-4 w-4"
-          />
-          <Link
-            to="/inicio/usuarios"
-            className="cursor-pointer text-sm font-medium leading-4"
-          >
+        <Link
+          to="/inicio/personal"
+          className="cursor-pointer text-sm font-medium leading-4"
+        >
+          <div className="mb-4 flex items-center">
+            <img
+              src={ChevronLeftIcon}
+              alt="arrow left"
+              className="-ml-1 h-4 w-4"
+            />
             Volver
-          </Link>
-        </div>
+          </div>
+        </Link>
 
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Usuarios
@@ -92,7 +92,7 @@ const AddRolePage = () => {
               label="Asignar permisos"
               selectionMode="multiple"
               placeholder="Permisos"
-              className="max-w mt-10 rounded-md border font-roboto font-medium"
+              className="max-w mt-10 rounded-lg border font-roboto font-medium"
               {...register("permissions", {
                 required: "Debes asignar al menos un permiso",
               })}
@@ -109,7 +109,7 @@ const AddRolePage = () => {
             )}
           </div>
 
-          <div className="flex justify-end py-6">
+          <div className="flex justify-end pt-6">
             <div>
               <Button
                 text={"GUARDAR"}

@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-const Users = () => {
+const Routes = () => {
   return (
     <div className="flex min-h-full flex-col bg-gray">
       <div className="flex-grow">
@@ -10,4 +10,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Routes;

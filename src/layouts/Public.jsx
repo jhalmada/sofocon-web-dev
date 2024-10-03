@@ -53,12 +53,12 @@ const Public = () => {
                 className="mt-2.5 h-20 p-4"
               />
             </div>
-            <div className="flex h-[30.625rem] flex-col items-center justify-between p-2">
+            <div className="flex h-[30.625rem] flex-col items-center space-y-4 p-2">
               {menuItems.map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`flex h-12 ${isOpen ? "w-[15.625rem]" : "w-20 justify-center"} items-center gap-1.5 rounded-md px-6 py-1.5 ${isActive(item.path) ? "bg-red_m text-white" : ""} transition-all duration-200 ease-in-out`}
+                  className={`flex h-12 ${isOpen ? "w-[15.625rem]" : "w-20 justify-center"} items-center gap-1.5 rounded-[.75rem] px-6 py-1.5 ${isActive(item.path) ? "bg-red_m text-white" : ""} transition-all duration-200 ease-in-out`}
                 >
                   <div className="flex items-center gap-2.5">
                     <img
@@ -76,15 +76,15 @@ const Public = () => {
               ))}
             </div>
           </div>
-          <div
-            className="flex cursor-pointer justify-end py-4 pr-4"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <img
-              src={arrowIcon}
-              alt="arrow"
-              className={`h-10 w-10 ${isOpen ? "rotate-0" : "rotate-180"} transform transition-transform duration-300 ease-in-out`}
-            />
+          <div className="pr-4">
+            <div className="-mt-12 flex justify-end">
+              <img
+                onClick={() => setIsOpen(!isOpen)}
+                src={arrowIcon}
+                alt="arrow"
+                className={`h-10 w-10 cursor-pointer ${isOpen ? "rotate-0" : "rotate-180"} transform transition-transform duration-300 ease-in-out`}
+              />
+            </div>
           </div>
         </aside>
         <div className="flex flex-1 flex-col overflow-auto">

@@ -1,7 +1,11 @@
-const UserRow = ({
-  fullName,
-  email,
-  role,
+import { Select, SelectItem } from "@nextui-org/select";
+
+const RouteRow = ({
+  name,
+  zone,
+  companies,
+  sellers,
+  state,
   editIconSrc,
   deleteIconSrc,
   onEditClick,
@@ -9,9 +13,18 @@ const UserRow = ({
 }) => {
   return (
     <tr className="border-b border-gray">
-      <td className="p-2">{fullName}</td>
-      <td className="p-2">{email}</td>
-      <td className="p-2">{role}</td>
+      <td className="p-2">{name}</td>
+      <td className="p-2">{zone}</td>
+      <td className="p-2">{companies}</td>
+      <td className="p-2">{sellers}</td>
+
+      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+        <Select placeholder={state} className="mb-4 rounded-lg border">
+          <SelectItem>Inactivo</SelectItem>
+          <SelectItem>Activo</SelectItem>
+        </Select>
+      </td>
+
       <td className="p-2">
         <div className="flex justify-center gap-4">
           <img
@@ -32,4 +45,4 @@ const UserRow = ({
   );
 };
 
-export default UserRow;
+export default RouteRow;

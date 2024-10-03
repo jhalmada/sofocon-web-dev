@@ -51,7 +51,6 @@ const TableRole = () => {
     const roleEdit = RolesResponse.find((role) => role.id === id);
     if (roleEdit) {
       setValue("name", roleEdit.name);
-      setValue("permissions", roleEdit.permissions);
     }
     setModalOpen(true);
   };
@@ -119,7 +118,7 @@ const TableRole = () => {
     setRolePage(e);
   };
   return (
-    <div className="rounded-tr-lg bg-white p-5 shadow-t">
+    <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
         <thead>
           <tr>
@@ -137,14 +136,14 @@ const TableRole = () => {
         </thead>
         <tbody>
           {paginatedRoles.map((role, index) => (
-            <tr key={index}>
+            <tr key={index} className="border-b border-gray">
               <td className="p-2">
                 <img src={icono} alt="role icon" className="h-6 w-6" />
               </td>
               <td className="p-2">{role.name}</td>
               <td className="p-2">{formatPermisos(role.permissions)}</td>
               <td className="p-2">
-                <div className="flex gap-5">
+                <div className="flex gap-4">
                   <img
                     src={editIcon}
                     alt="Edit icon"
@@ -193,7 +192,7 @@ const TableRole = () => {
             label="Asignar permisos"
             selectionMode="multiple"
             placeholder="Permisos"
-            className="max-w mt-10 rounded-md border font-roboto font-medium"
+            className="max-w mt-10 rounded-md border font-roboto font-light"
             {...register("permissions", {
               required: "Debes asignar al menos un permiso",
             })}

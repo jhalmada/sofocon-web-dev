@@ -6,11 +6,11 @@ import houseIcon from "../assets/icons/house-door.svg";
 import shopIcon from "../assets/icons/shop-window.svg";
 import peopleIcon from "../assets/icons/people.svg";
 import briefcaseIcon from "../assets/icons/briefcase.svg";
+import briefActiveIcon from "../assets/icons/briefcase-fill.svg";
 import compassIcon from "../assets/icons/compass.svg";
 import boxIcon from "../assets/icons/box-seam.svg";
-import briefActiveIcon from "../assets/icons/briefcase-fill.svg";
-import compassActiveIcon from "../assets/icons/compass-fill.svg";
 import boxActiveIcon from "../assets/icons/box-seam-fill.svg";
+import compassActiveIcon from "../assets/icons/compass-fill.svg";
 import houseActiveIcon from "../assets/icons/house-door-fill.svg";
 import peopleActiveIcon from "../assets/icons/people-fill.svg";
 import shopActiveIcon from "../assets/icons/shop-window-fill.svg";
@@ -110,17 +110,12 @@ const menuItems = [
     activeIcon: shopActiveIcon,
   },
   {
-    name: "Usuarios",
-    path: "/inicio/usuarios",
+    name: "Personal",
+    path: "/inicio/personal",
     icon: peopleIcon,
     activeIcon: peopleActiveIcon,
   },
-  {
-    name: "Vendedores",
-    path: "/inicio/vendedores",
-    icon: briefcaseIcon,
-    activeIcon: briefActiveIcon,
-  },
+
   {
     name: "Rutas",
     path: "/inicio/rutas",
@@ -134,7 +129,7 @@ const menuItems = [
     activeIcon: boxActiveIcon,
   },
   {
-    name: "Ordenes",
+    name: "Órdenes",
     path: "/inicio/ordenes",
     icon: clipboardChek,
     activeIcon: clipboardChekActive,

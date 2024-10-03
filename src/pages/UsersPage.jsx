@@ -22,6 +22,8 @@ import { useForm } from "react-hook-form";
 import useRoles from "../hooks/roles/use.roles.js";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { permisos } from "../utils/permisons";
+import { BASE_URL } from "../utils/Constants.js";
+import { getClientsExcel } from "../services/companies/companies.routes.js";
 
 const USER_TAB = "users";
 const ROLES_TAB = "roles";
@@ -38,16 +40,16 @@ const UsersPage = () => {
     itemsPerPage,
     setModified,
   } = useUsers();
-  const { RolesResponse, setRolModified } = useRoles();
+  const { RolesResponse } = useRoles();
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
-  const [userData, setUserData] = useState(null);
 
   const {
     register,
@@ -60,27 +62,23 @@ const UsersPage = () => {
     const userToEdit = usersResponse.find((user) => user.id === id);
     console.log(userToEdit);
     if (userToEdit) {
-      setUserData({
-        userInfo: {
-          fullName: userToEdit.userInfo.fullName,
-          email: userToEdit.email,
-        },
-        role: {
-          id: userToEdit.role.id,
-        },
-      });
       // Set form values
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
-      setValue("role", userToEdit.role.id);
+      setValue("role", userToEdit?.role?.id || "");
       console.log(userToEdit);
     }
     setIsModalOpen(true);
     setUserId(id);
   };
 
+  const openExportModal = (id) => {
+    setIsExportModalOpen(true);
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
+    setIsExportModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
@@ -157,22 +155,25 @@ const UsersPage = () => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
-        <div className="mb-4 flex items-center">
-          <img
-            src={ChevronLeftIcon}
-            alt="arrow left"
-            className="-ml-1 h-4 w-4"
-          />
-          <Link
-            to="/inicio"
-            className="cursor-pointer text-sm font-medium leading-4"
-          >
+        <Link
+          to="/inicio"
+          className="cursor-pointer text-sm font-medium leading-4"
+        >
+          <div className="mb-4 flex items-center">
+            <img
+              src={ChevronLeftIcon}
+              alt="arrow left"
+              className="-ml-1 h-4 w-4"
+            />
             Volver
-          </Link>
+          </div>
+        </Link>
+        <div className="flex justify-between">
+          <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
+            Personal
+          </h1>
+          <SearchInput placeholder="Buscar..." />
         </div>
-        <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Usuarios
-        </h1>
         <div className="flex items-center">
           <div className="flex">
             <h2
@@ -188,14 +189,14 @@ const UsersPage = () => {
               Roles
             </h2>
           </div>
-          <div className="flex h-8 w-full items-center justify-between gap-[0.875rem] rounded p-2">
-            <SearchInput placeholder="Buscar..." />
+          <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
             {activeTab === USER_TAB && (
               <div className="flex space-x-4">
                 <Button
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
+                  onClick={() => openExportModal()}
                 />
                 <Link to={"agregar-usuario"}>
                   <Button text="Nuevo Usuario" icon={PlusIcon} />
@@ -210,7 +211,7 @@ const UsersPage = () => {
           </div>
         </div>
         {activeTab === USER_TAB && (
-          <div className="rounded-tr-lg bg-white p-5 shadow-t">
+          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
             <table className="w-full">
               <thead>
                 <tr>
@@ -221,8 +222,8 @@ const UsersPage = () => {
                     Email
                   </th>
                   <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <h3>Rol</h3>
                     <div className="flex gap-2">
+                      <h3>Rol</h3>
                       <img
                         src={FilterRightIcon}
                         alt="chevron-down icon"
@@ -235,7 +236,7 @@ const UsersPage = () => {
                       />
                     </div>
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
                 </tr>
@@ -309,16 +310,18 @@ const UsersPage = () => {
           />
           {console.log(errors.email)}
 
-          <div className="mb-4 space-y-2">
+          <div className="space-y-4">
             <Checkbox
               defaultSelected={checkSelected === "existente"}
               isSelected={checkSelected === "existente"}
               onClick={() => setCheckSelected("existente")}
               radius="full"
+              className="font-light"
             >
               Asignar rol existente
             </Checkbox>
             <Select
+              className="rounded-lg border"
               isDisabled={checkSelected === "nuevo"}
               {...register("role", {
                 required:
@@ -333,62 +336,82 @@ const UsersPage = () => {
                   <SelectItem key={rol.id}>{rol.name}</SelectItem>
                 ))}
             </Select>
-          </div>
-          <Checkbox
-            radius="full"
-            isSelected={checkSelected === "nuevo"}
-            onClick={() => setCheckSelected("nuevo")}
-          >
-            Asignar nuevo rol
-          </Checkbox>
 
-          <div className="flex w-full flex-row justify-between">
-            <div className="w-[48%]">
-              <Input
-                label={"Nombre del rol"}
-                disabled={checkSelected === "existente"}
-                placeholder={"Escribe el nombre del rol..."}
-                {...register("nameRole", {
-                  required:
-                    checkSelected === "nuevo"
-                      ? "Debes ingresar el nombre del rol"
-                      : false,
-                })}
-                errorApi={errors.nameRole}
-                msjError={errors.nameRole ? errors.nameRole.message : ""}
-              />
-            </div>
+            <Checkbox
+              radius="full"
+              isSelected={checkSelected === "nuevo"}
+              onClick={() => setCheckSelected("nuevo")}
+              className="font-light"
+            >
+              Asignar nuevo rol
+            </Checkbox>
 
-            <div className="mt-5 w-[48%]">
-              <Select
-                isDisabled={checkSelected === "existente"}
-                labelPlacement="outside"
-                label="Asignar permisos"
-                placeholder="Permisos"
-                selectionMode="multiple"
-                className="max-w rounded-md border font-roboto font-medium"
-                {...register("permissions", {
-                  required:
-                    checkSelected === "nuevo"
-                      ? "Debes asignar permisos"
-                      : false,
-                })}
-                onSelectionChange={(values) => setValue("permissions", values)}
-              >
-                {permisos.map((permiso) => (
-                  <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-                ))}
-              </Select>
-              {errors.permissions && errors.permissions.message ? (
-                <span className="font-roboto text-xs text-red_e">
-                  {errors.permissions.message}
-                </span>
-              ) : (
-                " "
-              )}
-            </div>
+            <Input
+              disabled={checkSelected === "existente"}
+              placeholder={"Escribe el nombre del rol..."}
+              {...register("nameRole", {
+                required:
+                  checkSelected === "nuevo"
+                    ? "Debes ingresar el nombre del rol"
+                    : false,
+              })}
+              errorApi={errors.nameRole}
+              msjError={errors.nameRole ? errors.nameRole.message : ""}
+            />
+
+            <Select
+              isDisabled={checkSelected === "existente"}
+              placeholder="Permisos"
+              selectionMode="multiple"
+              className="max-w rounded-lg border font-roboto font-medium"
+              {...register("permissions", {
+                required:
+                  checkSelected === "nuevo" ? "Debes asignar permisos" : false,
+              })}
+              onSelectionChange={(values) => setValue("permissions", values)}
+            >
+              {permisos.map((permiso) => (
+                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+              ))}
+            </Select>
+            {errors.permissions && errors.permissions.message ? (
+              <span className="font-roboto text-xs text-red_e">
+                {errors.permissions.message}
+              </span>
+            ) : (
+              " "
+            )}
           </div>
         </form>
+      </ReusableModal>
+
+      <ReusableModal
+        isOpen={isExportModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-5">
+          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"selected"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+        </div>
+        <Button
+          text="Descargar archivo PDF"
+          icon={DownloadIcon}
+          color={"cancel"}
+          shadow="shadow-blur"
+          iconPosition={"left"}
+        />
       </ReusableModal>
 
       <ReusableModal

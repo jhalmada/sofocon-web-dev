@@ -13,17 +13,18 @@ const ReusableModal = ({
   buttons = [],
   handleCancelClick,
   onAccept,
+  width = "w-[27.75rem]",
 }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div
-        className="relative max-h-screen w-[27.75rem] max-w-[27.75rem] overflow-auto rounded-lg bg-white p-8 shadow-lg"
+        className={`relative max-h-screen ${width} overflow-auto rounded-lg bg-white p-8 shadow-lg`}
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="text-gray-500 hover:text-gray-700 absolute right-7 top-8 h-4 w-4"
+          className="text-gray-500 hover:text-gray-700 absolute right-10 top-8 h-4 w-4"
           onClick={onClose}
         >
           <img src={XlgIcon} alt="Close icon" className="h-6 w-6" />
@@ -31,17 +32,21 @@ const ReusableModal = ({
         <h2 className="mb-8 text-lg font-semibold">{title}</h2>
         {variant === "confirmation" ? (
           <div className="space-y-8">
-            <p>{children}</p>
+            <p className="space-y-6 text-sm font-medium leading-[1rem]">
+              {children}
+            </p>
             <div className="flex justify-between">
               {buttons.includes("back") && (
-                <Button
-                  text="Volver"
-                  color="cancel"
-                  icon={ChevronLeftIcon}
-                  iconPosition="left"
-                  onClick={onClose}
-                  width="w-20"
-                />
+                <div>
+                  <Button
+                    text="Volver"
+                    color="cancel"
+                    icon={ChevronLeftIcon}
+                    iconPosition="left"
+                    onClick={onClose}
+                    width="w-20"
+                  />
+                </div>
               )}
               {buttons.includes("accept") && (
                 <div className="w-full">

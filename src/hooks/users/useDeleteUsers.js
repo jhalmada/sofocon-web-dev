@@ -1,7 +1,5 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { UserService } from "../../services/user/user.service";
-import useUsers from "./use.users";
-import { p } from "framer-motion/client";
 
 const useDeleteUsers = () => {
   const [isDeleted, setIsDeleted] = useState(false);

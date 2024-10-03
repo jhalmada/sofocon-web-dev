@@ -1,6 +1,6 @@
 const HomePage = () => {
   return (
-    <div className="h-full bg-gray p-6">
+    <div className="min-h-full bg-gray p-6">
       <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
         Inicio
       </h1>

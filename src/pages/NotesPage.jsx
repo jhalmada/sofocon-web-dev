@@ -1,50 +1,54 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import RouteRow from "../components/RouteRow.jsx";
-import Button from "../components/buttons/Button.jsx";
-import ReusableModal from "../components/modals/ReusableModal.jsx";
-import Pagination from "../components/Pagination.jsx";
-import Input from "../components/inputs/Input.jsx";
+import Button from "../components/buttons/Button";
+import ReusableModal from "../components/modals/ReusableModal";
+import Pagination from "../components/Pagination";
+import Input from "../components/inputs/Input";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox } from "@nextui-org/react";
-import SearchInput from "../components/inputs/SearchInput.jsx";
+import SearchInput from "../components/inputs/SearchInput";
 import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import DownloadIcon from "../assets/icons/download.svg";
 import useUsers from "../hooks/users/use.users.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
+import useRoles from "../hooks/roles/use.roles";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
-import { permisos } from "../utils/permisons";
-import useRoles from "../hooks/roles/use.roles.js";
+import { Checkbox, DatePicker } from "@nextui-org/react";
+import NotesRow from "../components/NotesRow.jsx";
+import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 
-const USER_TAB = "users";
+const NOTES_TAB = "notes";
 
-const RoutesPage = () => {
-  const { changedUser } = usePutUsers();
+const NotesPage = () => {
+  const [userPage, setUserPage] = useState(5);
+  const { changedUser, isChanged } = usePutUsers();
   const [userId, setUserId] = useState(null);
-  const {
-    usersResponse,
-    setItemsPerPage,
-    totalPage,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-  } = useUsers();
+  const { usersResponse, loading } = useUsers();
   const { RolesResponse } = useRoles();
-  const { deleteUser } = useDeleteUsers();
-  const [activeTab, setActiveTab] = useState(USER_TAB);
+  const { deleteUser, isDeleted, isLoading } = useDeleteUsers();
+  const [activeTab, setActiveTab] = useState(NOTES_TAB);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [isExistingRoleChecked, setIsExistingRoleChecked] = useState(false);
+  const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
+  const [userData, setUserData] = useState(null);
+
+  const totalUsers = usersResponse ? usersResponse.length : 0;
+  const totalPages = Math.ceil(totalUsers / userPage);
+
+  const startIndex = (currentPage - 1) * userPage;
+  const paginatedUsers = usersResponse
+    ? usersResponse.slice(startIndex, startIndex + userPage)
+    : [];
 
   const {
     register,
@@ -55,13 +59,20 @@ const RoutesPage = () => {
 
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
-    console.log(userToEdit);
     if (userToEdit) {
+      setUserData({
+        userInfo: {
+          fullName: userToEdit.userInfo.fullName,
+          email: userToEdit.email,
+        },
+        role: {
+          id: userToEdit.role.id,
+        },
+      });
       // Set form values
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
-      setValue("role", userToEdit?.role?.id || "");
-      console.log(userToEdit);
+      setValue("role", userToEdit.role.id);
     }
     setIsModalOpen(true);
     setUserId(id);
@@ -74,8 +85,13 @@ const RoutesPage = () => {
     setConfirmDeleteModalOpen(false);
   };
 
+  const pageIndexChange = (e) => {
+    setUserPage(e);
+  };
+
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
+  const openSaveConfirmationModal = () => setSaveConfirmationModalOpen(true);
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
@@ -87,7 +103,7 @@ const RoutesPage = () => {
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
-    deleteUser(userId, setModified);
+    deleteUser(userId);
     closeConfirmDeleteModal();
   };
 
@@ -99,7 +115,7 @@ const RoutesPage = () => {
 
   const handleUserCreation = async (userData) => {
     try {
-      const newUser = await changedUser(userData, userId, setModified);
+      const newUser = await changedUser(userData, userId);
       console.log(newUser);
       if (newUser) {
         setSaveConfirmationModalOpen(true);
@@ -138,15 +154,20 @@ const RoutesPage = () => {
           role: {
             name: nameRole,
             permissions: [...permissions, "USER_ADMIN"],
+            s,
           },
         });
     }
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
   };
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
         <Link
-          to="/inicio"
+          to="/inicio/empresas"
           className="cursor-pointer text-sm font-medium leading-4"
         >
           <div className="mb-4 flex items-center">
@@ -160,35 +181,31 @@ const RoutesPage = () => {
         </Link>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Rutas
+            Empresas
           </h1>
           <SearchInput placeholder="Buscar..." />
         </div>
+
         <div className="flex items-center">
           <div className="flex">
             <h2
-              onClick={() => setActiveTab(USER_TAB)}
-              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              onClick={() => setActiveTab(NOTES_TAB)}
+              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Listado
+              Notas
             </h2>
           </div>
-          <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
-            {activeTab === USER_TAB && (
-              <div className="flex space-x-4">
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                />
-                <Link to={"agregar-ruta"}>
-                  <Button text="Nueva ruta" icon={PlusIcon} />
+          <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded py-2">
+            {activeTab === NOTES_TAB && (
+              <div className="flex gap-[.6rem]">
+                <Link to={"agregar-nota"}>
+                  <Button text="Nueva Nota" icon={PlusIcon} />
                 </Link>
               </div>
             )}
           </div>
         </div>
-        {activeTab === USER_TAB && (
+        {activeTab === NOTES_TAB && (
           <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
             <table className="w-full">
               <thead>
@@ -197,17 +214,12 @@ const RoutesPage = () => {
                     Nombre
                   </th>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Zona
+                    Contenido
                   </th>
+
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Empresas
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Vendedores
-                  </th>
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex gap-2">
-                      <h3>Estado</h3>
+                    <div className="flex gap-4">
+                      <h3>Fecha importante</h3>
                       <img
                         src={FilterRightIcon}
                         alt="chevron-down icon"
@@ -220,37 +232,34 @@ const RoutesPage = () => {
                       />
                     </div>
                   </th>
+
                   <th className="p-2 text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {usersResponse.map((user, index) => (
-                  <RouteRow
+                {paginatedUsers.map((user, index) => (
+                  <NotesRow
                     key={index}
-                    name="nombre de ruta"
-                    zone="zona de la ruta"
-                    companies="214"
-                    sellers="35"
-                    state="Activo"
+                    name={"Nombre nota"}
+                    content={"Contenido"}
+                    date={"Fecha importante"}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
-                    onEditClick={() => {
-                      openModal(user.id);
-                    }}
+                    onEditClick={() => openModal(user.id)}
                     onDeleteClick={() => openConfirmDeleteModal(user.id)}
                   />
                 ))}
               </tbody>
             </table>
+
             <div className="flex justify-center p-6">
               <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemPerPage={itemsPerPage}
+                pageIndex={pageIndexChange}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
               />
             </div>
           </div>
@@ -258,43 +267,42 @@ const RoutesPage = () => {
       </div>
 
       <ReusableModal
+        width="w-[46rem]"
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Editar Usuario"
+        title="Editar Nota"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col">
           <Input
-            label={"Nombre Completo"}
-            placeholder={"Escribe el nombre completo del usuario..."}
-            {...register("fullName", {
-              required: "El nombre completo es obligatorio",
+            label={"Nombre de nota"}
+            placeholder={"Escribir..."}
+            {...register("title", {
+              required: "El nombre es obligatorio",
             })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
+            errorApi={errors.title}
+            msjError={errors.title ? errors.title.message : ""}
           />
           <Input
-            placeholder={"Escribe tu correo"}
-            label={"Dirección de correo"}
-            {...register("email", {
-              required: {
-                value: true,
-                message: "Campo obligatorio",
-              },
-              pattern: {
-                value:
-                  /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
-                message: "Formato de email incorrecto",
-              },
-            })} // Add this line
-            errorApi={errors.email}
-            msjError={errors.email ? errors.email.message : ""}
+            label={"Contenido"}
+            placeholder={"Escribir..."}
+            {...register("description", {
+              required: "El contenido es obligatorio",
+            })}
+            errorApi={errors.description}
+            msjError={errors.description ? errors.description.message : ""}
           />
-          {console.log(errors.email)}
 
-          <div className="space-y-4">
+          {errors.permissions && (
+            <span className="font-roboto text-xs text-red_e">
+              {errors.permissions.message}
+            </span>
+          )}
+        </div>
+        <div className="flex gap-[4.4rem]">
+          <div>
             <Checkbox
               defaultSelected={checkSelected === "existente"}
               isSelected={checkSelected === "existente"}
@@ -302,71 +310,37 @@ const RoutesPage = () => {
               radius="full"
               className="font-light"
             >
-              Asignar rol existente
+              <span className="text-sm font-light leading-[1rem] text-black_b">
+                Asignar fecha
+              </span>
             </Checkbox>
-            <Select
-              className="rounded-lg border"
-              isDisabled={checkSelected === "nuevo"}
-              {...register("role", {
-                required:
-                  checkSelected === "existente"
-                    ? "Debes seleccionar un rol"
-                    : false,
-              })}
-              onSelectionChange={(value) => setValue("role", value)}
-            >
-              {RolesResponse &&
-                RolesResponse.map((rol) => (
-                  <SelectItem key={rol.id}>{rol.name}</SelectItem>
-                ))}
-            </Select>
+            <div className="flex w-[18rem]">
+              <DatePicker
+                label="Birth date"
+                className="max-w-[18rem] rounded-[.5rem] border"
+                {...register("date", {
+                  required: "La fecha es obligatoria",
+                })}
+                errorApi={errors.date}
+                msjError={errors.date ? errors.date.message : ""}
+              />
+            </div>
+          </div>
 
+          <div className="w-[12.6rem]">
             <Checkbox
+              defaultSelected={checkSelected === "existente"}
+              isSelected={checkSelected === "existente"}
+              onClick={() => setCheckSelected("existente")}
               radius="full"
-              isSelected={checkSelected === "nuevo"}
-              onClick={() => setCheckSelected("nuevo")}
               className="font-light"
             >
-              Asignar nuevo rol
-            </Checkbox>
-
-            <Input
-              disabled={checkSelected === "existente"}
-              placeholder={"Escribe el nombre del rol..."}
-              {...register("nameRole", {
-                required:
-                  checkSelected === "nuevo"
-                    ? "Debes ingresar el nombre del rol"
-                    : false,
-              })}
-              errorApi={errors.nameRole}
-              msjError={errors.nameRole ? errors.nameRole.message : ""}
-            />
-
-            <Select
-              isDisabled={checkSelected === "existente"}
-              placeholder="Permisos"
-              selectionMode="multiple"
-              className="max-w rounded-lg border font-roboto font-medium"
-              {...register("permissions", {
-                required:
-                  checkSelected === "nuevo" ? "Debes asignar permisos" : false,
-              })}
-              onSelectionChange={(values) => setValue("permissions", values)}
-            >
-              {permisos.map((permiso) => (
-                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-              ))}
-            </Select>
-            {errors.permissions && errors.permissions.message ? (
-              <span className="font-roboto text-xs text-red_e">
-                {errors.permissions.message}
+              <span className="text-sm font-light leading-[1rem] text-black_m">
+                Destacar como recordatorio
               </span>
-            ) : (
-              " "
-            )}
+            </Checkbox>
           </div>
-        </form>
+        </div>
       </ReusableModal>
 
       <ReusableModal
@@ -405,4 +379,4 @@ const RoutesPage = () => {
   );
 };
 
-export default RoutesPage;
+export default NotesPage;

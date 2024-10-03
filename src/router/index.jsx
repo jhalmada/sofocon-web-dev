@@ -1,23 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
-import LoginPage from "../pages/LoginPage";
-import RecoverPasswordPage from "../pages/RecoverPasswordPage";
-import NewPasswordPage from "../pages/NewPasswordPage";
-import PasswordPage from "../pages/PasswordPage";
-import Public from "../layouts/Public";
-import UsersLayout from "../layouts/Users";
-import HomePage from "../pages/HomePage";
-import CompaniesPage from "../pages/CompaniesPage";
-import UsersPage from "../pages/UsersPage";
-import AddUserPage from "../pages/AddUserPage";
-import AddRolePage from "../pages/AddRolePage";
-import SellersPage from "../pages/SellersPage";
-import RoutesPage from "../pages/RoutesPage";
-import ProductsPage from "../pages/ProductsPage";
-import { Login } from "../layouts/Login";
-import RedirectionPage from "../pages/RedirectionPage";
 import {
   ADD_ROLE_ROUTE,
   ADD_USER_ROUTE,
+  ADD_COMPANIE_ROUTE,
+  ADD_NOTE_ROUTE,
+  ADD_ROUTE_ROUTE,
   COMPANIES_ROUTE,
   HOME_ROUTE,
   LOGIN_ROUTE,
@@ -30,8 +17,32 @@ import {
   ROUTES_ROUTE,
   SELLERS_ROUTE,
   USERS_ROUTE,
+  NOTES_ROUTE,
 } from "../utils/Constants";
+import LoginPage from "../pages/LoginPage";
+import RecoverPasswordPage from "../pages/RecoverPasswordPage";
+import NewPasswordPage from "../pages/NewPasswordPage";
+import PasswordPage from "../pages/PasswordPage";
+import Public from "../layouts/Public";
+import UsersLayout from "../layouts/Users";
+import NotesLayout from "../layouts/Notes";
+import CompaniesLayout from "../layouts/Companies";
+import RoutesLayout from "../layouts/Routes";
+import HomePage from "../pages/HomePage";
+import CompaniesPage from "../pages/CompaniesPage";
+import UsersPage from "../pages/UsersPage";
+import AddCompaniePage from "../pages/AddCompaniePage";
+import AddUserPage from "../pages/AddUserPage";
+import AddRolePage from "../pages/AddRolePage";
+import SellersPage from "../pages/SellersPage";
+import RoutesPage from "../pages/RoutesPage";
+import ProductsPage from "../pages/ProductsPage";
+import { Login } from "../layouts/Login";
+import RedirectionPage from "../pages/RedirectionPage";
 import OrdersPage from "../pages/OrdersPage";
+import NotesPage from "../pages/NotesPage";
+import AddNotesPage from "../pages/AddNotePage";
+import AddRoutePage from "../pages/AddRoutePage";
 
 export const router = createBrowserRouter([
   {
@@ -66,7 +77,31 @@ export const router = createBrowserRouter([
       },
       {
         path: COMPANIES_ROUTE,
-        element: <CompaniesPage />,
+        element: <CompaniesLayout />,
+        children: [
+          {
+            index: true,
+            element: <CompaniesPage />,
+          },
+          {
+            path: ADD_COMPANIE_ROUTE,
+            element: <AddCompaniePage />,
+          },
+          {
+            path: NOTES_ROUTE,
+            element: <NotesLayout />,
+            children: [
+              {
+                index: true,
+                element: <NotesPage />,
+              },
+              {
+                path: ADD_NOTE_ROUTE,
+                element: <AddNotesPage />,
+              },
+            ],
+          },
+        ],
       },
       {
         path: USERS_ROUTE,
@@ -92,7 +127,17 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES_ROUTE,
-        element: <RoutesPage />,
+        element: <RoutesLayout />,
+        children: [
+          {
+            index: true,
+            element: <RoutesPage />,
+          },
+          {
+            path: ADD_ROUTE_ROUTE,
+            element: <AddRoutePage />,
+          },
+        ],
       },
       {
         path: PRODUCTS_ROUTE,

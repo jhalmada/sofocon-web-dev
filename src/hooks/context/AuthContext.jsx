@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
 
@@ -17,7 +17,13 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("SOFOCON_PERMISSIONS");
     setUserToken(null);
   };
-
+  useEffect(() => {
+    const token = localStorage.getItem("SOFOCON_JWT_TOKEN");
+    if (token) {
+      setUserToken(token);
+    }
+    console.log("actualziando token");
+  }, []);
   return (
     <AuthContext.Provider
       value={{
