@@ -15,6 +15,7 @@ import {
   RECOVER_ROUTE,
   REDIRECTION_ROUTE,
   ROUTES_ROUTE,
+  ROUTES_DETAILS_ROUTE,
   SELLERS_ROUTE,
   USERS_ROUTE,
   NOTES_ROUTE,
@@ -43,6 +44,7 @@ import OrdersPage from "../pages/OrdersPage";
 import NotesPage from "../pages/NotesPage";
 import AddNotesPage from "../pages/AddNotePage";
 import AddRoutePage from "../pages/AddRoutePage";
+import RouteDetails from "../pages/RouteDetails";
 
 export const router = createBrowserRouter([
   {
@@ -136,6 +138,10 @@ export const router = createBrowserRouter([
           {
             path: ADD_ROUTE_ROUTE,
             element: <AddRoutePage />,
+          },
+          {
+            path: ROUTES_DETAILS_ROUTE,
+            element: <RouteDetails />,
           },
         ],
       },
