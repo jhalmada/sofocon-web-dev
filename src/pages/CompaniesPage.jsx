@@ -18,11 +18,13 @@ import { Controller, useForm } from "react-hook-form";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
 import notesIcon from "../assets/icons/sticky-fill.svg";
-import { DatePicker } from "@nextui-org/react";
+import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 import closeIcon from "../assets/icons/x-lg.svg";
+import { parseAbsoluteToLocal } from "@internationalized/date";
+import usePutCompany from "../hooks/companies/usePutCompanies.js";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -39,7 +41,7 @@ const CompaniesPage = () => {
     itemsPerPage,
     setModified,
   } = useCompanies();
-  console.log(companiesResponse);
+  const { changedCompany } = usePutCompany();
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -48,6 +50,8 @@ const CompaniesPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [competence, setCompetence] = useState(false);
+  const [checkSelected, setCheckSelected] = useState("RUT");
 
   const {
     register,
@@ -58,6 +62,28 @@ const CompaniesPage = () => {
   } = useForm();
 
   const openModal = (id) => {
+    const companyToEdit = companiesResponse.find(
+      (company) => company.id === id,
+    );
+    if (companyToEdit) {
+      // Set form values
+      setValue("name", companyToEdit.name);
+      setValue("department", companyToEdit.department);
+      setValue("neighborhood", companyToEdit.neighborhood);
+      setValue("address", companyToEdit.address);
+      setValue("managerName", companyToEdit.managerName);
+      setValue("phone", companyToEdit.phone);
+      setValue("rut", companyToEdit.rut);
+      setValue("status", companyToEdit.status);
+      setValue("nextVisit", parseAbsoluteToLocal(companyToEdit.nextVisit));
+      console.log(companyToEdit);
+      companyToEdit.competenceName
+        ? setValue("competenceName", companyToEdit.competenceName)
+        : setValue("competenceName", "");
+      companyToEdit.competenceName ? setCompetence(true) : setCompetence(false);
+    }
+    setIsModalOpen(true);
+    setCompanyId(id);
     setIsModalOpen(true);
   };
   const openSellersModal = (id) => {
@@ -92,9 +118,75 @@ const CompaniesPage = () => {
     closeConfirmCancelModal();
     closeModal();
   };
+  //esta funcion se encarga de crear una nueva empresa, la podemos sacar a un hook y que ademas de pedir los datos de la empresa, tambien pida el metodo(POST, PUT, DELETE) y el id de la empresa a modificar
+  const handleCompanyCreation = async (companyData) => {
+    try {
+      const newCompany = await changedCompany(
+        companyData,
+        companyId,
+        setModified,
+      );
+      console.log("Empresa editada exitosamente");
+      if (newCompany) {
+        setSaveConfirmationModalOpen(true);
+      } else {
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error al crear la empresa:", error);
+      setIsModalOpen(true);
+    }
+  };
 
   const onSubmit = (data) => {
-    console.log("siasd");
+    const {
+      nextVisit,
+      name,
+      department,
+      managerName,
+      phone,
+      status,
+      address,
+      neighborhood,
+      competenceName,
+    } = data;
+    const newdata = new Date(
+      nextVisit.year,
+      nextVisit.month - 1,
+      nextVisit.day,
+    );
+    console.log(newdata);
+    //formate la fecha para que sea aceptada por el back
+    const formattedDate = newdata.toISOString();
+    switch (checkSelected) {
+      case "RUT":
+        handleCompanyCreation({
+          name,
+          department,
+          managerName,
+          phone,
+          status,
+          address,
+          neighborhood,
+          nextVisit: newdata,
+          rut: data.rut,
+          competenceName: competence ? competenceName : "",
+        });
+        break;
+      default:
+        handleCompanyCreation({
+          name,
+          department,
+          managerName,
+          phone,
+          status,
+          address,
+          neighborhood,
+          nextVisit: formattedDate,
+          ci: data.ci,
+          competenceName: competence ? competenceName : "",
+        });
+    }
   };
 
   const formatDate = (dateString) => {
@@ -103,7 +195,7 @@ const CompaniesPage = () => {
     const month = String(date.getMonth() + 1).padStart(2, "0"); // Meses están indexados desde 0
     const day = String(date.getDate()).padStart(2, "0");
 
-    return `${year}-${month}-${day}`;
+    return `${month}/${day}/${year}`;
   };
 
   return (
@@ -223,7 +315,7 @@ const CompaniesPage = () => {
                   <CompanieRow
                     key={index}
                     name={companie.name}
-                    departament={companie.departament}
+                    departament={companie.department}
                     direction={companie.address}
                     sellers={"Vendedores"}
                     nextVisits={formatDate(companie.nextVisit)}
@@ -265,25 +357,79 @@ const CompaniesPage = () => {
             label={"Nombre de la empresa"}
             placeholder={"Escribe el nombre del local..."}
             {...register("name", {
-              required: "El nombre es obligatorio",
+              required: "Este campo es requerido",
+              minLength: {
+                value: 2,
+                message: "El nombre debe contener al menos 2 caracteres.",
+              },
+              maxLength: {
+                value: 50,
+                message: "El nombre no puede exceder los 50 caracteres.",
+              },
             })}
             errorApi={errors.name}
             msjError={errors.name ? errors.name.message : ""}
           />
+          <div>
+            <Checkbox
+              defaultSelected={competence}
+              onClick={() => setCompetence(!competence)}
+              radius="full"
+              className="font-light"
+            >
+              Cliente de la competencia
+            </Checkbox>
+            <Input
+              disabled={!competence}
+              label={"Empresas actual"}
+              placeholder={"Escribe el nombre..."}
+              {...register("competenceName", {
+                required: competence && "Este campo es requerido",
+                minLength: {
+                  value: 2,
+                  message: "El nombre debe contener al menos 2 caracteres.",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El nombre no puede exceder los 50 caracteres.",
+                },
+              })}
+              errorApi={errors.competenceName}
+              msjError={
+                errors.competenceName ? errors.competenceName.message : ""
+              }
+            />
+          </div>
           <Input
             label={"Departamento"}
             placeholder={"Escribir..."}
-            {...register("departament", {
-              required: "El departamento es obligatorio",
+            {...register("department", {
+              required: "Este campo es requerido",
+              minLength: {
+                value: 2,
+                message: "El nombre debe contener al menos 2 caracteres.",
+              },
+              maxLength: {
+                value: 50,
+                message: "El nombre no puede exceder los 50 caracteres.",
+              },
             })}
-            errorApi={errors.departament}
-            msjError={errors.departament ? errors.departament.message : ""}
+            errorApi={errors.department}
+            msjError={errors.department ? errors.department.message : ""}
           />
           <Input
             label={"Barrio"}
             placeholder={"Escribir..."}
             {...register("neighborhood", {
-              required: "El barrio es obligatorio",
+              required: "Este campo es requerido",
+              minLength: {
+                value: 2,
+                message: "El nombre debe contener al menos 2 caracteres.",
+              },
+              maxLength: {
+                value: 50,
+                message: "El nombre no puede exceder los 50 caracteres.",
+              },
             })}
             errorApi={errors.neighborhood}
             msjError={errors.neighborhood ? errors.neighborhood.message : ""}
@@ -291,9 +437,17 @@ const CompaniesPage = () => {
           <div>
             <Input
               label={"Dirección"}
-              placeholder={"Escribe la dirección del local..."}
+              placeholder={"Escribir..."}
               {...register("address", {
-                required: "La dirección es obligatoria",
+                required: "Este campo es requerido",
+                minLength: {
+                  value: 2,
+                  message: "El nombre debe contener al menos 2 caracteres.",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El nombre no puede exceder los 50 caracteres.",
+                },
               })}
               errorApi={errors.address}
               msjError={errors.address ? errors.address.message : ""}
@@ -302,57 +456,106 @@ const CompaniesPage = () => {
               label={"Referente"}
               placeholder={"Escribe el nombre del referente..."}
               {...register("managerName", {
-                required: "El referente es obligatorio",
+                required: "Este campo es requerido",
+                minLength: {
+                  value: 2,
+                  message: "El nombre debe contener al menos 2 caracteres.",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El nombre no puede exceder los 50 caracteres.",
+                },
               })}
               errorApi={errors.managerName}
               msjError={errors.managerName ? errors.managerName.message : ""}
             />
             <Input
+              type={"number"}
               label={"Contacto"}
               placeholder={"Escribe el teléfono del contacto..."}
               {...register("phone", {
-                required: "El teléfono es obligatorio",
+                required: "Este campo es requerido",
+                minLength: {
+                  value: 15,
+                  message: "Ingrese los 15 digitos de su numero.",
+                },
+                maxLength: {
+                  value: 15,
+                  message: "Ingrese solo los 15 digitos de su numero.",
+                },
               })}
               errorApi={errors.phone}
               msjError={errors.phone ? errors.phone.message : ""}
             />
-            <Input
-              label={"R.U.T./CI"}
-              placeholder={"Escribe los datos fiscales de la empresa..."}
-              {...register("rut", {
-                required: "El R.U.T. es obligatorio",
-              })}
-              errorApi={errors.rut}
-              msjError={errors.rut ? errors.rut.message : ""}
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-sm font-light text-black">
-              Próxima visita
-            </label>
-            <Controller
-              name={"nextVisit"}
-              control={control}
-              render={({ field }) => (
-                <DatePicker
-                  className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
-                  {...field}
-                  label={""}
-                  placeholder="Seleccione una fecha"
+            <div className="flex gap-[.63rem]">
+              <div className="w-full">
+                <Checkbox
+                  defaultSelected={checkSelected === "RUT"}
+                  isSelected={checkSelected === "RUT"}
+                  onClick={() => setCheckSelected("RUT")}
+                  radius="full"
+                  className="font-light"
+                >
+                  Asignar R.U.T.:
+                </Checkbox>
+                <Input
+                  type={"number"}
+                  isSelected={checkSelected === "RUT"}
+                  disabled={checkSelected !== "RUT"}
+                  placeholder={"Escribe los 12 caracteres del RUT..."}
+                  {...register("rut", {
+                    required:
+                      checkSelected === "RUT" && "Este campo es requerido",
+                    minLength: {
+                      value: 12,
+                      message: "Ingrese los 12 digitos de su RUT.",
+                    },
+                    maxLength: {
+                      value: 12,
+                      message: "Ingrese solo los 12 digitos de su RUT.",
+                    },
+                  })}
+                  errorApi={checkSelected === "RUT" && errors.rut}
+                  msjError={
+                    checkSelected === "RUT" && errors.rut
+                      ? errors.rut.message
+                      : ""
+                  }
                 />
-              )}
-              rules={{
-                required: {
-                  value: true,
-                  message: "La fecha es obligatoria",
-                },
-              }}
-            />
-            <p className="font-roboto text-xs text-red_e">
-              {errors.nextVisit ? errors.nextVisit.message : ""}
-            </p>
+              </div>
+              <div className="w-full">
+                <Checkbox
+                  isSelected={checkSelected === "CI"}
+                  onClick={() => setCheckSelected("CI")}
+                  radius="full"
+                  className="font-light"
+                >
+                  Asignar CI:
+                </Checkbox>
+                <Input
+                  type={"number"}
+                  disabled={checkSelected !== "CI"}
+                  placeholder={"Escribe los 8 caracteres del CI..."}
+                  {...register("ci", {
+                    required:
+                      checkSelected === "CI" && "Este campo es requerido",
+                    minLength: {
+                      value: 8,
+                      message: "Ingrese los 8 digitos de su CI.",
+                    },
+                    maxLength: {
+                      value: 8,
+                      message: "Ingrese solo los 8 digitos de su CI.",
+                    },
+                  })}
+                  errorApi={checkSelected === "CI" && errors.ci}
+                  msjError={
+                    checkSelected === "CI" && errors.ci ? errors.ci.message : ""
+                  }
+                />
+              </div>
+            </div>
           </div>
-
           <div className="mb-4 space-y-2">
             <label
               className={`mb-2 block text-sm font-medium ${errors.status ? "text-red_e" : "text-gray-700"}`}
@@ -370,10 +573,10 @@ const CompaniesPage = () => {
               })}
               onSelectionChange={(value) => setValue("status", value)}
             >
-              <SelectItem value={"Frecuente"}>Frecuente</SelectItem>
-              <SelectItem value={"Potencial"}>Potencial</SelectItem>
-              <SelectItem value={"de Baja"}>De Baja</SelectItem>
-              <SelectItem value={"Potencial/Competencia"}>
+              <SelectItem key={"Frecuente"}>Frecuente</SelectItem>
+              <SelectItem key={"Potencial"}>Potencial</SelectItem>
+              <SelectItem key={"de Baja"}>De Baja</SelectItem>
+              <SelectItem key={"Potencial/Competencia"}>
                 Potencial/Competencia
               </SelectItem>
             </Select>
@@ -381,17 +584,46 @@ const CompaniesPage = () => {
               {errors.status ? errors.status.message : ""}
             </p>
           </div>
+          <div className="flex flex-col">
+            <label className="text-sm font-light text-black">
+              Próxima visita
+            </label>
+            <Controller
+              name={"nextVisit"}
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  granularity="day"
+                  className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
+                  {...field}
+                  label={""}
+                  placeholder="Seleccione una fecha"
+                />
+              )}
+              rules={{
+                required: {
+                  value: true,
+                  message: "La fecha es obligatoria",
+                },
+              }}
+            />
+            <p className="font-roboto text-xs text-red_e">
+              {errors.nextVisit ? errors.nextVisit.message : ""}
+            </p>
+          </div>
           <div className="space-y-2">
             <span>Notas</span>
-            <div className="flex">
-              <Button
-                text="Nueva Nota"
-                icon={PlusFillIcon}
-                iconPosition={"left"}
-                width="w-40"
-                color={"cancel"}
-              />
-            </div>
+            <Tooltip content="vendra en una mejora" placement="bottom-start">
+              <div className="flex">
+                <Button
+                  text="Nueva Nota"
+                  icon={PlusFillIcon}
+                  iconPosition={"left"}
+                  width="w-40"
+                  color={"cancel"}
+                />
+              </div>
+            </Tooltip>
           </div>
         </form>
       </ReusableModal>

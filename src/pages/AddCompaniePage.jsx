@@ -60,6 +60,7 @@ const AddCompaniePage = () => {
       status,
       address,
       neighborhood,
+      competenceName,
     } = data;
     const newdata = new Date(
       nextVisit.year,
@@ -81,7 +82,7 @@ const AddCompaniePage = () => {
           neighborhood,
           nextVisit: newdata,
           rut: data.rut,
-          competenceName: competence ? data.competenceName : "",
+          competenceName: competence ? competenceName : "",
         });
         break;
       default:
@@ -95,7 +96,7 @@ const AddCompaniePage = () => {
           neighborhood,
           nextVisit: formattedDate,
           ci: data.ci,
-          competenceName: competence ? data.competenceName : "",
+          competenceName: competence ? competenceName : "",
         });
     }
   };
@@ -413,7 +414,6 @@ const AddCompaniePage = () => {
                     {...field}
                     label={""}
                     placeholder="Seleccione una fecha"
-                    format="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
                   />
                 )}
                 rules={{
