@@ -1,4 +1,5 @@
 import { Select, SelectItem } from "@nextui-org/select";
+import { useNavigate } from "react-router-dom";
 
 const RouteRow = ({
   name,
@@ -11,8 +12,16 @@ const RouteRow = ({
   onEditClick,
   onDeleteClick,
 }) => {
+  const navigate = useNavigate();
+
+  const handleRowClick = () => {
+    navigate(`/inicio/rutas/nombre-empresa`);
+  };
   return (
-    <tr className="border-b border-gray">
+    <tr
+      className="cursor-pointer border-b border-gray transition-all duration-300 hover:bg-gray"
+      onClick={handleRowClick}
+    >
       <td className="p-2">{name}</td>
       <td className="p-2">{zone}</td>
       <td className="p-2">{companies}</td>
