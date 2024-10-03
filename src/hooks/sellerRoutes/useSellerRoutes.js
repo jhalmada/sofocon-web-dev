@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { CompaniesService } from "../../services/companies/companies.service.js";
-const useCompanies = () => {
-  const [companiesResponse, setCompaniesResponse] = useState([]);
+import { sellerRoutesService } from "../../services/sellerRoutes/sellerRoute.service.js";
+const useSellerRoutes = () => {
+  const [sellerRoutesResponse, setSellerRouteResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -9,18 +9,15 @@ const useCompanies = () => {
   const [modified, setModified] = useState(false);
 
   //la funcion principal
-  const getAllCompanies = async () => {
+  const getAllSellerRoutes = async () => {
     try {
       setLoading(true);
-      //consumir el servicio
-      const { data } = await CompaniesService.getAllCompaniesApi({
+      const { data } = await sellerRoutesService.getAllSellerRoutesApi({
         page,
         itemsPerPage,
       });
-      //aqui haces con el resultado lo que necesites
-      console.log(data);
       setTotalPage(data.pagination.totalPages);
-      setCompaniesResponse(data.result);
+      setSellerRouteResponse(data.result);
       console.log(data);
     } catch (e) {
       console.log(e);
@@ -28,12 +25,12 @@ const useCompanies = () => {
       setLoading(false);
     }
   };
-  //que permite actualizar las lista de empresa cada vez que se modifica el paginado, o se elimina una empresa
+  //que permite actualizar las lista cada vez que se modifica el paginado, se elimina o se agrega un nuevo registro
   useEffect(() => {
-    getAllCompanies();
+    getAllSellerRoutes();
   }, [page, itemsPerPage, modified]);
   return {
-    companiesResponse,
+    sellerRoutesResponse,
     loading,
     setItemsPerPage,
     totalPage,
@@ -45,4 +42,4 @@ const useCompanies = () => {
   };
 };
 
-export default useCompanies;
+export default useSellerRoutes;
