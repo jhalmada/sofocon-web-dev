@@ -8,7 +8,7 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox, DatePicker } from "@nextui-org/react";
+import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
 import { Controller, useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
 
@@ -24,10 +24,13 @@ const AddCompaniePage = () => {
   const navigate = useNavigate();
   const { postAddCompany } = useAddCompany();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMapModal, setIsMapModal] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
+  const [msjError, setMsjError] = useState("");
 
   const [checkSelected, setCheckSelected] = useState("RUT");
+  const [competence, setCompetence] = useState(false);
 
   const handleCompanyCreation = async (companyData) => {
     console.log("entra aqui");
@@ -42,6 +45,7 @@ const AddCompaniePage = () => {
       }
     } catch (error) {
       console.error("Error al crear la empresa:", error);
+      setMsjError("El nombre de la empresa ya existe.");
       setIsModalOpen(true);
     }
   };
@@ -65,7 +69,6 @@ const AddCompaniePage = () => {
     console.log(newdata);
     //formate la fecha para que sea aceptada por el back
     const formattedDate = newdata.toISOString();
-    console.log("aui si llega");
     switch (checkSelected) {
       case "RUT":
         handleCompanyCreation({
@@ -78,6 +81,7 @@ const AddCompaniePage = () => {
           neighborhood,
           nextVisit: newdata,
           rut: data.rut,
+          competenceName: competence ? data.competenceName : "",
         });
         break;
       default:
@@ -90,12 +94,18 @@ const AddCompaniePage = () => {
           address,
           neighborhood,
           nextVisit: formattedDate,
-          rut: data.rut,
+          ci: data.ci,
+          competenceName: competence ? data.competenceName : "",
         });
     }
   };
-  const openModal = () => {
-    setIsModalOpen(true);
+
+  //funciones para abrir y cerrar el modal de mapa
+  const openModalMap = () => {
+    setIsMapModal(true);
+  };
+  const closeModalMap = () => {
+    setIsMapModal(false);
   };
 
   const closeModal = () => {
@@ -166,6 +176,35 @@ const AddCompaniePage = () => {
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}
             />
+            <div>
+              <Checkbox
+                onClick={() => setCompetence(!competence)}
+                radius="full"
+                className="font-light"
+              >
+                Cliente de la competencia
+              </Checkbox>
+              <Input
+                disabled={!competence}
+                label={"Empresas actual"}
+                placeholder={"Escribe el nombre..."}
+                {...register("competenceName", {
+                  required: competence && "Este campo es requerido",
+                  minLength: {
+                    value: 2,
+                    message: "El nombre debe contener al menos 2 caracteres.",
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: "El nombre no puede exceder los 50 caracteres.",
+                  },
+                })}
+                errorApi={errors.competenceName}
+                msjError={
+                  errors.competenceName ? errors.competenceName.message : ""
+                }
+              />
+            </div>
             <div className="flex gap-4">
               <Input
                 label={"Dirección"}
@@ -223,7 +262,7 @@ const AddCompaniePage = () => {
             </div>
 
             <div
-              onClick={() => openModal()}
+              onClick={() => openModalMap()}
               className="mb-2 flex w-[8rem] cursor-pointer justify-center"
             >
               <img src={geoaltIcon} alt="geo Icon" />
@@ -335,51 +374,8 @@ const AddCompaniePage = () => {
                 />
               </div>
             </div>
-            <div className="flex justify-between">
-              <div className="space-y-2">
-                <span>Notas</span>
-
-                <Button
-                  text="Nueva Nota"
-                  icon={PlusFillIcon}
-                  iconPosition={"left"}
-                  width="w-40"
-                  color={"cancel"}
-                />
-              </div>
-              <div className="h-full w-[28.3rem]">
-                <label
-                  className={`${errors.nextVisit ? "text-red_e" : "text-black"} text-sm font-light`}
-                >
-                  Próxima visita
-                </label>
-                <Controller
-                  name={"nextVisit"}
-                  control={control}
-                  render={({ field }) => (
-                    <DatePicker
-                      className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
-                      {...field}
-                      label={""}
-                      placeholder="Seleccione una fecha"
-                      format="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-                    />
-                  )}
-                  rules={{
-                    required: {
-                      value: true,
-                      message: "Este campo es requerido",
-                    },
-                  }}
-                />
-                <p className="font-roboto text-xs text-red_e">
-                  {errors.nextVisit ? errors.nextVisit.message : ""}
-                </p>
-              </div>
-            </div>
-
             <label
-              className={`${errors.status ? "text-red_e" : "text-gray-700"} mt-6 block text-sm font-medium`}
+              className={`${errors.status ? "text-red_e" : "text-gray-700"} mt-2 block text-sm font-medium`}
             >
               Asignar estado:
             </label>
@@ -402,6 +398,50 @@ const AddCompaniePage = () => {
               {errors.status ? errors.status.message : ""}
               {console.log(errors.status)}
             </p>
+            <div className="h-full w-[28.3rem]">
+              <label
+                className={`${errors.nextVisit ? "text-red_e" : "text-black"} text-sm font-light`}
+              >
+                Próxima visita
+              </label>
+              <Controller
+                name={"nextVisit"}
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
+                    {...field}
+                    label={""}
+                    placeholder="Seleccione una fecha"
+                    format="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+                  />
+                )}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "Este campo es requerido",
+                  },
+                }}
+              />
+              <p className="font-roboto text-xs text-red_e">
+                {errors.nextVisit ? errors.nextVisit.message : ""}
+              </p>
+            </div>
+            <div className="mt-4 flex justify-between">
+              <Tooltip content="Viene en una mejora" placement="bottom">
+                <div className="space-y-2">
+                  <span>Notas</span>
+
+                  <Button
+                    text="Nueva Nota"
+                    icon={PlusFillIcon}
+                    iconPosition={"left"}
+                    width="w-40"
+                    color={"cancel"}
+                  />
+                </div>
+              </Tooltip>
+            </div>
           </div>
 
           <div className="flex w-full justify-end py-6">
@@ -415,10 +455,9 @@ const AddCompaniePage = () => {
         </form>
         <ReusableModal
           width="w-[45.37rem]"
-          isOpen={isModalOpen}
-          onClose={closeModal}
+          isOpen={isMapModal}
+          onClose={closeModalMap}
           title="Marcar ubicación en el mapa"
-          onSubmit={handleSubmit(onSubmit)}
           buttons={["cancel", "save"]}
           handleCancelClick={handleCancelClick}
         >
@@ -438,6 +477,17 @@ const AddCompaniePage = () => {
           onAccept={handleConfirmSaveClick}
         >
           Los cambios fueron guardados exitosamente.
+        </ReusableModal>
+        {/* modal de Errores */}
+        <ReusableModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Error al guardar"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setIsModalOpen(false)}
+        >
+          {msjError}
         </ReusableModal>
       </div>
     </div>
