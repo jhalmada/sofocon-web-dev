@@ -15,7 +15,7 @@ const RouteRow = ({
   const navigate = useNavigate();
 
   const handleRowClick = () => {
-    navigate(`/inicio/rutas/nombre-empresa`);
+    navigate(`/inicio/rutas/mapa`);
   };
   return (
     <tr
