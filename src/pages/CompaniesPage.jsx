@@ -67,16 +67,20 @@ const CompaniesPage = () => {
     );
     if (companyToEdit) {
       // Set form values
-      setValue("name", companyToEdit.name);
-      setValue("department", companyToEdit.department);
-      setValue("neighborhood", companyToEdit.neighborhood);
-      setValue("address", companyToEdit.address);
-      setValue("managerName", companyToEdit.managerName);
-      setValue("phone", companyToEdit.phone);
-      setValue("rut", companyToEdit.rut);
-      setValue("status", companyToEdit.status);
-      setValue("nextVisit", parseAbsoluteToLocal(companyToEdit.nextVisit));
-      console.log(companyToEdit);
+      setValue("name", companyToEdit?.name || "");
+      setValue("department", companyToEdit?.department || "");
+      setValue("neighborhood", companyToEdit?.neighborhood || "");
+      setValue("address", companyToEdit?.address || "");
+      setValue("managerName", companyToEdit?.managerName || "");
+      setValue("phone", companyToEdit?.phone || "");
+      setValue("rut", companyToEdit?.rut || "");
+      setValue("status", companyToEdit?.status || "");
+      setValue(
+        "nextVisit",
+        parseAbsoluteToLocal(
+          companyToEdit?.nextVisit || "2024-10-02T21:46:00.330Z",
+        ),
+      );
       companyToEdit.competenceName
         ? setValue("competenceName", companyToEdit.competenceName)
         : setValue("competenceName", "");
