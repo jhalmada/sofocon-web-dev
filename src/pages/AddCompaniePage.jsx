@@ -25,7 +25,7 @@ const AddCompaniePage = () => {
   const { postAddCompany } = useAddCompany();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMapModal, setIsMapModal] = useState(false);
-  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [msjError, setMsjError] = useState("");
@@ -105,25 +105,19 @@ const AddCompaniePage = () => {
   };
 
   //funciones para abrir y cerrar el modal de mapa
-  const openModalMap = () => {
-    setIsMapModal(true);
-  };
   const closeModalMap = () => {
     setIsMapModal(false);
-  };
-  const openMapModal = () => {
-    setIsMapModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setIsMapModalOpen(false);
     //setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     //setConfirmDeleteModalOpen(false);
   };
 
   const closeSaveConfirmationModal = () => {
+    navigate("/inicio/empresas");
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
@@ -462,7 +456,7 @@ const AddCompaniePage = () => {
         </form>
         <ReusableModal
           width="w-[45.37rem]"
-          isOpen={isMapMapModal}
+          isOpen={isMapModal}
           onClose={closeModalMap}
           title="Marcar ubicación en el mapa"
           buttons={["cancel", "save"]}
