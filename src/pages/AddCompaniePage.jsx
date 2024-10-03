@@ -10,7 +10,7 @@ import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import useRoles from "../hooks/roles/use.roles";
-import { Calendar, Checkbox, DatePicker } from "@nextui-org/react";
+import { Checkbox, DatePicker } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 
 const AddCompaniePage = () => {
@@ -23,6 +23,7 @@ const AddCompaniePage = () => {
   const { RolesResponse } = useRoles();
   const { postAddUsers, loading } = AddUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
 
@@ -35,7 +36,9 @@ const AddCompaniePage = () => {
       if (newUser) {
         setSaveConfirmationModalOpen(true);
       } else {
-        setIsModalOpen(true);
+        console.error(
+          "No se recibió una nueva empresa después de la actualización",
+        );
       }
     } catch (error) {
       console.error("Error al crear el usuario:", error);
@@ -70,9 +73,13 @@ const AddCompaniePage = () => {
   const openModal = () => {
     setIsModalOpen(true);
   };
+  const openMapModal = () => {
+    setIsMapModalOpen(true);
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setIsMapModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
@@ -131,7 +138,7 @@ const AddCompaniePage = () => {
               placeholder={"Escribe la dirección del local..."}
             />
             <div
-              onClick={() => openModal()}
+              onClick={() => openMapModal()}
               className="flex w-[8rem] cursor-pointer"
             >
               <img src={geoaltIcon} alt="geo Icon" className="-mt-3 mb-3" />
@@ -193,13 +200,15 @@ const AddCompaniePage = () => {
 
             <div className="mt-4 flex flex-col items-start space-y-2">
               <span>Notas</span>
-              <Button
-                text="Nueva Nota"
-                icon={PlusFillIcon}
-                iconPosition={"left"}
-                width="w-40"
-                color={"cancel"}
-              />
+              <Link to={"/inicio/empresas/notas/agregar-nota"}>
+                <Button
+                  text="Nueva Nota"
+                  icon={PlusFillIcon}
+                  iconPosition={"left"}
+                  width="w-40"
+                  color={"cancel"}
+                />
+              </Link>
             </div>
           </div>
 
@@ -214,10 +223,9 @@ const AddCompaniePage = () => {
         </form>
         <ReusableModal
           width="w-[45.37rem]"
-          isOpen={isModalOpen}
+          isOpen={isMapModalOpen}
           onClose={closeModal}
           title="Marcar ubicación en el mapa"
-          onSubmit={handleSubmit(onSubmit)}
           buttons={["cancel", "save"]}
           handleCancelClick={handleCancelClick}
         >
@@ -234,7 +242,7 @@ const AddCompaniePage = () => {
           title="Cambios guardados"
           variant="confirmation"
           buttons={["accept"]}
-          onAccept={handleConfirmSaveClick}
+          onAccept={closeSaveConfirmationModal}
         >
           Los cambios fueron guardados exitosamente.
         </ReusableModal>

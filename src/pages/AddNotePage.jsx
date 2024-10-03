@@ -3,11 +3,8 @@ import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Input from "../components/inputs/Input";
-import { Select, SelectItem } from "@nextui-org/select";
-import PlusIcon from "../assets/icons/plus.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import useUsers from "../hooks/users/use.users.js";
-
 import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
 import useRoles from "../hooks/roles/use.roles";
