@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Pagination from "../Pagination";
-import icono from "../../assets/users/ImgEscudo.png";
+
 import editIcon from "../../assets/icons/pencil-square.svg";
 import deleteIcon from "../../assets/icons/trash3.svg";
 import useDeleteRoles from "../../hooks/roles/useDeleteRoles";
@@ -122,7 +122,6 @@ const TableRole = () => {
       <table className="w-full">
         <thead>
           <tr>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]"></th>
             <th className="w-[40.4%] p-2 text-left text-md font-semibold leading-[1.125rem]">
               Rol
             </th>
@@ -137,9 +136,6 @@ const TableRole = () => {
         <tbody>
           {paginatedRoles.map((role, index) => (
             <tr key={index} className="border-b border-gray">
-              <td className="p-2">
-                <img src={icono} alt="role icon" className="h-6 w-6" />
-              </td>
               <td className="p-2">{role.name}</td>
               <td className="p-2">{formatPermisos(role.permissions)}</td>
               <td className="p-2">
