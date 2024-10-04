@@ -1,39 +1,33 @@
 import { Select, SelectItem } from "@nextui-org/select";
-import { useNavigate } from "react-router-dom";
 
-const RouteRow = ({
-  name,
-  zone,
-  companies,
-  sellers,
+const SellerRow = ({
+  fullName,
+  email,
+  route,
   state,
+  info,
   editIconSrc,
   deleteIconSrc,
   onEditClick,
   onDeleteClick,
 }) => {
-  const navigate = useNavigate();
-
-  const handleRowClick = () => {
-    navigate(`/inicio/rutas/mapa`);
-  };
   return (
-    <tr
-      className="cursor-pointer border-b border-gray transition-all duration-300 hover:bg-gray"
-      onClick={handleRowClick}
-    >
-      <td className="p-2">{name}</td>
-      <td className="p-2">{zone}</td>
-      <td className="p-2">{companies}</td>
-      <td className="p-2">{sellers}</td>
-
+    <tr className="border-b border-gray">
+      <td className="p-2">{fullName}</td>
+      <td
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={email}
+      >
+        {email}
+      </td>
+      <td className="p-2">{route}</td>
       <td className="p-2 text-md font-semibold leading-[1.16rem]">
         <Select placeholder={state} className="mb-4 mt-4 rounded-lg border">
           <SelectItem>Inactivo</SelectItem>
           <SelectItem>Activo</SelectItem>
         </Select>
       </td>
-
+      <td className="cursor-pointer p-2 underline">{info}</td>
       <td className="p-2">
         <div className="flex justify-center gap-4">
           <img
@@ -54,4 +48,4 @@ const RouteRow = ({
   );
 };
 
-export default RouteRow;
+export default SellerRow;

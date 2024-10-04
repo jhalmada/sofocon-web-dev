@@ -14,7 +14,7 @@ import useRoles from "../hooks/roles/use.roles";
 import { Checkbox } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 
-const AddUserPage = () => {
+const AddSellerPage = () => {
   const {
     register,
     handleSubmit,
@@ -319,4 +319,4 @@ const AddUserPage = () => {
   );
 };
 
-export default AddUserPage;
+export default AddSellerPage;

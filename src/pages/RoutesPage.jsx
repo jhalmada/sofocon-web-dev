@@ -55,13 +55,12 @@ const RoutesPage = () => {
 
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
-    console.log(userToEdit);
+
     if (userToEdit) {
       // Set form values
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
       setValue("role", userToEdit?.role?.id || "");
-      console.log(userToEdit);
     }
     setIsModalOpen(true);
     setUserId(id);
@@ -100,7 +99,7 @@ const RoutesPage = () => {
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await changedUser(userData, userId, setModified);
-      console.log(newUser);
+
       if (newUser) {
         setSaveConfirmationModalOpen(true);
       } else {
@@ -292,7 +291,6 @@ const RoutesPage = () => {
             errorApi={errors.email}
             msjError={errors.email ? errors.email.message : ""}
           />
-          {console.log(errors.email)}
 
           <div className="space-y-4">
             <Checkbox

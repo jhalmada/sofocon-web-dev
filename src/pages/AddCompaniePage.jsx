@@ -34,11 +34,8 @@ const AddCompaniePage = () => {
   const [competence, setCompetence] = useState(false);
 
   const handleCompanyCreation = async (companyData) => {
-    console.log("entra aqui");
     try {
       const newCompany = await postAddCompany(companyData);
-      console.log(newCompany);
-      console.log("Empresa creada exitosamente");
       if (newCompany) {
         setSaveConfirmationModalOpen(true);
       } else {
@@ -70,7 +67,6 @@ const AddCompaniePage = () => {
       nextVisit.month - 1,
       nextVisit.day,
     );
-    console.log(newdata);
     //formate la fecha para que sea aceptada por el back
     const formattedDate = newdata.toISOString();
     switch (checkSelected) {
@@ -398,7 +394,6 @@ const AddCompaniePage = () => {
             </Select>
             <p className="mt-1 font-roboto text-xs text-red_e">
               {errors.status ? errors.status.message : ""}
-              {console.log(errors.status)}
             </p>
             <div className="h-full w-[28.3rem]">
               <label

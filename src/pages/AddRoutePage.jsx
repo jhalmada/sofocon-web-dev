@@ -31,7 +31,6 @@ const AddRoutePage = () => {
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await postAddUsers(userData);
-      console.log(newUser);
       if (newUser) {
         setSaveConfirmationModalOpen(true);
       } else {

@@ -30,8 +30,7 @@ const AddRolePage = () => {
       name: data.name,
       permissions: [...data.permissions, "USER_ADMIN"],
     });
-    console.log("rol creado", newRole);
-    console.log(idRol);
+
     setSaveConfirmationModalOpen(true);
   };
 

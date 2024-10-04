@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
 
 const CompetingRow = ({

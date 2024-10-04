@@ -101,7 +101,6 @@ const AddNotesPage = () => {
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await changedUser(userData, userId);
-      console.log(newUser);
       if (newUser) {
         setSaveConfirmationModalOpen(true);
       } else {

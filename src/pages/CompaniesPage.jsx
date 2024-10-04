@@ -135,7 +135,7 @@ const CompaniesPage = () => {
         companyId,
         setModified,
       );
-      console.log("Empresa editada exitosamente");
+
       if (newCompany) {
         setSaveConfirmationModalOpen(true);
       } else {
@@ -164,7 +164,7 @@ const CompaniesPage = () => {
       nextVisit.month - 1,
       nextVisit.day,
     );
-    console.log(newdata);
+
     //formate la fecha para que sea aceptada por el back
     const formattedDate = newdata.toISOString();
     switch (checkSelected) {

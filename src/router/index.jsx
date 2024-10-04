@@ -1,25 +1,24 @@
 import { createBrowserRouter } from "react-router-dom";
 import {
-  ADD_ROLE_ROUTE,
-  ADD_USER_ROUTE,
-  ADD_COMPANIE_ROUTE,
-  ADD_NOTE_ROUTE,
-  ADD_ROUTE_ROUTE,
-  COMPANIES_ROUTE,
-  HOME_ROUTE,
   LOGIN_ROUTE,
   NEW_PASSWORD_ROUTE,
-  ORDERS_ROUTE,
   PASSWORD_CHANGED_ROUTE,
-  PRODUCTS_ROUTE,
   RECOVER_ROUTE,
   REDIRECTION_ROUTE,
+  HOME_ROUTE,
+  COMPANIES_ROUTE,
+  ADD_COMPANIE_ROUTE,
+  USERS_ROUTE,
+  ADD_USER_ROUTE,
+  ADD_SELLER_ROUTE,
+  ADD_ROLE_ROUTE,
   ROUTES_ROUTE,
   ROUTES_MAP_ROUTE,
-  ROUTES_SELLER_ROUTE,
-  SELLERS_ROUTE,
-  USERS_ROUTE,
   NOTES_ROUTE,
+  ADD_NOTE_ROUTE,
+  ADD_ROUTE_ROUTE,
+  PRODUCTS_ROUTE,
+  ORDERS_ROUTE,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
 import RecoverPasswordPage from "../pages/RecoverPasswordPage";
@@ -35,16 +34,16 @@ import CompaniesPage from "../pages/CompaniesPage";
 import UsersPage from "../pages/UsersPage";
 import AddCompaniePage from "../pages/AddCompaniePage";
 import AddUserPage from "../pages/AddUserPage";
+import AddSellerPage from "../pages/AddSellerPage";
 import AddRolePage from "../pages/AddRolePage";
-import SellersPage from "../pages/SellersPage";
+import AddNotesPage from "../pages/AddNotePage";
+import AddRoutePage from "../pages/AddRoutePage";
 import RoutesPage from "../pages/RoutesPage";
 import ProductsPage from "../pages/ProductsPage";
 import { Login } from "../layouts/Login";
 import RedirectionPage from "../pages/RedirectionPage";
 import OrdersPage from "../pages/OrdersPage";
 import NotesPage from "../pages/NotesPage";
-import AddNotesPage from "../pages/AddNotePage";
-import AddRoutePage from "../pages/AddRoutePage";
 import RouteMapDetailsPage from "../pages/RouteMapDetailsPage";
 
 export const router = createBrowserRouter([
@@ -119,14 +118,14 @@ export const router = createBrowserRouter([
             element: <AddUserPage />,
           },
           {
+            path: ADD_SELLER_ROUTE,
+            element: <AddSellerPage />,
+          },
+          {
             path: ADD_ROLE_ROUTE,
             element: <AddRolePage />,
           },
         ],
-      },
-      {
-        path: SELLERS_ROUTE,
-        element: <SellersPage />,
       },
       {
         path: ROUTES_ROUTE,

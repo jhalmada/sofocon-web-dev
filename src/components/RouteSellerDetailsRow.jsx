@@ -1,5 +1,3 @@
-import { Select, SelectItem } from "@nextui-org/select";
-
 const RouteSellerDetailsRow = ({
   name,
   contact,

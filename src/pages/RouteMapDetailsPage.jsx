@@ -121,7 +121,7 @@ const RouteMapDetailsPage = () => {
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await changedUser(userData, companyId, setModified);
-      console.log(newUser);
+
       if (newUser) {
         setSaveConfirmationModalOpen(true);
       } else {
@@ -451,7 +451,6 @@ const RouteMapDetailsPage = () => {
             errorApi={errors.email}
             msjError={errors.email ? errors.email.message : ""}
           />
-          {console.log(errors.email)}
 
           <div className="space-y-4">
             <Checkbox
