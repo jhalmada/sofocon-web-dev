@@ -78,7 +78,7 @@ const AddRolePage = () => {
           <div className="flex flex-col">
             <Input
               {...register("name", {
-                required: "El nombre del rol es obligatorio",
+                required: "Este campo es obligatorio",
               })}
               label={"Nombre del rol"}
               placeholder={"Escribe el nombre del rol..."}

@@ -429,7 +429,7 @@ const RouteMapDetailsPage = () => {
             label={"Nombre Completo"}
             placeholder={"Escribe el nombre completo del usuario..."}
             {...register("fullName", {
-              required: "El nombre completo es obligatorio",
+              required: "Este campo es obligatorio",
             })}
             errorApi={errors.fullName}
             msjError={errors.fullName ? errors.fullName.message : ""}

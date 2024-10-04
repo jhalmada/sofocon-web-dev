@@ -13,7 +13,7 @@ import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
-import useUsers from "../hooks/users/use.users.js";
+
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutUsers from "../hooks/users/usePutUsers.js";
@@ -21,24 +21,25 @@ import { useForm } from "react-hook-form";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { permisos } from "../utils/permisons";
 import useRoles from "../hooks/roles/use.roles.js";
+import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 
-const USER_TAB = "users";
-
+const SELLER_TAB = "sellers";
 const RoutesPage = () => {
   const { changedUser } = usePutUsers();
   const [userId, setUserId] = useState(null);
   const {
-    usersResponse,
+    sellerRoutesResponse,
     setItemsPerPage,
     totalPage,
     setPage,
     page,
     itemsPerPage,
     setModified,
-  } = useUsers();
+  } = useSellerRoutes();
+  console.log("sellers", sellerRoutesResponse);
   const { RolesResponse } = useRoles();
   const { deleteUser } = useDeleteUsers();
-  const [activeTab, setActiveTab] = useState(USER_TAB);
+  const [activeTab, setActiveTab] = useState(SELLER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -166,14 +167,14 @@ const RoutesPage = () => {
         <div className="flex items-center">
           <div className="flex">
             <h2
-              onClick={() => setActiveTab(USER_TAB)}
-              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              onClick={() => setActiveTab(SELLER_TAB)}
+              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === SELLER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listado
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
-            {activeTab === USER_TAB && (
+            {activeTab === SELLER_TAB && (
               <div className="flex space-x-4">
                 <Button
                   text="Exportar lista"
@@ -187,7 +188,7 @@ const RoutesPage = () => {
             )}
           </div>
         </div>
-        {activeTab === USER_TAB && (
+        {activeTab === SELLER_TAB && (
           <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
             <table className="w-full">
               <thead>
@@ -225,20 +226,17 @@ const RoutesPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {usersResponse.map((user, index) => (
+                {sellerRoutesResponse.map((seller, index) => (
                   <RouteRow
                     key={index}
-                    name="nombre de ruta"
-                    zone="zona de la ruta"
-                    companies="214"
-                    sellers="35"
-                    state="Activo"
+                    name={seller.name}
+                    zone={seller.zone}
+                    companies="21"
+                    sellers={seller.user[0].userInfo.fullName}
+                    state={seller.isActive}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
-                    onEditClick={() => {
-                      openModal(user.id);
-                    }}
-                    onDeleteClick={() => openConfirmDeleteModal(user.id)}
+                    onDeleteClick={() => openConfirmDeleteModal(seller.id)}
                   />
                 ))}
               </tbody>
@@ -269,7 +267,7 @@ const RoutesPage = () => {
             label={"Nombre Completo"}
             placeholder={"Escribe el nombre completo del usuario..."}
             {...register("fullName", {
-              required: "El nombre completo es obligatorio",
+              required: "Este campo es obligatorio",
             })}
             errorApi={errors.fullName}
             msjError={errors.fullName ? errors.fullName.message : ""}

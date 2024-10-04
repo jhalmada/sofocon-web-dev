@@ -189,7 +189,7 @@ const AddNotesPage = () => {
               label={"Nombre de nota"}
               placeholder={"Escribir..."}
               {...register("title", {
-                required: "El nombre es obligatorio",
+                required: "Este campo es obligatorio",
               })}
               errorApi={errors.title}
               msjError={errors.title ? errors.title.message : ""}
@@ -198,7 +198,7 @@ const AddNotesPage = () => {
               label={"Contenido"}
               placeholder={"Escribir..."}
               {...register("description", {
-                required: "El contenido es obligatorio",
+                required: "Este campo es obligatorio",
               })}
               errorApi={errors.description}
               msjError={errors.description ? errors.description.message : ""}
@@ -227,7 +227,7 @@ const AddNotesPage = () => {
                 <DatePicker
                   className="rounded-lg border"
                   {...register("date", {
-                    required: "La fecha es obligatoria",
+                    required: "Este campo es obligatoria",
                   })}
                   errorApi={errors.date}
                   msjError={errors.date ? errors.date.message : ""}

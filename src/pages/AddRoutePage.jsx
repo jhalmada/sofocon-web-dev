@@ -1,17 +1,16 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import geoaltIcon from "../assets/icons/geo-alt.svg";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
-import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import useRoles from "../hooks/roles/use.roles";
-import { Calendar, Checkbox, DatePicker } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
+import useUsers from "../hooks/users/use.users";
+import useCompanies from "../hooks/companies/useCompanies";
+import AddSellersRoutes from "../hooks/sellerRoutes/useAddSellerRoutes";
 
 const AddRoutePage = () => {
   const {
@@ -20,52 +19,51 @@ const AddRoutePage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const { RolesResponse } = useRoles();
-  const { postAddUsers, loading } = AddUsers();
+  const navigate = useNavigate();
+  const { usersResponse } = useUsers();
+  const [isMapModal, setIsMapModal] = useState(false);
+  const [msjError, setMsjError] = useState("");
+  const { companiesResponse } = useCompanies();
+  const { postAddSellersRoutes, loading } = AddSellersRoutes();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
 
-  const [checkSelected, setCheckSelected] = useState("existente");
-
-  const handleUserCreation = async (userData) => {
+  const handleSellerCreation = async (sellerData) => {
     try {
-      const newUser = await postAddUsers(userData);
-      if (newUser) {
+      const newSeller = await postAddSellersRoutes(sellerData);
+      if (newSeller) {
         setSaveConfirmationModalOpen(true);
       } else {
         setIsModalOpen(true);
       }
     } catch (error) {
-      console.error("Error al crear el usuario:", error);
+      setMsjError("El nombre de la ruta ya existe.");
+      console.error("Error al crear la ruta:", error);
       setIsModalOpen(true);
     }
   };
 
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          fullName,
-          email,
-          password,
-          role: { id: role }, // Pasamos el rol existente
-        });
-        break;
-      default:
-        handleUserCreation({
-          fullName,
-          email,
-          password,
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"], // Permisos asignados
-          },
-        });
-    }
+    const { name, status, idVendedor, idEmpresa, zone } = data;
+    const newData = {
+      name,
+      zone,
+      isActive: status,
+      user: [
+        {
+          id: idVendedor,
+        },
+      ],
+      clientInRoute: [
+        {
+          client: idEmpresa,
+        },
+      ],
+    };
+    handleSellerCreation(newData);
   };
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -76,14 +74,14 @@ const AddRoutePage = () => {
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-
-  const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
-    closeModal();
+  const closeModalMap = () => {
+    setIsMapModal(false);
   };
 
-  const handleConfirmSaveClick = () => {
-    closeSaveConfirmationModal();
+  const closeSaveConfirmationModal = () => {
+    navigate("/inicio/rutas");
+    setSaveConfirmationModalOpen(false);
+    closeModal();
   };
 
   const handleCancelClick = () => closeModal();
@@ -124,31 +122,54 @@ const AddRoutePage = () => {
               label={"Nombre"}
               placeholder={"Escribir..."}
               {...register("name", {
-                required: "El nombre es obligatorio",
+                required: "Este campo es obligatorio",
+                minLength: {
+                  value: 2,
+                  message: "El nombre debe contener al menos 2 caracteres.",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El nombre no puede exceder los 50 caracteres.",
+                },
               })}
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}
             />
 
-            <Input label={"Zona"} placeholder={"Escribir..."} />
+            <Input
+              label={"Zona"}
+              placeholder={"Escribir..."}
+              {...register("zone", {
+                required: "Este campo es obligatorio",
+                minLength: {
+                  value: 2,
+                  message: "El nombre debe contener al menos 2 caracteres.",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El nombre no puede exceder los 50 caracteres.",
+                },
+              })}
+              errorApi={errors.zone}
+              msjError={errors.zone ? errors.zone.message : ""}
+            />
 
             <div className="mb-4 space-y-2">
               <label className="text-gray-700 block text-sm font-light">
                 Asignar estado:
               </label>
               <Select
+                onSelectionChange={(value) => setValue("status", value)}
                 placeholder="Estado"
                 className="rounded-lg border"
                 {...register("status", {
-                  required: "El estado es obligatorio",
+                  required: "Debes seleccionar una opción",
                 })}
                 errorApi={errors.status}
                 msjError={errors.status ? errors.status.message : ""}
               >
-                <SelectItem>Frecuente</SelectItem>
-                <SelectItem>Potencial</SelectItem>
-                <SelectItem>De Baja</SelectItem>
-                <SelectItem>Potencial/Competencia</SelectItem>
+                <SelectItem key={true}>Activo</SelectItem>
+                <SelectItem key={false}>Inactivo</SelectItem>
               </Select>
             </div>
             <div className="mb-4 space-y-2">
@@ -156,18 +177,20 @@ const AddRoutePage = () => {
                 Asignar vendedores
               </label>
               <Select
+                onSelectionChange={(value) => setValue("idVendedor", value)}
                 placeholder="Vendedores"
                 className="rounded-lg border"
-                {...register("status", {
-                  required: "El estado es obligatorio",
+                {...register("idVendedor", {
+                  required: "Debes seleccionar una opción",
                 })}
-                errorApi={errors.status}
-                msjError={errors.status ? errors.status.message : ""}
+                errorApi={errors.idVendedor}
+                msjError={errors.idVendedor ? errors.idVendedor.message : ""}
               >
-                <SelectItem>vendedor 1</SelectItem>
-                <SelectItem>vendedor 2</SelectItem>
-                <SelectItem>vendedor 3</SelectItem>
-                <SelectItem>vendedor 4</SelectItem>
+                {usersResponse.map((user) => (
+                  <SelectItem key={user.id}>
+                    {user.userInfo.fullName}
+                  </SelectItem>
+                ))}
               </Select>
             </div>
 
@@ -175,32 +198,33 @@ const AddRoutePage = () => {
               <span className="text-gray-700 block text-sm font-light">
                 Asignar nuevo vendedor
               </span>
-
-              <Button
-                text="Nueva vendedor"
-                icon={PlusFillIcon}
-                iconPosition={"left"}
-                width="w-50"
-                color={"cancel"}
-              />
+              <Link to={"/inicio/personal/agregar-vendedor"}>
+                <Button
+                  text="Nuevo vendedor"
+                  icon={PlusFillIcon}
+                  iconPosition={"left"}
+                  width="w-50"
+                  color={"cancel"}
+                />
+              </Link>
             </div>
             <div className="mb-4 space-y-2">
               <label className="text-gray-700 block text-sm font-light">
                 Asignar empresas
               </label>
               <Select
+                onSelectionChange={(value) => setValue("idEmpresa", value)}
                 placeholder="Empresas"
                 className="rounded-lg border"
-                {...register("status", {
-                  required: "El estado es obligatorio",
+                {...register("idEmpresa", {
+                  required: "Debes seleccionar una opción",
                 })}
-                errorApi={errors.status}
-                msjError={errors.status ? errors.status.message : ""}
+                errorApi={errors.idEmpresa}
+                msjError={errors.idEmpresa ? errors.idEmpresa.message : ""}
               >
-                <SelectItem>empresa 1</SelectItem>
-                <SelectItem>empresa 2</SelectItem>
-                <SelectItem>empresa 3</SelectItem>
-                <SelectItem>empresa 4</SelectItem>
+                {companiesResponse.map((company) => (
+                  <SelectItem key={company.id}>{company.name}</SelectItem>
+                ))}
               </Select>
             </div>
             <div className="mb-2 flex flex-col items-start">
@@ -230,8 +254,8 @@ const AddRoutePage = () => {
         </form>
         <ReusableModal
           width="w-[45.37rem]"
-          isOpen={isModalOpen}
-          onClose={closeModal}
+          isOpen={isMapModal}
+          onClose={closeModalMap}
           title="Marcar ubicación en el mapa"
           onSubmit={handleSubmit(onSubmit)}
           buttons={["cancel", "save"]}
@@ -250,9 +274,20 @@ const AddRoutePage = () => {
           title="Cambios guardados"
           variant="confirmation"
           buttons={["accept"]}
-          onAccept={handleConfirmSaveClick}
+          onAccept={closeSaveConfirmationModal}
         >
           Los cambios fueron guardados exitosamente.
+        </ReusableModal>
+        {/* modal de Errores */}
+        <ReusableModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Error al guardar"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setIsModalOpen(false)}
+        >
+          {msjError}
         </ReusableModal>
       </div>
     </div>

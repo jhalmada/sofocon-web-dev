@@ -367,7 +367,7 @@ const CompaniesPage = () => {
               label={"Nombre de la empresa"}
               placeholder={"Escribe el nombre del local..."}
               {...register("name", {
-                required: "El nombre es obligatorio",
+                required: "Este campo es obligatorio",
               })}
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}

@@ -105,13 +105,13 @@ const AddSellerPage = () => {
           </div>
         </Link>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Usuarios
+          Vendedores
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-36 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
-              Nuevo usuario
+              Nuevo vendedor
             </span>
           </div>
         </div>
@@ -125,7 +125,7 @@ const AddSellerPage = () => {
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
               {...register("fullName", {
-                required: "El nombre completo es obligatorio",
+                required: "Este campo es obligatorio",
               })}
               errorApi={errors.fullName}
               msjError={errors.fullName ? errors.fullName.message : ""}

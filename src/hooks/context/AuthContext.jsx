@@ -22,7 +22,6 @@ const AuthProvider = ({ children }) => {
     if (token) {
       setUserToken(token);
     }
-    console.log("actualziando token");
   }, []);
   return (
     <AuthContext.Provider

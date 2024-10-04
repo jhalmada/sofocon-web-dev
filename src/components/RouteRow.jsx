@@ -28,9 +28,12 @@ const RouteRow = ({
       <td className="p-2">{sellers}</td>
 
       <td className="p-2 text-md font-semibold leading-[1.16rem]">
-        <Select placeholder={state} className="mb-4 mt-4 rounded-lg border">
-          <SelectItem>Inactivo</SelectItem>
-          <SelectItem>Activo</SelectItem>
+        <Select
+          defaultSelectedKeys={[state ? "true" : "false"]}
+          className="mb-4 mt-4 rounded-lg border"
+        >
+          <SelectItem key={"true"}>Activo</SelectItem>
+          <SelectItem key={"false"}>Inactivo</SelectItem>
         </Select>
       </td>
 
