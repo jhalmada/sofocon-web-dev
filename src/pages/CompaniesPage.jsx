@@ -27,6 +27,7 @@ import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
 import { getClientsExcel } from "../services/companies/companies.routes.js";
+import { I18nProvider } from "@react-aria/i18n";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -611,28 +612,30 @@ const CompaniesPage = () => {
             <label className="text-sm font-light text-black">
               Próxima visita
             </label>
-            <Controller
-              name={"nextVisit"}
-              control={control}
-              render={({ field }) => (
-                <DatePicker
-                  granularity="day"
-                  className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
-                  {...field}
-                  label={""}
-                  placeholder="Seleccione una fecha"
-                />
-              )}
-              rules={{
-                required: {
-                  value: true,
-                  message: "La fecha es obligatoria",
-                },
-              }}
-            />
-            <p className="font-roboto text-xs text-red_e">
-              {errors.nextVisit ? errors.nextVisit.message : ""}
-            </p>
+            <I18nProvider locale="es-ES">
+              <Controller
+                name={"nextVisit"}
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    granularity="day"
+                    className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
+                    {...field}
+                    label={""}
+                    placeholder="Seleccione una fecha"
+                  />
+                )}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "La fecha es obligatoria",
+                  },
+                }}
+              />
+              <p className="font-roboto text-xs text-red_e">
+                {errors.nextVisit ? errors.nextVisit.message : ""}
+              </p>
+            </I18nProvider>
           </div>
           <div className="space-y-2">
             <span>Notas</span>

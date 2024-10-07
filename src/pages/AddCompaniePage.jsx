@@ -11,6 +11,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
 import { Controller, useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
+import { I18nProvider } from "@react-aria/i18n";
 
 const AddCompaniePage = () => {
   const {
@@ -156,7 +157,7 @@ const AddCompaniePage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="rounded-tr-lg bg-white px-14 py-4 shadow-t"
         >
-          <div>
+          <div className="flex flex-col gap-1">
             <Input
               label={"Nombre de la empresa"}
               placeholder={"Escribe el nombre del local..."}
@@ -178,9 +179,8 @@ const AddCompaniePage = () => {
               <Checkbox
                 onClick={() => setCompetence(!competence)}
                 radius="full"
-                className="font-light"
               >
-                Cliente de la competencia
+                <p className="text-sm font-light">Cliente de la competencia</p>
               </Checkbox>
               <Input
                 disabled={!competence}
@@ -260,7 +260,7 @@ const AddCompaniePage = () => {
             </div>
 
             <div
-              onClick={() => openMapModalMap()}
+              // onClick={() => openMapModalMap()}
               className="mb-2 flex w-[8rem] cursor-pointer justify-center"
             >
               <img src={geoaltIcon} alt="geo Icon" />
@@ -313,7 +313,7 @@ const AddCompaniePage = () => {
                   radius="full"
                   className="font-light"
                 >
-                  Asignar R.U.T.:
+                  <label className="text-sm">Asignar R.U.T.:</label>
                 </Checkbox>
                 <Input
                   type={"number"}
@@ -347,7 +347,10 @@ const AddCompaniePage = () => {
                   radius="full"
                   className="font-light"
                 >
-                  Asignar CI:
+                  <label htmlFor="ci" className="text-sm">
+                    {" "}
+                    Asignar CI:
+                  </label>
                 </Checkbox>
                 <Input
                   type={"number"}
@@ -372,56 +375,60 @@ const AddCompaniePage = () => {
                 />
               </div>
             </div>
-            <label
-              className={`${errors.status ? "text-red_e" : "text-gray-700"} mt-2 block text-sm font-medium`}
-            >
-              Asignar estado:
-            </label>
-            <Select
-              placeholder="Seleccionar estado"
-              className={`rounded-lg border ${errors.status ? "border-red_e" : ""}`}
-              {...register("status", {
-                required: "Este campo es requerido",
-              })}
-              onSelectionChange={(values) => setValue("status", values)}
-            >
-              <SelectItem key={"Frecuente"}>Frecuente</SelectItem>
-              <SelectItem key={"Potencial"}>Potencial</SelectItem>
-              <SelectItem key={"de Baja"}>De Baja</SelectItem>
-              <SelectItem key={"Potencial/Competencia"}>
-                Potencial/Competencia
-              </SelectItem>
-            </Select>
-            <p className="mt-1 font-roboto text-xs text-red_e">
-              {errors.status ? errors.status.message : ""}
-            </p>
-            <div className="h-full w-[28.3rem]">
+            <div className="mb-3">
+              <label
+                className={`${errors.status ? "text-red_e" : "text-gray-700"} block text-sm font-light`}
+              >
+                Asignar estado:
+              </label>
+              <Select
+                placeholder="Seleccionar estado"
+                className={`rounded-lg border ${errors.status ? "border-red_e" : ""}`}
+                {...register("status", {
+                  required: "Este campo es requerido",
+                })}
+                onSelectionChange={(values) => setValue("status", values)}
+              >
+                <SelectItem key={"Frecuente"}>Frecuente</SelectItem>
+                <SelectItem key={"Potencial"}>Potencial</SelectItem>
+                <SelectItem key={"de Baja"}>De Baja</SelectItem>
+                <SelectItem key={"Potencial/Competencia"}>
+                  Potencial/Competencia
+                </SelectItem>
+              </Select>
+              <p className="mt-1 font-roboto text-xs text-red_e">
+                {errors.status ? errors.status.message : ""}
+              </p>
+            </div>
+            <div className="mb-3 h-full w-[28.3rem]">
               <label
                 className={`${errors.nextVisit ? "text-red_e" : "text-black"} text-sm font-light`}
               >
                 Próxima visita
               </label>
-              <Controller
-                name={"nextVisit"}
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
-                    {...field}
-                    label={""}
-                    placeholder="Seleccione una fecha"
-                  />
-                )}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "Este campo es requerido",
-                  },
-                }}
-              />
-              <p className="font-roboto text-xs text-red_e">
-                {errors.nextVisit ? errors.nextVisit.message : ""}
-              </p>
+              <I18nProvider locale="es-ES">
+                <Controller
+                  name={"nextVisit"}
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
+                      {...field}
+                      label={""}
+                      placeholder="Seleccione una fecha"
+                    />
+                  )}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Este campo es requerido",
+                    },
+                  }}
+                />
+                <p className="font-roboto text-xs text-red_e">
+                  {errors.nextVisit ? errors.nextVisit.message : ""}
+                </p>
+              </I18nProvider>
             </div>
             <div className="mt-4 flex justify-between">
               <Tooltip content="Viene en una mejora" placement="bottom">
