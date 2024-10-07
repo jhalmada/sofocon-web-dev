@@ -30,8 +30,7 @@ const AddRolePage = () => {
       name: data.name,
       permissions: [...data.permissions, "USER_ADMIN"],
     });
-    console.log("rol creado", newRole);
-    console.log(idRol);
+
     setSaveConfirmationModalOpen(true);
   };
 
@@ -66,7 +65,7 @@ const AddRolePage = () => {
 
         <div className="flex items-center justify-between">
           <div className="flex">
-            <span className="w-36 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
+            <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
               Roles
             </span>
           </div>
@@ -79,7 +78,7 @@ const AddRolePage = () => {
           <div className="flex flex-col">
             <Input
               {...register("name", {
-                required: "El nombre del rol es obligatorio",
+                required: "Este campo es obligatorio",
               })}
               label={"Nombre del rol"}
               placeholder={"Escribe el nombre del rol..."}

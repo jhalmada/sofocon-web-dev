@@ -1,26 +1,20 @@
-import { useState } from "react";
 import Pagination from "../components/Pagination";
-import { Select, SelectItem } from "@nextui-org/select";
-import { permisos } from "../utils/permisons";
-import usePatchRoles from "../hooks/roles/usePatchRoles";
 import { useForm } from "react-hook-form";
-import useRoles from "../hooks/roles/use.roles";
-import ReusableModal from "../components/modals/ReusableModal";
-import Input from "../components/inputs/Input";
 import CompetingRow from "../components/CompetingRow";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import notesIcon from "../assets/icons/sticky-fill.svg";
-import DownloadIcon from "../assets/icons/download.svg";
-import PlusFillIcon from "../assets/icons/plus-fill.svg";
-import Button from "../components/buttons/Button";
-import { DatePicker } from "@nextui-org/react";
-import CompanieRow from "../components/CompanieRow";
 import useCompanies from "../hooks/companies/useCompanies";
+import { useState } from "react";
 
 const CompetingPage = () => {
+  const [companyId, setCompanyId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [competence, setCompetence] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -44,6 +38,39 @@ const CompetingPage = () => {
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${month}/${day}/${year}`;
+  };
+  const openModal = (id) => {
+    const companyToEdit = companiesResponse.find(
+      (company) => company.id === id,
+    );
+    if (companyToEdit) {
+      // Set form values
+      setValue("name", companyToEdit?.name || "");
+      setValue("department", companyToEdit?.department || "");
+      setValue("neighborhood", companyToEdit?.neighborhood || "");
+      setValue("address", companyToEdit?.address || "");
+      setValue("managerName", companyToEdit?.managerName || "");
+      setValue("phone", companyToEdit?.phone || "");
+      setValue("rut", companyToEdit?.rut || "");
+      setValue("status", companyToEdit?.status || "");
+      setValue(
+        "nextVisit",
+        parseAbsoluteToLocal(
+          companyToEdit?.nextVisit || "2024-10-02T21:46:00.330Z",
+        ),
+      );
+      companyToEdit.competenceName
+        ? setValue("competenceName", companyToEdit.competenceName)
+        : setValue("competenceName", "");
+      companyToEdit.competenceName ? setCompetence(true) : setCompetence(false);
+    }
+    setIsModalOpen(true);
+    setCompanyId(id);
+    setIsModalOpen(true);
+  };
+  const openConfirmDeleteModal = (id) => {
+    setCompanyId(id);
+    setConfirmDeleteModalOpen(true);
   };
 
   return (
@@ -79,6 +106,9 @@ const CompetingPage = () => {
                 />
               </div>
             </th>
+            <th className="p-2 text-md font-semibold leading-[1.125rem]">
+              Acción
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -95,6 +125,8 @@ const CompetingPage = () => {
                 editIconSrc={editIcon}
                 deleteIconSrc={deleteIcon}
                 notesIcon={notesIcon}
+                onEditClick={() => openModal(companie.id)}
+                onDeleteClick={() => openConfirmDeleteModal(companie.id)}
               />
             ))}
         </tbody>

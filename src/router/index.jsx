@@ -1,24 +1,25 @@
 import { createBrowserRouter } from "react-router-dom";
 import {
-  ADD_ROLE_ROUTE,
-  ADD_USER_ROUTE,
-  ADD_COMPANIE_ROUTE,
-  ADD_NOTE_ROUTE,
-  ADD_ROUTE_ROUTE,
-  COMPANIES_ROUTE,
-  HOME_ROUTE,
   LOGIN_ROUTE,
   NEW_PASSWORD_ROUTE,
-  ORDERS_ROUTE,
   PASSWORD_CHANGED_ROUTE,
-  PRODUCTS_ROUTE,
   RECOVER_ROUTE,
   REDIRECTION_ROUTE,
-  ROUTES_ROUTE,
-  ROUTES_DETAILS_ROUTE,
-  SELLERS_ROUTE,
+  HOME_ROUTE,
+  COMPANIES_ROUTE,
+  ADD_COMPANIE_ROUTE,
   USERS_ROUTE,
+  ADD_USER_ROUTE,
+  ADD_SELLER_ROUTE,
+  ADD_ROLE_ROUTE,
+  ROUTES_ROUTE,
+  ROUTES_MAP_ROUTE,
   NOTES_ROUTE,
+  ADD_NOTE_ROUTE,
+  ADD_ROUTE_ROUTE,
+  PRODUCTS_ROUTE,
+  ORDERS_ROUTE,
+  WORKSHOP_ROUTE,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
 import RecoverPasswordPage from "../pages/RecoverPasswordPage";
@@ -34,17 +35,18 @@ import CompaniesPage from "../pages/CompaniesPage";
 import UsersPage from "../pages/UsersPage";
 import AddCompaniePage from "../pages/AddCompaniePage";
 import AddUserPage from "../pages/AddUserPage";
+import AddSellerPage from "../pages/AddSellerPage";
 import AddRolePage from "../pages/AddRolePage";
-import SellersPage from "../pages/SellersPage";
+import AddNotesPage from "../pages/AddNotePage";
+import AddRoutePage from "../pages/AddRoutePage";
 import RoutesPage from "../pages/RoutesPage";
 import ProductsPage from "../pages/ProductsPage";
 import { Login } from "../layouts/Login";
 import RedirectionPage from "../pages/RedirectionPage";
 import OrdersPage from "../pages/OrdersPage";
 import NotesPage from "../pages/NotesPage";
-import AddNotesPage from "../pages/AddNotePage";
-import AddRoutePage from "../pages/AddRoutePage";
-import RouteDetails from "../pages/RouteDetails";
+import RouteMapDetailsPage from "../pages/RouteMapDetailsPage";
+import WorkshopPage from "../pages/WorkshopPage";
 
 export const router = createBrowserRouter([
   {
@@ -118,14 +120,14 @@ export const router = createBrowserRouter([
             element: <AddUserPage />,
           },
           {
+            path: ADD_SELLER_ROUTE,
+            element: <AddSellerPage />,
+          },
+          {
             path: ADD_ROLE_ROUTE,
             element: <AddRolePage />,
           },
         ],
-      },
-      {
-        path: SELLERS_ROUTE,
-        element: <SellersPage />,
       },
       {
         path: ROUTES_ROUTE,
@@ -140,8 +142,8 @@ export const router = createBrowserRouter([
             element: <AddRoutePage />,
           },
           {
-            path: ROUTES_DETAILS_ROUTE,
-            element: <RouteDetails />,
+            path: ROUTES_MAP_ROUTE,
+            element: <RouteMapDetailsPage />,
           },
         ],
       },
@@ -152,6 +154,10 @@ export const router = createBrowserRouter([
       {
         path: ORDERS_ROUTE,
         element: <OrdersPage />,
+      },
+      {
+        path: WORKSHOP_ROUTE,
+        element: <WorkshopPage />,
       },
     ],
   },

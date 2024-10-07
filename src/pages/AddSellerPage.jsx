@@ -14,7 +14,7 @@ import useRoles from "../hooks/roles/use.roles";
 import { Checkbox } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 
-const AddUserPage = () => {
+const AddSellerPage = () => {
   const {
     register,
     handleSubmit,
@@ -105,13 +105,13 @@ const AddUserPage = () => {
           </div>
         </Link>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Usuarios
+          Vendedores
         </h1>
-        {/*navbar */}
+
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
-              Nuevo usuario
+              Nuevo vendedor
             </span>
           </div>
         </div>
@@ -149,7 +149,7 @@ const AddUserPage = () => {
             />
 
             <Input
-              placeholder={"Escribe el email del usuario..."}
+              placeholder={"Escribe el email del usuario"}
               label={"Correo electrónico"}
               {...register("email", {
                 required: {
@@ -161,7 +161,7 @@ const AddUserPage = () => {
                     /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
                   message: "Formato de email incorrecto",
                 },
-              })} // Add this line
+              })}
               errorApi={errors.email}
               msjError={errors.email ? errors.email.message : ""}
             />
@@ -200,99 +200,66 @@ const AddUserPage = () => {
               </p>
             </div>
             <div className="space-y-4">
-              <Checkbox
-                defaultSelected={checkSelected === "existente"}
-                isSelected={checkSelected === "existente"}
-                onClick={() => setCheckSelected("existente")}
-                radius="full"
-                className="font-light"
-              >
-                Asignar rol existente
-              </Checkbox>
-
-              <Select
-                isDisabled={checkSelected === "nuevo"}
-                labelPlacement="outside"
-                placeholder="Rol"
-                className="max-w rounded-lg border font-roboto font-medium"
-                {...register("role", {
-                  required:
-                    checkSelected === "existente"
-                      ? "Debes seleccionar un rol"
-                      : false,
-                })}
-                onSelectionChange={(value) => setValue("role", value)}
-              >
-                {RolesResponse &&
-                  RolesResponse.map((rol) => (
-                    <SelectItem key={rol.id}>{rol.name}</SelectItem>
-                  ))}
-              </Select>
-              {errors.role && errors.role.message ? (
-                <span className="font-roboto text-xs text-red_e">
-                  {errors.role.message}
-                </span>
-              ) : (
-                ""
-              )}
-
-              <div className="flex flex-col">
-                <Checkbox
-                  radius="full"
-                  isSelected={checkSelected === "nuevo"}
-                  onClick={() => setCheckSelected("nuevo")}
-                  className="font-light"
+              <div>
+                <label className="text-gray-700 block text-sm font-light">
+                  Asignar rol existente:
+                </label>
+                <Select
+                  isDisabled={checkSelected === "nuevo"}
+                  labelPlacement="outside"
+                  placeholder="Rol"
+                  className="max-w rounded-lg border font-roboto font-medium"
+                  {...register("role", {
+                    required:
+                      checkSelected === "existente"
+                        ? "Debes seleccionar un rol"
+                        : false,
+                  })}
+                  onSelectionChange={(value) => setValue("role", value)}
                 >
-                  Asignar nuevo rol
-                </Checkbox>
+                  {RolesResponse &&
+                    RolesResponse.map((rol) => (
+                      <SelectItem key={rol.id}>{rol.name}</SelectItem>
+                    ))}
+                </Select>
+                {errors.role && errors.role.message ? (
+                  <span className="font-roboto text-xs text-red_e">
+                    {errors.role.message}
+                  </span>
+                ) : (
+                  ""
+                )}
+              </div>
 
-                <div className="flex w-full flex-row justify-between">
-                  <div className="mt-5 w-[48%]">
-                    <Input
-                      disabled={checkSelected === "existente"}
-                      placeholder={"Escribe el nombre del rol..."}
-                      {...register("nameRole", {
-                        required:
-                          checkSelected === "nuevo"
-                            ? "Debes ingresar el nombre del rol"
-                            : false,
-                      })}
-                      errorApi={errors.nameRole}
-                      msjError={errors.nameRole ? errors.nameRole.message : ""}
-                    />
-                  </div>
-
-                  <div className="mt-5 w-[48%]">
-                    <Select
-                      isDisabled={checkSelected === "existente"}
-                      placeholder="Permisos"
-                      selectionMode="multiple"
-                      className="max-w rounded-lg border font-roboto font-medium"
-                      {...register("permissions", {
-                        required:
-                          checkSelected === "nuevo"
-                            ? "Debes asignar permisos"
-                            : false,
-                      })}
-                      onSelectionChange={(values) =>
-                        setValue("permissions", values)
-                      }
-                    >
-                      {permisos.map((permiso) => (
-                        <SelectItem key={permiso.key}>
-                          {permiso.label}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                    {errors.permissions && errors.permissions.message ? (
-                      <span className="font-roboto text-xs text-red_e">
-                        {errors.permissions.message}
-                      </span>
-                    ) : (
-                      " "
-                    )}
-                  </div>
-                </div>
+              <div>
+                <label className="text-gray-700 block text-sm font-light">
+                  Asignar ruta:
+                </label>
+                <Select
+                  isDisabled={checkSelected === "nuevo"}
+                  labelPlacement="outside"
+                  placeholder="Ruta"
+                  className="max-w rounded-lg border font-roboto font-medium"
+                  {...register("role", {
+                    required:
+                      checkSelected === "existente"
+                        ? "Debes seleccionar un rol"
+                        : false,
+                  })}
+                  onSelectionChange={(value) => setValue("role", value)}
+                >
+                  {RolesResponse &&
+                    RolesResponse.map((rol) => (
+                      <SelectItem key={rol.id}>{rol.name}</SelectItem>
+                    ))}
+                </Select>
+                {errors.role && errors.role.message ? (
+                  <span className="font-roboto text-xs text-red_e">
+                    {errors.role.message}
+                  </span>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           </div>
@@ -334,4 +301,4 @@ const AddUserPage = () => {
   );
 };
 
-export default AddUserPage;
+export default AddSellerPage;

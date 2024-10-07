@@ -26,7 +26,7 @@ const LoginPage = () => {
   const onSubmit = async (data) => {
     try {
       const loginResult = await onLogin(data);
-      console.log(loginResult);
+
       if (!loginResult) {
         // Mostrar mensaje de error
         setIsModalOpen(true);

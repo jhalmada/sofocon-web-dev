@@ -1,4 +1,4 @@
-export const getSeller = "/seller-route";
-export const postSeller = "/seller-route";
-export const deleteSeller = "/seller-route";
-export const putSeller = "/seller-route";
+export const getSeller = "/seller-routes";
+export const postSeller = "/seller-routes";
+export const deleteSeller = "/seller-routes";
+export const putSeller = "/seller-routes";

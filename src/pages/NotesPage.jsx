@@ -116,7 +116,7 @@ const NotesPage = () => {
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await changedUser(userData, userId);
-      console.log(newUser);
+
       if (newUser) {
         setSaveConfirmationModalOpen(true);
       } else {
@@ -190,7 +190,7 @@ const NotesPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(NOTES_TAB)}
-              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Notas
             </h2>

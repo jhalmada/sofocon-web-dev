@@ -27,6 +27,7 @@ import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
 import { getClientsExcel } from "../services/companies/companies.routes.js";
+import { I18nProvider } from "@react-aria/i18n";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -135,7 +136,7 @@ const CompaniesPage = () => {
         companyId,
         setModified,
       );
-      console.log("Empresa editada exitosamente");
+
       if (newCompany) {
         setSaveConfirmationModalOpen(true);
       } else {
@@ -164,7 +165,7 @@ const CompaniesPage = () => {
       nextVisit.month - 1,
       nextVisit.day,
     );
-    console.log(newdata);
+
     //formate la fecha para que sea aceptada por el back
     const formattedDate = newdata.toISOString();
     switch (checkSelected) {
@@ -201,7 +202,7 @@ const CompaniesPage = () => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Meses están indexados desde 0
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${month}/${day}/${year}`;
@@ -234,13 +235,13 @@ const CompaniesPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(COMPANIE_TAB)}
-              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === COMPANIE_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === COMPANIE_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listado
             </h2>
             <h2
               onClick={() => setActiveTab(COMPETING_TAB)}
-              className={`${activeTab === COMPETING_TAB ? "bg-white" : "bg-gray"} w-36 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === COMPETING_TAB ? "bg-white" : "bg-gray"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Competencia
             </h2>
@@ -367,7 +368,7 @@ const CompaniesPage = () => {
               label={"Nombre de la empresa"}
               placeholder={"Escribe el nombre del local..."}
               {...register("name", {
-                required: "El nombre es obligatorio",
+                required: "Este campo es obligatorio",
               })}
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}
@@ -611,28 +612,30 @@ const CompaniesPage = () => {
             <label className="text-sm font-light text-black">
               Próxima visita
             </label>
-            <Controller
-              name={"nextVisit"}
-              control={control}
-              render={({ field }) => (
-                <DatePicker
-                  granularity="day"
-                  className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
-                  {...field}
-                  label={""}
-                  placeholder="Seleccione una fecha"
-                />
-              )}
-              rules={{
-                required: {
-                  value: true,
-                  message: "La fecha es obligatoria",
-                },
-              }}
-            />
-            <p className="font-roboto text-xs text-red_e">
-              {errors.nextVisit ? errors.nextVisit.message : ""}
-            </p>
+            <I18nProvider locale="es-ES">
+              <Controller
+                name={"nextVisit"}
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    granularity="day"
+                    className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
+                    {...field}
+                    label={""}
+                    placeholder="Seleccione una fecha"
+                  />
+                )}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "La fecha es obligatoria",
+                  },
+                }}
+              />
+              <p className="font-roboto text-xs text-red_e">
+                {errors.nextVisit ? errors.nextVisit.message : ""}
+              </p>
+            </I18nProvider>
           </div>
           <div className="space-y-2">
             <span>Notas</span>
@@ -665,7 +668,7 @@ const CompaniesPage = () => {
             <Button
               text="Descargar archivo Excel"
               icon={DownloadIcon}
-              color={"selected"}
+              color={"cancel"}
               shadow="shadow-blur"
               iconPosition={"left"}
             />

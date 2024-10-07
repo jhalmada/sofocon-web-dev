@@ -134,6 +134,12 @@ const menuItems = [
     icon: clipboardChek,
     activeIcon: clipboardChekActive,
   },
+  {
+    name: "Taller",
+    path: "/inicio/taller",
+    icon: briefcaseIcon,
+    activeIcon: briefActiveIcon,
+  },
 ];
 
 export { users, roles, menuItems };

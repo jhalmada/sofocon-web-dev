@@ -6,45 +6,43 @@ import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Pagination from "../components/Pagination.jsx";
 import Input from "../components/inputs/Input.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox } from "@nextui-org/react";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
-import useUsers from "../hooks/users/use.users.js";
+
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
-import { permisos } from "../utils/permisons";
-import useRoles from "../hooks/roles/use.roles.js";
+import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
+import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
+import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
 
-const USER_TAB = "users";
-
+const SELLER_TAB = "sellers";
 const RoutesPage = () => {
-  const { changedUser } = usePutUsers();
-  const [userId, setUserId] = useState(null);
+  const { changedSellerRoute } = usePutSellerRoute();
+  const { deleteSellerRoute } = useDeleteSellerRoute();
+  const [routeId, setRouteId] = useState(null);
   const {
-    usersResponse,
+    sellerRoutesResponse,
     setItemsPerPage,
     totalPage,
     setPage,
     page,
     itemsPerPage,
     setModified,
-  } = useUsers();
-  const { RolesResponse } = useRoles();
+  } = useSellerRoutes();
+
   const { deleteUser } = useDeleteUsers();
-  const [activeTab, setActiveTab] = useState(USER_TAB);
+  const [activeTab, setActiveTab] = useState(SELLER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
 
   const {
     register,
@@ -54,17 +52,16 @@ const RoutesPage = () => {
   } = useForm();
 
   const openModal = (id) => {
-    const userToEdit = usersResponse.find((user) => user.id === id);
-    console.log(userToEdit);
-    if (userToEdit) {
-      // Set form values
-      setValue("fullName", userToEdit.userInfo.fullName);
-      setValue("email", userToEdit.email);
-      setValue("role", userToEdit?.role?.id || "");
-      console.log(userToEdit);
+    const sellerToEdit = sellerRoutesResponse.find(
+      (seller) => seller.id === id,
+    );
+    if (sellerToEdit) {
+      setValue("name", sellerToEdit.name);
+      setValue("zone", sellerToEdit.zone);
+      setValue("status", sellerToEdit.isActive);
     }
     setIsModalOpen(true);
-    setUserId(id);
+    setRouteId(id);
   };
 
   const closeModal = () => {
@@ -81,13 +78,13 @@ const RoutesPage = () => {
     closeModal();
   };
   const openConfirmDeleteModal = (id) => {
-    setUserId(id);
+    setRouteId(id);
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
-    deleteUser(userId, setModified);
+    deleteSellerRoute(routeId, setModified);
     closeConfirmDeleteModal();
   };
 
@@ -97,50 +94,33 @@ const RoutesPage = () => {
     closeModal();
   };
 
-  const handleUserCreation = async (userData) => {
+  const handleRouteCreation = async (routeData) => {
     try {
-      const newUser = await changedUser(userData, userId, setModified);
-      console.log(newUser);
-      if (newUser) {
+      const newRoute = await changedSellerRoute(
+        routeData,
+        routeId,
+        setModified,
+      );
+
+      if (newRoute) {
         setSaveConfirmationModalOpen(true);
       } else {
-        console.error(
-          "No se recibió un nuevo usuario después de la actualización",
-        );
+        console.error("No se actualizó la ruta, por favor intenta de nuevo");
       }
     } catch (error) {
-      console.error("Error al actualizar el usuario:", error);
+      console.error("Error al actualizar la ruta:", error);
       setIsModalOpen(true);
     }
   };
 
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          email,
-          password,
-          userInfo: {
-            fullName,
-          },
-          role: { id: role },
-        });
-        break;
-      default:
-        handleUserCreation({
-          email,
-          password,
-          fullName: {
-            fullName,
-          },
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-          },
-        });
-    }
+    const { name, zone, status } = data;
+    const sellerData = {
+      name,
+      zone,
+      isActive: status,
+    };
+    handleRouteCreation(sellerData);
   };
   return (
     <div className="flex h-full flex-col justify-between">
@@ -167,14 +147,14 @@ const RoutesPage = () => {
         <div className="flex items-center">
           <div className="flex">
             <h2
-              onClick={() => setActiveTab(USER_TAB)}
-              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              onClick={() => setActiveTab(SELLER_TAB)}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listado
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
-            {activeTab === USER_TAB && (
+            {activeTab === SELLER_TAB && (
               <div className="flex space-x-4">
                 <Button
                   text="Exportar lista"
@@ -188,7 +168,7 @@ const RoutesPage = () => {
             )}
           </div>
         </div>
-        {activeTab === USER_TAB && (
+        {activeTab === SELLER_TAB && (
           <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
             <table className="w-full">
               <thead>
@@ -226,20 +206,20 @@ const RoutesPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {usersResponse.map((user, index) => (
+                {sellerRoutesResponse.map((seller, index) => (
                   <RouteRow
                     key={index}
-                    name="nombre de ruta"
-                    zone="zona de la ruta"
-                    companies="214"
-                    sellers="35"
-                    state="Activo"
+                    name={seller.name}
+                    zone={seller.zone}
+                    companies="21"
+                    sellers={seller.user[0].userInfo.fullName}
+                    state={seller.isActive}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     onEditClick={() => {
-                      openModal(user.id);
+                      openModal(seller.id);
                     }}
-                    onDeleteClick={() => openConfirmDeleteModal(user.id)}
+                    onDeleteClick={() => openConfirmDeleteModal(seller.id)}
                   />
                 ))}
               </tbody>
@@ -260,7 +240,7 @@ const RoutesPage = () => {
       <ReusableModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Editar Usuario"
+        title="Editar Ruta"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
@@ -268,103 +248,60 @@ const RoutesPage = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
             label={"Nombre Completo"}
-            placeholder={"Escribe el nombre completo del usuario..."}
-            {...register("fullName", {
-              required: "El nombre completo es obligatorio",
+            placeholder={"Escribir..."}
+            {...register("name", {
+              required: "Este campo es obligatorio",
+              minLength: {
+                value: 2,
+                message: "Debe tener al menos 2 caracteres",
+              },
+              maxLength: {
+                value: 50,
+                message: "Debe tener máximo 50 caracteres",
+              },
             })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
+            errorApi={errors.name}
+            msjError={errors.name ? errors.name.message : ""}
           />
           <Input
-            placeholder={"Escribe tu correo"}
-            label={"Dirección de correo"}
-            {...register("email", {
+            label={"Zona"}
+            placeholder={"Escribir..."}
+            {...register("zone", {
               required: {
                 value: true,
                 message: "Campo obligatorio",
               },
-              pattern: {
-                value:
-                  /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
-                message: "Formato de email incorrecto",
+              minLength: {
+                value: 2,
+                message: "Debe tener al menos 2 caracteres",
+              },
+              maxLength: {
+                value: 50,
+                message: "Debe tener máximo 50 caracteres",
               },
             })} // Add this line
-            errorApi={errors.email}
-            msjError={errors.email ? errors.email.message : ""}
+            errorApi={errors.zone}
+            msjError={errors.zone ? errors.zone.message : ""}
           />
-          {console.log(errors.email)}
 
-          <div className="space-y-4">
-            <Checkbox
-              defaultSelected={checkSelected === "existente"}
-              isSelected={checkSelected === "existente"}
-              onClick={() => setCheckSelected("existente")}
-              radius="full"
-              className="font-light"
-            >
-              Asignar rol existente
-            </Checkbox>
+          <div className="mb-4 space-y-2">
+            <label className="text-gray-700 block text-sm font-light">
+              Asignar estado:
+            </label>
             <Select
+              onSelectionChange={(value) => setValue("status", value)}
+              placeholder="Estado"
               className="rounded-lg border"
-              isDisabled={checkSelected === "nuevo"}
-              {...register("role", {
-                required:
-                  checkSelected === "existente"
-                    ? "Debes seleccionar un rol"
-                    : false,
+              {...register("status", {
+                required: "Debes seleccionar una opción",
               })}
-              onSelectionChange={(value) => setValue("role", value)}
             >
-              {RolesResponse &&
-                RolesResponse.map((rol) => (
-                  <SelectItem key={rol.id}>{rol.name}</SelectItem>
-                ))}
+              <SelectItem key={true}>Activo</SelectItem>
+              <SelectItem key={false}>Inactivo</SelectItem>
             </Select>
-
-            <Checkbox
-              radius="full"
-              isSelected={checkSelected === "nuevo"}
-              onClick={() => setCheckSelected("nuevo")}
-              className="font-light"
-            >
-              Asignar nuevo rol
-            </Checkbox>
-
-            <Input
-              disabled={checkSelected === "existente"}
-              placeholder={"Escribe el nombre del rol..."}
-              {...register("nameRole", {
-                required:
-                  checkSelected === "nuevo"
-                    ? "Debes ingresar el nombre del rol"
-                    : false,
-              })}
-              errorApi={errors.nameRole}
-              msjError={errors.nameRole ? errors.nameRole.message : ""}
-            />
-
-            <Select
-              isDisabled={checkSelected === "existente"}
-              placeholder="Permisos"
-              selectionMode="multiple"
-              className="max-w rounded-lg border font-roboto font-medium"
-              {...register("permissions", {
-                required:
-                  checkSelected === "nuevo" ? "Debes asignar permisos" : false,
-              })}
-              onSelectionChange={(values) => setValue("permissions", values)}
-            >
-              {permisos.map((permiso) => (
-                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-              ))}
-            </Select>
-            {errors.permissions && errors.permissions.message ? (
-              <span className="font-roboto text-xs text-red_e">
-                {errors.permissions.message}
-              </span>
-            ) : (
-              " "
-            )}
+            <p className="font-roboto text-xs text-red_e">
+              {errors.status ? errors.status.message : ""}
+            </p>
           </div>
         </form>
       </ReusableModal>
@@ -394,12 +331,12 @@ const RoutesPage = () => {
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
-        title="Eliminar usuario"
+        title="Eliminar ruta"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete(userId)}
+        onAccept={() => handleConfirmDelete(routeId)}
       >
-        Este usuario será eliminado de forma permanente. ¿Desea continuar?
+        Esta ruta será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );
