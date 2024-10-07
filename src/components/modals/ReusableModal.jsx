@@ -35,7 +35,13 @@ const ReusableModal = ({
             <p className="space-y-6 text-sm font-medium leading-[1rem]">
               {children}
             </p>
-            <div className="flex justify-between">
+            <div
+              className={`flex ${
+                buttons.includes("back") && buttons.includes("accept")
+                  ? "justify-between"
+                  : "justify-center"
+              }`}
+            >
               {buttons.includes("back") && (
                 <Button
                   text="Volver"

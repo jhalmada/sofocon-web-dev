@@ -399,7 +399,7 @@ const AddCompaniePage = () => {
                   Potencial/Competencia
                 </SelectItem>
               </Select>
-              <p className="mt-1 font-roboto text-xs text-red_e">
+              <p className="font-roboto text-xs text-red_e">
                 {errors.status ? errors.status.message : ""}
               </p>
             </div>
