@@ -36,7 +36,7 @@ const RoutesPage = () => {
     itemsPerPage,
     setModified,
   } = useSellerRoutes();
-  console.log("sellers", sellerRoutesResponse);
+
   const { RolesResponse } = useRoles();
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(SELLER_TAB);
@@ -55,14 +55,10 @@ const RoutesPage = () => {
   } = useForm();
 
   const openModal = (id) => {
-    const userToEdit = usersResponse.find((user) => user.id === id);
+    const sellerToEdit = sellerRoutesResponse.find(
+      (seller) => seller.id === id,
+    );
 
-    if (userToEdit) {
-      // Set form values
-      setValue("fullName", userToEdit.userInfo.fullName);
-      setValue("email", userToEdit.email);
-      setValue("role", userToEdit?.role?.id || "");
-    }
     setIsModalOpen(true);
     setUserId(id);
   };
@@ -168,7 +164,7 @@ const RoutesPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(SELLER_TAB)}
-              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === SELLER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listado
             </h2>
@@ -236,6 +232,9 @@ const RoutesPage = () => {
                     state={seller.isActive}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
+                    onEditClick={() => {
+                      openModal(seller.id);
+                    }}
                     onDeleteClick={() => openConfirmDeleteModal(seller.id)}
                   />
                 ))}
@@ -257,7 +256,7 @@ const RoutesPage = () => {
       <ReusableModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Editar Usuario"
+        title="Editar Ruta"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
@@ -265,7 +264,7 @@ const RoutesPage = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
             label={"Nombre Completo"}
-            placeholder={"Escribe el nombre completo del usuario..."}
+            placeholder={"Escribir..."}
             {...register("fullName", {
               required: "Este campo es obligatorio",
             })}
@@ -273,8 +272,8 @@ const RoutesPage = () => {
             msjError={errors.fullName ? errors.fullName.message : ""}
           />
           <Input
-            placeholder={"Escribe tu correo"}
-            label={"Dirección de correo"}
+            label={"Zona"}
+            placeholder={"Escribir..."}
             {...register("email", {
               required: {
                 value: true,
@@ -290,77 +289,23 @@ const RoutesPage = () => {
             msjError={errors.email ? errors.email.message : ""}
           />
 
-          <div className="space-y-4">
-            <Checkbox
-              defaultSelected={checkSelected === "existente"}
-              isSelected={checkSelected === "existente"}
-              onClick={() => setCheckSelected("existente")}
-              radius="full"
-              className="font-light"
-            >
-              Asignar rol existente
-            </Checkbox>
+          <div className="mb-4 space-y-2">
+            <label className="text-gray-700 block text-sm font-light">
+              Asignar estado:
+            </label>
             <Select
+              onSelectionChange={(value) => setValue("status", value)}
+              placeholder="Estado"
               className="rounded-lg border"
-              isDisabled={checkSelected === "nuevo"}
-              {...register("role", {
-                required:
-                  checkSelected === "existente"
-                    ? "Debes seleccionar un rol"
-                    : false,
+              {...register("status", {
+                required: "Debes seleccionar una opción",
               })}
-              onSelectionChange={(value) => setValue("role", value)}
+              errorApi={errors.status}
+              msjError={errors.status ? errors.status.message : ""}
             >
-              {RolesResponse &&
-                RolesResponse.map((rol) => (
-                  <SelectItem key={rol.id}>{rol.name}</SelectItem>
-                ))}
+              <SelectItem key={true}>Activo</SelectItem>
+              <SelectItem key={false}>Inactivo</SelectItem>
             </Select>
-
-            <Checkbox
-              radius="full"
-              isSelected={checkSelected === "nuevo"}
-              onClick={() => setCheckSelected("nuevo")}
-              className="font-light"
-            >
-              Asignar nuevo rol
-            </Checkbox>
-
-            <Input
-              disabled={checkSelected === "existente"}
-              placeholder={"Escribe el nombre del rol..."}
-              {...register("nameRole", {
-                required:
-                  checkSelected === "nuevo"
-                    ? "Debes ingresar el nombre del rol"
-                    : false,
-              })}
-              errorApi={errors.nameRole}
-              msjError={errors.nameRole ? errors.nameRole.message : ""}
-            />
-
-            <Select
-              isDisabled={checkSelected === "existente"}
-              placeholder="Permisos"
-              selectionMode="multiple"
-              className="max-w rounded-lg border font-roboto font-medium"
-              {...register("permissions", {
-                required:
-                  checkSelected === "nuevo" ? "Debes asignar permisos" : false,
-              })}
-              onSelectionChange={(values) => setValue("permissions", values)}
-            >
-              {permisos.map((permiso) => (
-                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-              ))}
-            </Select>
-            {errors.permissions && errors.permissions.message ? (
-              <span className="font-roboto text-xs text-red_e">
-                {errors.permissions.message}
-              </span>
-            ) : (
-              " "
-            )}
           </div>
         </form>
       </ReusableModal>

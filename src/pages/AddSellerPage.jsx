@@ -107,10 +107,10 @@ const AddSellerPage = () => {
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Vendedores
         </h1>
-        {/*navbar */}
+
         <div className="flex items-center justify-between">
           <div className="flex">
-            <span className="w-36 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
+            <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
               Nuevo vendedor
             </span>
           </div>
@@ -120,7 +120,6 @@ const AddSellerPage = () => {
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
           <div className="space-y-3">
-            {/* Nombre Completo */}
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
@@ -131,9 +130,8 @@ const AddSellerPage = () => {
               msjError={errors.fullName ? errors.fullName.message : ""}
             />
 
-            {/* Correo electrónico */}
             <Input
-              placeholder={"Escribe tu correo"}
+              placeholder={"Escribe el email del usuario"}
               label={"Dirección de correo"}
               {...register("email", {
                 required: {
@@ -145,7 +143,7 @@ const AddSellerPage = () => {
                     /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
                   message: "Formato de email incorrecto",
                 },
-              })} // Add this line
+              })}
               errorApi={errors.email}
               msjError={errors.email ? errors.email.message : ""}
             />

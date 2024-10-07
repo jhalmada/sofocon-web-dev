@@ -234,13 +234,13 @@ const CompaniesPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(COMPANIE_TAB)}
-              className={`w-36 cursor-pointer rounded-t-lg ${activeTab === COMPANIE_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === COMPANIE_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listado
             </h2>
             <h2
               onClick={() => setActiveTab(COMPETING_TAB)}
-              className={`${activeTab === COMPETING_TAB ? "bg-white" : "bg-gray"} w-36 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === COMPETING_TAB ? "bg-white" : "bg-gray"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Competencia
             </h2>

@@ -65,7 +65,7 @@ const AddRolePage = () => {
 
         <div className="flex items-center justify-between">
           <div className="flex">
-            <span className="w-36 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
+            <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
               Roles
             </span>
           </div>
