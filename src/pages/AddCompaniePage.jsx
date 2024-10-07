@@ -175,16 +175,19 @@ const AddCompaniePage = () => {
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}
             />
-            <div>
+            <div className="mb-2">
               <Checkbox
                 onClick={() => setCompetence(!competence)}
                 radius="full"
               >
                 <p className="text-sm font-light">Cliente de la competencia</p>
               </Checkbox>
+            </div>
+
+            <div>
               <Input
                 disabled={!competence}
-                label={"Empresas actual"}
+                label={"Empresa actual"}
                 placeholder={"Escribe el nombre..."}
                 {...register("competenceName", {
                   required: competence && "Este campo es requerido",
@@ -261,10 +264,10 @@ const AddCompaniePage = () => {
 
             <div
               // onClick={() => openMapModalMap()}
-              className="mb-2 flex w-[8rem] cursor-pointer justify-center"
+              className="mb-2 flex w-[9rem] cursor-pointer justify-center"
             >
               <img src={geoaltIcon} alt="geo Icon" />
-              <span className="text-xs leading-[.88rem] underline">
+              <span className="text-sm leading-[.88rem] underline">
                 Marcar en el mapa
               </span>
             </div>

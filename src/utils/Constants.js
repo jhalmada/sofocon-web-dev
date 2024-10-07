@@ -7,6 +7,7 @@ export const RECOVER_ROUTE = "recuperar-contraseña";
 export const NEW_PASSWORD_ROUTE = "nueva-contraseña";
 export const PASSWORD_CHANGED_ROUTE = "cambiar-contraseña";
 export const COMPANIES_ROUTE = "empresas";
+export const WORKSHOP_ROUTE = "taller";
 export const NOTES_ROUTE = "notas";
 export const USERS_ROUTE = "personal";
 export const ADD_USER_ROUTE = "agregar-usuario";

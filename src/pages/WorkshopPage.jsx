@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-
+import { Link } from "react-router-dom";
 const OrdersPage = () => {
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
@@ -19,13 +18,13 @@ const OrdersPage = () => {
         </Link>
         <div></div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Órdenes
+          Taller
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
-              Órdenes
+              Taller
             </span>
           </div>
         </div>

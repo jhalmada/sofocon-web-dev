@@ -668,7 +668,7 @@ const CompaniesPage = () => {
             <Button
               text="Descargar archivo Excel"
               icon={DownloadIcon}
-              color={"selected"}
+              color={"cancel"}
               shadow="shadow-blur"
               iconPosition={"left"}
             />

@@ -25,7 +25,7 @@ const SearchInput = ({
       <img
         src={XlgIcon}
         alt="Close icon"
-        className="absolute right-2 top-1/2 mr-1 h-4 w-4 -translate-y-1/2 transform cursor-pointer rounded-[1.875rem]"
+        className="absolute right-2 top-[1.26rem] mr-1 h-4 w-4 -translate-y-1/2 transform cursor-pointer rounded-[1.875rem]"
       />
     </div>
   );

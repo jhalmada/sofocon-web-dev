@@ -3,4 +3,5 @@ export const permisos = [
   { key: "SECTION_ROUTES", label: "RUTAS" },
   { key: "SECTION_ADMINISTRATION", label: "EMPRESAS" },
   { key: "SECTION_SELLER", label: "VENDEDORES" },
+  { key: "SECTION_WORKSHOP", label: "TALLER" },
 ];
