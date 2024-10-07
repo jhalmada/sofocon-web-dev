@@ -6,7 +6,6 @@ import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Pagination from "../components/Pagination.jsx";
 import Input from "../components/inputs/Input.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox } from "@nextui-org/react";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
@@ -16,17 +15,17 @@ import DownloadIcon from "../assets/icons/download.svg";
 
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
-import { permisos } from "../utils/permisons";
-import useRoles from "../hooks/roles/use.roles.js";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
+import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
+import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
 
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
-  const { changedUser } = usePutUsers();
-  const [userId, setUserId] = useState(null);
+  const { changedSellerRoute } = usePutSellerRoute();
+  const { deleteSellerRoute } = useDeleteSellerRoute();
+  const [routeId, setRouteId] = useState(null);
   const {
     sellerRoutesResponse,
     setItemsPerPage,
@@ -37,7 +36,6 @@ const RoutesPage = () => {
     setModified,
   } = useSellerRoutes();
 
-  const { RolesResponse } = useRoles();
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(SELLER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,7 +43,6 @@ const RoutesPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
 
   const {
     register,
@@ -58,9 +55,13 @@ const RoutesPage = () => {
     const sellerToEdit = sellerRoutesResponse.find(
       (seller) => seller.id === id,
     );
-
+    if (sellerToEdit) {
+      setValue("name", sellerToEdit.name);
+      setValue("zone", sellerToEdit.zone);
+      setValue("status", sellerToEdit.isActive);
+    }
     setIsModalOpen(true);
-    setUserId(id);
+    setRouteId(id);
   };
 
   const closeModal = () => {
@@ -77,13 +78,13 @@ const RoutesPage = () => {
     closeModal();
   };
   const openConfirmDeleteModal = (id) => {
-    setUserId(id);
+    setRouteId(id);
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
-    deleteUser(userId, setModified);
+    deleteSellerRoute(routeId, setModified);
     closeConfirmDeleteModal();
   };
 
@@ -93,50 +94,33 @@ const RoutesPage = () => {
     closeModal();
   };
 
-  const handleUserCreation = async (userData) => {
+  const handleRouteCreation = async (routeData) => {
     try {
-      const newUser = await changedUser(userData, userId, setModified);
+      const newRoute = await changedSellerRoute(
+        routeData,
+        routeId,
+        setModified,
+      );
 
-      if (newUser) {
+      if (newRoute) {
         setSaveConfirmationModalOpen(true);
       } else {
-        console.error(
-          "No se recibió un nuevo usuario después de la actualización",
-        );
+        console.error("No se actualizó la ruta, por favor intenta de nuevo");
       }
     } catch (error) {
-      console.error("Error al actualizar el usuario:", error);
+      console.error("Error al actualizar la ruta:", error);
       setIsModalOpen(true);
     }
   };
 
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          email,
-          password,
-          userInfo: {
-            fullName,
-          },
-          role: { id: role },
-        });
-        break;
-      default:
-        handleUserCreation({
-          email,
-          password,
-          fullName: {
-            fullName,
-          },
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-          },
-        });
-    }
+    const { name, zone, status } = data;
+    const sellerData = {
+      name,
+      zone,
+      isActive: status,
+    };
+    handleRouteCreation(sellerData);
   };
   return (
     <div className="flex h-full flex-col justify-between">
@@ -265,28 +249,39 @@ const RoutesPage = () => {
           <Input
             label={"Nombre Completo"}
             placeholder={"Escribir..."}
-            {...register("fullName", {
+            {...register("name", {
               required: "Este campo es obligatorio",
+              minLength: {
+                value: 2,
+                message: "Debe tener al menos 2 caracteres",
+              },
+              maxLength: {
+                value: 50,
+                message: "Debe tener máximo 50 caracteres",
+              },
             })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
+            errorApi={errors.name}
+            msjError={errors.name ? errors.name.message : ""}
           />
           <Input
             label={"Zona"}
             placeholder={"Escribir..."}
-            {...register("email", {
+            {...register("zone", {
               required: {
                 value: true,
                 message: "Campo obligatorio",
               },
-              pattern: {
-                value:
-                  /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
-                message: "Formato de email incorrecto",
+              minLength: {
+                value: 2,
+                message: "Debe tener al menos 2 caracteres",
+              },
+              maxLength: {
+                value: 50,
+                message: "Debe tener máximo 50 caracteres",
               },
             })} // Add this line
-            errorApi={errors.email}
-            msjError={errors.email ? errors.email.message : ""}
+            errorApi={errors.zone}
+            msjError={errors.zone ? errors.zone.message : ""}
           />
 
           <div className="mb-4 space-y-2">
@@ -300,12 +295,13 @@ const RoutesPage = () => {
               {...register("status", {
                 required: "Debes seleccionar una opción",
               })}
-              errorApi={errors.status}
-              msjError={errors.status ? errors.status.message : ""}
             >
               <SelectItem key={true}>Activo</SelectItem>
               <SelectItem key={false}>Inactivo</SelectItem>
             </Select>
+            <p className="font-roboto text-xs text-red_e">
+              {errors.status ? errors.status.message : ""}
+            </p>
           </div>
         </form>
       </ReusableModal>
@@ -338,7 +334,7 @@ const RoutesPage = () => {
         title="Eliminar ruta"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete(userId)}
+        onAccept={() => handleConfirmDelete(routeId)}
       >
         Esta ruta será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
