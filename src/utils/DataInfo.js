@@ -142,4 +142,11 @@ const menuItems = [
   },
 ];
 
-export { users, roles, menuItems };
+const sellers = [
+  { id: 1, name: "Vendedor 1" },
+  { id: 2, name: "Vendedor 2" },
+  { id: 3, name: "Vendedor 3" },
+  { id: 4, name: "Vendedor 4" },
+];
+
+export { users, roles, menuItems, sellers };
