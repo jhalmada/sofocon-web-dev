@@ -119,7 +119,7 @@ const AddSellerPage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
-          <div className="space-y-3">
+          <div>
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
@@ -129,10 +129,28 @@ const AddSellerPage = () => {
               errorApi={errors.fullName}
               msjError={errors.fullName ? errors.fullName.message : ""}
             />
+            <Input
+              label={"CI"}
+              placeholder={"123456789"}
+              {...register("fullName", {
+                required: "Este campo es obligatorio",
+              })}
+              errorApi={errors.fullName}
+              msjError={errors.fullName ? errors.fullName.message : ""}
+            />
+            <Input
+              label={"Teléfono de contacto"}
+              placeholder={"123456789"}
+              {...register("fullName", {
+                required: "Este campo es obligatorio",
+              })}
+              errorApi={errors.fullName}
+              msjError={errors.fullName ? errors.fullName.message : ""}
+            />
 
             <Input
               placeholder={"Escribe el email del usuario"}
-              label={"Dirección de correo"}
+              label={"Correo electrónico"}
               {...register("email", {
                 required: {
                   value: true,
@@ -177,105 +195,71 @@ const AddSellerPage = () => {
                 errorApi={errors.password}
                 msjError={errors.password ? errors.password.message : ""}
               />
-              <p className="mt-5 text-xs leading-[.875rem] text-black_b">
+              <p className="text-xs leading-[.875rem] text-black_b">
                 *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
               </p>
             </div>
             <div className="space-y-4">
-              {/* Asignar rol existente */}
-              <Checkbox
-                defaultSelected={checkSelected === "existente"}
-                isSelected={checkSelected === "existente"}
-                onClick={() => setCheckSelected("existente")}
-                radius="full"
-                className="font-light"
-              >
-                Asignar rol existente
-              </Checkbox>
-
-              <Select
-                isDisabled={checkSelected === "nuevo"}
-                labelPlacement="outside"
-                placeholder="Rol"
-                className="max-w rounded-lg border font-roboto font-medium"
-                {...register("role", {
-                  required:
-                    checkSelected === "existente"
-                      ? "Debes seleccionar un rol"
-                      : false,
-                })}
-                onSelectionChange={(value) => setValue("role", value)}
-              >
-                {RolesResponse &&
-                  RolesResponse.map((rol) => (
-                    <SelectItem key={rol.id}>{rol.name}</SelectItem>
-                  ))}
-              </Select>
-              {errors.role && errors.role.message ? (
-                <span className="font-roboto text-xs text-red_e">
-                  {errors.role.message}
-                </span>
-              ) : (
-                ""
-              )}
-
-              <div className="flex flex-col">
-                <Checkbox
-                  radius="full"
-                  isSelected={checkSelected === "nuevo"}
-                  onClick={() => setCheckSelected("nuevo")}
-                  className="font-light"
+              <div>
+                <label className="text-gray-700 block text-sm font-light">
+                  Asignar rol existente:
+                </label>
+                <Select
+                  isDisabled={checkSelected === "nuevo"}
+                  labelPlacement="outside"
+                  placeholder="Rol"
+                  className="max-w rounded-lg border font-roboto font-medium"
+                  {...register("role", {
+                    required:
+                      checkSelected === "existente"
+                        ? "Debes seleccionar un rol"
+                        : false,
+                  })}
+                  onSelectionChange={(value) => setValue("role", value)}
                 >
-                  Asignar nuevo rol
-                </Checkbox>
+                  {RolesResponse &&
+                    RolesResponse.map((rol) => (
+                      <SelectItem key={rol.id}>{rol.name}</SelectItem>
+                    ))}
+                </Select>
+                {errors.role && errors.role.message ? (
+                  <span className="font-roboto text-xs text-red_e">
+                    {errors.role.message}
+                  </span>
+                ) : (
+                  ""
+                )}
+              </div>
 
-                <div className="flex w-full flex-row justify-between">
-                  <div className="mt-5 w-[48%]">
-                    <Input
-                      disabled={checkSelected === "existente"}
-                      placeholder={"Escribe el nombre del rol..."}
-                      {...register("nameRole", {
-                        required:
-                          checkSelected === "nuevo"
-                            ? "Debes ingresar el nombre del rol"
-                            : false,
-                      })}
-                      errorApi={errors.nameRole}
-                      msjError={errors.nameRole ? errors.nameRole.message : ""}
-                    />
-                  </div>
-
-                  <div className="mt-5 w-[48%]">
-                    <Select
-                      isDisabled={checkSelected === "existente"}
-                      placeholder="Permisos"
-                      selectionMode="multiple"
-                      className="max-w rounded-lg border font-roboto font-medium"
-                      {...register("permissions", {
-                        required:
-                          checkSelected === "nuevo"
-                            ? "Debes asignar permisos"
-                            : false,
-                      })}
-                      onSelectionChange={(values) =>
-                        setValue("permissions", values)
-                      }
-                    >
-                      {permisos.map((permiso) => (
-                        <SelectItem key={permiso.key}>
-                          {permiso.label}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                    {errors.permissions && errors.permissions.message ? (
-                      <span className="font-roboto text-xs text-red_e">
-                        {errors.permissions.message}
-                      </span>
-                    ) : (
-                      " "
-                    )}
-                  </div>
-                </div>
+              <div>
+                <label className="text-gray-700 block text-sm font-light">
+                  Asignar ruta:
+                </label>
+                <Select
+                  isDisabled={checkSelected === "nuevo"}
+                  labelPlacement="outside"
+                  placeholder="Ruta"
+                  className="max-w rounded-lg border font-roboto font-medium"
+                  {...register("role", {
+                    required:
+                      checkSelected === "existente"
+                        ? "Debes seleccionar un rol"
+                        : false,
+                  })}
+                  onSelectionChange={(value) => setValue("role", value)}
+                >
+                  {RolesResponse &&
+                    RolesResponse.map((rol) => (
+                      <SelectItem key={rol.id}>{rol.name}</SelectItem>
+                    ))}
+                </Select>
+                {errors.role && errors.role.message ? (
+                  <span className="font-roboto text-xs text-red_e">
+                    {errors.role.message}
+                  </span>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           </div>

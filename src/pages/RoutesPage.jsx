@@ -335,12 +335,12 @@ const RoutesPage = () => {
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
-        title="Eliminar usuario"
+        title="Eliminar ruta"
         variant="confirmation"
         buttons={["back", "accept"]}
         onAccept={() => handleConfirmDelete(userId)}
       >
-        Este usuario será eliminado de forma permanente. ¿Desea continuar?
+        Esta ruta será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

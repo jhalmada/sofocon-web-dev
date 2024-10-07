@@ -37,30 +37,26 @@ const ReusableModal = ({
             </p>
             <div className="flex justify-between">
               {buttons.includes("back") && (
-                <div>
-                  <Button
-                    text="Volver"
-                    color="cancel"
-                    icon={ChevronLeftIcon}
-                    iconPosition="left"
-                    onClick={onClose}
-                    width="w-20"
-                  />
-                </div>
+                <Button
+                  text="Volver"
+                  color="cancel"
+                  icon={ChevronLeftIcon}
+                  iconPosition="left"
+                  onClick={onClose}
+                  width="w-20"
+                />
               )}
               {buttons.includes("accept") && (
-                <div className="w-full">
-                  <Button
-                    type="onSubmit"
-                    text="ACEPTAR"
-                    color="save"
-                    icon={CheckLgIcon}
-                    iconPosition="right"
-                    onClick={() => {
-                      if (onAccept) onAccept();
-                    }}
-                  />
-                </div>
+                <Button
+                  type="onSubmit"
+                  text="ACEPTAR"
+                  color="save"
+                  icon={CheckLgIcon}
+                  iconPosition="right"
+                  onClick={() => {
+                    if (onAccept) onAccept();
+                  }}
+                />
               )}
             </div>
           </div>

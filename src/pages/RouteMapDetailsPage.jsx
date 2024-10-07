@@ -3,9 +3,7 @@ import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Pagination from "../components/Pagination.jsx";
-import Input from "../components/inputs/Input.jsx";
-import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox } from "@nextui-org/react";
+import closeIcon from "../assets/icons/x-lg.svg";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
@@ -17,8 +15,6 @@ import useCompanies from "../hooks/companies/useCompanies.js";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 import { useForm } from "react-hook-form";
-
-import { permisos } from "../utils/permisons.js";
 import useRoles from "../hooks/roles/use.roles.js";
 import RouteMapDetailsRow from "../components/RouteMapDetailsRow.jsx";
 import RouteSellerDetailsRow from "../components/RouteSellerDetailsRow.jsx";
@@ -40,6 +36,7 @@ const RouteMapDetailsPage = () => {
     itemsPerPage,
     setModified,
   } = useCompanies();
+  const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
   const { changedCompany } = usePutCompany();
   const { RolesResponse } = useRoles();
 
@@ -88,8 +85,13 @@ const RouteMapDetailsPage = () => {
     setIsModalOpen(true);
   };
 
+  const openSellersModal = (id) => {
+    setIsSellersModalOpen(true);
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
+    setIsSellersModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
@@ -222,9 +224,12 @@ const RouteMapDetailsPage = () => {
                   icon={DownloadIcon}
                   color={"cancel"}
                 />
-                <Link to={"/inicio/empresas/agregar-empresa"}>
-                  <Button text="Agregar empresa" icon={PlusIcon} />
-                </Link>
+
+                <Button
+                  text="Agregar empresa"
+                  icon={PlusIcon}
+                  onClick={() => openModal()}
+                />
               </div>
             )}
             {activeTab === SELLERS_TAB && (
@@ -234,9 +239,12 @@ const RouteMapDetailsPage = () => {
                   icon={DownloadIcon}
                   color={"cancel"}
                 />
-                <Link to={"/inicio"}>
-                  <Button text="Agregar vendedor" icon={PlusIcon} />
-                </Link>
+
+                <Button
+                  text="Agregar vendedor"
+                  icon={PlusIcon}
+                  onClick={() => openSellersModal()}
+                />
               </div>
             )}
           </div>
@@ -417,114 +425,91 @@ const RouteMapDetailsPage = () => {
       </div>
 
       <ReusableModal
-        isOpen={isModalOpen}
+        isOpen={isSellersModalOpen}
         onClose={closeModal}
-        title="Editar Usuario"
+        title="Agregar vendedor/es a Ruta 1"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            label={"Nombre Completo"}
-            placeholder={"Escribe el nombre completo del usuario..."}
-            {...register("fullName", {
-              required: "Este campo es obligatorio",
-            })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
+        <div className="space-y-2">
+          <p className="text-sm font-light leading-[1rem] text-black_b">
+            Vendedores asignados
+          </p>
+          <Button
+            text="Vendedor 1"
+            icon={closeIcon}
+            color={"selected"}
+            width="w-full"
           />
-          <Input
-            placeholder={"Escribe tu correo"}
-            label={"Dirección de correo"}
-            {...register("email", {
-              required: {
-                value: true,
-                message: "Campo obligatorio",
-              },
-              pattern: {
-                value:
-                  /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
-                message: "Formato de email incorrecto",
-              },
-            })} // Add this line
-            errorApi={errors.email}
-            msjError={errors.email ? errors.email.message : ""}
+          <Button
+            text="Vendedor 2"
+            icon={closeIcon}
+            color={"selected"}
+            width="w-full"
           />
+          <Button
+            text="Vendedor 3"
+            icon={closeIcon}
+            color={"selected"}
+            width="w-full"
+          />
+        </div>
+        <div>
+          <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
+            Agregar vendedores
+          </p>
+          <SearchInput
+            placeholder="Buscar..."
+            border="border"
+            rounded="rounded-[0.375rem]"
+            visibility="block"
+          />
+        </div>
+      </ReusableModal>
 
-          <div className="space-y-4">
-            <Checkbox
-              defaultSelected={checkSelected === "existente"}
-              isSelected={checkSelected === "existente"}
-              onClick={() => setCheckSelected("existente")}
-              radius="full"
-              className="font-light"
-            >
-              Asignar rol existente
-            </Checkbox>
-            <Select
-              className="rounded-lg border"
-              isDisabled={checkSelected === "nuevo"}
-              {...register("role", {
-                required:
-                  checkSelected === "existente"
-                    ? "Debes seleccionar un rol"
-                    : false,
-              })}
-              onSelectionChange={(value) => setValue("role", value)}
-            >
-              {RolesResponse &&
-                RolesResponse.map((rol) => (
-                  <SelectItem key={rol.id}>{rol.name}</SelectItem>
-                ))}
-            </Select>
-
-            <Checkbox
-              radius="full"
-              isSelected={checkSelected === "nuevo"}
-              onClick={() => setCheckSelected("nuevo")}
-              className="font-light"
-            >
-              Asignar nuevo rol
-            </Checkbox>
-
-            <Input
-              disabled={checkSelected === "existente"}
-              placeholder={"Escribe el nombre del rol..."}
-              {...register("nameRole", {
-                required:
-                  checkSelected === "nuevo"
-                    ? "Debes ingresar el nombre del rol"
-                    : false,
-              })}
-              errorApi={errors.nameRole}
-              msjError={errors.nameRole ? errors.nameRole.message : ""}
-            />
-
-            <Select
-              isDisabled={checkSelected === "existente"}
-              placeholder="Permisos"
-              selectionMode="multiple"
-              className="max-w rounded-lg border font-roboto font-medium"
-              {...register("permissions", {
-                required:
-                  checkSelected === "nuevo" ? "Debes asignar permisos" : false,
-              })}
-              onSelectionChange={(values) => setValue("permissions", values)}
-            >
-              {permisos.map((permiso) => (
-                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-              ))}
-            </Select>
-            {errors.permissions && errors.permissions.message ? (
-              <span className="font-roboto text-xs text-red_e">
-                {errors.permissions.message}
-              </span>
-            ) : (
-              " "
-            )}
-          </div>
-        </form>
+      <ReusableModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="Agregar empresa/s a Ruta 1"
+        onSubmit={handleSubmit(onSubmit)}
+        buttons={["cancel", "save"]}
+        handleCancelClick={handleCancelClick}
+      >
+        <div className="space-y-2">
+          <p className="text-sm font-light leading-[1rem] text-black_b">
+            Empresas asignadas
+          </p>
+          <Button
+            text="Empresa 1"
+            icon={closeIcon}
+            color={"selected"}
+            width="w-full"
+          />
+          <Button
+            text="Empresa 2"
+            icon={closeIcon}
+            color={"selected"}
+            width="w-full"
+          />
+          <Button
+            text="Empresa 3"
+            icon={closeIcon}
+            color={"selected"}
+            width="w-full"
+          />
+        </div>
+        <div>
+          <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
+            Agregar empresas
+          </p>
+          <SearchInput
+            placeholder="Buscar..."
+            border="border"
+            rounded="rounded-[0.375rem]"
+            visibility="block"
+          />
+        </div>
       </ReusableModal>
 
       <ReusableModal

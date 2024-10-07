@@ -119,8 +119,7 @@ const AddUserPage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
-          <div className="space-y-3">
-            {/* Nombre Completo */}
+          <div>
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
@@ -130,11 +129,28 @@ const AddUserPage = () => {
               errorApi={errors.fullName}
               msjError={errors.fullName ? errors.fullName.message : ""}
             />
-
-            {/* Correo electrónico */}
             <Input
-              placeholder={"Escribe tu correo"}
-              label={"Dirección de correo"}
+              label={"CI"}
+              placeholder={"123456789"}
+              {...register("fullName", {
+                required: "Este campo es obligatorio",
+              })}
+              errorApi={errors.fullName}
+              msjError={errors.fullName ? errors.fullName.message : ""}
+            />
+            <Input
+              label={"Teléfono de contacto"}
+              placeholder={"123456789"}
+              {...register("fullName", {
+                required: "Este campo es obligatorio",
+              })}
+              errorApi={errors.fullName}
+              msjError={errors.fullName ? errors.fullName.message : ""}
+            />
+
+            <Input
+              placeholder={"Escribe el email del usuario..."}
+              label={"Correo electrónico"}
               {...register("email", {
                 required: {
                   value: true,
@@ -179,12 +195,11 @@ const AddUserPage = () => {
                 errorApi={errors.password}
                 msjError={errors.password ? errors.password.message : ""}
               />
-              <p className="mt-5 text-xs leading-[.875rem] text-black_b">
+              <p className="text-xs leading-[.875rem] text-black_b">
                 *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
               </p>
             </div>
             <div className="space-y-4">
-              {/* Asignar rol existente */}
               <Checkbox
                 defaultSelected={checkSelected === "existente"}
                 isSelected={checkSelected === "existente"}
