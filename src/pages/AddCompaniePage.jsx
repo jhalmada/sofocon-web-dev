@@ -12,7 +12,6 @@ import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
 import { Controller, useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
 import { I18nProvider } from "@react-aria/i18n";
-
 const AddCompaniePage = () => {
   const {
     register,
@@ -26,14 +25,11 @@ const AddCompaniePage = () => {
   const { postAddCompany } = useAddCompany();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMapModal, setIsMapModal] = useState(false);
-
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [msjError, setMsjError] = useState("");
-
   const [checkSelected, setCheckSelected] = useState("RUT");
   const [competence, setCompetence] = useState(false);
-
   const handleCompanyCreation = async (companyData) => {
     try {
       const newCompany = await postAddCompany(companyData);
@@ -50,7 +46,6 @@ const AddCompaniePage = () => {
       setIsModalOpen(true);
     }
   };
-
   const onSubmit = (data) => {
     const {
       nextVisit,
@@ -68,7 +63,6 @@ const AddCompaniePage = () => {
       nextVisit.month - 1,
       nextVisit.day,
     );
-    //formate la fecha para que sea aceptada por el back
     const formattedDate = newdata.toISOString();
     switch (checkSelected) {
       case "RUT":
@@ -100,32 +94,25 @@ const AddCompaniePage = () => {
         });
     }
   };
-
-  //funciones para abrir y cerrar el modal de mapa
   const closeModalMap = () => {
     setIsMapModal(false);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
     //setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     //setConfirmDeleteModalOpen(false);
   };
-
   const closeSaveConfirmationModal = () => {
     navigate("/inicio/empresas");
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-
   const handleConfirmSaveClick = () => {
     navigate("/inicio/empresas");
     closeSaveConfirmationModal();
   };
-
   const handleCancelClick = () => closeModal();
-
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -145,7 +132,6 @@ const AddCompaniePage = () => {
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Empresas
         </h1>
-        {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-38 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
@@ -183,7 +169,6 @@ const AddCompaniePage = () => {
                 <p className="text-sm font-light">Cliente de la competencia</p>
               </Checkbox>
             </div>
-
             <div>
               <Input
                 disabled={!competence}
@@ -271,7 +256,6 @@ const AddCompaniePage = () => {
                 Marcar en el mapa
               </span>
             </div>
-
             <Input
               label={"Referente"}
               placeholder={"Escribe el nombre del referente..."}
@@ -449,7 +433,6 @@ const AddCompaniePage = () => {
               </Tooltip>
             </div>
           </div>
-
           <div className="flex w-full justify-end py-6">
             <Button
               text={"GUARDAR"}
@@ -484,7 +467,6 @@ const AddCompaniePage = () => {
         >
           Los cambios fueron guardados exitosamente.
         </ReusableModal>
-        {/* modal de Errores */}
         <ReusableModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -499,5 +481,4 @@ const AddCompaniePage = () => {
     </div>
   );
 };
-
 export default AddCompaniePage;

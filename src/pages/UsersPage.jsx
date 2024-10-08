@@ -25,11 +25,9 @@ import { permisos } from "../utils/permisons";
 import { BASE_URL } from "../utils/Constants.js";
 import { getClientsExcel } from "../services/companies/companies.routes.js";
 import SellerRow from "../components/SellerRow.jsx";
-
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
-
 const UsersPage = () => {
   const { changedUser } = usePutUsers();
   const [userId, setUserId] = useState(null);
@@ -53,19 +51,15 @@ const UsersPage = () => {
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
-
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
-
     if (userToEdit) {
-      // Set form values
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
       setValue("role", userToEdit?.role?.id || "");
@@ -73,11 +67,9 @@ const UsersPage = () => {
     setIsModalOpen(true);
     setUserId(id);
   };
-
   const openExportModal = (id) => {
     setIsExportModalOpen(true);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
     setIsExportModalOpen(false);
@@ -85,7 +77,6 @@ const UsersPage = () => {
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const closeSaveConfirmationModal = () => {
@@ -97,22 +88,18 @@ const UsersPage = () => {
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
-
   const handleConfirmDelete = () => {
     deleteUser(userId, setModified);
     closeConfirmDeleteModal();
   };
-
   const handleCancelClick = () => openConfirmCancelModal();
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
   };
-
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await changedUser(userData, userId, setModified);
-
       if (newUser) {
         setSaveConfirmationModalOpen(true);
       } else {
@@ -125,10 +112,8 @@ const UsersPage = () => {
       setIsModalOpen(true);
     }
   };
-
   const onSubmit = (data) => {
     const { fullName, email, password, role, nameRole, permissions } = data;
-
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
@@ -291,7 +276,6 @@ const UsersPage = () => {
             </div>
           </div>
         )}
-
         {activeTab === SELLERS_TAB && (
           <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
             <table className="w-full">
@@ -349,7 +333,6 @@ const UsersPage = () => {
         )}
         {activeTab === ROLES_TAB && <TableRole />}
       </div>
-
       <ReusableModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -381,11 +364,10 @@ const UsersPage = () => {
                   /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
                 message: "Formato de email incorrecto",
               },
-            })} // Add this line
+            })}
             errorApi={errors.email}
             msjError={errors.email ? errors.email.message : ""}
           />
-
           <div className="space-y-4">
             <Checkbox
               defaultSelected={checkSelected === "existente"}
@@ -412,7 +394,6 @@ const UsersPage = () => {
                   <SelectItem key={rol.id}>{rol.name}</SelectItem>
                 ))}
             </Select>
-
             <Checkbox
               radius="full"
               isSelected={checkSelected === "nuevo"}
@@ -421,7 +402,6 @@ const UsersPage = () => {
             >
               Asignar nuevo rol
             </Checkbox>
-
             <Input
               disabled={checkSelected === "existente"}
               placeholder={"Escribe el nombre del rol..."}
@@ -434,7 +414,6 @@ const UsersPage = () => {
               errorApi={errors.nameRole}
               msjError={errors.nameRole ? errors.nameRole.message : ""}
             />
-
             <Select
               isDisabled={checkSelected === "existente"}
               placeholder="Permisos"
@@ -460,7 +439,6 @@ const UsersPage = () => {
           </div>
         </form>
       </ReusableModal>
-
       <ReusableModal
         isOpen={isExportModalOpen}
         onClose={closeModal}
@@ -489,7 +467,6 @@ const UsersPage = () => {
           iconPosition={"left"}
         />
       </ReusableModal>
-
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}
         onClose={closeConfirmCancelModal}
@@ -500,7 +477,6 @@ const UsersPage = () => {
       >
         Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
       </ReusableModal>
-
       <ReusableModal
         isOpen={isSaveConfirmationModalOpen}
         onClose={closeSaveConfirmationModal}
@@ -511,7 +487,6 @@ const UsersPage = () => {
       >
         Los cambios fueron guardados exitosamente.
       </ReusableModal>
-
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}

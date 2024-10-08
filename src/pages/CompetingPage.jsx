@@ -8,13 +8,11 @@ import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import notesIcon from "../assets/icons/sticky-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies";
 import { useState } from "react";
-
 const CompetingPage = () => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [competence, setCompetence] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -30,13 +28,11 @@ const CompetingPage = () => {
     itemsPerPage,
     setModified,
   } = useCompanies();
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Meses están indexados desde 0
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-
     return `${month}/${day}/${year}`;
   };
   const openModal = (id) => {
@@ -44,7 +40,6 @@ const CompetingPage = () => {
       (company) => company.id === id,
     );
     if (companyToEdit) {
-      // Set form values
       setValue("name", companyToEdit?.name || "");
       setValue("department", companyToEdit?.department || "");
       setValue("neighborhood", companyToEdit?.neighborhood || "");
@@ -72,7 +67,6 @@ const CompetingPage = () => {
     setCompanyId(id);
     setConfirmDeleteModalOpen(true);
   };
-
   return (
     <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
@@ -143,5 +137,4 @@ const CompetingPage = () => {
     </div>
   );
 };
-
 export default CompetingPage;

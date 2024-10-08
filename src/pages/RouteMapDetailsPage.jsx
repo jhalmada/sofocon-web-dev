@@ -20,6 +20,9 @@ import RouteCompanieDetailsRow from "../components/RouteCompanieDetailsRow.jsx";
 import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
 import useUsers from "../hooks/users/use.users.js";
 import { u } from "framer-motion/client";
+import { BASE_URL } from "../utils/Constants.js";
+import { getSellersExcel } from "../services/user/user.routes.js";
+import { getClientsExcel } from "../services/companies/companies.routes.js";
 
 const MAP_TAB = "map";
 const SELLERS_TAB = "sellers";
@@ -59,6 +62,9 @@ const RouteMapDetailsPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isSellersExportModalOpen, setIsSellersExportModalOpen] =
+    useState(false);
   {
     /*Vendedores*/
   }
@@ -95,6 +101,8 @@ const RouteMapDetailsPage = () => {
   console.log(usersResponse);
   const closeModal = () => {
     setIsModalOpen(false);
+    setIsExportModalOpen(false);
+    setIsSellersExportModalOpen(false);
     setIsSellersModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
@@ -204,6 +212,13 @@ const RouteMapDetailsPage = () => {
     }
   }, [companySearchTerm, allCompanies]);
 
+  const openExportModal = (id) => {
+    setIsExportModalOpen(true);
+  };
+  const openSellersExportModal = (id) => {
+    setIsSellersExportModalOpen(true);
+  };
+
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -248,14 +263,18 @@ const RouteMapDetailsPage = () => {
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
-            {(activeTab === MAP_TAB || activeTab === COMPANIES_TAB) && (
+            {activeTab === COMPANIES_TAB && (
               <div className="flex space-x-4">
                 <Button
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
+                  onClick={() => openExportModal()}
                 />
-
+              </div>
+            )}
+            {(activeTab === MAP_TAB || activeTab === COMPANIES_TAB) && (
+              <div className="flex space-x-4">
                 <Button
                   text="Agregar empresa"
                   icon={PlusIcon}
@@ -263,12 +282,14 @@ const RouteMapDetailsPage = () => {
                 />
               </div>
             )}
+
             {activeTab === SELLERS_TAB && (
               <div className="flex space-x-4">
                 <Button
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
+                  onClick={() => openSellersExportModal()}
                 />
 
                 <Button
@@ -448,7 +469,62 @@ const RouteMapDetailsPage = () => {
           </div>
         )}
       </div>
-
+      <ReusableModal
+        isOpen={isSellersExportModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-5">
+          <a href={`${BASE_URL}/${getSellersExcel}`} download target="_blank">
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+        </div>
+        <Button
+          text="Descargar archivo PDF"
+          icon={DownloadIcon}
+          color={"cancel"}
+          shadow="shadow-blur"
+          iconPosition={"left"}
+        />
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isExportModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-5">
+          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+        </div>
+        <Button
+          text="Descargar archivo PDF"
+          icon={DownloadIcon}
+          color={"cancel"}
+          shadow="shadow-blur"
+          iconPosition={"left"}
+        />
+      </ReusableModal>
       <ReusableModal
         isOpen={isSellersModalOpen}
         onClose={closeModal}

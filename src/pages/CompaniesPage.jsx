@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
@@ -93,10 +92,10 @@ const CompaniesPage = () => {
     setCompanyId(id);
     setIsModalOpen(true);
   };
-  const openExportModal = (id) => {
+  const openExportModal = () => {
     setIsExportModalOpen(true);
   };
-  const openSellersModal = (id) => {
+  const openSellersModal = () => {
     setIsSellersModalOpen(true);
   };
 
@@ -659,7 +658,7 @@ const CompaniesPage = () => {
         onClose={closeModal}
         title="Exportar lista"
         variant="confirmation"
-        buttons={["back", "accept"]}
+        buttons={["accept"]}
         onAccept={handleConfirmCancel}
       >
         Elige el formato en el que desea descargar el contenido de la lista:
