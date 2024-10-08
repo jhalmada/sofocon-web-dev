@@ -208,6 +208,7 @@ const RoutesPage = () => {
               <tbody>
                 {sellerRoutesResponse.map((seller, index) => (
                   <RouteRow
+                    id={seller.id}
                     key={index}
                     name={seller.name}
                     zone={seller.zone}

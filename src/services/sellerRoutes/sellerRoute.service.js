@@ -13,4 +13,7 @@ export class sellerRoutesService {
 
   static deleteSellerRoutesApi = async (routeId) =>
     await axios.delete(`${sellerRoutes.deleteSeller}/${routeId}`);
+
+  static getOneSellerRouteApi = async (routeId) =>
+    await axios.get(`${sellerRoutes.getSeller}/${routeId}`);
 }

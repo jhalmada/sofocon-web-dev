@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Pagination from "../components/Pagination.jsx";
@@ -12,13 +12,12 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
-import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 import { useForm } from "react-hook-form";
-import useRoles from "../hooks/roles/use.roles.js";
 import RouteMapDetailsRow from "../components/RouteMapDetailsRow.jsx";
 import RouteSellerDetailsRow from "../components/RouteSellerDetailsRow.jsx";
 import RouteCompanieDetailsRow from "../components/RouteCompanieDetailsRow.jsx";
+import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
 
 const MAP_TAB = "map";
 const SELLERS_TAB = "sellers";
@@ -26,6 +25,20 @@ const COMPANIES_TAB = "companies";
 
 const RouteMapDetailsPage = () => {
   const [companyId, setCompanyId] = useState(null);
+  const { id } = useParams();
+  const { getOneSellerRoute } = useOneSellerRoutes();
+  const [datos, setDatos] = useState(null);
+
+  const oneRute = async (id) => {
+    const newdatos = await getOneSellerRoute(id);
+    setDatos(newdatos);
+    console.log(newdatos);
+  };
+
+  useEffect(() => {
+    oneRute(id);
+  }, []);
+
   const { deleteCompany } = useDeleteCompanies();
   const {
     companiesResponse,
@@ -37,8 +50,6 @@ const RouteMapDetailsPage = () => {
     setModified,
   } = useCompanies();
   const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
-  const { changedCompany } = usePutCompany();
-  const { RolesResponse } = useRoles();
 
   const [activeTab, setActiveTab] = useState(MAP_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,35 +66,7 @@ const RouteMapDetailsPage = () => {
     formState: { errors },
   } = useForm();
 
-  const openModal = (id) => {
-    const companyToEdit = companiesResponse.find(
-      (company) => company.id === id,
-    );
-    if (companyToEdit) {
-      // Set form values
-      setValue("name", companyToEdit?.name || "");
-      setValue("department", companyToEdit?.department || "");
-      setValue("neighborhood", companyToEdit?.neighborhood || "");
-      setValue("address", companyToEdit?.address || "");
-      setValue("managerName", companyToEdit?.managerName || "");
-      setValue("phone", companyToEdit?.phone || "");
-      setValue("rut", companyToEdit?.rut || "");
-      setValue("status", companyToEdit?.status || "");
-      setValue(
-        "nextVisit",
-        parseAbsoluteToLocal(
-          companyToEdit?.nextVisit || "2024-10-02T21:46:00.330Z",
-        ),
-      );
-      companyToEdit.competenceName
-        ? setValue("competenceName", companyToEdit.competenceName)
-        : setValue("competenceName", "");
-      companyToEdit.competenceName ? setCompetence(true) : setCompetence(false);
-    }
-    setIsModalOpen(true);
-    setCompanyId(id);
-    setIsModalOpen(true);
-  };
+  const openModal = (id) => {};
 
   const openSellersModal = (id) => {
     setIsSellersModalOpen(true);
@@ -120,51 +103,9 @@ const RouteMapDetailsPage = () => {
     closeModal();
   };
 
-  const handleUserCreation = async (userData) => {
-    try {
-      const newUser = await changedUser(userData, companyId, setModified);
+  const handleUserCreation = async (userData) => {};
 
-      if (newUser) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        console.error(
-          "No se recibió un nuevo usuario después de la actualización",
-        );
-      }
-    } catch (error) {
-      console.error("Error al actualizar el usuario:", error);
-      setIsModalOpen(true);
-    }
-  };
-
-  const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          email,
-          password,
-          userInfo: {
-            fullName,
-          },
-          role: { id: role },
-        });
-        break;
-      default:
-        handleUserCreation({
-          email,
-          password,
-          fullName: {
-            fullName,
-          },
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-          },
-        });
-    }
-  };
+  const onSubmit = (data) => {};
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -285,23 +226,14 @@ const RouteMapDetailsPage = () => {
               </thead>
               <tbody>
                 <RouteMapDetailsRow
-                  name="nombre de ruta"
-                  zone="zona de la ruta"
+                  name={datos?.name || "Nombre de la ruta"}
+                  zone={datos?.zone || "zona de la ruta"}
                   companies="214"
                   sellers="35"
                   state="Activo"
                 />
               </tbody>
             </table>
-            <div className="flex justify-center p-6">
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemPerPage={itemsPerPage}
-              />
-            </div>
           </div>
         )}
         {activeTab === SELLERS_TAB && (

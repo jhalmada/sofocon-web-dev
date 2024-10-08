@@ -7,12 +7,14 @@ const useUsers = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [modified, setModified] = useState(false);
+  const [search, setSearch] = useState("");
   const getAllUsers = async () => {
     try {
       setLoading(true);
       const { data } = await UserService.getAllUsersApi({
         page,
         itemsPerPage,
+        search,
       });
       setTotalPage(data.pagination.totalPages);
       setUsersResponse(data.result);
@@ -37,6 +39,7 @@ const useUsers = () => {
     itemsPerPage,
     setModified,
     modified,
+    setSearch,
   };
 };
 
