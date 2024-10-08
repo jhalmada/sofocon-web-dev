@@ -659,7 +659,7 @@ const CompaniesPage = () => {
         onClose={closeModal}
         title="Exportar lista"
         variant="confirmation"
-        buttons={["back", "accept"]}
+        buttons={["accept"]}
         onAccept={handleConfirmCancel}
       >
         Elige el formato en el que desea descargar el contenido de la lista:

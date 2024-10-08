@@ -156,11 +156,6 @@ const RoutesPage = () => {
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
             {activeTab === SELLER_TAB && (
               <div className="flex space-x-4">
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                />
                 <Link to={"agregar-ruta"}>
                   <Button text="Nueva ruta" icon={PlusIcon} />
                 </Link>

@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import useUsers from "../hooks/users/use.users";
 import useCompanies from "../hooks/companies/useCompanies";
 import AddSellersRoutes from "../hooks/sellerRoutes/useAddSellerRoutes";
+import SearchInput from "../components/inputs/SearchInput";
 
 const AddRoutePage = () => {
   const {
@@ -176,22 +177,17 @@ const AddRoutePage = () => {
               <label className="text-gray-700 block text-sm font-light">
                 Asignar vendedores
               </label>
-              <Select
-                onSelectionChange={(value) => setValue("idVendedor", value)}
-                placeholder="Vendedores"
-                className="rounded-lg border"
+              <SearchInput
+                placeholder="Buscar vendedores..."
+                border="border"
+                rounded="rounded-[0.375rem]"
+                visibility="block"
                 {...register("idVendedor", {
                   required: "Debes seleccionar una opción",
                 })}
                 errorApi={errors.idVendedor}
                 msjError={errors.idVendedor ? errors.idVendedor.message : ""}
-              >
-                {usersResponse.map((user) => (
-                  <SelectItem key={user.id}>
-                    {user.userInfo.fullName}
-                  </SelectItem>
-                ))}
-              </Select>
+              ></SearchInput>
             </div>
 
             <div className="mb-2 flex flex-col items-start">
@@ -212,20 +208,17 @@ const AddRoutePage = () => {
               <label className="text-gray-700 block text-sm font-light">
                 Asignar empresas
               </label>
-              <Select
-                onSelectionChange={(value) => setValue("idEmpresa", value)}
-                placeholder="Empresas"
-                className="rounded-lg border"
+              <SearchInput
+                placeholder="Buscar vendedores..."
+                border="border"
+                rounded="rounded-[0.375rem]"
+                visibility="block"
                 {...register("idEmpresa", {
                   required: "Debes seleccionar una opción",
                 })}
                 errorApi={errors.idEmpresa}
                 msjError={errors.idEmpresa ? errors.idEmpresa.message : ""}
-              >
-                {companiesResponse.map((company) => (
-                  <SelectItem key={company.id}>{company.name}</SelectItem>
-                ))}
-              </Select>
+              ></SearchInput>
             </div>
             <div className="mb-2 flex flex-col items-start">
               <span className="text-gray-700 block text-sm font-light">
