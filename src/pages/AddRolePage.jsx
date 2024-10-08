@@ -1,6 +1,5 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link } from "react-router-dom";
-
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
@@ -9,39 +8,30 @@ import { Select, SelectItem } from "@nextui-org/select";
 import useAddroles from "../hooks/roles/useAddroles";
 import { permisos } from "../utils/permisons";
 import ReusableModal from "../components/modals/ReusableModal";
-import { useForm } from "react-hook-form"; // Importamos React Hook Form
-
+import { useForm } from "react-hook-form";
 const AddRolePage = () => {
   const { postAddRoles, loading, idRol } = useAddroles();
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-
-  // Inicializamos useForm para manejar los inputs
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-
   const onSubmit = async (data) => {
-    // Aquí obtendremos los datos del formulario
     const newRole = await postAddRoles({
       name: data.name,
       permissions: [...data.permissions, "USER_ADMIN"],
     });
-
     setSaveConfirmationModalOpen(true);
   };
-
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
   };
-
   const handleConfirmSaveClick = () => {
     setSaveConfirmationModalOpen(false);
   };
-
   return (
     <div className="flex min-h-full flex-col justify-between overflow-auto bg-gray">
       <div className="flex-grow p-6">
@@ -58,11 +48,9 @@ const AddRolePage = () => {
             Volver
           </div>
         </Link>
-
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Usuarios
         </h1>
-
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
@@ -70,9 +58,8 @@ const AddRolePage = () => {
             </span>
           </div>
         </div>
-
         <form
-          onSubmit={handleSubmit(onSubmit)} // Usamos handleSubmit de React Hook Form
+          onSubmit={handleSubmit(onSubmit)}
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
           <div className="flex flex-col">
@@ -85,7 +72,6 @@ const AddRolePage = () => {
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}
             />
-
             <Select
               labelPlacement="outside"
               label="Asignar permisos"
@@ -95,7 +81,7 @@ const AddRolePage = () => {
               {...register("permissions", {
                 required: "Debes asignar al menos un permiso",
               })}
-              onSelectionChange={(values) => setValue("permissions", values)} // Usamos setValue para sincronizar con React Hook Form
+              onSelectionChange={(values) => setValue("permissions", values)}
             >
               {permisos.map((permiso) => (
                 <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
@@ -107,7 +93,6 @@ const AddRolePage = () => {
               </span>
             )}
           </div>
-
           <div className="flex justify-end pt-6">
             <div>
               <Button
@@ -119,7 +104,6 @@ const AddRolePage = () => {
             </div>
           </div>
         </form>
-
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
@@ -134,5 +118,4 @@ const AddRolePage = () => {
     </div>
   );
 };
-
 export default AddRolePage;

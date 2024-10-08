@@ -4,7 +4,6 @@ import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
-import { Select, SelectItem } from "@nextui-org/select";
 import SearchInput from "../components/inputs/SearchInput";
 import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
@@ -19,10 +18,7 @@ import useRoles from "../hooks/roles/use.roles";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import NotesRow from "../components/NotesRow.jsx";
-import ArrowRightIcon from "../assets/icons/arrow-right.svg";
-
 const NOTES_TAB = "notes";
-
 const NotesPage = () => {
   const [userPage, setUserPage] = useState(5);
   const { changedUser, isChanged } = usePutUsers();
@@ -41,22 +37,18 @@ const NotesPage = () => {
   const [isNewRoleChecked, setIsNewRoleChecked] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [userData, setUserData] = useState(null);
-
   const totalUsers = usersResponse ? usersResponse.length : 0;
   const totalPages = Math.ceil(totalUsers / userPage);
-
   const startIndex = (currentPage - 1) * userPage;
   const paginatedUsers = usersResponse
     ? usersResponse.slice(startIndex, startIndex + userPage)
     : [];
-
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
     if (userToEdit) {
@@ -69,7 +61,6 @@ const NotesPage = () => {
           id: userToEdit.role.id,
         },
       });
-      // Set form values
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
       setValue("role", userToEdit.role.id);
@@ -77,18 +68,15 @@ const NotesPage = () => {
     setIsModalOpen(true);
     setUserId(id);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-
   const pageIndexChange = (e) => {
     setUserPage(e);
   };
-
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const openSaveConfirmationModal = () => setSaveConfirmationModalOpen(true);
@@ -101,18 +89,15 @@ const NotesPage = () => {
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
-
   const handleConfirmDelete = () => {
     deleteUser(userId);
     closeConfirmDeleteModal();
   };
-
   const handleCancelClick = () => openConfirmCancelModal();
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
   };
-
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await changedUser(userData, userId);
@@ -129,10 +114,8 @@ const NotesPage = () => {
       setIsModalOpen(true);
     }
   };
-
   const onSubmit = (data) => {
     const { fullName, email, password, role, nameRole, permissions } = data;
-
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
@@ -159,7 +142,6 @@ const NotesPage = () => {
         });
     }
   };
-
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
@@ -185,7 +167,6 @@ const NotesPage = () => {
           </h1>
           <SearchInput placeholder="Buscar..." />
         </div>
-
         <div className="flex items-center">
           <div className="flex">
             <h2
@@ -216,7 +197,6 @@ const NotesPage = () => {
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Contenido
                   </th>
-
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     <div className="flex gap-4">
                       <h3>Fecha importante</h3>
@@ -232,7 +212,6 @@ const NotesPage = () => {
                       />
                     </div>
                   </th>
-
                   <th className="p-2 text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
@@ -253,7 +232,6 @@ const NotesPage = () => {
                 ))}
               </tbody>
             </table>
-
             <div className="flex justify-center p-6">
               <Pagination
                 pageIndex={pageIndexChange}
@@ -265,7 +243,6 @@ const NotesPage = () => {
           </div>
         )}
       </div>
-
       <ReusableModal
         width="w-[46rem]"
         isOpen={isModalOpen}
@@ -294,7 +271,6 @@ const NotesPage = () => {
             errorApi={errors.description}
             msjError={errors.description ? errors.description.message : ""}
           />
-
           {errors.permissions && (
             <span className="font-roboto text-xs text-red_e">
               {errors.permissions.message}
@@ -326,7 +302,6 @@ const NotesPage = () => {
               />
             </div>
           </div>
-
           <div className="w-[12.6rem]">
             <Checkbox
               defaultSelected={checkSelected === "existente"}
@@ -342,7 +317,6 @@ const NotesPage = () => {
           </div>
         </div>
       </ReusableModal>
-
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}
         onClose={closeConfirmCancelModal}
@@ -353,7 +327,6 @@ const NotesPage = () => {
       >
         Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
       </ReusableModal>
-
       <ReusableModal
         isOpen={isSaveConfirmationModalOpen}
         onClose={closeSaveConfirmationModal}
@@ -364,7 +337,6 @@ const NotesPage = () => {
       >
         Los cambios fueron guardados exitosamente.
       </ReusableModal>
-
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
@@ -378,5 +350,4 @@ const NotesPage = () => {
     </div>
   );
 };
-
 export default NotesPage;

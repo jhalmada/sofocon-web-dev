@@ -11,9 +11,7 @@ import useRoles from "../hooks/roles/use.roles";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
-
 const NOTES_TAB = "notes";
-
 const AddNotesPage = () => {
   const [userPage, setUserPage] = useState(5);
   const { changedUser, isChanged } = usePutUsers();
@@ -30,22 +28,18 @@ const AddNotesPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [userData, setUserData] = useState(null);
-
   const totalUsers = usersResponse ? usersResponse.length : 0;
   const totalPages = Math.ceil(totalUsers / userPage);
-
   const startIndex = (currentPage - 1) * userPage;
   const paginatedUsers = usersResponse
     ? usersResponse.slice(startIndex, startIndex + userPage)
     : [];
-
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
     if (userToEdit) {
@@ -58,7 +52,6 @@ const AddNotesPage = () => {
           id: userToEdit.role.id,
         },
       });
-      // Set form values
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
       setValue("role", userToEdit.role.id);
@@ -66,14 +59,12 @@ const AddNotesPage = () => {
     setIsModalOpen(true);
     setUserId(id);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const openSaveConfirmationModal = () => setSaveConfirmationModalOpen(true);
@@ -86,18 +77,15 @@ const AddNotesPage = () => {
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
-
   const handleConfirmDelete = () => {
     deleteUser(userId);
     closeConfirmDeleteModal();
   };
-
   const handleCancelClick = () => openConfirmCancelModal();
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
   };
-
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await changedUser(userData, userId);
@@ -113,10 +101,8 @@ const AddNotesPage = () => {
       setIsModalOpen(true);
     }
   };
-
   const onSubmit = (data) => {
     const { fullName, email, password, role, nameRole, permissions } = data;
-
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
@@ -143,7 +129,6 @@ const AddNotesPage = () => {
         });
     }
   };
-
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
@@ -168,7 +153,6 @@ const AddNotesPage = () => {
             Nombre Empresa
           </h1>
         </div>
-
         <div className="flex items-center">
           <div className="flex">
             <h2
@@ -179,9 +163,8 @@ const AddNotesPage = () => {
             </h2>
           </div>
         </div>
-
         <form
-          onSubmit={handleSubmit(onSubmit)} // Usamos handleSubmit de React Hook Form
+          onSubmit={handleSubmit(onSubmit)}
           className="rounded-tr-lg bg-white px-14 py-4 shadow-t"
         >
           <div className="flex flex-col">
@@ -234,7 +217,6 @@ const AddNotesPage = () => {
                 />
               </div>
             </div>
-
             <div className="w-[12.6rem]">
               <Checkbox
                 defaultSelected={checkSelected === "existente"}
@@ -249,7 +231,6 @@ const AddNotesPage = () => {
               </Checkbox>
             </div>
           </div>
-
           <div className="flex justify-end pt-6">
             <div>
               <Button
@@ -262,7 +243,6 @@ const AddNotesPage = () => {
           </div>
         </form>
       </div>
-
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}
         onClose={closeConfirmCancelModal}
@@ -273,7 +253,6 @@ const AddNotesPage = () => {
       >
         Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
       </ReusableModal>
-
       <ReusableModal
         isOpen={isSaveConfirmationModalOpen}
         onClose={closeSaveConfirmationModal}
@@ -284,7 +263,6 @@ const AddNotesPage = () => {
       >
         Los cambios fueron guardados exitosamente.
       </ReusableModal>
-
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
@@ -298,5 +276,4 @@ const AddNotesPage = () => {
     </div>
   );
 };
-
 export default AddNotesPage;

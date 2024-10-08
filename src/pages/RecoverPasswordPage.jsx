@@ -1,6 +1,5 @@
 import Input from "../components/inputs/Input";
 import { Link } from "react-router-dom";
-
 const RecoverPasswordPage = () => {
   return (
     <div className="w-full font-roboto">
@@ -31,5 +30,4 @@ const RecoverPasswordPage = () => {
     </div>
   );
 };
-
 export default RecoverPasswordPage;
