@@ -43,6 +43,7 @@ const UsersPage = () => {
     setModified,
   } = useUsers();
   const { RolesResponse } = useRoles();
+  console.log("RolesResponse", usersResponse);
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);

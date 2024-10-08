@@ -1,18 +1,19 @@
 import SearchIcon from "../../assets/icons/search.svg";
 import XlgIcon from "../../assets/icons/x-lg.svg";
-import FilterRightIcon from "../../assets/icons/filter-right.svg";
-import ChevronDownIcon from "../../assets/icons/chevron-down.svg";
 
 const SearchInput = ({
   placeholder,
-  visibility = "hidden",
   border = "none",
   rounded = "rounded-[2rem]",
+  value,
+  onChange,
 }) => {
   return (
     <div className={`${border} ${rounded} relative flex px-1`}>
       <input
         type="text"
+        onChange={onChange}
+        value={value}
         placeholder={placeholder || "Buscar..."}
         className={`h-10 min-w-64 bg-white pl-10 pr-10 outline-none ${rounded}`}
       />

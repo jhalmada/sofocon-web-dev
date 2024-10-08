@@ -18,12 +18,14 @@ import RouteMapDetailsRow from "../components/RouteMapDetailsRow.jsx";
 import RouteSellerDetailsRow from "../components/RouteSellerDetailsRow.jsx";
 import RouteCompanieDetailsRow from "../components/RouteCompanieDetailsRow.jsx";
 import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
+import useUsers from "../hooks/users/use.users.js";
+import { u } from "framer-motion/client";
 
 const MAP_TAB = "map";
 const SELLERS_TAB = "sellers";
 const COMPANIES_TAB = "companies";
-
 const RouteMapDetailsPage = () => {
+  const { usersResponse } = useUsers();
   const [companyId, setCompanyId] = useState(null);
   const { id } = useParams();
   const { getOneSellerRoute } = useOneSellerRoutes();
@@ -57,8 +59,26 @@ const RouteMapDetailsPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
+  {
+    /*Vendedores*/
+  }
+  const [allSellers, setAllSellers] = useState([]);
+  const [assignedSellers, setAssignedSellers] = useState([]);
+  const [availableSellers, setAvailableSellers] = useState(allSellers);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredSellers, setFilteredSellers] = useState(allSellers);
 
+  useEffect(() => {
+    setAllSellers(usersResponse);
+  }, [usersResponse]);
+
+  {
+    /*Empresas*/
+  }
+  const [allCompanies, setAllCompanies] = useState(companiesResponse || []);
+  const [assignedCompanies, setAssignedCompanies] = useState([]);
+  const [filteredCompanies, setFilteredCompanies] = useState(allCompanies);
+  const [companySearchTerm, setCompanySearchTerm] = useState("");
   const {
     register,
     handleSubmit,
@@ -71,7 +91,8 @@ const RouteMapDetailsPage = () => {
   const openSellersModal = (id) => {
     setIsSellersModalOpen(true);
   };
-
+  console.log(allSellers);
+  console.log(usersResponse);
   const closeModal = () => {
     setIsModalOpen(false);
     setIsSellersModalOpen(false);
@@ -109,11 +130,80 @@ const RouteMapDetailsPage = () => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Meses están indexados desde 0
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${month}/${day}/${year}`;
   };
+
+  const handleAddSeller = (seller) => {
+    setAssignedSellers((prev) => [...prev, seller]);
+    setAvailableSellers((prev) => prev.filter((s) => s.id !== seller.id));
+  };
+
+  const handleAddCompany = (company) => {
+    setAssignedCompanies((prev) => [...prev, company]);
+    setFilteredCompanies((prev) => prev.filter((c) => c.id !== company.id));
+  };
+
+  const handleRemoveSeller = (seller) => {
+    setAssignedSellers((prev) => prev.filter((s) => s.id !== seller.id));
+    setAvailableSellers((prev) => [...prev, seller]);
+  };
+  const handleRemoveCompany = (company) => {
+    setAssignedCompanies((prev) => prev.filter((c) => c.id !== company.id));
+    setFilteredCompanies((prev) => [...prev, company]);
+  };
+  const handleSearch = (term) => {
+    setFilteredSellers(
+      availableSellers.filter((seller) =>
+        seller.userInfo.fullName.toLowerCase().includes(term.toLowerCase()),
+      ),
+    );
+  };
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    const filtered = availableSellers.filter((seller) =>
+      seller.userInfo.fullName.toLowerCase().includes(term.toLowerCase()),
+    );
+    setFilteredSellers(filtered);
+  };
+  const handleCompanySearchChange = (e) => {
+    const term = e.target.value;
+    setCompanySearchTerm(term);
+    const filtered = companiesResponse.filter((company) =>
+      company.name.toLowerCase().includes(term.toLowerCase()),
+    );
+    setFilteredCompanies(filtered);
+  };
+
+  useEffect(() => {
+    if (searchTerm) {
+      setFilteredSellers(
+        allSellers.filter((seller) =>
+          seller.userInfo.fullName
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()),
+        ),
+      );
+    } else {
+      setFilteredSellers(allSellers);
+    }
+  }, [searchTerm, allSellers]);
+
+  useEffect(() => {
+    if (companySearchTerm) {
+      setFilteredCompanies(
+        allCompanies.filter((company) =>
+          company.name.toLowerCase().includes(companySearchTerm.toLowerCase()),
+        ),
+      );
+    } else {
+      setFilteredCompanies(allCompanies);
+    }
+  }, [companySearchTerm, allCompanies]);
+
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -232,6 +322,7 @@ const RouteMapDetailsPage = () => {
                   sellers="35"
                   state="Activo"
                 />
+                {console.log(datos)}
               </tbody>
             </table>
           </div>
@@ -247,7 +338,6 @@ const RouteMapDetailsPage = () => {
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Contacto
                   </th>
-
                   <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
                     <div className="flex gap-2">
                       <h3>Estado</h3>
@@ -269,13 +359,16 @@ const RouteMapDetailsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                <RouteSellerDetailsRow
-                  name="Nombre completo"
-                  contact={"email/tel"}
-                  state="Activo"
-                  deleteIconSrc={deleteIcon}
-                  onDeleteClick={() => openConfirmDeleteModal()}
-                />
+                {usersResponse.map((seller) => (
+                  <RouteSellerDetailsRow
+                    key={seller.id}
+                    name={seller.userInfo.fullName}
+                    contact={"emailsd"}
+                    state="Activo"
+                    deleteIconSrc={deleteIcon}
+                    onDeleteClick={() => openConfirmDeleteModal()}
+                  />
+                ))}
               </tbody>
             </table>
             <div className="flex justify-center p-6">
@@ -329,13 +422,13 @@ const RouteMapDetailsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {companiesResponse.map((companie, index) => (
+                {datos.clientInRoute.map((companie, index) => (
                   <RouteCompanieDetailsRow
                     key={index}
-                    name={companie.name}
-                    direction={companie.address}
-                    nextVisits={formatDate(companie.nextVisit)}
-                    state={"activo"}
+                    name={companie.client.name}
+                    direction={companie.client.address}
+                    nextVisits={formatDate(companie.client.nextVisit)}
+                    state={companie.client.status}
                     notes={"ver notas"}
                     deleteIconSrc={deleteIcon}
                     onDeleteClick={() => openConfirmDeleteModal(companie.id)}
@@ -365,27 +458,21 @@ const RouteMapDetailsPage = () => {
         handleCancelClick={handleCancelClick}
       >
         <div className="space-y-2">
-          <p className="text-sm font-light leading-[1rem] text-black_b">
-            Vendedores asignados
-          </p>
-          <Button
-            text="Vendedor 1"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
-          <Button
-            text="Vendedor 2"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
-          <Button
-            text="Vendedor 3"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
+          {assignedSellers.length > 0 && (
+            <p className="text-sm font-light leading-[1rem] text-black_b">
+              Vendedores asignados
+            </p>
+          )}
+          {assignedSellers.map((seller) => (
+            <Button
+              key={seller.id}
+              text={seller.userInfo.fullName}
+              icon={closeIcon}
+              color={"selected"}
+              width="w-full"
+              onClick={() => handleRemoveSeller(seller)}
+            />
+          ))}
         </div>
         <div>
           <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
@@ -396,7 +483,31 @@ const RouteMapDetailsPage = () => {
             border="border"
             rounded="rounded-[0.375rem]"
             visibility="block"
+            onSearch={handleSearch}
+            value={searchTerm}
+            onChange={handleSearchChange}
           />
+          <div className="mt-2 space-y-2">
+            {searchTerm ? (
+              availableSellers
+                .filter((seller) =>
+                  seller.userInfo.fullName
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()),
+                )
+                .map((seller) => (
+                  <Button
+                    key={seller.id}
+                    text={seller.userInfo.fullName}
+                    color={"cancel"}
+                    width="w-full"
+                    onClick={() => handleAddSeller(seller)}
+                  />
+                ))
+            ) : (
+              <span></span>
+            )}
+          </div>
         </div>
       </ReusableModal>
 
@@ -409,27 +520,16 @@ const RouteMapDetailsPage = () => {
         handleCancelClick={handleCancelClick}
       >
         <div className="space-y-2">
-          <p className="text-sm font-light leading-[1rem] text-black_b">
-            Empresas asignadas
-          </p>
-          <Button
-            text="Empresa 1"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
-          <Button
-            text="Empresa 2"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
-          <Button
-            text="Empresa 3"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
+          {assignedCompanies.length > 0 &&
+            assignedCompanies.map((company) => (
+              <Button
+                key={company.id}
+                text={company.name}
+                icon={closeIcon}
+                color={"selected"}
+                width="w-full"
+              />
+            ))}
         </div>
         <div>
           <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
@@ -440,7 +540,20 @@ const RouteMapDetailsPage = () => {
             border="border"
             rounded="rounded-[0.375rem]"
             visibility="block"
+            value={companySearchTerm}
+            onChange={handleCompanySearchChange}
           />
+          <div className="mt-2 space-y-2">
+            {filteredCompanies.map((company) => (
+              <Button
+                key={company.id}
+                text={company.name}
+                color={"cancel"}
+                width="w-full"
+                onClick={() => handleAddCompany(company)}
+              />
+            ))}
+          </div>
         </div>
       </ReusableModal>
 

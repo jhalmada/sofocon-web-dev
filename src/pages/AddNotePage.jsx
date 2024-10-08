@@ -138,7 +138,6 @@ const AddNotesPage = () => {
           role: {
             name: nameRole,
             permissions: [...permissions, "USER_ADMIN"],
-            s,
           },
         });
     }
