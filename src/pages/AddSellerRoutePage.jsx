@@ -8,6 +8,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
+import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes";
 
 const AddSellerRoutePage = ({
   arraySeller,
@@ -25,6 +26,7 @@ const AddSellerRoutePage = ({
   //Hooks
   const { userSellerResponse, setSearch } = useUsersSellers();
   const { changedSellerRoute } = usePutSellerRoute();
+  const { deleteSellerRoute, isDeleted, isLoading } = useDeleteSellerRoute();
   const {
     register,
     handleSubmit,
@@ -32,6 +34,7 @@ const AddSellerRoutePage = ({
     setValue,
     formState: { errors },
   } = useForm();
+
   //funciones
   const onSubmit = (data) => {
     const sellers = data.vendedores.map((seller) => ({ id: seller.id }));

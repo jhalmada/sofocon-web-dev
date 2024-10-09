@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { sellerRoutesService } from "../../services/sellerRoutes/sellerRoute.service.js";
 
 const useDeleteSellerRoute = () => {

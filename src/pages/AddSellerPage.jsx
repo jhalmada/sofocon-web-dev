@@ -107,7 +107,7 @@ const AddSellerPage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
-          <div>
+          <div className="space-y-4">
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
@@ -152,7 +152,7 @@ const AddSellerPage = () => {
               errorApi={errors.email}
               msjError={errors.email ? errors.email.message : ""}
             />
-            <div className="pb-8">
+            <div>
               <Input
                 type="password"
                 label={"Contraseña"}
@@ -184,8 +184,8 @@ const AddSellerPage = () => {
                 *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
               </p>
             </div>
-            <div className="space-y-4">
-              <div>
+            <div className="space-y-6">
+              <div className="relative">
                 <label className="text-gray-700 block text-sm font-light">
                   Asignar rol existente:
                 </label>
@@ -207,15 +207,13 @@ const AddSellerPage = () => {
                       <SelectItem key={rol.id}>{rol.name}</SelectItem>
                     ))}
                 </Select>
-                {errors.role && errors.role.message ? (
-                  <span className="font-roboto text-xs text-red_e">
+                {errors.role && errors.role.message && (
+                  <span className="absolute -bottom-5 left-0 font-roboto text-xs text-red_e">
                     {errors.role.message}
                   </span>
-                ) : (
-                  ""
                 )}
               </div>
-              <div>
+              <div className="relative">
                 <label className="text-gray-700 block text-sm font-light">
                   Asignar ruta:
                 </label>
@@ -237,17 +235,15 @@ const AddSellerPage = () => {
                       <SelectItem key={rol.id}>{rol.name}</SelectItem>
                     ))}
                 </Select>
-                {errors.role && errors.role.message ? (
-                  <span className="font-roboto text-xs text-red_e">
+                {errors.role && errors.role.message && (
+                  <span className="absolute -bottom-5 left-0 font-roboto text-xs text-red_e">
                     {errors.role.message}
                   </span>
-                ) : (
-                  ""
                 )}
               </div>
             </div>
           </div>
-          <div className="flex w-full justify-end">
+          <div className="mt-10 flex w-full justify-end">
             <Button
               text={"GUARDAR"}
               color={"save"}

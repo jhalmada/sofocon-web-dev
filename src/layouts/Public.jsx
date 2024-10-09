@@ -58,7 +58,7 @@ const Public = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`flex h-12 ${isOpen ? "w-[15.625rem]" : "w-20 justify-center"} items-center gap-1.5 rounded-[.75rem] px-6 py-1.5 ${isActive(item.path) ? "bg-red_m text-white" : ""} transition-all duration-200 ease-in-out`}
+                  className={`flex h-12 ${isOpen ? "w-[15.625rem]" : "w-20 justify-center"} items-center gap-1.5 rounded-[.75rem] px-6 py-1.5 ${isActive(item.path) ? "bg-red_m text-white" : ""} transition-all duration-200 ease-in-out ${isActive(item.path) ? "shadow-br" : ""}`}
                 >
                   <div className="flex items-center gap-2.5">
                     <img
