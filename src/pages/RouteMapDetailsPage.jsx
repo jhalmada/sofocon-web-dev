@@ -2,30 +2,22 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
-import Pagination from "../components/Pagination.jsx";
-import closeIcon from "../assets/icons/x-lg.svg";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import deleteIcon from "../assets/icons/trash3.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import RouteMapDetailsRow from "../components/RouteMapDetailsRow.jsx";
-import RouteSellerDetailsRow from "../components/RouteSellerDetailsRow.jsx";
-import RouteCompanieDetailsRow from "../components/RouteCompanieDetailsRow.jsx";
 import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
 import useUsers from "../hooks/users/use.users.js";
-import { u, use } from "framer-motion/client";
 import { BASE_URL } from "../utils/Constants.js";
 import { getSellersExcel } from "../services/user/user.routes.js";
 import { getClientsExcel } from "../services/companies/companies.routes.js";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
-import AddSellerRoute from "./AddSellerRoutePage.jsx";
 import AddSellerRoutePage from "./AddSellerRoutePage.jsx";
 import AddCompanyRoutePage from "./AddCompanyRoutePage.jsx";
 
@@ -391,6 +383,8 @@ const RouteMapDetailsPage = () => {
             totalPage={totalPage}
             isSellersModalOpen={isSellersModalOpen}
             closeModal={closeModal}
+            isConfirmDeleteModalOpen={isConfirmDeleteModalOpen}
+            closeConfirmDeleteModal={closeConfirmDeleteModal}
             handleCancelClick={handleCancelClick}
             setModified={setModified}
             idCompany={id}

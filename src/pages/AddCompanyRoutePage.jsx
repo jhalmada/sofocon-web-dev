@@ -7,8 +7,8 @@ import useCompanies from "../hooks/companies/useCompanies";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
 import ReusableModal from "../components/modals/ReusableModal";
-import usePutCompany from "../hooks/companies/usePutCompanies";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
+import { useState } from "react";
 
 const AddCompanyRoutePage = ({
   setItemsPerPage,
@@ -24,7 +24,8 @@ const AddCompanyRoutePage = ({
   setModified,
 }) => {
   //estados
-
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [companyId, setCompanyId] = useState(null);
   //hooks
   const { companiesResponse, setSearch } = useCompanies();
   const { changedSellerRoute } = usePutSellerRoute();
@@ -37,13 +38,28 @@ const AddCompanyRoutePage = ({
   } = useForm();
 
   //funciones
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${month}/${day}/${year}`;
+  const onSubmit = (data) => {
+    const companies = data.empresas.map((company) => ({ client: company.id }));
+    const newData = {
+      clientInRoute: [...companies],
+    };
+    changedSellerRoute(newData, idCompany, setModified);
+    closeModal();
+  };
+  const openConfirmDeleteModal = (id) => {
+    setCompanyId(id);
+    setConfirmDeleteModalOpen(true);
+  };
+  const handleConfirmDelete = () => {
+    const newCompanyArray = transformData(arrayCompanies).filter(
+      (element) => element.id !== companyId,
+    );
+    const newArray = newCompanyArray.map((company) => ({ client: company.id }));
+    const newData = {
+      clientInRoute: [...newArray],
+    };
+    changedSellerRoute(newData, idCompany, setModified);
+    setConfirmDeleteModalOpen(false);
   };
 
   //funcion para transformar los Arrays
@@ -53,15 +69,13 @@ const AddCompanyRoutePage = ({
       name: item.name,
     }));
   };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
-  //funciones
-  const onSubmit = (data) => {
-    const companies = data.empresas.map((company) => ({ client: company.id }));
-    const newData = {
-      clientInRoute: [...companies],
-    };
-    changedSellerRoute(newData, idCompany, setModified);
-    closeModal();
+    return `${month}/${day}/${year}`;
   };
 
   return (
@@ -113,7 +127,7 @@ const AddCompanyRoutePage = ({
               state={companie.status}
               notes={"ver notas"}
               deleteIconSrc={deleteIcon}
-              //onDeleteClick={() => openConfirmDeleteModal(companie.id)}
+              onDeleteClick={() => openConfirmDeleteModal(companie.id)}
             />
           ))}
         </tbody>
@@ -147,6 +161,16 @@ const AddCompanyRoutePage = ({
             <p>{errors.vendedores && errors.vendedores.message}</p>
           </form>
         </div>
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isConfirmDeleteModalOpen}
+        onClose={() => setConfirmDeleteModalOpen(false)}
+        title="Eliminar empresa"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={() => handleConfirmDelete()}
+      >
+        Esta empresa será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );
