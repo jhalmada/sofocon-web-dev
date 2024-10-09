@@ -1,5 +1,5 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import Button from "../components/buttons/Button";
@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import useUsers from "../hooks/users/use.users";
 import useCompanies from "../hooks/companies/useCompanies";
 import AddSellersRoutes from "../hooks/sellerRoutes/useAddSellerRoutes";
-
+import SearchInput from "../components/inputs/SearchInput";
 const AddRoutePage = () => {
   const {
     register,
@@ -28,7 +28,6 @@ const AddRoutePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-
   const handleSellerCreation = async (sellerData) => {
     try {
       const newSeller = await postAddSellersRoutes(sellerData);
@@ -43,7 +42,6 @@ const AddRoutePage = () => {
       setIsModalOpen(true);
     }
   };
-
   const onSubmit = (data) => {
     const { name, status, idVendedor, idEmpresa, zone } = data;
     const newData = {
@@ -63,11 +61,9 @@ const AddRoutePage = () => {
     };
     handleSellerCreation(newData);
   };
-
   const openModal = () => {
     setIsModalOpen(true);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
     setConfirmCancelModalOpen(false);
@@ -77,15 +73,12 @@ const AddRoutePage = () => {
   const closeModalMap = () => {
     setIsMapModal(false);
   };
-
   const closeSaveConfirmationModal = () => {
     navigate("/inicio/rutas");
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-
   const handleCancelClick = () => closeModal();
-
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -135,7 +128,6 @@ const AddRoutePage = () => {
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}
             />
-
             <Input
               label={"Zona"}
               placeholder={"Escribir..."}
@@ -153,7 +145,6 @@ const AddRoutePage = () => {
               errorApi={errors.zone}
               msjError={errors.zone ? errors.zone.message : ""}
             />
-
             <div className="mb-4 space-y-2">
               <label className="text-gray-700 block text-sm font-light">
                 Asignar estado:
@@ -176,22 +167,17 @@ const AddRoutePage = () => {
               <label className="text-gray-700 block text-sm font-light">
                 Asignar vendedores
               </label>
-              <Select
-                onSelectionChange={(value) => setValue("idVendedor", value)}
-                placeholder="Vendedores"
-                className="rounded-lg border"
+              <SearchInput
+                placeholder="Buscar vendedores..."
+                border="border"
+                rounded="rounded-[0.375rem]"
+                visibility="block"
                 {...register("idVendedor", {
                   required: "Debes seleccionar una opción",
                 })}
                 errorApi={errors.idVendedor}
                 msjError={errors.idVendedor ? errors.idVendedor.message : ""}
-              >
-                {usersResponse.map((user) => (
-                  <SelectItem key={user.id}>
-                    {user.userInfo.fullName}
-                  </SelectItem>
-                ))}
-              </Select>
+              ></SearchInput>
             </div>
 
             <div className="mb-2 flex flex-col items-start">
@@ -212,20 +198,17 @@ const AddRoutePage = () => {
               <label className="text-gray-700 block text-sm font-light">
                 Asignar empresas
               </label>
-              <Select
-                onSelectionChange={(value) => setValue("idEmpresa", value)}
-                placeholder="Empresas"
-                className="rounded-lg border"
+              <SearchInput
+                placeholder="Buscar vendedores..."
+                border="border"
+                rounded="rounded-[0.375rem]"
+                visibility="block"
                 {...register("idEmpresa", {
                   required: "Debes seleccionar una opción",
                 })}
                 errorApi={errors.idEmpresa}
                 msjError={errors.idEmpresa ? errors.idEmpresa.message : ""}
-              >
-                {companiesResponse.map((company) => (
-                  <SelectItem key={company.id}>{company.name}</SelectItem>
-                ))}
-              </Select>
+              ></SearchInput>
             </div>
             <div className="mb-2 flex flex-col items-start">
               <span className="text-gray-700 block text-sm font-light">
@@ -242,7 +225,6 @@ const AddRoutePage = () => {
               </Link>
             </div>
           </div>
-
           <div className="flex w-full justify-end py-6">
             <Button
               text={"GUARDAR"}
@@ -278,7 +260,6 @@ const AddRoutePage = () => {
         >
           Los cambios fueron guardados exitosamente.
         </ReusableModal>
-        {/* modal de Errores */}
         <ReusableModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -293,5 +274,4 @@ const AddRoutePage = () => {
     </div>
   );
 };
-
 export default AddRoutePage;

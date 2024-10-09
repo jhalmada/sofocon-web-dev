@@ -11,8 +11,6 @@ import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import DownloadIcon from "../assets/icons/download.svg";
-
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import { useForm } from "react-hook-form";
@@ -20,7 +18,6 @@ import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
-
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
@@ -35,7 +32,6 @@ const RoutesPage = () => {
     itemsPerPage,
     setModified,
   } = useSellerRoutes();
-
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(SELLER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,14 +39,12 @@ const RoutesPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-
   const openModal = (id) => {
     const sellerToEdit = sellerRoutesResponse.find(
       (seller) => seller.id === id,
@@ -63,14 +57,12 @@ const RoutesPage = () => {
     setIsModalOpen(true);
     setRouteId(id);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const closeSaveConfirmationModal = () => {
@@ -82,18 +74,15 @@ const RoutesPage = () => {
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
-
   const handleConfirmDelete = () => {
     deleteSellerRoute(routeId, setModified);
     closeConfirmDeleteModal();
   };
-
   const handleCancelClick = () => openConfirmCancelModal();
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
   };
-
   const handleRouteCreation = async (routeData) => {
     try {
       const newRoute = await changedSellerRoute(
@@ -101,7 +90,6 @@ const RoutesPage = () => {
         routeId,
         setModified,
       );
-
       if (newRoute) {
         setSaveConfirmationModalOpen(true);
       } else {
@@ -112,7 +100,6 @@ const RoutesPage = () => {
       setIsModalOpen(true);
     }
   };
-
   const onSubmit = (data) => {
     const { name, zone, status } = data;
     const sellerData = {
@@ -156,11 +143,6 @@ const RoutesPage = () => {
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
             {activeTab === SELLER_TAB && (
               <div className="flex space-x-4">
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                />
                 <Link to={"agregar-ruta"}>
                   <Button text="Nueva ruta" icon={PlusIcon} />
                 </Link>
@@ -208,6 +190,7 @@ const RoutesPage = () => {
               <tbody>
                 {sellerRoutesResponse.map((seller, index) => (
                   <RouteRow
+                    id={seller.id}
                     key={index}
                     name={seller.name}
                     zone={seller.zone}
@@ -236,7 +219,6 @@ const RoutesPage = () => {
           </div>
         )}
       </div>
-
       <ReusableModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -279,11 +261,10 @@ const RoutesPage = () => {
                 value: 50,
                 message: "Debe tener máximo 50 caracteres",
               },
-            })} // Add this line
+            })}
             errorApi={errors.zone}
             msjError={errors.zone ? errors.zone.message : ""}
           />
-
           <div className="mb-4 space-y-2">
             <label className="text-gray-700 block text-sm font-light">
               Asignar estado:
@@ -305,7 +286,6 @@ const RoutesPage = () => {
           </div>
         </form>
       </ReusableModal>
-
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}
         onClose={closeConfirmCancelModal}
@@ -316,7 +296,6 @@ const RoutesPage = () => {
       >
         Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
       </ReusableModal>
-
       <ReusableModal
         isOpen={isSaveConfirmationModalOpen}
         onClose={closeSaveConfirmationModal}
@@ -327,7 +306,6 @@ const RoutesPage = () => {
       >
         Los cambios fueron guardados exitosamente.
       </ReusableModal>
-
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
@@ -341,5 +319,4 @@ const RoutesPage = () => {
     </div>
   );
 };
-
 export default RoutesPage;

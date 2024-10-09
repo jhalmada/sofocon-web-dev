@@ -1,23 +1,25 @@
 import { useEffect, useState } from "react";
 import { UserService } from "../../services/user/user.service.js";
-const useUsers = () => {
-  const [usersResponse, setUsersResponse] = useState([]);
+const useUsersSellers = () => {
+  const [userSellerResponse, setUsersSellerResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
-  const getAllUsers = async () => {
+  const [route, setRoute] = useState(null);
+  const getUsersSellers = async () => {
     try {
       setLoading(true);
-      const { data } = await UserService.getAllUsersApi({
+      const { data } = await UserService.getUsersSellersApi({
         page,
         itemsPerPage,
         search,
+        route,
       });
       setTotalPage(data.pagination.totalPages);
-      setUsersResponse(data.result);
+      setUsersSellerResponse(data);
       console.log(data);
     } catch (e) {
       console.log(e);
@@ -27,10 +29,10 @@ const useUsers = () => {
   };
 
   useEffect(() => {
-    getAllUsers();
-  }, [page, itemsPerPage, modified]);
+    getUsersSellers();
+  }, [page, itemsPerPage, modified, search, route]);
   return {
-    usersResponse,
+    userSellerResponse,
     loading,
     setItemsPerPage,
     totalPage,
@@ -40,7 +42,8 @@ const useUsers = () => {
     setModified,
     modified,
     setSearch,
+    setRoute,
   };
 };
 
-export default useUsers;
+export default useUsersSellers;

@@ -13,7 +13,6 @@ import { Select, SelectItem } from "@nextui-org/select";
 import useRoles from "../hooks/roles/use.roles";
 import { Checkbox } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-
 const AddUserPage = () => {
   const {
     register,
@@ -27,10 +26,8 @@ const AddUserPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-
   const [checkSelected, setCheckSelected] = useState("existente");
   const [mnsError, setMnsError] = useState("");
-
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await postAddUsers(userData);
@@ -49,17 +46,15 @@ const AddUserPage = () => {
       }
     }
   };
-
   const onSubmit = (data) => {
     const { fullName, email, password, role, nameRole, permissions } = data;
-
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
           fullName,
           email,
           password,
-          role: { id: role }, // Pasamos el rol existente
+          role: { id: role },
         });
         break;
       default:
@@ -69,25 +64,21 @@ const AddUserPage = () => {
           password,
           role: {
             name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"], // Permisos asignados
+            permissions: [...permissions, "USER_ADMIN"],
           },
         });
     }
   };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
   };
-  // Función para cerrar el modal de confirmación de guardado
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
     navigate("/inicio/usuarios");
   };
-
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -147,7 +138,6 @@ const AddUserPage = () => {
               errorApi={errors.fullName}
               msjError={errors.fullName ? errors.fullName.message : ""}
             />
-
             <Input
               placeholder={"Escribe el email del usuario..."}
               label={"Correo electrónico"}
@@ -161,12 +151,10 @@ const AddUserPage = () => {
                     /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
                   message: "Formato de email incorrecto",
                 },
-              })} // Add this line
+              })}
               errorApi={errors.email}
               msjError={errors.email ? errors.email.message : ""}
             />
-
-            {/* Contraseña */}
             <div className="pb-8">
               <Input
                 type="password"
@@ -209,7 +197,6 @@ const AddUserPage = () => {
               >
                 Asignar rol existente
               </Checkbox>
-
               <Select
                 isDisabled={checkSelected === "nuevo"}
                 labelPlacement="outside"
@@ -235,7 +222,6 @@ const AddUserPage = () => {
               ) : (
                 ""
               )}
-
               <div className="flex flex-col">
                 <Checkbox
                   radius="full"
@@ -245,7 +231,6 @@ const AddUserPage = () => {
                 >
                   Asignar nuevo rol
                 </Checkbox>
-
                 <div className="flex w-full flex-row justify-between">
                   <div className="mt-5 w-[48%]">
                     <Input
@@ -261,7 +246,6 @@ const AddUserPage = () => {
                       msjError={errors.nameRole ? errors.nameRole.message : ""}
                     />
                   </div>
-
                   <div className="mt-5 w-[48%]">
                     <Select
                       isDisabled={checkSelected === "existente"}
@@ -296,7 +280,6 @@ const AddUserPage = () => {
               </div>
             </div>
           </div>
-
           <div className="flex w-full justify-end">
             <Button
               text={"GUARDAR"}
@@ -316,7 +299,6 @@ const AddUserPage = () => {
         >
           Los cambios fueron guardados exitosamente.
         </ReusableModal>
-
         {isModalOpen && (
           <ReusableModal
             isOpen={isModalOpen}
@@ -333,5 +315,4 @@ const AddUserPage = () => {
     </div>
   );
 };
-
 export default AddUserPage;

@@ -8,12 +8,9 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
-import { permisos } from "../utils/permisons";
 import { Select, SelectItem } from "@nextui-org/select";
 import useRoles from "../hooks/roles/use.roles";
-import { Checkbox } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-
 const AddSellerPage = () => {
   const {
     register,
@@ -27,10 +24,8 @@ const AddSellerPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-
   const [checkSelected, setCheckSelected] = useState("existente");
   const [mnsError, setMnsError] = useState("");
-
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await postAddUsers(userData);
@@ -49,17 +44,15 @@ const AddSellerPage = () => {
       }
     }
   };
-
   const onSubmit = (data) => {
     const { fullName, email, password, role, nameRole, permissions } = data;
-
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
           fullName,
           email,
           password,
-          role: { id: role }, // Pasamos el rol existente
+          role: { id: role },
         });
         break;
       default:
@@ -69,25 +62,21 @@ const AddSellerPage = () => {
           password,
           role: {
             name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"], // Permisos asignados
+            permissions: [...permissions, "USER_ADMIN"],
           },
         });
     }
   };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
   };
-  // Función para cerrar el modal de confirmación de guardado
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
     navigate("/inicio/usuarios");
   };
-
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -107,7 +96,6 @@ const AddSellerPage = () => {
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Vendedores
         </h1>
-
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
@@ -119,7 +107,7 @@ const AddSellerPage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
-          <div>
+          <div className="space-y-4">
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
@@ -147,7 +135,6 @@ const AddSellerPage = () => {
               errorApi={errors.fullName}
               msjError={errors.fullName ? errors.fullName.message : ""}
             />
-
             <Input
               placeholder={"Escribe el email del usuario"}
               label={"Correo electrónico"}
@@ -165,9 +152,7 @@ const AddSellerPage = () => {
               errorApi={errors.email}
               msjError={errors.email ? errors.email.message : ""}
             />
-
-            {/* Contraseña */}
-            <div className="pb-8">
+            <div>
               <Input
                 type="password"
                 label={"Contraseña"}
@@ -199,8 +184,8 @@ const AddSellerPage = () => {
                 *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
               </p>
             </div>
-            <div className="space-y-4">
-              <div>
+            <div className="space-y-6">
+              <div className="relative">
                 <label className="text-gray-700 block text-sm font-light">
                   Asignar rol existente:
                 </label>
@@ -222,16 +207,13 @@ const AddSellerPage = () => {
                       <SelectItem key={rol.id}>{rol.name}</SelectItem>
                     ))}
                 </Select>
-                {errors.role && errors.role.message ? (
-                  <span className="font-roboto text-xs text-red_e">
+                {errors.role && errors.role.message && (
+                  <span className="absolute -bottom-5 left-0 font-roboto text-xs text-red_e">
                     {errors.role.message}
                   </span>
-                ) : (
-                  ""
                 )}
               </div>
-
-              <div>
+              <div className="relative">
                 <label className="text-gray-700 block text-sm font-light">
                   Asignar ruta:
                 </label>
@@ -253,18 +235,15 @@ const AddSellerPage = () => {
                       <SelectItem key={rol.id}>{rol.name}</SelectItem>
                     ))}
                 </Select>
-                {errors.role && errors.role.message ? (
-                  <span className="font-roboto text-xs text-red_e">
+                {errors.role && errors.role.message && (
+                  <span className="absolute -bottom-5 left-0 font-roboto text-xs text-red_e">
                     {errors.role.message}
                   </span>
-                ) : (
-                  ""
                 )}
               </div>
             </div>
           </div>
-
-          <div className="flex w-full justify-end">
+          <div className="mt-10 flex w-full justify-end">
             <Button
               text={"GUARDAR"}
               color={"save"}
@@ -283,7 +262,6 @@ const AddSellerPage = () => {
         >
           Los cambios fueron guardados exitosamente.
         </ReusableModal>
-
         {isModalOpen && (
           <ReusableModal
             isOpen={isModalOpen}
@@ -300,5 +278,4 @@ const AddSellerPage = () => {
     </div>
   );
 };
-
 export default AddSellerPage;

@@ -1,53 +1,104 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
-import Pagination from "../components/Pagination.jsx";
-import closeIcon from "../assets/icons/x-lg.svg";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import deleteIcon from "../assets/icons/trash3.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
-import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 import { useForm } from "react-hook-form";
-import useRoles from "../hooks/roles/use.roles.js";
 import RouteMapDetailsRow from "../components/RouteMapDetailsRow.jsx";
-import RouteSellerDetailsRow from "../components/RouteSellerDetailsRow.jsx";
-import RouteCompanieDetailsRow from "../components/RouteCompanieDetailsRow.jsx";
+import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
+import useUsers from "../hooks/users/use.users.js";
+import { BASE_URL } from "../utils/Constants.js";
+import { getSellersExcel } from "../services/user/user.routes.js";
+import { getClientsExcel } from "../services/companies/companies.routes.js";
+import useUsersSellers from "../hooks/users/useUsersSellers.js";
+import AddSellerRoutePage from "./AddSellerRoutePage.jsx";
+import AddCompanyRoutePage from "./AddCompanyRoutePage.jsx";
 
 const MAP_TAB = "map";
 const SELLERS_TAB = "sellers";
 const COMPANIES_TAB = "companies";
-
 const RouteMapDetailsPage = () => {
+  //estados
+  const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
+  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
+
+  const {
+    userSellerResponse,
+    setRoute,
+    setItemsPerPage,
+    page,
+    totalPage,
+    setPage,
+    itemsPerPage,
+    setModified,
+  } = useUsersSellers();
+  const { usersResponse } = useUsers();
   const [companyId, setCompanyId] = useState(null);
+  const { id } = useParams();
+  const { getOneSellerRoute } = useOneSellerRoutes();
+  const [datos, setDatos] = useState(null);
+
   const { deleteCompany } = useDeleteCompanies();
   const {
     companiesResponse,
-    setItemsPerPage,
-    totalPage,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
+    setItemsPerPage: setItemsPerPageCompanies,
+    totalPage: totalPageCompanies,
+    setPage: setPageCompanies,
+    page: pageCompanies,
+    itemsPerPage: itemsPerPageCompanies,
+    setModified: setModifiedCompanies,
+    setRoutes: setRoutesCompanies,
   } = useCompanies();
-  const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
-  const { changedCompany } = usePutCompany();
-  const { RolesResponse } = useRoles();
+  console.log(companiesResponse);
 
   const [activeTab, setActiveTab] = useState(MAP_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isSellersExportModalOpen, setIsSellersExportModalOpen] =
+    useState(false);
 
+  const oneRute = async (id) => {
+    const newdatos = await getOneSellerRoute(id);
+    setRoute(id);
+    setRoutesCompanies(id);
+    setDatos(newdatos);
+    console.log(newdatos);
+  };
+
+  useEffect(() => {
+    oneRute(id);
+  }, []);
+
+  {
+    /*Vendedores*/
+  }
+  const [allSellers, setAllSellers] = useState([]);
+  const [assignedSellers, setAssignedSellers] = useState([]);
+  const [availableSellers, setAvailableSellers] = useState(allSellers);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredSellers, setFilteredSellers] = useState(allSellers);
+
+  useEffect(() => {
+    setAllSellers(usersResponse);
+  }, [usersResponse]);
+
+  {
+    /*Empresas*/
+  }
+  const [allCompanies, setAllCompanies] = useState(companiesResponse || []);
+  const [assignedCompanies, setAssignedCompanies] = useState([]);
+  const [filteredCompanies, setFilteredCompanies] = useState(allCompanies);
+  const [companySearchTerm, setCompanySearchTerm] = useState("");
   const {
     register,
     handleSubmit,
@@ -56,48 +107,15 @@ const RouteMapDetailsPage = () => {
   } = useForm();
 
   const openModal = (id) => {
-    const companyToEdit = companiesResponse.find(
-      (company) => company.id === id,
-    );
-    if (companyToEdit) {
-      // Set form values
-      setValue("name", companyToEdit?.name || "");
-      setValue("department", companyToEdit?.department || "");
-      setValue("neighborhood", companyToEdit?.neighborhood || "");
-      setValue("address", companyToEdit?.address || "");
-      setValue("managerName", companyToEdit?.managerName || "");
-      setValue("phone", companyToEdit?.phone || "");
-      setValue("rut", companyToEdit?.rut || "");
-      setValue("status", companyToEdit?.status || "");
-      setValue(
-        "nextVisit",
-        parseAbsoluteToLocal(
-          companyToEdit?.nextVisit || "2024-10-02T21:46:00.330Z",
-        ),
-      );
-      companyToEdit.competenceName
-        ? setValue("competenceName", companyToEdit.competenceName)
-        : setValue("competenceName", "");
-      companyToEdit.competenceName ? setCompetence(true) : setCompetence(false);
-    }
-    setIsModalOpen(true);
-    setCompanyId(id);
     setIsModalOpen(true);
   };
 
   const openSellersModal = (id) => {
     setIsSellersModalOpen(true);
   };
+  console.log(allSellers);
+  console.log(usersResponse);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setIsSellersModalOpen(false);
-    setConfirmCancelModalOpen(false);
-    setSaveConfirmationModalOpen(false);
-    setConfirmDeleteModalOpen(false);
-  };
-
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
@@ -110,69 +128,122 @@ const RouteMapDetailsPage = () => {
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
-    deleteCompany(companyId, setModified);
+    deleteCompany(companyId, setModifiedCompanies);
     closeConfirmDeleteModal();
   };
 
-  const handleCancelClick = () => openConfirmCancelModal();
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
   };
 
-  const handleUserCreation = async (userData) => {
-    try {
-      const newUser = await changedUser(userData, companyId, setModified);
+  const handleUserCreation = async (userData) => {};
 
-      if (newUser) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        console.error(
-          "No se recibió un nuevo usuario después de la actualización",
-        );
-      }
-    } catch (error) {
-      console.error("Error al actualizar el usuario:", error);
-      setIsModalOpen(true);
-    }
-  };
-
-  const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          email,
-          password,
-          userInfo: {
-            fullName,
-          },
-          role: { id: role },
-        });
-        break;
-      default:
-        handleUserCreation({
-          email,
-          password,
-          fullName: {
-            fullName,
-          },
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-          },
-        });
-    }
-  };
+  const onSubmit = (data) => {};
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Meses están indexados desde 0
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${month}/${day}/${year}`;
   };
+
+  const handleAddSeller = (seller) => {
+    setAssignedSellers((prev) => [...prev, seller]);
+    setAvailableSellers((prev) => prev.filter((s) => s.id !== seller.id));
+  };
+
+  const handleAddCompany = (company) => {
+    setAssignedCompanies((prev) => [...prev, company]);
+    setFilteredCompanies((prev) => prev.filter((c) => c.id !== company.id));
+  };
+
+  const handleRemoveSeller = (seller) => {
+    setAssignedSellers((prev) => prev.filter((s) => s.id !== seller.id));
+    setAvailableSellers((prev) => [...prev, seller]);
+  };
+  const handleRemoveCompany = (company) => {
+    setAssignedCompanies((prev) => prev.filter((c) => c.id !== company.id));
+    setFilteredCompanies((prev) => [...prev, company]);
+  };
+  const handleSearch = (term) => {
+    setFilteredSellers(
+      availableSellers.filter((seller) =>
+        seller.userInfo.fullName.toLowerCase().includes(term.toLowerCase()),
+      ),
+    );
+  };
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    const filtered = availableSellers.filter((seller) =>
+      seller.userInfo.fullName.toLowerCase().includes(term.toLowerCase()),
+    );
+    setFilteredSellers(filtered);
+  };
+  const handleCompanySearchChange = (e) => {
+    const term = e.target.value;
+    setCompanySearchTerm(term);
+    const filtered = companiesResponse.filter((company) =>
+      company.name.toLowerCase().includes(term.toLowerCase()),
+    );
+    setFilteredCompanies(filtered);
+  };
+
+  useEffect(() => {
+    if (searchTerm) {
+      setFilteredSellers(
+        allSellers.filter((seller) =>
+          seller.userInfo.fullName
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()),
+        ),
+      );
+    } else {
+      setFilteredSellers(allSellers);
+    }
+  }, [searchTerm, allSellers]);
+
+  useEffect(() => {
+    if (companySearchTerm) {
+      setFilteredCompanies(
+        allCompanies.filter((company) =>
+          company.name.toLowerCase().includes(companySearchTerm.toLowerCase()),
+        ),
+      );
+    } else {
+      setFilteredCompanies(allCompanies);
+    }
+  }, [companySearchTerm, allCompanies]);
+
+  const openExportModal = (id) => {
+    setIsExportModalOpen(true);
+  };
+  const openSellersExportModal = (id) => {
+    setIsSellersExportModalOpen(true);
+  };
+
+  //funciones
+  const onSubmits = (data) => {
+    console.log(data);
+  };
+
+  //funciones del modal de añadir vendedor
+  //para cerrar el modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setIsExportModalOpen(false);
+    setIsSellersExportModalOpen(false);
+    setIsSellersModalOpen(false);
+    setConfirmCancelModalOpen(false);
+    setSaveConfirmationModalOpen(false);
+    setConfirmDeleteModalOpen(false);
+  };
+  //para el boton de cancelar
+  const handleCancelClick = () => openConfirmCancelModal();
+  //para la confirmacion de cancelar
+  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -217,14 +288,18 @@ const RouteMapDetailsPage = () => {
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
-            {(activeTab === MAP_TAB || activeTab === COMPANIES_TAB) && (
+            {activeTab === COMPANIES_TAB && (
               <div className="flex space-x-4">
                 <Button
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
+                  onClick={() => openExportModal()}
                 />
-
+              </div>
+            )}
+            {(activeTab === MAP_TAB || activeTab === COMPANIES_TAB) && (
+              <div className="flex space-x-4">
                 <Button
                   text="Agregar empresa"
                   icon={PlusIcon}
@@ -232,12 +307,14 @@ const RouteMapDetailsPage = () => {
                 />
               </div>
             )}
+
             {activeTab === SELLERS_TAB && (
               <div className="flex space-x-4">
                 <Button
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
+                  onClick={() => openSellersExportModal()}
                 />
 
                 <Button
@@ -285,231 +362,105 @@ const RouteMapDetailsPage = () => {
               </thead>
               <tbody>
                 <RouteMapDetailsRow
-                  name="nombre de ruta"
-                  zone="zona de la ruta"
-                  companies="214"
-                  sellers="35"
+                  name={datos?.name || "Nombre de la ruta"}
+                  zone={datos?.zone || "zona de la ruta"}
+                  companies={datos?.totalClients || "cargando"}
+                  sellers={datos?.totalSeller || "cargando"}
                   state="Activo"
                 />
+                {console.log(datos)}
               </tbody>
             </table>
-            <div className="flex justify-center p-6">
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemPerPage={itemsPerPage}
-              />
-            </div>
           </div>
         )}
         {activeTab === SELLERS_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre completo
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Contacto
-                  </th>
-
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex gap-2">
-                      <h3>Estado</h3>
-                      <img
-                        src={FilterRightIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                      <img
-                        src={ChevronDownIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
-                    Acción
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <RouteSellerDetailsRow
-                  name="Nombre completo"
-                  contact={"email/tel"}
-                  state="Activo"
-                  deleteIconSrc={deleteIcon}
-                  onDeleteClick={() => openConfirmDeleteModal()}
-                />
-              </tbody>
-            </table>
-            <div className="flex justify-center p-6">
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemPerPage={itemsPerPage}
-              />
-            </div>
-          </div>
+          <AddSellerRoutePage
+            arraySeller={userSellerResponse.result}
+            itemsPerPage={itemsPerPage}
+            page={page}
+            setItemsPerPage={setItemsPerPage}
+            setPage={setPage}
+            totalPage={totalPage}
+            isSellersModalOpen={isSellersModalOpen}
+            closeModal={closeModal}
+            isConfirmDeleteModalOpen={isConfirmDeleteModalOpen}
+            closeConfirmDeleteModal={closeConfirmDeleteModal}
+            handleCancelClick={handleCancelClick}
+            setModified={setModified}
+            idCompany={id}
+          />
         )}
         {activeTab === COMPANIES_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre
-                  </th>
-
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Dirección
-                  </th>
-
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Próx. visita
-                  </th>
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex w-full gap-2">
-                      <h3>Estado</h3>
-                      <img
-                        src={FilterRightIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                      <img
-                        src={ChevronDownIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Notas
-                  </th>
-                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
-                    Acción
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {companiesResponse.map((companie, index) => (
-                  <RouteCompanieDetailsRow
-                    key={index}
-                    name={companie.name}
-                    direction={companie.address}
-                    nextVisits={formatDate(companie.nextVisit)}
-                    state={"activo"}
-                    notes={"ver notas"}
-                    deleteIconSrc={deleteIcon}
-                    onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-                  />
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-center p-6">
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemsPerPage={itemsPerPage}
-              />
-            </div>
-          </div>
+          <AddCompanyRoutePage
+            page={pageCompanies}
+            itemsPerPage={itemsPerPageCompanies}
+            setPage={setPageCompanies}
+            totalPage={totalPageCompanies}
+            setItemsPerPage={setItemsPerPageCompanies}
+            arrayCompanies={companiesResponse}
+            isModalOpen={isModalOpen}
+            closeModal={closeModal}
+            handleCancelClick={handleCancelClick}
+            setModified={setModifiedCompanies}
+            idCompany={id}
+          />
         )}
       </div>
-
       <ReusableModal
-        isOpen={isSellersModalOpen}
+        isOpen={isSellersExportModalOpen}
         onClose={closeModal}
-        title="Agregar vendedor/es a Ruta 1"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={handleConfirmCancel}
       >
-        <div className="space-y-2">
-          <p className="text-sm font-light leading-[1rem] text-black_b">
-            Vendedores asignados
-          </p>
-          <Button
-            text="Vendedor 1"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
-          <Button
-            text="Vendedor 2"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
-          <Button
-            text="Vendedor 3"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-5">
+          <a href={`${BASE_URL}/${getSellersExcel}`} download target="_blank">
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
         </div>
-        <div>
-          <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
-            Agregar vendedores
-          </p>
-          <SearchInput
-            placeholder="Buscar..."
-            border="border"
-            rounded="rounded-[0.375rem]"
-            visibility="block"
-          />
-        </div>
+        <Button
+          text="Descargar archivo PDF"
+          icon={DownloadIcon}
+          color={"cancel"}
+          shadow="shadow-blur"
+          iconPosition={"left"}
+        />
       </ReusableModal>
-
       <ReusableModal
-        isOpen={isModalOpen}
+        isOpen={isExportModalOpen}
         onClose={closeModal}
-        title="Agregar empresa/s a Ruta 1"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={handleConfirmCancel}
       >
-        <div className="space-y-2">
-          <p className="text-sm font-light leading-[1rem] text-black_b">
-            Empresas asignadas
-          </p>
-          <Button
-            text="Empresa 1"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
-          <Button
-            text="Empresa 2"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
-          <Button
-            text="Empresa 3"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-5">
+          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
         </div>
-        <div>
-          <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
-            Agregar empresas
-          </p>
-          <SearchInput
-            placeholder="Buscar..."
-            border="border"
-            rounded="rounded-[0.375rem]"
-            visibility="block"
-          />
-        </div>
+        <Button
+          text="Descargar archivo PDF"
+          icon={DownloadIcon}
+          color={"cancel"}
+          shadow="shadow-blur"
+          iconPosition={"left"}
+        />
       </ReusableModal>
 
       <ReusableModal

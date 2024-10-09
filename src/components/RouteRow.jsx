@@ -2,6 +2,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { useNavigate } from "react-router-dom";
 
 const RouteRow = ({
+  id,
   name,
   zone,
   companies,
@@ -15,7 +16,7 @@ const RouteRow = ({
   const navigate = useNavigate();
 
   const handleRowClick = () => {
-    navigate(`/inicio/rutas/mapa`);
+    navigate(`/inicio/rutas/mapa/${id}`);
   };
   return (
     <tr className="border-b border-gray transition-all duration-300 hover:bg-gray">

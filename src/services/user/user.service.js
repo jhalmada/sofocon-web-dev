@@ -12,4 +12,7 @@ export class UserService {
 
   static deleteUserApi = async (userId) =>
     await axios.delete(`${usersRoutes.deleteUsers}/${userId}`);
+
+  static getUsersSellersApi = async (params) =>
+    await axios.get(usersRoutes.getUsersSeller, { params });
 }
