@@ -2,14 +2,13 @@ import Input from "../components/inputs/Input";
 import { Link, useNavigate } from "react-router-dom";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useApiRequest from "../hooks/useApiRequest";
 import ReusableModal from "../components/modals/ReusableModal";
 import { BASE_URL, HOME_ROUTE } from "../utils/Constants";
 import useLogin from "../hooks/auth/use.login.js";
 import { Button } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import { useAuthContext } from "../hooks/context/AuthContext.jsx";
 
 const LoginPage = () => {
   const {

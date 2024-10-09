@@ -187,10 +187,11 @@ const AddSellerPage = () => {
             <div className="space-y-6">
               <div className="relative">
                 <label className="text-gray-700 block text-sm font-light">
-                  Asignar rol existente:
+                  Rol
                 </label>
                 <Select
-                  isDisabled={checkSelected === "nuevo"}
+                  defaultSelectedKeys={["b3137878-2db6-41a0-a697-49638086ca83"]}
+                  isDisabled={true}
                   labelPlacement="outside"
                   placeholder="Rol"
                   className="max-w rounded-lg border font-roboto font-medium"
@@ -207,6 +208,7 @@ const AddSellerPage = () => {
                       <SelectItem key={rol.id}>{rol.name}</SelectItem>
                     ))}
                 </Select>
+
                 {errors.role && errors.role.message && (
                   <span className="absolute -bottom-5 left-0 font-roboto text-xs text-red_e">
                     {errors.role.message}

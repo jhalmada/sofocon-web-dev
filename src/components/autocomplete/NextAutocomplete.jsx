@@ -30,7 +30,7 @@ const NextAutoComplete = ({ array, label, name, setValue, onChange }) => {
         {selectedItems.map((item, index) => (
           <span
             key={index}
-            className="mt-2 flex h-10 w-full items-center justify-between rounded-lg border border-black_l bg-gray p-2"
+            className="mt-2 flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br"
           >
             {item.name}
             <img

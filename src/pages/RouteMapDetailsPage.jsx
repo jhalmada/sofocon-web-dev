@@ -16,7 +16,10 @@ import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
 import useUsers from "../hooks/users/use.users.js";
 import { BASE_URL } from "../utils/Constants.js";
 import { getSellersExcel } from "../services/user/user.routes.js";
-import { getClientsExcel } from "../services/companies/companies.routes.js";
+import {
+  getClientsExcel,
+  getClientsPdf,
+} from "../services/companies/companies.routes.js";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import AddSellerRoutePage from "./AddSellerRoutePage.jsx";
 import AddCompanyRoutePage from "./AddCompanyRoutePage.jsx";
@@ -56,7 +59,6 @@ const RouteMapDetailsPage = () => {
     setModified: setModifiedCompanies,
     setRoutes: setRoutesCompanies,
   } = useCompanies();
-  console.log(companiesResponse);
 
   const [activeTab, setActiveTab] = useState(MAP_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,7 +74,6 @@ const RouteMapDetailsPage = () => {
     setRoute(id);
     setRoutesCompanies(id);
     setDatos(newdatos);
-    console.log(newdatos);
   };
 
   useEffect(() => {
@@ -113,8 +114,6 @@ const RouteMapDetailsPage = () => {
   const openSellersModal = (id) => {
     setIsSellersModalOpen(true);
   };
-  console.log(allSellers);
-  console.log(usersResponse);
 
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const closeSaveConfirmationModal = () => {
@@ -225,9 +224,7 @@ const RouteMapDetailsPage = () => {
   };
 
   //funciones
-  const onSubmits = (data) => {
-    console.log(data);
-  };
+  const onSubmits = (data) => {};
 
   //funciones del modal de añadir vendedor
   //para cerrar el modal
@@ -368,7 +365,6 @@ const RouteMapDetailsPage = () => {
                   sellers={datos?.totalSeller || "cargando"}
                   state="Activo"
                 />
-                {console.log(datos)}
               </tbody>
             </table>
           </div>
@@ -415,8 +411,8 @@ const RouteMapDetailsPage = () => {
         onAccept={handleConfirmCancel}
       >
         Elige el formato en el que desea descargar el contenido de la lista:
-        <div className="mt-5">
-          <a href={`${BASE_URL}/${getSellersExcel}`} download target="_blank">
+        <div className="mt-4 flex flex-col space-y-4">
+          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
             <Button
               text="Descargar archivo Excel"
               icon={DownloadIcon}
@@ -425,14 +421,17 @@ const RouteMapDetailsPage = () => {
               iconPosition={"left"}
             />
           </a>
+
+          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+            <Button
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
         </div>
-        <Button
-          text="Descargar archivo PDF"
-          icon={DownloadIcon}
-          color={"cancel"}
-          shadow="shadow-blur"
-          iconPosition={"left"}
-        />
       </ReusableModal>
       <ReusableModal
         isOpen={isExportModalOpen}
@@ -443,7 +442,7 @@ const RouteMapDetailsPage = () => {
         onAccept={handleConfirmCancel}
       >
         Elige el formato en el que desea descargar el contenido de la lista:
-        <div className="mt-5">
+        <div className="mt-4 flex flex-col space-y-4">
           <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
             <Button
               text="Descargar archivo Excel"
@@ -453,14 +452,17 @@ const RouteMapDetailsPage = () => {
               iconPosition={"left"}
             />
           </a>
+
+          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+            <Button
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
         </div>
-        <Button
-          text="Descargar archivo PDF"
-          icon={DownloadIcon}
-          color={"cancel"}
-          shadow="shadow-blur"
-          iconPosition={"left"}
-        />
       </ReusableModal>
 
       <ReusableModal
