@@ -19,7 +19,6 @@ import RouteSellerDetailsRow from "../components/RouteSellerDetailsRow.jsx";
 import RouteCompanieDetailsRow from "../components/RouteCompanieDetailsRow.jsx";
 import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
 import useUsers from "../hooks/users/use.users.js";
-import { u } from "framer-motion/client";
 import { BASE_URL } from "../utils/Constants.js";
 import { getSellersExcel } from "../services/user/user.routes.js";
 import { getClientsExcel } from "../services/companies/companies.routes.js";
@@ -92,7 +91,9 @@ const RouteMapDetailsPage = () => {
     formState: { errors },
   } = useForm();
 
-  const openModal = (id) => {};
+  const openModal = (id) => {
+    setIsModalOpen(true);
+  };
 
   const openSellersModal = (id) => {
     setIsSellersModalOpen(true);
@@ -443,7 +444,7 @@ const RouteMapDetailsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {datos.clientInRoute.map((companie, index) => (
+                {/*   {datos.clientInRoute.map((companie, index) => (
                   <RouteCompanieDetailsRow
                     key={index}
                     name={companie.client.name}
@@ -455,6 +456,7 @@ const RouteMapDetailsPage = () => {
                     onDeleteClick={() => openConfirmDeleteModal(companie.id)}
                   />
                 ))}
+                  */}
               </tbody>
             </table>
             <div className="flex justify-center p-6">
