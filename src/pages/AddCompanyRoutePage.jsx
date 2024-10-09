@@ -3,6 +3,12 @@ import RouteCompanieDetailsRow from "../components/RouteCompanieDetailsRow";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
+import useCompanies from "../hooks/companies/useCompanies";
+import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
+import { useForm } from "react-hook-form";
+import ReusableModal from "../components/modals/ReusableModal";
+import usePutCompany from "../hooks/companies/usePutCompanies";
+import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 
 const AddCompanyRoutePage = ({
   setItemsPerPage,
@@ -11,10 +17,24 @@ const AddCompanyRoutePage = ({
   totalPage,
   itemsPerPage,
   arrayCompanies,
+  isModalOpen,
+  closeModal,
+  handleCancelClick,
+  idCompany,
+  setModified,
 }) => {
   //estados
 
   //hooks
+  const { companiesResponse, setSearch } = useCompanies();
+  const { changedSellerRoute } = usePutSellerRoute();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
   //funciones
   const formatDate = (dateString) => {
@@ -24,6 +44,24 @@ const AddCompanyRoutePage = ({
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${month}/${day}/${year}`;
+  };
+
+  //funcion para transformar los Arrays
+  const transformData = (array) => {
+    return array.map((item) => ({
+      id: item.id,
+      name: item.name,
+    }));
+  };
+
+  //funciones
+  const onSubmit = (data) => {
+    const companies = data.empresas.map((company) => ({ client: company.id }));
+    const newData = {
+      clientInRoute: [...companies],
+    };
+    changedSellerRoute(newData, idCompany, setModified);
+    closeModal();
   };
 
   return (
@@ -89,6 +127,27 @@ const AddCompanyRoutePage = ({
           itemsPerPage={itemsPerPage}
         />
       </div>
+      <ReusableModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="Agregar empresa/s a Ruta 1"
+        onSubmit={handleSubmit(onSubmit)}
+        buttons={["cancel", "save"]}
+        handleCancelClick={handleCancelClick}
+      >
+        <div className="space-y-2">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <NextAutoComplete
+              array={transformData(companiesResponse || []) || []}
+              name={"empresas"}
+              label={"Agregar Empresas"}
+              setValue={setValue}
+              onChange={setSearch}
+            />
+            <p>{errors.vendedores && errors.vendedores.message}</p>
+          </form>
+        </div>
+      </ReusableModal>
     </div>
   );
 };

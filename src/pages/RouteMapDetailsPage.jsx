@@ -404,6 +404,11 @@ const RouteMapDetailsPage = () => {
             totalPage={totalPageCompanies}
             setItemsPerPage={setItemsPerPageCompanies}
             arrayCompanies={companiesResponse}
+            isModalOpen={isModalOpen}
+            closeModal={closeModal}
+            handleCancelClick={handleCancelClick}
+            setModified={setModifiedCompanies}
+            idCompany={id}
           />
         )}
       </div>
@@ -462,52 +467,6 @@ const RouteMapDetailsPage = () => {
           shadow="shadow-blur"
           iconPosition={"left"}
         />
-      </ReusableModal>
-
-      <ReusableModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title="Agregar empresa/s a Ruta 1"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <div className="space-y-2">
-          {assignedCompanies.length > 0 &&
-            assignedCompanies.map((company) => (
-              <Button
-                key={company.id}
-                text={company.name}
-                icon={closeIcon}
-                color={"selected"}
-                width="w-full"
-              />
-            ))}
-        </div>
-        <div>
-          <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
-            Agregar empresas
-          </p>
-          <SearchInput
-            placeholder="Buscar..."
-            border="border"
-            rounded="rounded-[0.375rem]"
-            visibility="block"
-            value={companySearchTerm}
-            onChange={handleCompanySearchChange}
-          />
-          <div className="mt-2 space-y-2">
-            {filteredCompanies.map((company) => (
-              <Button
-                key={company.id}
-                text={company.name}
-                color={"cancel"}
-                width="w-full"
-                onClick={() => handleAddCompany(company)}
-              />
-            ))}
-          </div>
-        </div>
       </ReusableModal>
 
       <ReusableModal
