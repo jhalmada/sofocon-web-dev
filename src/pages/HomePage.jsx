@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
-import { useState } from "react";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 
 const HomePage = () => {

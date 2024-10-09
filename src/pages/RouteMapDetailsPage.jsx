@@ -13,28 +13,72 @@ import deleteIcon from "../assets/icons/trash3.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import RouteMapDetailsRow from "../components/RouteMapDetailsRow.jsx";
 import RouteSellerDetailsRow from "../components/RouteSellerDetailsRow.jsx";
 import RouteCompanieDetailsRow from "../components/RouteCompanieDetailsRow.jsx";
 import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
 import useUsers from "../hooks/users/use.users.js";
+import { u, use } from "framer-motion/client";
 import { BASE_URL } from "../utils/Constants.js";
 import { getSellersExcel } from "../services/user/user.routes.js";
 import { getClientsExcel } from "../services/companies/companies.routes.js";
+import useUsersSellers from "../hooks/users/useUsersSellers.js";
+import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
+import AddSellerRoute from "./AddSellerRoutePage.jsx";
+import AddSellerRoutePage from "./AddSellerRoutePage.jsx";
+import AddCompanyRoutePage from "./AddCompanyRoutePage.jsx";
 
 const MAP_TAB = "map";
 const SELLERS_TAB = "sellers";
 const COMPANIES_TAB = "companies";
 const RouteMapDetailsPage = () => {
+  //estados
+  const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
+  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
+
+  const {
+    userSellerResponse,
+    setRoute,
+    setItemsPerPage,
+    page,
+    totalPage,
+    setPage,
+    itemsPerPage,
+    setModified,
+  } = useUsersSellers();
   const { usersResponse } = useUsers();
   const [companyId, setCompanyId] = useState(null);
   const { id } = useParams();
   const { getOneSellerRoute } = useOneSellerRoutes();
   const [datos, setDatos] = useState(null);
 
+  const { deleteCompany } = useDeleteCompanies();
+  const {
+    companiesResponse,
+    setItemsPerPage: setItemsPerPageCompanies,
+    totalPage: totalPageCompanies,
+    setPage: setPageCompanies,
+    page: pageCompanies,
+    itemsPerPage: itemsPerPageCompanies,
+    setModified: setModifiedCompanies,
+    setRoutes: setRoutesCompanies,
+  } = useCompanies();
+  console.log(companiesResponse);
+
+  const [activeTab, setActiveTab] = useState(MAP_TAB);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+    useState(false);
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isSellersExportModalOpen, setIsSellersExportModalOpen] =
+    useState(false);
+
   const oneRute = async (id) => {
     const newdatos = await getOneSellerRoute(id);
+    setRoute(id);
+    setRoutesCompanies(id);
     setDatos(newdatos);
     console.log(newdatos);
   };
@@ -43,27 +87,6 @@ const RouteMapDetailsPage = () => {
     oneRute(id);
   }, []);
 
-  const { deleteCompany } = useDeleteCompanies();
-  const {
-    companiesResponse,
-    setItemsPerPage,
-    totalPage,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-  } = useCompanies();
-  const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
-
-  const [activeTab, setActiveTab] = useState(MAP_TAB);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
-  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  const [isSellersExportModalOpen, setIsSellersExportModalOpen] =
-    useState(false);
   {
     /*Vendedores*/
   }
@@ -100,17 +123,7 @@ const RouteMapDetailsPage = () => {
   };
   console.log(allSellers);
   console.log(usersResponse);
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setIsExportModalOpen(false);
-    setIsSellersExportModalOpen(false);
-    setIsSellersModalOpen(false);
-    setConfirmCancelModalOpen(false);
-    setSaveConfirmationModalOpen(false);
-    setConfirmDeleteModalOpen(false);
-  };
 
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
@@ -123,11 +136,10 @@ const RouteMapDetailsPage = () => {
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
-    deleteCompany(companyId, setModified);
+    deleteCompany(companyId, setModifiedCompanies);
     closeConfirmDeleteModal();
   };
 
-  const handleCancelClick = () => openConfirmCancelModal();
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
@@ -220,6 +232,26 @@ const RouteMapDetailsPage = () => {
     setIsSellersExportModalOpen(true);
   };
 
+  //funciones
+  const onSubmits = (data) => {
+    console.log(data);
+  };
+
+  //funciones del modal de añadir vendedor
+  //para cerrar el modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setIsExportModalOpen(false);
+    setIsSellersExportModalOpen(false);
+    setIsSellersModalOpen(false);
+    setConfirmCancelModalOpen(false);
+    setSaveConfirmationModalOpen(false);
+    setConfirmDeleteModalOpen(false);
+  };
+  //para el boton de cancelar
+  const handleCancelClick = () => openConfirmCancelModal();
+  //para la confirmacion de cancelar
+  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -340,8 +372,8 @@ const RouteMapDetailsPage = () => {
                 <RouteMapDetailsRow
                   name={datos?.name || "Nombre de la ruta"}
                   zone={datos?.zone || "zona de la ruta"}
-                  companies="214"
-                  sellers="35"
+                  companies={datos?.totalClients || "cargando"}
+                  sellers={datos?.totalSeller || "cargando"}
                   state="Activo"
                 />
                 {console.log(datos)}
@@ -350,125 +382,34 @@ const RouteMapDetailsPage = () => {
           </div>
         )}
         {activeTab === SELLERS_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre completo
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Contacto
-                  </th>
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex gap-2">
-                      <h3>Estado</h3>
-                      <img
-                        src={FilterRightIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                      <img
-                        src={ChevronDownIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
-                    Acción
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {usersResponse.map((seller) => (
-                  <RouteSellerDetailsRow
-                    key={seller.id}
-                    name={seller.userInfo.fullName}
-                    contact={"emailsd"}
-                    state="Activo"
-                    deleteIconSrc={deleteIcon}
-                    onDeleteClick={() => openConfirmDeleteModal()}
-                  />
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-center p-6">
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemPerPage={itemsPerPage}
-              />
-            </div>
-          </div>
+          <AddSellerRoutePage
+            arraySeller={userSellerResponse.result}
+            itemsPerPage={itemsPerPage}
+            page={page}
+            setItemsPerPage={setItemsPerPage}
+            setPage={setPage}
+            totalPage={totalPage}
+            isSellersModalOpen={isSellersModalOpen}
+            closeModal={closeModal}
+            handleCancelClick={handleCancelClick}
+            setModified={setModified}
+            idCompany={id}
+          />
         )}
         {activeTab === COMPANIES_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre
-                  </th>
-
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Dirección
-                  </th>
-
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Próx. visita
-                  </th>
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex w-full gap-2">
-                      <h3>Estado</h3>
-                      <img
-                        src={FilterRightIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                      <img
-                        src={ChevronDownIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Notas
-                  </th>
-                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
-                    Acción
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {/*   {datos.clientInRoute.map((companie, index) => (
-                  <RouteCompanieDetailsRow
-                    key={index}
-                    name={companie.client.name}
-                    direction={companie.client.address}
-                    nextVisits={formatDate(companie.client.nextVisit)}
-                    state={companie.client.status}
-                    notes={"ver notas"}
-                    deleteIconSrc={deleteIcon}
-                    onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-                  />
-                ))}
-                  */}
-              </tbody>
-            </table>
-            <div className="flex justify-center p-6">
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemsPerPage={itemsPerPage}
-              />
-            </div>
-          </div>
+          <AddCompanyRoutePage
+            page={pageCompanies}
+            itemsPerPage={itemsPerPageCompanies}
+            setPage={setPageCompanies}
+            totalPage={totalPageCompanies}
+            setItemsPerPage={setItemsPerPageCompanies}
+            arrayCompanies={companiesResponse}
+            isModalOpen={isModalOpen}
+            closeModal={closeModal}
+            handleCancelClick={handleCancelClick}
+            setModified={setModifiedCompanies}
+            idCompany={id}
+          />
         )}
       </div>
       <ReusableModal
@@ -526,113 +467,6 @@ const RouteMapDetailsPage = () => {
           shadow="shadow-blur"
           iconPosition={"left"}
         />
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isSellersModalOpen}
-        onClose={closeModal}
-        title="Agregar vendedor/es a Ruta 1"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <div className="space-y-2">
-          {assignedSellers.length > 0 && (
-            <p className="text-sm font-light leading-[1rem] text-black_b">
-              Vendedores asignados
-            </p>
-          )}
-          {assignedSellers.map((seller) => (
-            <Button
-              key={seller.id}
-              text={seller.userInfo.fullName}
-              icon={closeIcon}
-              color={"selected"}
-              width="w-full"
-              onClick={() => handleRemoveSeller(seller)}
-            />
-          ))}
-        </div>
-        <div>
-          <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
-            Agregar vendedores
-          </p>
-          <SearchInput
-            placeholder="Buscar..."
-            border="border"
-            rounded="rounded-[0.375rem]"
-            visibility="block"
-            onSearch={handleSearch}
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-          <div className="mt-2 space-y-2">
-            {searchTerm ? (
-              availableSellers
-                .filter((seller) =>
-                  seller.userInfo.fullName
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase()),
-                )
-                .map((seller) => (
-                  <Button
-                    key={seller.id}
-                    text={seller.userInfo.fullName}
-                    color={"cancel"}
-                    width="w-full"
-                    onClick={() => handleAddSeller(seller)}
-                  />
-                ))
-            ) : (
-              <span></span>
-            )}
-          </div>
-        </div>
-      </ReusableModal>
-
-      <ReusableModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title="Agregar empresa/s a Ruta 1"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <div className="space-y-2">
-          {assignedCompanies.length > 0 &&
-            assignedCompanies.map((company) => (
-              <Button
-                key={company.id}
-                text={company.name}
-                icon={closeIcon}
-                color={"selected"}
-                width="w-full"
-              />
-            ))}
-        </div>
-        <div>
-          <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
-            Agregar empresas
-          </p>
-          <SearchInput
-            placeholder="Buscar..."
-            border="border"
-            rounded="rounded-[0.375rem]"
-            visibility="block"
-            value={companySearchTerm}
-            onChange={handleCompanySearchChange}
-          />
-          <div className="mt-2 space-y-2">
-            {filteredCompanies.map((company) => (
-              <Button
-                key={company.id}
-                text={company.name}
-                color={"cancel"}
-                width="w-full"
-                onClick={() => handleAddCompany(company)}
-              />
-            ))}
-          </div>
-        </div>
       </ReusableModal>
 
       <ReusableModal
