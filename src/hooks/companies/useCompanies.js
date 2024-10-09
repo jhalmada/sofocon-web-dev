@@ -7,6 +7,7 @@ const useCompanies = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [modified, setModified] = useState(false);
+  const [route, setRoutes] = useState(null);
 
   //la funcion principal
   const getAllCompanies = async () => {
@@ -16,6 +17,7 @@ const useCompanies = () => {
       const { data } = await CompaniesService.getAllCompaniesApi({
         page,
         itemsPerPage,
+        route,
       });
       //aqui haces con el resultado lo que necesites
       console.log(data);
@@ -31,7 +33,7 @@ const useCompanies = () => {
   //que permite actualizar las lista de empresa cada vez que se modifica el paginado, o se elimina una empresa
   useEffect(() => {
     getAllCompanies();
-  }, [page, itemsPerPage, modified]);
+  }, [page, itemsPerPage, modified, route]);
   return {
     companiesResponse,
     loading,
@@ -42,6 +44,7 @@ const useCompanies = () => {
     itemsPerPage,
     setModified,
     modified,
+    setRoutes,
   };
 };
 

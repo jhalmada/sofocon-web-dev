@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import x from "../../assets/icons/x.svg";
 import search from "../../assets/icons/search.svg";
-import { set } from "react-hook-form";
 
-const CustomMultiselect = ({ array, label, name, setValue, onChange }) => {
+const NextAutoComplete = ({ array, label, name, setValue, onChange }) => {
+  //estados
   const [selectedItems, setSelectedItems] = useState([]);
 
   const handleSelect = (item) => {
@@ -30,9 +30,9 @@ const CustomMultiselect = ({ array, label, name, setValue, onChange }) => {
         {selectedItems.map((item, index) => (
           <span
             key={index}
-            className="mt-2 flex h-10 w-full items-center justify-between rounded-lg border bg-black_l p-2"
+            className="mt-2 flex h-10 w-full items-center justify-between rounded-lg border border-black_l bg-gray p-2"
           >
-            {item.userInfo.fullName}
+            {item.name}
             <img
               src={x}
               alt="delete"
@@ -57,7 +57,7 @@ const CustomMultiselect = ({ array, label, name, setValue, onChange }) => {
             onClick={() => handleSelect(item)}
             endContent={selectedItems.includes(item) && <p>Seleccionado</p>}
           >
-            {item.userInfo.fullName}
+            {item.name}
           </AutocompleteItem>
         ))}
       </Autocomplete>
@@ -65,4 +65,4 @@ const CustomMultiselect = ({ array, label, name, setValue, onChange }) => {
   );
 };
 
-export default CustomMultiselect;
+export default NextAutoComplete;

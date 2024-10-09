@@ -4,10 +4,11 @@ const useUsersSellers = () => {
   const [userSellerResponse, setUsersSellerResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(2);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
+  const [route, setRoute] = useState(null);
   const getUsersSellers = async () => {
     try {
       setLoading(true);
@@ -15,6 +16,7 @@ const useUsersSellers = () => {
         page,
         itemsPerPage,
         search,
+        route,
       });
       setTotalPage(data.pagination.totalPages);
       setUsersSellerResponse(data);
@@ -28,7 +30,7 @@ const useUsersSellers = () => {
 
   useEffect(() => {
     getUsersSellers();
-  }, [page, itemsPerPage, modified, search]);
+  }, [page, itemsPerPage, modified, search, route]);
   return {
     userSellerResponse,
     loading,
@@ -40,6 +42,7 @@ const useUsersSellers = () => {
     setModified,
     modified,
     setSearch,
+    setRoute,
   };
 };
 
