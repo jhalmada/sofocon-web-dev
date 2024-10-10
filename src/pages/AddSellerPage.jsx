@@ -11,6 +11,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import useRoles from "../hooks/roles/use.roles";
 import { useForm } from "react-hook-form";
+import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes";
 const AddSellerPage = () => {
   const {
     register,
@@ -26,6 +27,18 @@ const AddSellerPage = () => {
     useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [mnsError, setMnsError] = useState("");
+
+  //hooks
+  const {
+    sellerRoutesResponse,
+    setItemsPerPage,
+    totalPage,
+    setPage,
+    page,
+    itemsPerPage,
+    setModified,
+  } = useSellerRoutes();
+
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await postAddUsers(userData);
@@ -220,26 +233,20 @@ const AddSellerPage = () => {
                   Asignar ruta:
                 </label>
                 <Select
-                  isDisabled={checkSelected === "nuevo"}
                   labelPlacement="outside"
                   placeholder="Ruta"
                   className="max-w rounded-lg border font-roboto font-medium"
-                  {...register("role", {
-                    required:
-                      checkSelected === "existente"
-                        ? "Debes seleccionar un rol"
-                        : false,
-                  })}
-                  onSelectionChange={(value) => setValue("role", value)}
+                  {...register("routes", {})}
+                  onSelectionChange={(value) => setValue("routes", value)}
                 >
-                  {RolesResponse &&
-                    RolesResponse.map((rol) => (
+                  {sellerRoutesResponse &&
+                    sellerRoutesResponse.map((rol) => (
                       <SelectItem key={rol.id}>{rol.name}</SelectItem>
                     ))}
                 </Select>
-                {errors.role && errors.role.message && (
+                {errors.routes && errors.routes.message && (
                   <span className="absolute -bottom-5 left-0 font-roboto text-xs text-red_e">
-                    {errors.role.message}
+                    {errors.routes.message}
                   </span>
                 )}
               </div>
