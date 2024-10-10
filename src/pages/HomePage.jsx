@@ -4,7 +4,7 @@ import useUsersSellers from "../hooks/users/useUsersSellers";
 
 const HomePage = () => {
   const { userSellerResponse, setSearch } = useUsersSellers();
-  console.log(userSellerResponse);
+
   const {
     register,
     handleSubmit,
@@ -13,9 +13,7 @@ const HomePage = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const onSubmit = (data) => {};
   return (
     <div className="min-h-full bg-gray p-6">
       <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">

@@ -11,6 +11,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import useRoles from "../hooks/roles/use.roles";
 import { useForm } from "react-hook-form";
+import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes";
 const AddSellerPage = () => {
   const {
     register,
@@ -26,6 +27,18 @@ const AddSellerPage = () => {
     useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [mnsError, setMnsError] = useState("");
+
+  //hooks
+  const {
+    sellerRoutesResponse,
+    setItemsPerPage,
+    totalPage,
+    setPage,
+    page,
+    itemsPerPage,
+    setModified,
+  } = useSellerRoutes();
+
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await postAddUsers(userData);
@@ -107,7 +120,7 @@ const AddSellerPage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
-          <div>
+          <div className="space-y-4">
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
@@ -152,7 +165,7 @@ const AddSellerPage = () => {
               errorApi={errors.email}
               msjError={errors.email ? errors.email.message : ""}
             />
-            <div className="pb-8">
+            <div>
               <Input
                 type="password"
                 label={"Contraseña"}
@@ -184,13 +197,14 @@ const AddSellerPage = () => {
                 *Este campo debe contener entre 8 y 20 caracteres alfanuméricos
               </p>
             </div>
-            <div className="space-y-4">
-              <div>
+            <div className="space-y-6">
+              <div className="relative">
                 <label className="text-gray-700 block text-sm font-light">
-                  Asignar rol existente:
+                  Rol
                 </label>
                 <Select
-                  isDisabled={checkSelected === "nuevo"}
+                  defaultSelectedKeys={["b3137878-2db6-41a0-a697-49638086ca83"]}
+                  isDisabled={true}
                   labelPlacement="outside"
                   placeholder="Rol"
                   className="max-w rounded-lg border font-roboto font-medium"
@@ -207,47 +221,38 @@ const AddSellerPage = () => {
                       <SelectItem key={rol.id}>{rol.name}</SelectItem>
                     ))}
                 </Select>
-                {errors.role && errors.role.message ? (
-                  <span className="font-roboto text-xs text-red_e">
+
+                {errors.role && errors.role.message && (
+                  <span className="absolute -bottom-5 left-0 font-roboto text-xs text-red_e">
                     {errors.role.message}
                   </span>
-                ) : (
-                  ""
                 )}
               </div>
-              <div>
+              <div className="relative">
                 <label className="text-gray-700 block text-sm font-light">
                   Asignar ruta:
                 </label>
                 <Select
-                  isDisabled={checkSelected === "nuevo"}
                   labelPlacement="outside"
                   placeholder="Ruta"
                   className="max-w rounded-lg border font-roboto font-medium"
-                  {...register("role", {
-                    required:
-                      checkSelected === "existente"
-                        ? "Debes seleccionar un rol"
-                        : false,
-                  })}
-                  onSelectionChange={(value) => setValue("role", value)}
+                  {...register("routes", {})}
+                  onSelectionChange={(value) => setValue("routes", value)}
                 >
-                  {RolesResponse &&
-                    RolesResponse.map((rol) => (
+                  {sellerRoutesResponse &&
+                    sellerRoutesResponse.map((rol) => (
                       <SelectItem key={rol.id}>{rol.name}</SelectItem>
                     ))}
                 </Select>
-                {errors.role && errors.role.message ? (
-                  <span className="font-roboto text-xs text-red_e">
-                    {errors.role.message}
+                {errors.routes && errors.routes.message && (
+                  <span className="absolute -bottom-5 left-0 font-roboto text-xs text-red_e">
+                    {errors.routes.message}
                   </span>
-                ) : (
-                  ""
                 )}
               </div>
             </div>
           </div>
-          <div className="flex w-full justify-end">
+          <div className="mt-10 flex w-full justify-end">
             <Button
               text={"GUARDAR"}
               color={"save"}

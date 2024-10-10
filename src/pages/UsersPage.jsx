@@ -23,7 +23,10 @@ import useRoles from "../hooks/roles/use.roles.js";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { permisos } from "../utils/permisons";
 import { BASE_URL } from "../utils/Constants.js";
-import { getClientsExcel } from "../services/companies/companies.routes.js";
+import {
+  getClientsExcel,
+  getClientsPdf,
+} from "../services/companies/companies.routes.js";
 import SellersPage from "./SellersPage.jsx";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
@@ -41,7 +44,6 @@ const UsersPage = () => {
     setModified,
   } = useUsers();
   const { RolesResponse } = useRoles();
-  console.log("RolesResponse", usersResponse);
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -394,24 +396,27 @@ const UsersPage = () => {
         onAccept={handleConfirmCancel}
       >
         Elige el formato en el que desea descargar el contenido de la lista:
-        <div className="mt-5">
+        <div className="mt-4 flex flex-col space-y-4">
           <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
             <Button
               text="Descargar archivo Excel"
               icon={DownloadIcon}
-              color={"selected"}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+
+          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+            <Button
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
               shadow="shadow-blur"
               iconPosition={"left"}
             />
           </a>
         </div>
-        <Button
-          text="Descargar archivo PDF"
-          icon={DownloadIcon}
-          color={"cancel"}
-          shadow="shadow-blur"
-          iconPosition={"left"}
-        />
       </ReusableModal>
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}

@@ -8,6 +8,8 @@ import ReusableModal from "../components/modals/ReusableModal";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
+import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes";
+import { useState } from "react";
 
 const AddSellerRoutePage = ({
   arraySeller,
@@ -22,9 +24,13 @@ const AddSellerRoutePage = ({
   setModified,
   idCompany,
 }) => {
+  //estados
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [sellerId, setSellerId] = useState(null);
   //Hooks
   const { userSellerResponse, setSearch } = useUsersSellers();
   const { changedSellerRoute } = usePutSellerRoute();
+  const { deleteSellerRoute, isDeleted, isLoading } = useDeleteSellerRoute();
   const {
     register,
     handleSubmit,
@@ -32,6 +38,7 @@ const AddSellerRoutePage = ({
     setValue,
     formState: { errors },
   } = useForm();
+
   //funciones
   const onSubmit = (data) => {
     const sellers = data.vendedores.map((seller) => ({ id: seller.id }));
@@ -40,6 +47,22 @@ const AddSellerRoutePage = ({
     };
     changedSellerRoute(newData, idCompany, setModified);
     closeModal();
+  };
+
+  const openConfirmDeleteModal = (id) => {
+    setSellerId(id);
+    setConfirmDeleteModalOpen(true);
+  };
+  const handleConfirmDelete = () => {
+    const newSellersArray = transformData(arraySeller).filter(
+      (element) => element.id !== sellerId,
+    );
+    const newArray = newSellersArray.map((seller) => ({ id: seller.id }));
+    const newData = {
+      user: [...newArray],
+    };
+    changedSellerRoute(newData, idCompany, setModified);
+    setConfirmDeleteModalOpen(false);
   };
 
   //funcion para transformar los Arrays
@@ -90,7 +113,7 @@ const AddSellerRoutePage = ({
                 contact={seller.email}
                 state="Activo"
                 deleteIconSrc={deleteIcon}
-                // onDeleteClick={() => openConfirmDeleteModal()}
+                onDeleteClick={() => openConfirmDeleteModal(seller.id)}
               />
             ))}
           </tbody>
@@ -125,6 +148,16 @@ const AddSellerRoutePage = ({
             <p>{errors.vendedores && errors.vendedores.message}</p>
           </form>
         </div>
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isConfirmDeleteModalOpen}
+        onClose={() => setConfirmDeleteModalOpen(false)}
+        title="Eliminar vendedor"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={() => handleConfirmDelete()}
+      >
+        Este vendedor será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

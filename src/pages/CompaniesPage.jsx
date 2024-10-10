@@ -25,7 +25,10 @@ import closeIcon from "../assets/icons/x-lg.svg";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
-import { getClientsExcel } from "../services/companies/companies.routes.js";
+import {
+  getClientsExcel,
+  getClientsPdf,
+} from "../services/companies/companies.routes.js";
 import { I18nProvider } from "@react-aria/i18n";
 
 const COMPANIE_TAB = "companies";
@@ -662,7 +665,7 @@ const CompaniesPage = () => {
         onAccept={handleConfirmCancel}
       >
         Elige el formato en el que desea descargar el contenido de la lista:
-        <div className="mt-5">
+        <div className="mt-4 flex flex-col space-y-4">
           <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
             <Button
               text="Descargar archivo Excel"
@@ -672,14 +675,17 @@ const CompaniesPage = () => {
               iconPosition={"left"}
             />
           </a>
+
+          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+            <Button
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
         </div>
-        <Button
-          text="Descargar archivo PDF"
-          icon={DownloadIcon}
-          color={"cancel"}
-          shadow="shadow-blur"
-          iconPosition={"left"}
-        />
       </ReusableModal>
 
       <ReusableModal
