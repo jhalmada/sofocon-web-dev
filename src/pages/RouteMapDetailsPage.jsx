@@ -397,7 +397,7 @@ const RouteMapDetailsPage = () => {
             isModalOpen={isModalOpen}
             closeModal={closeModal}
             handleCancelClick={handleCancelClick}
-            setModified={setModifiedCompanies}
+            setModified={setModified}
             idCompany={id}
           />
         )}
