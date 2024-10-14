@@ -18,6 +18,7 @@ import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
+import { s } from "framer-motion/client";
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
@@ -100,12 +101,14 @@ const RoutesPage = () => {
       setIsModalOpen(true);
     }
   };
+
+  const stringToBoolean = (str) => JSON.parse(str);
   const onSubmit = (data) => {
     const { name, zone, status } = data;
     const sellerData = {
       name,
       zone,
-      isActive: status,
+      isActive: stringToBoolean(status),
     };
     handleRouteCreation(sellerData);
   };
@@ -188,14 +191,15 @@ const RoutesPage = () => {
                 </tr>
               </thead>
               <tbody>
+                {console.log(sellerRoutesResponse)}
                 {sellerRoutesResponse.map((seller, index) => (
                   <RouteRow
                     id={seller.id}
                     key={index}
                     name={seller.name}
                     zone={seller.zone}
-                    companies="21"
-                    sellers={seller.user[0].userInfo.fullName}
+                    companies={seller.totalClients}
+                    sellers={seller.user.length}
                     state={seller.isActive}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}

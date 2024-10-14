@@ -3,7 +3,14 @@ import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import x from "../../assets/icons/x.svg";
 import search from "../../assets/icons/search.svg";
 
-const NextAutoComplete = ({ array, label, name, setValue, onChange }) => {
+const NextAutoComplete = ({
+  array,
+  label,
+  name,
+  setValue,
+  onChange,
+  label2,
+}) => {
   //estados
   const [selectedItems, setSelectedItems] = useState([]);
 
@@ -26,7 +33,10 @@ const NextAutoComplete = ({ array, label, name, setValue, onChange }) => {
 
   return (
     <div>
-      <div className="mt-2 flex w-96 flex-wrap">
+      <div className="mt-2 flex w-full flex-wrap">
+        {selectedItems.length > 0 && (
+          <p className="font-roboto text-sm">{label2}</p>
+        )}
         {selectedItems.map((item, index) => (
           <span
             key={index}
@@ -44,7 +54,7 @@ const NextAutoComplete = ({ array, label, name, setValue, onChange }) => {
       </div>
       <label className="mt-2 block font-roboto text-sm">{label}</label>
       <Autocomplete
-        className="w-96 rounded-lg border"
+        className="w-full rounded-lg border"
         selectedKey={""}
         placeholder="Buscar"
         startContent={<img src={search}></img>}

@@ -7,6 +7,7 @@ const useSellerRoutes = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [modified, setModified] = useState(false);
+  const [search, setSearch] = useState("");
 
   //la funcion principal
   const getAllSellerRoutes = async () => {
@@ -39,6 +40,8 @@ const useSellerRoutes = () => {
     itemsPerPage,
     setModified,
     modified,
+    search,
+    setSearch,
   };
 };
 

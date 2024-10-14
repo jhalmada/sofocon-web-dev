@@ -139,6 +139,7 @@ const AddSellerRoutePage = ({
         <div className="space-y-2">
           <form onSubmit={handleSubmit(onSubmit)}>
             <NextAutoComplete
+              label2={"Vendedores Asignados"}
               array={transformData(userSellerResponse?.result || []) || []}
               name={"vendedores"}
               label={"Agregar Vendedores"}

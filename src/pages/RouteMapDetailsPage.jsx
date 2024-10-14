@@ -295,7 +295,7 @@ const RouteMapDetailsPage = () => {
                 />
               </div>
             )}
-            {(activeTab === MAP_TAB || activeTab === COMPANIES_TAB) && (
+            {activeTab === COMPANIES_TAB && (
               <div className="flex space-x-4">
                 <Button
                   text="Agregar empresa"
@@ -358,12 +358,13 @@ const RouteMapDetailsPage = () => {
                 </tr>
               </thead>
               <tbody>
+                {console.log(datos)}
                 <RouteMapDetailsRow
                   name={datos?.name || "Nombre de la ruta"}
                   zone={datos?.zone || "zona de la ruta"}
                   companies={datos?.totalClients || "cargando"}
                   sellers={datos?.totalSeller || "cargando"}
-                  state="Activo"
+                  state={datos?.isActive || "cargando"}
                 />
               </tbody>
             </table>
