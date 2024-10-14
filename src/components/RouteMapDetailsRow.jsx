@@ -8,7 +8,7 @@ const RouteMapDetailsRow = ({ name, zone, companies, sellers, state }) => {
         <td className="p-2">{zone}</td>
         <td className="p-2">{companies}</td>
         <td className="p-2">{sellers}</td>
-        <td className="p-2 text-sm leading-[1.16rem]">{state}</td>
+        <td className="p-2">{state ? "Activo" : "Inactivo"}</td>
       </tr>
       <tr className="border-b border-gray">
         <td colSpan="5">

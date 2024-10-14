@@ -12,32 +12,25 @@ import { Select, SelectItem } from "@nextui-org/select";
 import useRoles from "../hooks/roles/use.roles";
 import { useForm } from "react-hook-form";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes";
+import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 const AddSellerPage = () => {
+  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+    useState(false);
+  const [mnsError, setMnsError] = useState("");
+
+  //hooks
+  const { RolesResponse } = useRoles();
+  const { postAddUsers } = AddUsers();
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-  const navigate = useNavigate();
-  const { RolesResponse } = useRoles();
-  const { postAddUsers, loading } = AddUsers();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [mnsError, setMnsError] = useState("");
-
-  //hooks
-  const {
-    sellerRoutesResponse,
-    setItemsPerPage,
-    totalPage,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-  } = useSellerRoutes();
+  const { sellerRoutesResponse, setSearch } = useSellerRoutes();
+  console.log(sellerRoutesResponse);
 
   const handleUserCreation = async (userData) => {
     try {
@@ -57,29 +50,22 @@ const AddSellerPage = () => {
       }
     }
   };
+
+  //funciones
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          fullName,
-          email,
-          password,
-          role: { id: role },
-        });
-        break;
-      default:
-        handleUserCreation({
-          fullName,
-          email,
-          password,
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-          },
-        });
-    }
+    const { fullName, email, password, route, ci, phone } = data;
+
+    handleUserCreation({
+      email,
+      fullName,
+      password,
+      ci,
+      phone,
+      role: { id: "b3137878-2db6-41a0-a697-49638086ca83" },
+      sellerRoute: route?.map((route) => ({ id: route.id })) || [],
+    });
   };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -88,8 +74,17 @@ const AddSellerPage = () => {
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
-    navigate("/inicio/usuarios");
+    navigate("/inicio/personal");
   };
+
+  //funcion para transformar los Arrays
+  const transformData = (array) => {
+    return array.map((item) => ({
+      id: item.id,
+      name: item.name,
+    }));
+  };
+
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -126,6 +121,14 @@ const AddSellerPage = () => {
               placeholder={"Escribe el nombre completo del usuario..."}
               {...register("fullName", {
                 required: "Este campo es obligatorio",
+                maxLength: {
+                  value: 50,
+                  message: "Solo se permiten 50 caracteres",
+                },
+                minLength: {
+                  value: 2,
+                  message: "Se requieren al menos 2 caracteres",
+                },
               })}
               errorApi={errors.fullName}
               msjError={errors.fullName ? errors.fullName.message : ""}
@@ -133,20 +136,36 @@ const AddSellerPage = () => {
             <Input
               label={"CI"}
               placeholder={"123456789"}
-              {...register("fullName", {
+              {...register("ci", {
                 required: "Este campo es obligatorio",
+                maxLength: {
+                  value: 8,
+                  message: "Solo se permiten 8 caracteres",
+                },
+                minLength: {
+                  value: 8,
+                  message: "Se requieren al menos 8 caracteres",
+                },
               })}
-              errorApi={errors.fullName}
-              msjError={errors.fullName ? errors.fullName.message : ""}
+              errorApi={errors.ci}
+              msjError={errors.ci ? errors.ci.message : ""}
             />
             <Input
               label={"Teléfono de contacto"}
               placeholder={"123456789"}
-              {...register("fullName", {
+              {...register("phone", {
                 required: "Este campo es obligatorio",
+                maxLength: {
+                  value: 12,
+                  message: "Solo se permiten 12 caracteres",
+                },
+                minLength: {
+                  value: 12,
+                  message: "Se requieren al menos 12 caracteres",
+                },
               })}
-              errorApi={errors.fullName}
-              msjError={errors.fullName ? errors.fullName.message : ""}
+              errorApi={errors.phone}
+              msjError={errors.phone ? errors.phone.message : ""}
             />
             <Input
               placeholder={"Escribe el email del usuario"}
@@ -208,12 +227,7 @@ const AddSellerPage = () => {
                   labelPlacement="outside"
                   placeholder="Rol"
                   className="max-w rounded-lg border font-roboto font-medium"
-                  {...register("role", {
-                    required:
-                      checkSelected === "existente"
-                        ? "Debes seleccionar un rol"
-                        : false,
-                  })}
+                  {...register("role", {})}
                   onSelectionChange={(value) => setValue("role", value)}
                 >
                   {RolesResponse &&
@@ -229,26 +243,15 @@ const AddSellerPage = () => {
                 )}
               </div>
               <div className="relative">
-                <label className="text-gray-700 block text-sm font-light">
-                  Asignar ruta:
-                </label>
-                <Select
-                  labelPlacement="outside"
-                  placeholder="Ruta"
-                  className="max-w rounded-lg border font-roboto font-medium"
-                  {...register("routes", {})}
-                  onSelectionChange={(value) => setValue("routes", value)}
-                >
-                  {sellerRoutesResponse &&
-                    sellerRoutesResponse.map((rol) => (
-                      <SelectItem key={rol.id}>{rol.name}</SelectItem>
-                    ))}
-                </Select>
-                {errors.routes && errors.routes.message && (
-                  <span className="absolute -bottom-5 left-0 font-roboto text-xs text-red_e">
-                    {errors.routes.message}
-                  </span>
-                )}
+                <NextAutoComplete
+                  label2={"Rutas Asignadas"}
+                  array={transformData(sellerRoutesResponse || []) || []}
+                  name={"route"}
+                  label={"Asignar Ruta"}
+                  setValue={setValue}
+                  onChange={setSearch}
+                />
+                <p>{errors.vendedores && errors.vendedores.message}</p>
               </div>
             </div>
           </div>

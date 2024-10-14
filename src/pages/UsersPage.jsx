@@ -278,7 +278,9 @@ const UsersPage = () => {
             </div>
           </div>
         )}
-        {activeTab === SELLERS_TAB && <SellersPage />}
+        {activeTab === SELLERS_TAB && (
+          <SellersPage openConfirmDeleteModal={openConfirmDeleteModal} />
+        )}
         {activeTab === ROLES_TAB && <TableRole />}
       </div>
       <ReusableModal

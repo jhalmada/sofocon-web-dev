@@ -360,12 +360,13 @@ const RouteMapDetailsPage = () => {
                 </tr>
               </thead>
               <tbody>
+                {console.log(datos)}
                 <RouteMapDetailsRow
                   name={datos?.name || "Nombre de la ruta"}
                   zone={datos?.zone || "zona de la ruta"}
                   companies={datos?.totalClients || "cargando"}
                   sellers={datos?.totalSeller || "cargando"}
-                  state="Activo"
+                  state={datos?.isActive || "cargando"}
                 />
               </tbody>
             </table>
