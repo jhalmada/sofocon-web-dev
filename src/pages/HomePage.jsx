@@ -25,21 +25,7 @@ const HomePage = () => {
         <div className="h-[7.875rem] w-[15.44rem] bg-white"></div>
         <div className="h-[7.875rem] w-[15.44rem] bg-white"></div>
       </div>
-      <div className="mt-10 h-[16rem] bg-white">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <NextAutoComplete
-            array={userSellerResponse?.result || []}
-            name={"vendedores"}
-            label={"Agregar Vendedores"}
-            setValue={setValue}
-            onChange={setSearch}
-          />
-          <p>{errors.vendedores && errors.vendedores.message}</p>
-          <button type="submit" className="mt-8">
-            enviar
-          </button>
-        </form>
-      </div>
+      <div className="mt-10 h-[16rem] bg-white"></div>
     </div>
   );
 };

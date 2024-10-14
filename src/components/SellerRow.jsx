@@ -11,6 +11,7 @@ const SellerRow = ({
   onEditClick,
   onDeleteClick,
 }) => {
+  const opciones = ["Activo", "Inactivo"];
   return (
     <tr className="border-b border-gray">
       <td className="p-2">{fullName}</td>
@@ -22,9 +23,13 @@ const SellerRow = ({
       </td>
       <td className="p-2">{route}</td>
       <td className="p-2 text-md font-semibold leading-[1.16rem]">
-        <Select placeholder={state} className="mb-4 mt-4 rounded-lg border">
-          <SelectItem>Inactivo</SelectItem>
-          <SelectItem>Activo</SelectItem>
+        <Select
+          defaultSelectedKeys={[state ? "Activo" : "Inactivo"]}
+          className="mb-4 mt-4 rounded-lg border"
+        >
+          {opciones.map((opcion) => (
+            <SelectItem key={opcion}>{opcion}</SelectItem>
+          ))}
         </Select>
       </td>
       <td className="cursor-pointer p-2 underline">{info}</td>

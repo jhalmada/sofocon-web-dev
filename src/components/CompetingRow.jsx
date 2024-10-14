@@ -1,5 +1,19 @@
 import { Link } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
+const translateState = (state) => {
+  switch (state) {
+    case "POTENTIAL":
+      return "Potencial";
+    case "UNSUBSCRIBED":
+      return "De baja";
+    case "FRECUENT":
+      return "Frecuente";
+    case "COMPETENCE":
+      return "Competencia";
+    default:
+      return state;
+  }
+};
 
 const CompetingRow = ({
   name,
@@ -14,7 +28,7 @@ const CompetingRow = ({
   onDeleteClick,
 }) => {
   return (
-    <tr>
+    <tr className="border-b border-gray">
       <div className="flex">
         <img
           src={watchIcon}
@@ -26,7 +40,9 @@ const CompetingRow = ({
       <td className="max-w-[15rem] p-2">{direction}</td>
       <td className="p-2">{currentCompany}</td>
       <td className="p-2">{nextVisits}</td>
-      <td className="p-2 text-md font-semibold leading-[1.16rem]">{state}</td>
+      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+        {translateState(state)}
+      </td>
       <td className="p-2">
         <div className="flex justify-center gap-4">
           <Link to={"notas"}>

@@ -28,6 +28,7 @@ const AddUserPage = () => {
     useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [mnsError, setMnsError] = useState("");
+  const options = ["Activo", "Inactivo"];
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await postAddUsers(userData);
@@ -47,11 +48,24 @@ const AddUserPage = () => {
     }
   };
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
+    const {
+      fullName,
+      ci,
+      phone,
+      email,
+      password,
+      role,
+      nameRole,
+      permissions,
+      state,
+    } = data;
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
+          state,
           fullName,
+          ci,
+          phone,
           email,
           password,
           role: { id: role },
@@ -59,7 +73,10 @@ const AddUserPage = () => {
         break;
       default:
         handleUserCreation({
+          state,
           fullName,
+          ci,
+          phone,
           email,
           password,
           role: {
@@ -112,15 +129,16 @@ const AddUserPage = () => {
         >
           <div>
             <Select
-              label={"Estado"}
               labelPlacement="outside"
+              label="Estado"
               placeholder="Activo"
-              className="mb-4 w-1/6 rounded-lg border text-sm"
-              {...register("status")}
-              onSelectionChange={(value) => setValue("status", value)}
+              className="mb-3 w-1/6 rounded-lg border"
+              {...register("state", {})}
+              onSelectionChange={(value) => setValue("state", value)}
             >
-              <SelectItem key={true}> Activo</SelectItem>
-              <SelectItem key={false}>Inactivo</SelectItem>
+              {options.map((option) => (
+                <SelectItem key={option}>{option}</SelectItem>
+              ))}
             </Select>
             <Input
               label={"Nombre Completo"}
@@ -134,7 +152,7 @@ const AddUserPage = () => {
             <Input
               label={"CI"}
               placeholder={"123456789"}
-              {...register("fullName", {
+              {...register("ci", {
                 required: "Este campo es obligatorio",
               })}
               errorApi={errors.fullName}
@@ -143,7 +161,7 @@ const AddUserPage = () => {
             <Input
               label={"Teléfono de contacto"}
               placeholder={"123456789"}
-              {...register("fullName", {
+              {...register("phone", {
                 required: "Este campo es obligatorio",
               })}
               errorApi={errors.fullName}

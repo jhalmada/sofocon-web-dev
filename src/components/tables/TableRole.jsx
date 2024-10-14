@@ -12,8 +12,29 @@ import useRoles from "../../hooks/roles/use.roles";
 import ReusableModal from "../modals/ReusableModal";
 import Input from "../inputs/Input";
 
+const translatePermission = (permission) => {
+  switch (permission) {
+    case "USER_SUPER_ADMIN":
+      return "ADMIN";
+    case "ACCESS_APP":
+      return "APP";
+    case "SECTION_ROUTES":
+      return "RUTAS";
+    case "SECTION_ADMINISTRATION":
+      return "EMPRESAS";
+    case "SECTION_SELLER":
+      return "VENDEDORES";
+    case "SECTION_WORKSHOP":
+      return "TALLER";
+    default:
+      return permission;
+  }
+};
 const formatPermisos = (permisos, excludeWords = ["USER_ADMIN"]) => {
-  return permisos.filter((p) => !excludeWords.includes(p)).join("/");
+  return permisos
+    .filter((p) => !excludeWords.includes(p))
+    .map(translatePermission)
+    .join("/");
 };
 
 const TableRole = () => {
@@ -117,6 +138,7 @@ const TableRole = () => {
   const pageIndexChange = (e) => {
     setRolePage(e);
   };
+
   return (
     <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
@@ -138,6 +160,7 @@ const TableRole = () => {
             <tr key={index} className="border-b border-gray">
               <td className="p-2">{role.name}</td>
               <td className="p-2">{formatPermisos(role.permissions)}</td>
+
               <td className="p-2">
                 <div className="flex gap-4">
                   <img

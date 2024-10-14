@@ -99,7 +99,6 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
               fullName={`${user.userInfo.fullName} `}
               email={user.email}
               route={"Ruta"}
-              state={"Activo"}
               info={"Ver más"}
               editIconSrc={editIcon}
               deleteIconSrc={deleteIcon}
@@ -141,7 +140,7 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
           />
           <Input
             label={"Telefono"}
-            placeholder={"Escribe tu numero telefonico."}
+            placeholder={"Escribe tu numero telefónico."}
             {...register("phone", {
               required: "Este campo es obligatorio",
               pattern: {
@@ -162,7 +161,7 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
           />
           <Input
             label={"CI"}
-            placeholder={"Escribe tu numero telefonico."}
+            placeholder={"Escribe tu numero de CI."}
             {...register("ci", {
               required: "Este campo es obligatorio",
               pattern: {

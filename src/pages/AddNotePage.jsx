@@ -4,21 +4,16 @@ import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Input from "../components/inputs/Input";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import useUsers from "../hooks/users/use.users.js";
-import usePutUsers from "../hooks/users/usePutUsers.js";
+import useNotes from "../hooks/notes/useNotes.js";
+import usePutNotes from "../hooks/notes/usePutNotes.js";
 import { useForm } from "react-hook-form";
-import useRoles from "../hooks/roles/use.roles";
-import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 const NOTES_TAB = "notes";
 const AddNotesPage = () => {
-  const [userPage, setUserPage] = useState(5);
-  const { changedUser, isChanged } = usePutUsers();
-  const [userId, setUserId] = useState(null);
-  const { usersResponse, loading } = useUsers();
-  const { RolesResponse } = useRoles();
-  const { deleteUser, isDeleted, isLoading } = useDeleteUsers();
+  const [NotePage, setNotePage] = useState(5);
+  const { changedNote, isChanged } = usePutNotes();
+  const [noteId, setNoteId] = useState(null);
   const [activeTab, setActiveTab] = useState(NOTES_TAB);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,13 +22,17 @@ const AddNotesPage = () => {
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
-  const [userData, setUserData] = useState(null);
-  const totalUsers = usersResponse ? usersResponse.length : 0;
-  const totalPages = Math.ceil(totalUsers / userPage);
-  const startIndex = (currentPage - 1) * userPage;
-  const paginatedUsers = usersResponse
-    ? usersResponse.slice(startIndex, startIndex + userPage)
-    : [];
+  const [noteData, setNoteData] = useState(null);
+
+  const {
+    notesResponse,
+    setItemsPerPage,
+    totalPage,
+    setPage,
+    page,
+    itemsPerPage,
+    setModified,
+  } = useNotes();
   const {
     register,
     handleSubmit,
@@ -41,23 +40,23 @@ const AddNotesPage = () => {
     formState: { errors },
   } = useForm();
   const openModal = (id) => {
-    const userToEdit = usersResponse.find((user) => user.id === id);
-    if (userToEdit) {
-      setUserData({
-        userInfo: {
-          fullName: userToEdit.userInfo.fullName,
-          email: userToEdit.email,
-        },
-        role: {
-          id: userToEdit.role.id,
+    const noteToEdit = notesResponse.find((note) => note.id === id);
+    if (noteToEdit) {
+      setNoteData({
+        title: notesResponse.title,
+        description: notesResponse.description,
+        date: notesResponse.date,
+        client: {
+          id: notesResponse.client.id,
         },
       });
-      setValue("fullName", userToEdit.userInfo.fullName);
-      setValue("email", userToEdit.email);
-      setValue("role", userToEdit.role.id);
+      setValue("title", noteToEdit.title);
+      setValue("description", noteToEdit.description);
+      setValue("date", noteToEdit.date);
+      setValue("client", noteToEdit.client.id);
     }
     setIsModalOpen(true);
-    setUserId(id);
+    setNoteId(id);
   };
   const closeModal = () => {
     setIsModalOpen(false);
@@ -73,12 +72,12 @@ const AddNotesPage = () => {
     closeModal();
   };
   const openConfirmDeleteModal = (id) => {
-    setUserId(id);
+    setNoteId(id);
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
   const handleConfirmDelete = () => {
-    deleteUser(userId);
+    deleteNote(noteId);
     closeConfirmDeleteModal();
   };
   const handleCancelClick = () => openConfirmCancelModal();
@@ -86,47 +85,31 @@ const AddNotesPage = () => {
     closeConfirmCancelModal();
     closeModal();
   };
-  const handleUserCreation = async (userData) => {
+  const handleNoteCreation = async (noteData) => {
     try {
-      const newUser = await changedUser(userData, userId);
-      if (newUser) {
+      const newNote = await changedNote(noteData, noteId);
+      if (newNote) {
         setSaveConfirmationModalOpen(true);
       } else {
         console.error(
-          "No se recibió un nuevo usuario después de la actualización",
+          "No se recibió una nueva nota después de la actualización",
         );
       }
     } catch (error) {
-      console.error("Error al actualizar el usuario:", error);
+      console.error("Error al actualizar la nota:", error);
       setIsModalOpen(true);
     }
   };
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          email,
-          password,
-          userInfo: {
-            fullName,
-          },
-          role: { id: role },
-        });
-        break;
-      default:
-        handleUserCreation({
-          email,
-          password,
-          fullName: {
-            fullName,
-          },
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-          },
-        });
-    }
+    const { title, description, date, id } = data;
+    handleNoteCreation({
+      title,
+      description,
+      date,
+      client: {
+        id,
+      },
+    });
   };
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -268,7 +251,7 @@ const AddNotesPage = () => {
         title="Eliminar usuario"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete(userId)}
+        onAccept={() => handleConfirmDelete(noteId)}
       >
         Este usuario será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>

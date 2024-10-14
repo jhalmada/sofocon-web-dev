@@ -599,12 +599,10 @@ const CompaniesPage = () => {
               })}
               onSelectionChange={(value) => setValue("status", value)}
             >
-              <SelectItem key={"Frecuente"}>Frecuente</SelectItem>
-              <SelectItem key={"Potencial"}>Potencial</SelectItem>
-              <SelectItem key={"de Baja"}>De Baja</SelectItem>
-              <SelectItem key={"Potencial/Competencia"}>
-                Potencial/Competencia
-              </SelectItem>
+              <SelectItem key={"FRECUENT"}>Frecuente</SelectItem>
+              <SelectItem key={"POTENTIAL"}>Potencial</SelectItem>
+              <SelectItem key={"UNSUBSCRIBED"}>De Baja</SelectItem>
+              <SelectItem key={"COMPETENCE"}>Competencia</SelectItem>
             </Select>
             <p className="font-roboto text-xs text-red_e">
               {errors.status ? errors.status.message : ""}
@@ -666,7 +664,11 @@ const CompaniesPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getClientsExcel}?competence=false`}
+            download
+            target="_blank"
+          >
             <Button
               text="Descargar archivo Excel"
               icon={DownloadIcon}

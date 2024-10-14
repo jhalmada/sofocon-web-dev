@@ -6,7 +6,7 @@ const RouteSellerDetailsRow = ({
   deleteIconSrc,
 }) => {
   return (
-    <tr>
+    <tr className="border-b border-gray">
       <td className="p-2">{name}</td>
       <td className="p-2">{contact}</td>
 

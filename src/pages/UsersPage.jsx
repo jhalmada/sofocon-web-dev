@@ -64,6 +64,8 @@ const UsersPage = () => {
     if (userToEdit) {
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
+      setValue("ci", userToEdit.userInfo.ci);
+      setValue("phone", userToEdit.userInfo.phone);
       setValue("role", userToEdit?.role?.id || "");
     }
     setIsModalOpen(true);
@@ -115,7 +117,17 @@ const UsersPage = () => {
     }
   };
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
+    const {
+      fullName,
+      ci,
+      phone,
+      email,
+      password,
+      role,
+      nameRole,
+      permissions,
+      state,
+    } = data;
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
@@ -123,6 +135,8 @@ const UsersPage = () => {
           password,
           userInfo: {
             fullName,
+            ci,
+            phone,
           },
           role: { id: role },
         });
@@ -133,6 +147,8 @@ const UsersPage = () => {
           password,
           fullName: {
             fullName,
+            ci,
+            phone,
           },
           role: {
             name: nameRole,
@@ -244,6 +260,9 @@ const UsersPage = () => {
                       />
                     </div>
                   </th>
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                    Estado
+                  </th>
                   <th className="p-2 text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
@@ -255,7 +274,6 @@ const UsersPage = () => {
                     key={index}
                     fullName={`${user.userInfo.fullName} `}
                     email={user.email}
-                    password=""
                     role={user?.role?.name}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
@@ -296,6 +314,24 @@ const UsersPage = () => {
             label={"Nombre Completo"}
             placeholder={"Escribe el nombre completo del usuario..."}
             {...register("fullName", {
+              required: "Este campo es obligatorio",
+            })}
+            errorApi={errors.fullName}
+            msjError={errors.fullName ? errors.fullName.message : ""}
+          />
+          <Input
+            label={"CI"}
+            placeholder={"123456789"}
+            {...register("ci", {
+              required: "Este campo es obligatorio",
+            })}
+            errorApi={errors.fullName}
+            msjError={errors.fullName ? errors.fullName.message : ""}
+          />
+          <Input
+            label={"Teléfono de contacto"}
+            placeholder={"123456789"}
+            {...register("phone", {
               required: "Este campo es obligatorio",
             })}
             errorApi={errors.fullName}

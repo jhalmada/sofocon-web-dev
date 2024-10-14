@@ -191,7 +191,6 @@ const RoutesPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {console.log(sellerRoutesResponse)}
                 {sellerRoutesResponse.map((seller, index) => (
                   <RouteRow
                     id={seller.id}

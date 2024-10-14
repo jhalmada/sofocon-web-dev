@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
-import { UserService } from "../../services/user/user.service.js";
-const useUsers = () => {
-  const [usersResponse, setUsersResponse] = useState([]);
+import { NotesService } from "../../services/notes/notes.service";
+const useNotes = () => {
+  const [notesResponse, setNotesResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
-  const getAllUsers = async () => {
+  const getAllNotes = async () => {
     try {
       setLoading(true);
-      const { data } = await UserService.getAllUsersApi({
+      const { data } = await NotesService.getAllNotesApi({
         page,
         itemsPerPage,
         search,
       });
       setTotalPage(data.pagination.totalPages);
-      setUsersResponse(data.result);
+      setNotesResponse(data.result);
       console.log(data.result);
     } catch (e) {
       console.log(e);
@@ -27,10 +27,10 @@ const useUsers = () => {
   };
 
   useEffect(() => {
-    getAllUsers();
+    getAllNotes();
   }, [page, itemsPerPage, modified]);
   return {
-    usersResponse,
+    notesResponse,
     loading,
     setItemsPerPage,
     totalPage,
@@ -43,4 +43,4 @@ const useUsers = () => {
   };
 };
 
-export default useUsers;
+export default useNotes;

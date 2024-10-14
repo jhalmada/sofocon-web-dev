@@ -28,6 +28,7 @@ const CompetingPage = () => {
     itemsPerPage,
     setModified,
   } = useCompanies();
+  console.log("respuesta: " + companiesResponse);
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -107,7 +108,7 @@ const CompetingPage = () => {
         </thead>
         <tbody>
           {companiesResponse
-            .filter((comp) => comp.status === "Potencial/Competencia")
+            .filter((comp) => comp.status === "COMPETENCE")
             .map((companie, index) => (
               <CompetingRow
                 key={index}
