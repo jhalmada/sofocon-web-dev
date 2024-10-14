@@ -23,11 +23,8 @@ import useRoles from "../hooks/roles/use.roles.js";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { permisos } from "../utils/permisons";
 import { BASE_URL } from "../utils/Constants.js";
-import {
-  getClientsExcel,
-  getClientsPdf,
-} from "../services/companies/companies.routes.js";
 import SellersPage from "./SellersPage.jsx";
+import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
@@ -443,7 +440,7 @@ const UsersPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+          <a href={`${BASE_URL}/${getUsersExcel}`} download target="_blank">
             <Button
               text="Descargar archivo Excel"
               icon={DownloadIcon}
@@ -453,7 +450,7 @@ const UsersPage = () => {
             />
           </a>
 
-          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+          <a href={`${BASE_URL}/${getUsersPdf}`} download target="_blank">
             <Button
               text="Descargar archivo PDF"
               icon={DownloadIcon}
@@ -475,7 +472,7 @@ const UsersPage = () => {
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
           <a
-            href={`${BASE_URL}/${getClientsExcel}?isSeller=true`}
+            href={`${BASE_URL}/${getUsersExcel}?isSeller=true`}
             download
             target="_blank"
           >
@@ -489,7 +486,7 @@ const UsersPage = () => {
           </a>
 
           <a
-            href={`${BASE_URL}/${getClientsPdf}?isSeller=true`}
+            href={`${BASE_URL}/${getUsersPdf}?isSeller=true`}
             download
             target="_blank"
           >

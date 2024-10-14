@@ -15,7 +15,6 @@ import RouteMapDetailsRow from "../components/RouteMapDetailsRow.jsx";
 import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
 import useUsers from "../hooks/users/use.users.js";
 import { BASE_URL } from "../utils/Constants.js";
-import { getSellersExcel } from "../services/user/user.routes.js";
 import {
   getClientsExcel,
   getClientsPdf,
@@ -23,6 +22,7 @@ import {
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import AddSellerRoutePage from "./AddSellerRoutePage.jsx";
 import AddCompanyRoutePage from "./AddCompanyRoutePage.jsx";
+import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
 
 const MAP_TAB = "map";
 const SELLERS_TAB = "sellers";
@@ -360,7 +360,6 @@ const RouteMapDetailsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {console.log(datos)}
                 <RouteMapDetailsRow
                   name={datos?.name || "Nombre de la ruta"}
                   zone={datos?.zone || "zona de la ruta"}
@@ -372,6 +371,7 @@ const RouteMapDetailsPage = () => {
             </table>
           </div>
         )}
+
         {activeTab === SELLERS_TAB && (
           <AddSellerRoutePage
             arraySeller={userSellerResponse.result}
@@ -415,7 +415,7 @@ const RouteMapDetailsPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+          <a href={`${BASE_URL}/${getUsersExcel}`} download target="_blank">
             <Button
               text="Descargar archivo Excel"
               icon={DownloadIcon}
@@ -425,7 +425,7 @@ const RouteMapDetailsPage = () => {
             />
           </a>
 
-          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+          <a href={`${BASE_URL}/${getUsersPdf}`} download target="_blank">
             <Button
               text="Descargar archivo PDF"
               icon={DownloadIcon}

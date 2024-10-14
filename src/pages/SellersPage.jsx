@@ -40,9 +40,7 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
 
   const { sellerRoutesResponse, setSearch } = useSellerRoutes();
   //funciones
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const onSubmit = (data) => {};
   //funcion para editar
   const openModal = (id) => {
     const userToEdit = userSellerResponse?.result.find(

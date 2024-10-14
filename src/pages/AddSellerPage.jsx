@@ -30,7 +30,6 @@ const AddSellerPage = () => {
     formState: { errors },
   } = useForm();
   const { sellerRoutesResponse, setSearch } = useSellerRoutes();
-  console.log(sellerRoutesResponse);
 
   const handleUserCreation = async (userData) => {
     try {

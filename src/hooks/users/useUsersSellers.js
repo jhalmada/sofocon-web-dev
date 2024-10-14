@@ -20,7 +20,6 @@ const useUsersSellers = () => {
       });
       setTotalPage(data.pagination.totalPages);
       setUsersSellerResponse(data);
-      console.log(data);
     } catch (e) {
       console.log(e);
     } finally {

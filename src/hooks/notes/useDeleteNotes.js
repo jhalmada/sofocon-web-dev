@@ -11,7 +11,6 @@ const useDeleteNotes = () => {
       await NotesService.deleteNoteApi(noteId);
       setIsDeleted(true);
       setModified((prev) => !prev);
-      console.log("Nota eliminada con éxito");
     } catch (error) {
       console.error("Error al eliminar la nota: ", error);
     } finally {

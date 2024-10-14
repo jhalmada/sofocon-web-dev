@@ -19,7 +19,6 @@ const useSellerRoutes = () => {
       });
       setTotalPage(data.pagination.totalPages);
       setSellerRouteResponse(data.result);
-      console.log(data);
     } catch (e) {
       console.log(e);
     } finally {

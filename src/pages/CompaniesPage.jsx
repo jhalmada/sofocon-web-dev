@@ -25,11 +25,12 @@ import closeIcon from "../assets/icons/x-lg.svg";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
+import { I18nProvider } from "@react-aria/i18n";
+import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
 import {
   getClientsExcel,
   getClientsPdf,
 } from "../services/companies/companies.routes.js";
-import { I18nProvider } from "@react-aria/i18n";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";

@@ -18,7 +18,6 @@ const useUsers = () => {
       });
       setTotalPage(data.pagination.totalPages);
       setUsersResponse(data.result);
-      console.log(data.result);
     } catch (e) {
       console.log(e);
     } finally {

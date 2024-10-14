@@ -18,7 +18,6 @@ const useNotes = () => {
       });
       setTotalPage(data.pagination.totalPages);
       setNotesResponse(data.result);
-      console.log(data.result);
     } catch (e) {
       console.log(e);
     } finally {

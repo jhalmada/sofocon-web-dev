@@ -13,7 +13,6 @@ const useAddroles = () => {
           setIdRol(response.data.id);
         },
       );
-      console.log(data);
     } catch (e) {
       console.log(e);
     } finally {
