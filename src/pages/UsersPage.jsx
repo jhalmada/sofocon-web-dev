@@ -323,6 +323,7 @@ const UsersPage = () => {
               onClick={() => setCheckSelected("existente")}
               radius="full"
               className="font-light"
+              size="sm"
             >
               Asignar rol existente
             </Checkbox>
@@ -347,6 +348,7 @@ const UsersPage = () => {
               isSelected={checkSelected === "nuevo"}
               onClick={() => setCheckSelected("nuevo")}
               className="font-light"
+              size="sm"
             >
               Asignar nuevo rol
             </Checkbox>

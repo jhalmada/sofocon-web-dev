@@ -375,9 +375,6 @@ const CompaniesPage = () => {
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}
             />
-            <Checkbox radius="full" className="text-sm font-light">
-              Cliente de la competencia
-            </Checkbox>
           </div>
           <Input
             label={"Empresa actual"}
@@ -402,6 +399,7 @@ const CompaniesPage = () => {
               onClick={() => setCompetence(!competence)}
               radius="full"
               className="font-light"
+              size="sm"
             >
               Cliente de la competencia
             </Checkbox>
@@ -521,6 +519,7 @@ const CompaniesPage = () => {
                   onClick={() => setCheckSelected("RUT")}
                   radius="full"
                   className="font-light"
+                  size="sm"
                 >
                   Asignar R.U.T.:
                 </Checkbox>
@@ -555,6 +554,7 @@ const CompaniesPage = () => {
                   onClick={() => setCheckSelected("CI")}
                   radius="full"
                   className="font-light"
+                  size="sm"
                 >
                   Asignar CI:
                 </Checkbox>

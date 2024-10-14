@@ -261,7 +261,9 @@ const RouteMapDetailsPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Nombre de ruta
           </h1>
-          <SearchInput placeholder="Buscar..." />
+          {(activeTab === SELLERS_TAB || activeTab === COMPANIES_TAB) && (
+            <SearchInput placeholder="Buscar..." />
+          )}
         </div>
         <div className="flex items-center">
           <div className="flex">
@@ -295,7 +297,7 @@ const RouteMapDetailsPage = () => {
                 />
               </div>
             )}
-            {(activeTab === MAP_TAB || activeTab === COMPANIES_TAB) && (
+            {activeTab === COMPANIES_TAB && (
               <div className="flex space-x-4">
                 <Button
                   text="Agregar empresa"

@@ -77,7 +77,7 @@ const AddUserPage = () => {
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
-    navigate("/inicio/usuarios");
+    navigate("/inicio/personal");
   };
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
@@ -111,6 +111,17 @@ const AddUserPage = () => {
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
           <div>
+            <Select
+              label={"Estado"}
+              labelPlacement="outside"
+              placeholder="Activo"
+              className="mb-4 w-1/6 rounded-lg border text-sm"
+              {...register("status")}
+              onSelectionChange={(value) => setValue("status", value)}
+            >
+              <SelectItem key={true}> Activo</SelectItem>
+              <SelectItem key={false}>Inactivo</SelectItem>
+            </Select>
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
@@ -194,6 +205,7 @@ const AddUserPage = () => {
                 onClick={() => setCheckSelected("existente")}
                 radius="full"
                 className="font-light"
+                size="sm"
               >
                 Asignar rol existente
               </Checkbox>
@@ -228,6 +240,7 @@ const AddUserPage = () => {
                   isSelected={checkSelected === "nuevo"}
                   onClick={() => setCheckSelected("nuevo")}
                   className="font-light"
+                  size="sm"
                 >
                   Asignar nuevo rol
                 </Checkbox>
