@@ -50,6 +50,8 @@ const CompaniesPage = () => {
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isExportCompetingModalOpen, setIsExportCompetingModalOpen] =
+    useState(false);
   const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -98,6 +100,9 @@ const CompaniesPage = () => {
   const openExportModal = () => {
     setIsExportModalOpen(true);
   };
+  const openExportCompetingModal = () => {
+    setIsExportCompetingModalOpen(true);
+  };
   const openSellersModal = () => {
     setIsSellersModalOpen(true);
   };
@@ -105,6 +110,7 @@ const CompaniesPage = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setIsExportModalOpen(false);
+    setIsExportCompetingModalOpen(false);
     setIsSellersModalOpen(false);
   };
 
@@ -271,7 +277,7 @@ const CompaniesPage = () => {
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
-                  onClick={() => openExportModal()}
+                  onClick={() => openExportCompetingModal()}
                 />
                 <Link to={"agregar-empresa"}>
                   <Button text="Nueva Empresa" icon={PlusIcon} />
@@ -664,6 +670,37 @@ const CompaniesPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
+          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+
+          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+            <Button
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+        </div>
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isExportCompetingModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-4 flex flex-col space-y-4">
           <a
             href={`${BASE_URL}/${getClientsExcel}?competence=false`}
             download
@@ -678,7 +715,11 @@ const CompaniesPage = () => {
             />
           </a>
 
-          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getClientsPdf}?competence=false`}
+            download
+            target="_blank"
+          >
             <Button
               text="Descargar archivo PDF"
               icon={DownloadIcon}

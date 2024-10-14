@@ -48,6 +48,8 @@ const UsersPage = () => {
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isExportSellersModalOpen, setIsExportSellersModalOpen] =
+    useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
@@ -74,9 +76,13 @@ const UsersPage = () => {
   const openExportModal = (id) => {
     setIsExportModalOpen(true);
   };
+  const openExportSellersModal = (id) => {
+    setIsExportSellersModalOpen(true);
+  };
   const closeModal = () => {
     setIsModalOpen(false);
     setIsExportModalOpen(false);
+    setIsExportSellersModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
@@ -220,7 +226,7 @@ const UsersPage = () => {
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
-                  onClick={() => openExportModal()}
+                  onClick={() => openExportSellersModal()}
                 />
                 <Link to={"agregar-vendedor"}>
                   <Button text="Nuevo Vendedor" icon={PlusIcon} />
@@ -448,6 +454,45 @@ const UsersPage = () => {
           </a>
 
           <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+            <Button
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+        </div>
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isExportSellersModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-4 flex flex-col space-y-4">
+          <a
+            href={`${BASE_URL}/${getClientsExcel}?isSeller=true`}
+            download
+            target="_blank"
+          >
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+
+          <a
+            href={`${BASE_URL}/${getClientsPdf}?isSeller=true`}
+            download
+            target="_blank"
+          >
             <Button
               text="Descargar archivo PDF"
               icon={DownloadIcon}
