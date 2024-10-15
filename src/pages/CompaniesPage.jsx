@@ -25,8 +25,12 @@ import closeIcon from "../assets/icons/x-lg.svg";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
-import { getClientsExcel } from "../services/companies/companies.routes.js";
 import { I18nProvider } from "@react-aria/i18n";
+import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
+import {
+  getClientsExcel,
+  getClientsPdf,
+} from "../services/companies/companies.routes.js";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -47,6 +51,8 @@ const CompaniesPage = () => {
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isExportCompetingModalOpen, setIsExportCompetingModalOpen] =
+    useState(false);
   const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -68,7 +74,6 @@ const CompaniesPage = () => {
       (company) => company.id === id,
     );
     if (companyToEdit) {
-      // Set form values
       setValue("name", companyToEdit?.name || "");
       setValue("department", companyToEdit?.department || "");
       setValue("neighborhood", companyToEdit?.neighborhood || "");
@@ -95,6 +100,9 @@ const CompaniesPage = () => {
   const openExportModal = () => {
     setIsExportModalOpen(true);
   };
+  const openExportCompetingModal = () => {
+    setIsExportCompetingModalOpen(true);
+  };
   const openSellersModal = () => {
     setIsSellersModalOpen(true);
   };
@@ -102,6 +110,7 @@ const CompaniesPage = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setIsExportModalOpen(false);
+    setIsExportCompetingModalOpen(false);
     setIsSellersModalOpen(false);
   };
 
@@ -204,25 +213,24 @@ const CompaniesPage = () => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
-    return `${month}/${day}/${year}`;
+    return `${day}/${month}/${year}`;
   };
 
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            Volver
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio" className="text-sm font-medium leading-4">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              Volver
+            </div>
+          </Link>
+        </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Empresas
@@ -268,7 +276,7 @@ const CompaniesPage = () => {
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
-                  onClick={() => openExportModal()}
+                  onClick={() => openExportCompetingModal()}
                 />
                 <Link to={"agregar-empresa"}>
                   <Button text="Nueva Empresa" icon={PlusIcon} />
@@ -323,6 +331,7 @@ const CompaniesPage = () => {
                 {companiesResponse.map((companie, index) => (
                   <CompanieRow
                     key={index}
+                    id={companie.id}
                     name={companie.name}
                     departament={companie.department}
                     direction={companie.address}
@@ -372,9 +381,6 @@ const CompaniesPage = () => {
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}
             />
-            <Checkbox radius="full" className="text-sm font-light">
-              Cliente de la competencia
-            </Checkbox>
           </div>
           <Input
             label={"Empresa actual"}
@@ -399,6 +405,7 @@ const CompaniesPage = () => {
               onClick={() => setCompetence(!competence)}
               radius="full"
               className="font-light"
+              size="sm"
             >
               Cliente de la competencia
             </Checkbox>
@@ -518,6 +525,7 @@ const CompaniesPage = () => {
                   onClick={() => setCheckSelected("RUT")}
                   radius="full"
                   className="font-light"
+                  size="sm"
                 >
                   Asignar R.U.T.:
                 </Checkbox>
@@ -552,6 +560,7 @@ const CompaniesPage = () => {
                   onClick={() => setCheckSelected("CI")}
                   radius="full"
                   className="font-light"
+                  size="sm"
                 >
                   Asignar CI:
                 </Checkbox>
@@ -596,12 +605,10 @@ const CompaniesPage = () => {
               })}
               onSelectionChange={(value) => setValue("status", value)}
             >
-              <SelectItem key={"Frecuente"}>Frecuente</SelectItem>
-              <SelectItem key={"Potencial"}>Potencial</SelectItem>
-              <SelectItem key={"de Baja"}>De Baja</SelectItem>
-              <SelectItem key={"Potencial/Competencia"}>
-                Potencial/Competencia
-              </SelectItem>
+              <SelectItem key={"FRECUENT"}>Frecuente</SelectItem>
+              <SelectItem key={"POTENTIAL"}>Potencial</SelectItem>
+              <SelectItem key={"UNSUBSCRIBED"}>De Baja</SelectItem>
+              <SelectItem key={"COMPETENCE"}>Competencia</SelectItem>
             </Select>
             <p className="font-roboto text-xs text-red_e">
               {errors.status ? errors.status.message : ""}
@@ -662,7 +669,7 @@ const CompaniesPage = () => {
         onAccept={handleConfirmCancel}
       >
         Elige el formato en el que desea descargar el contenido de la lista:
-        <div className="mt-5">
+        <div className="mt-4 flex flex-col space-y-4">
           <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
             <Button
               text="Descargar archivo Excel"
@@ -672,14 +679,56 @@ const CompaniesPage = () => {
               iconPosition={"left"}
             />
           </a>
+
+          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+            <Button
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
         </div>
-        <Button
-          text="Descargar archivo PDF"
-          icon={DownloadIcon}
-          color={"cancel"}
-          shadow="shadow-blur"
-          iconPosition={"left"}
-        />
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isExportCompetingModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-4 flex flex-col space-y-4">
+          <a
+            href={`${BASE_URL}/${getClientsExcel}?competence=false`}
+            download
+            target="_blank"
+          >
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+
+          <a
+            href={`${BASE_URL}/${getClientsPdf}?competence=false`}
+            download
+            target="_blank"
+          >
+            <Button
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+        </div>
       </ReusableModal>
 
       <ReusableModal

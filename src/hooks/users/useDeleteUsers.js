@@ -11,7 +11,6 @@ const useDeleteUsers = () => {
       await UserService.deleteUserApi(userId);
       setIsDeleted(true);
       setModified((prev) => !prev);
-      console.log("Usuario eliminado con éxito");
     } catch (error) {
       console.error("Error al eliminar el usuario: ", error);
     } finally {

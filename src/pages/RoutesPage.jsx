@@ -18,6 +18,7 @@ import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
+import { s } from "framer-motion/client";
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
@@ -100,31 +101,32 @@ const RoutesPage = () => {
       setIsModalOpen(true);
     }
   };
+
+  const stringToBoolean = (str) => JSON.parse(str);
   const onSubmit = (data) => {
     const { name, zone, status } = data;
     const sellerData = {
       name,
       zone,
-      isActive: status,
+      isActive: stringToBoolean(status),
     };
     handleRouteCreation(sellerData);
   };
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            Volver
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio" className="text-sm font-medium leading-4">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              Volver
+            </div>
+          </Link>
+        </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Rutas
@@ -194,8 +196,8 @@ const RoutesPage = () => {
                     key={index}
                     name={seller.name}
                     zone={seller.zone}
-                    companies="21"
-                    sellers={seller.user[0].userInfo.fullName}
+                    companies={seller.totalClients}
+                    sellers={seller.user.length}
                     state={seller.isActive}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}

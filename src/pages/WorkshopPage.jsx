@@ -4,18 +4,18 @@ const OrdersPage = () => {
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
-        <Link to="/inicio">
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            <button className="cursor-pointer text-sm font-medium leading-4">
-              Volver
-            </button>
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              <button className="text-sm font-medium leading-4">Volver</button>
+            </div>
+          </Link>
+        </div>
         <div></div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Taller

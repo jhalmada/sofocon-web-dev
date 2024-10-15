@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
-import { UserService } from "../../services/user/user.service.js";
-const useUsersSellers = () => {
-  const [userSellerResponse, setUsersSellerResponse] = useState([]);
+import { NotesService } from "../../services/notes/notes.service";
+const useNotes = () => {
+  const [notesResponse, setNotesResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
-  const [route, setRoute] = useState(null);
-  const getUsersSellers = async () => {
+  const [client, setClient] = useState(null);
+  const getAllNotes = async () => {
     try {
       setLoading(true);
-      const { data } = await UserService.getUsersSellersApi({
+      const { data } = await NotesService.getAllNotesApi({
         page,
         itemsPerPage,
         search,
-        route,
+        client,
       });
       setTotalPage(data.pagination.totalPages);
-      setUsersSellerResponse(data);
+      setNotesResponse(data.result);
     } catch (e) {
       console.log(e);
     } finally {
@@ -28,10 +28,10 @@ const useUsersSellers = () => {
   };
 
   useEffect(() => {
-    getUsersSellers();
-  }, [page, itemsPerPage, modified, search, route]);
+    getAllNotes();
+  }, [page, itemsPerPage, modified, client]);
   return {
-    userSellerResponse,
+    notesResponse,
     loading,
     setItemsPerPage,
     totalPage,
@@ -41,8 +41,9 @@ const useUsersSellers = () => {
     setModified,
     modified,
     setSearch,
-    setRoute,
+    client,
+    setClient,
   };
 };
 
-export default useUsersSellers;
+export default useNotes;

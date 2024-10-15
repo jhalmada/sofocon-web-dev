@@ -28,6 +28,7 @@ const AddUserPage = () => {
     useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [mnsError, setMnsError] = useState("");
+  const options = ["Activo", "Inactivo"];
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await postAddUsers(userData);
@@ -47,11 +48,24 @@ const AddUserPage = () => {
     }
   };
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
+    const {
+      fullName,
+      ci,
+      phone,
+      email,
+      password,
+      role,
+      nameRole,
+      permissions,
+      state,
+    } = data;
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
+          isActive: state === "Activo" ? true : false,
           fullName,
+          ci,
+          phone,
           email,
           password,
           role: { id: role },
@@ -59,7 +73,10 @@ const AddUserPage = () => {
         break;
       default:
         handleUserCreation({
+          isActive: state === "Activo" ? true : false,
           fullName,
+          ci,
+          phone,
           email,
           password,
           role: {
@@ -77,24 +94,23 @@ const AddUserPage = () => {
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
-    navigate("/inicio/usuarios");
+    navigate("/inicio/personal");
   };
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio/personal"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            Volver
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio/personal" className="text-sm font-medium leading-4">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              Volver
+            </div>
+          </Link>
+        </div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Usuarios
         </h1>
@@ -111,6 +127,18 @@ const AddUserPage = () => {
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
           <div>
+            <Select
+              labelPlacement="outside"
+              label="Estado"
+              selectedKeys={["Activo"]}
+              className="mb-3 w-1/6 rounded-lg border"
+              {...register("state", {})}
+              onSelectionChange={(value) => setValue("state", value)}
+            >
+              {options.map((option) => (
+                <SelectItem key={option}>{option}</SelectItem>
+              ))}
+            </Select>
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
@@ -123,7 +151,7 @@ const AddUserPage = () => {
             <Input
               label={"CI"}
               placeholder={"123456789"}
-              {...register("fullName", {
+              {...register("ci", {
                 required: "Este campo es obligatorio",
               })}
               errorApi={errors.fullName}
@@ -132,7 +160,7 @@ const AddUserPage = () => {
             <Input
               label={"Teléfono de contacto"}
               placeholder={"123456789"}
-              {...register("fullName", {
+              {...register("phone", {
                 required: "Este campo es obligatorio",
               })}
               errorApi={errors.fullName}
@@ -194,6 +222,7 @@ const AddUserPage = () => {
                 onClick={() => setCheckSelected("existente")}
                 radius="full"
                 className="font-light"
+                size="sm"
               >
                 Asignar rol existente
               </Checkbox>
@@ -228,6 +257,7 @@ const AddUserPage = () => {
                   isSelected={checkSelected === "nuevo"}
                   onClick={() => setCheckSelected("nuevo")}
                   className="font-light"
+                  size="sm"
                 >
                   Asignar nuevo rol
                 </Checkbox>

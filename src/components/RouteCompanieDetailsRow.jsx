@@ -10,7 +10,7 @@ const RouteCompanieDetailsRow = ({
   onDeleteClick,
 }) => {
   return (
-    <tr>
+    <tr className="border-b border-gray">
       <td className="p-2">{name}</td>
 
       <td

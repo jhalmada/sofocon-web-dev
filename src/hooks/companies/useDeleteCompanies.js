@@ -11,7 +11,6 @@ const useDeleteCompanies = () => {
       await CompaniesService.deleteCompanyApi(companieId);
       setIsDeleted(true);
       setModified((prev) => !prev);
-      console.log("Empresa eliminada con éxito");
     } catch (error) {
       console.error("Error al eliminar la empresa: ", error);
     } finally {

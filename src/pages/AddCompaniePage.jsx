@@ -116,19 +116,18 @@ const AddCompaniePage = () => {
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio/empresas"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            Volver
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio/empresas" className="text-sm font-medium leading-4">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              Volver
+            </div>
+          </Link>
+        </div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Empresas
         </h1>
@@ -376,12 +375,10 @@ const AddCompaniePage = () => {
                 })}
                 onSelectionChange={(values) => setValue("status", values)}
               >
-                <SelectItem key={"Frecuente"}>Frecuente</SelectItem>
-                <SelectItem key={"Potencial"}>Potencial</SelectItem>
-                <SelectItem key={"de Baja"}>De Baja</SelectItem>
-                <SelectItem key={"Potencial/Competencia"}>
-                  Potencial/Competencia
-                </SelectItem>
+                <SelectItem key={"FRECUENT"}>Frecuente</SelectItem>
+                <SelectItem key={"POTENTIAL"}>Potencial</SelectItem>
+                <SelectItem key={"UNSUBSCRIBED"}>De Baja</SelectItem>
+                <SelectItem key={"COMPETENCE"}>Competencia</SelectItem>
               </Select>
               <p className="font-roboto text-xs text-red_e">
                 {errors.status ? errors.status.message : ""}

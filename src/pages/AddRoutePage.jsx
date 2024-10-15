@@ -13,6 +13,7 @@ import useCompanies from "../hooks/companies/useCompanies";
 import AddSellersRoutes from "../hooks/sellerRoutes/useAddSellerRoutes";
 import SearchInput from "../components/inputs/SearchInput";
 const AddRoutePage = () => {
+  const options = ["Activo", "Inactivo"];
   const {
     register,
     handleSubmit,
@@ -47,7 +48,7 @@ const AddRoutePage = () => {
     const newData = {
       name,
       zone,
-      isActive: status,
+      isActive: status === "Activo" ? true : false,
       user: [
         {
           id: idVendedor,
@@ -82,19 +83,18 @@ const AddRoutePage = () => {
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio/rutas"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            Volver
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio/rutas" className="text-sm font-medium leading-4">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              Volver
+            </div>
+          </Link>
+        </div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Rutas
         </h1>
@@ -150,6 +150,7 @@ const AddRoutePage = () => {
                 Asignar estado:
               </label>
               <Select
+                defaultSelectedKeys={["Activo"]}
                 onSelectionChange={(value) => setValue("status", value)}
                 placeholder="Estado"
                 className="rounded-lg border"
@@ -159,8 +160,9 @@ const AddRoutePage = () => {
                 errorApi={errors.status}
                 msjError={errors.status ? errors.status.message : ""}
               >
-                <SelectItem key={true}>Activo</SelectItem>
-                <SelectItem key={false}>Inactivo</SelectItem>
+                {options.map((option) => (
+                  <SelectItem key={option}>{option}</SelectItem>
+                ))}
               </Select>
             </div>
             <div className="mb-4 space-y-2">
@@ -172,11 +174,6 @@ const AddRoutePage = () => {
                 border="border"
                 rounded="rounded-[0.375rem]"
                 visibility="block"
-                {...register("idVendedor", {
-                  required: "Debes seleccionar una opción",
-                })}
-                errorApi={errors.idVendedor}
-                msjError={errors.idVendedor ? errors.idVendedor.message : ""}
               ></SearchInput>
             </div>
 
@@ -203,11 +200,6 @@ const AddRoutePage = () => {
                 border="border"
                 rounded="rounded-[0.375rem]"
                 visibility="block"
-                {...register("idEmpresa", {
-                  required: "Debes seleccionar una opción",
-                })}
-                errorApi={errors.idEmpresa}
-                msjError={errors.idEmpresa ? errors.idEmpresa.message : ""}
               ></SearchInput>
             </div>
             <div className="mb-2 flex flex-col items-start">

@@ -23,8 +23,8 @@ import useRoles from "../hooks/roles/use.roles.js";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { permisos } from "../utils/permisons";
 import { BASE_URL } from "../utils/Constants.js";
-import { getClientsExcel } from "../services/companies/companies.routes.js";
-import SellerRow from "../components/SellerRow.jsx";
+import SellersPage from "./SellersPage.jsx";
+import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
@@ -41,11 +41,12 @@ const UsersPage = () => {
     setModified,
   } = useUsers();
   const { RolesResponse } = useRoles();
-  console.log("RolesResponse", usersResponse);
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isExportSellersModalOpen, setIsExportSellersModalOpen] =
+    useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
@@ -62,6 +63,8 @@ const UsersPage = () => {
     if (userToEdit) {
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
+      setValue("ci", userToEdit.userInfo.ci);
+      setValue("phone", userToEdit.userInfo.phone);
       setValue("role", userToEdit?.role?.id || "");
     }
     setIsModalOpen(true);
@@ -70,9 +73,13 @@ const UsersPage = () => {
   const openExportModal = (id) => {
     setIsExportModalOpen(true);
   };
+  const openExportSellersModal = (id) => {
+    setIsExportSellersModalOpen(true);
+  };
   const closeModal = () => {
     setIsModalOpen(false);
     setIsExportModalOpen(false);
+    setIsExportSellersModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
@@ -113,7 +120,17 @@ const UsersPage = () => {
     }
   };
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
+    const {
+      fullName,
+      ci,
+      phone,
+      email,
+      password,
+      role,
+      nameRole,
+      permissions,
+      state,
+    } = data;
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
@@ -121,6 +138,8 @@ const UsersPage = () => {
           password,
           userInfo: {
             fullName,
+            ci,
+            phone,
           },
           role: { id: role },
         });
@@ -131,6 +150,8 @@ const UsersPage = () => {
           password,
           fullName: {
             fullName,
+            ci,
+            phone,
           },
           role: {
             name: nameRole,
@@ -142,19 +163,18 @@ const UsersPage = () => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            Volver
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio" className="text-sm font-medium leading-4">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              Volver
+            </div>
+          </Link>
+        </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Personal
@@ -202,7 +222,7 @@ const UsersPage = () => {
                   text="Exportar lista"
                   icon={DownloadIcon}
                   color={"cancel"}
-                  onClick={() => openExportModal()}
+                  onClick={() => openExportSellersModal()}
                 />
                 <Link to={"agregar-vendedor"}>
                   <Button text="Nuevo Vendedor" icon={PlusIcon} />
@@ -242,6 +262,9 @@ const UsersPage = () => {
                       />
                     </div>
                   </th>
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                    Estado
+                  </th>
                   <th className="p-2 text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
@@ -253,7 +276,6 @@ const UsersPage = () => {
                     key={index}
                     fullName={`${user.userInfo.fullName} `}
                     email={user.email}
-                    password=""
                     role={user?.role?.name}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
@@ -277,59 +299,7 @@ const UsersPage = () => {
           </div>
         )}
         {activeTab === SELLERS_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre Completo
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Contacto
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Ruta
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Estado
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Mas info
-                  </th>
-                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
-                    Acción
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {usersResponse.map((user, index) => (
-                  <SellerRow
-                    key={index}
-                    fullName={`${user.userInfo.fullName} `}
-                    email={user.email}
-                    route={"Ruta"}
-                    state={"Activo"}
-                    info={"Ver más"}
-                    editIconSrc={editIcon}
-                    deleteIconSrc={deleteIcon}
-                    onEditClick={() => {
-                      openModal(user.id);
-                    }}
-                    onDeleteClick={() => openConfirmDeleteModal(user.id)}
-                  />
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-center p-6">
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemPerPage={itemsPerPage}
-              />
-            </div>
-          </div>
+          <SellersPage openConfirmDeleteModal={openConfirmDeleteModal} />
         )}
         {activeTab === ROLES_TAB && <TableRole />}
       </div>
@@ -346,6 +316,24 @@ const UsersPage = () => {
             label={"Nombre Completo"}
             placeholder={"Escribe el nombre completo del usuario..."}
             {...register("fullName", {
+              required: "Este campo es obligatorio",
+            })}
+            errorApi={errors.fullName}
+            msjError={errors.fullName ? errors.fullName.message : ""}
+          />
+          <Input
+            label={"CI"}
+            placeholder={"123456789"}
+            {...register("ci", {
+              required: "Este campo es obligatorio",
+            })}
+            errorApi={errors.fullName}
+            msjError={errors.fullName ? errors.fullName.message : ""}
+          />
+          <Input
+            label={"Teléfono de contacto"}
+            placeholder={"123456789"}
+            {...register("phone", {
               required: "Este campo es obligatorio",
             })}
             errorApi={errors.fullName}
@@ -375,6 +363,7 @@ const UsersPage = () => {
               onClick={() => setCheckSelected("existente")}
               radius="full"
               className="font-light"
+              size="sm"
             >
               Asignar rol existente
             </Checkbox>
@@ -399,6 +388,7 @@ const UsersPage = () => {
               isSelected={checkSelected === "nuevo"}
               onClick={() => setCheckSelected("nuevo")}
               className="font-light"
+              size="sm"
             >
               Asignar nuevo rol
             </Checkbox>
@@ -448,24 +438,66 @@ const UsersPage = () => {
         onAccept={handleConfirmCancel}
       >
         Elige el formato en el que desea descargar el contenido de la lista:
-        <div className="mt-5">
-          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+        <div className="mt-4 flex flex-col space-y-4">
+          <a href={`${BASE_URL}/${getUsersExcel}`} download target="_blank">
             <Button
               text="Descargar archivo Excel"
               icon={DownloadIcon}
-              color={"selected"}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+
+          <a href={`${BASE_URL}/${getUsersPdf}`} download target="_blank">
+            <Button
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
               shadow="shadow-blur"
               iconPosition={"left"}
             />
           </a>
         </div>
-        <Button
-          text="Descargar archivo PDF"
-          icon={DownloadIcon}
-          color={"cancel"}
-          shadow="shadow-blur"
-          iconPosition={"left"}
-        />
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isExportSellersModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-4 flex flex-col space-y-4">
+          <a
+            href={`${BASE_URL}/${getUsersExcel}?isSeller=true`}
+            download
+            target="_blank"
+          >
+            <Button
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+
+          <a
+            href={`${BASE_URL}/${getUsersPdf}?isSeller=true`}
+            download
+            target="_blank"
+          >
+            <Button
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+        </div>
       </ReusableModal>
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}

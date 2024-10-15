@@ -1,24 +1,19 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Input from "../components/inputs/Input";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import useUsers from "../hooks/users/use.users.js";
-import usePutUsers from "../hooks/users/usePutUsers.js";
-import { useForm } from "react-hook-form";
-import useRoles from "../hooks/roles/use.roles";
-import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
+import useNotes from "../hooks/notes/useNotes.js";
+import usePutNotes from "../hooks/notes/usePutNotes.js";
+import { Controller, useForm } from "react-hook-form";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+import useAddNotes from "../hooks/notes/useAddNotes.js";
+import { I18nProvider } from "@react-aria/i18n";
 const NOTES_TAB = "notes";
 const AddNotesPage = () => {
-  const [userPage, setUserPage] = useState(5);
-  const { changedUser, isChanged } = usePutUsers();
-  const [userId, setUserId] = useState(null);
-  const { usersResponse, loading } = useUsers();
-  const { RolesResponse } = useRoles();
-  const { deleteUser, isDeleted, isLoading } = useDeleteUsers();
+  const [noteId, setNoteId] = useState(null);
   const [activeTab, setActiveTab] = useState(NOTES_TAB);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,39 +21,37 @@ const AddNotesPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [userData, setUserData] = useState(null);
-  const totalUsers = usersResponse ? usersResponse.length : 0;
-  const totalPages = Math.ceil(totalUsers / userPage);
-  const startIndex = (currentPage - 1) * userPage;
-  const paginatedUsers = usersResponse
-    ? usersResponse.slice(startIndex, startIndex + userPage)
-    : [];
+  const [noteData, setNoteData] = useState(null);
+
+  const [dateSelected, setDateSelected] = useState(false);
+  const [reminderSelected, setReminderSelected] = useState(false);
+  const { id } = useParams();
+  const [idCliente, setIdCliente] = useState(null);
+
+  useEffect(() => {
+    setIdCliente(id);
+  }, [id]);
+
+  const navigate = useNavigate();
+  const {
+    notesResponse,
+    setItemsPerPage,
+    totalPage,
+    setPage,
+    page,
+    itemsPerPage,
+    setModified,
+  } = useNotes();
+  const { postAddNotes, loading } = useAddNotes();
+
   const {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
   } = useForm();
-  const openModal = (id) => {
-    const userToEdit = usersResponse.find((user) => user.id === id);
-    if (userToEdit) {
-      setUserData({
-        userInfo: {
-          fullName: userToEdit.userInfo.fullName,
-          email: userToEdit.email,
-        },
-        role: {
-          id: userToEdit.role.id,
-        },
-      });
-      setValue("fullName", userToEdit.userInfo.fullName);
-      setValue("email", userToEdit.email);
-      setValue("role", userToEdit.role.id);
-    }
-    setIsModalOpen(true);
-    setUserId(id);
-  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setConfirmCancelModalOpen(false);
@@ -69,84 +62,71 @@ const AddNotesPage = () => {
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const openSaveConfirmationModal = () => setSaveConfirmationModalOpen(true);
   const closeSaveConfirmationModal = () => {
+    navigate(`/inicio/empresas/notas/${idCliente}`);
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
   const openConfirmDeleteModal = (id) => {
-    setUserId(id);
+    setNoteId(id);
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
   const handleConfirmDelete = () => {
-    deleteUser(userId);
     closeConfirmDeleteModal();
   };
-  const handleCancelClick = () => openConfirmCancelModal();
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
   };
-  const handleUserCreation = async (userData) => {
+  const handleNoteCreation = async (noteData) => {
     try {
-      const newUser = await changedUser(userData, userId);
-      if (newUser) {
+      const newNote = await postAddNotes(noteData, noteId);
+      if (newNote) {
         setSaveConfirmationModalOpen(true);
       } else {
         console.error(
-          "No se recibió un nuevo usuario después de la actualización",
+          "No se recibió una nueva nota después de la actualización",
         );
       }
     } catch (error) {
-      console.error("Error al actualizar el usuario:", error);
+      console.error("Error al actualizar la nota:", error);
       setIsModalOpen(true);
     }
   };
   const onSubmit = (data) => {
-    const { fullName, email, password, role, nameRole, permissions } = data;
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          email,
-          password,
-          userInfo: {
-            fullName,
-          },
-          role: { id: role },
-        });
-        break;
-      default:
-        handleUserCreation({
-          email,
-          password,
-          fullName: {
-            fullName,
-          },
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-          },
-        });
-    }
+    const { title, description, dateV } = data;
+    const newdata = new Date(
+      dateV?.year || 1,
+      dateV?.month - 1 || 1,
+      dateV?.day || 1,
+    );
+    const formattedDate = newdata.toISOString();
+    handleNoteCreation({
+      title,
+      description,
+      client: {
+        id: idCliente,
+      },
+      isReminder: reminderSelected,
+      date: formattedDate,
+    });
   };
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
+
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio/empresas/notas"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            Volver
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio/empresas" className="text-sm font-medium leading-4">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              Volver
+            </div>
+          </Link>
+        </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Nombre Empresa
@@ -195,9 +175,7 @@ const AddNotesPage = () => {
           <div className="flex gap-[4.4rem]">
             <div>
               <Checkbox
-                defaultSelected={checkSelected === "existente"}
-                isSelected={checkSelected === "existente"}
-                onClick={() => setCheckSelected("existente")}
+                onClick={() => setDateSelected(!dateSelected)}
                 radius="full"
                 className="font-light"
               >
@@ -205,26 +183,35 @@ const AddNotesPage = () => {
                   Asignar fecha
                 </span>
               </Checkbox>
-              <div className="flex w-[18rem]">
-                <DatePicker
-                  className="rounded-lg border"
-                  {...register("date", {
-                    required: "Este campo es obligatoria",
-                  })}
-                  errorApi={errors.date}
-                  msjError={errors.date ? errors.date.message : ""}
-                />
+              <div className="flex w-[18rem] flex-col">
+                <I18nProvider locale="es-ES">
+                  <Controller
+                    name={"dateV"}
+                    control={control}
+                    render={({ field }) => (
+                      <DatePicker
+                        className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
+                        {...field}
+                        label={""}
+                        placeholder="Seleccione una fecha"
+                      />
+                    )}
+                    rules={{
+                      required: dateSelected && "La fecha es obligatoria",
+                    }}
+                  />
+                  <p className="font-roboto text-xs text-red_e">
+                    {errors.dateV ? errors.dateV.message : ""}
+                  </p>
+                </I18nProvider>
               </div>
             </div>
             <div className="w-[12.6rem]">
               <Checkbox
-                defaultSelected={checkSelected === "existente"}
-                isSelected={checkSelected === "existente"}
-                onClick={() => setCheckSelected("existente")}
+                onClick={() => setReminderSelected(!reminderSelected)}
                 radius="full"
-                className="font-light"
               >
-                <span className="text-sm font-light leading-[1rem] text-black_m">
+                <span className="text-sm font-light leading-[1rem] text-black_b">
                   Destacar como recordatorio
                 </span>
               </Checkbox>
@@ -254,7 +241,7 @@ const AddNotesPage = () => {
       </ReusableModal>
       <ReusableModal
         isOpen={isSaveConfirmationModalOpen}
-        onClose={closeSaveConfirmationModal}
+        onClose={() => setSaveConfirmationModalOpen(false)}
         title="Cambios guardados"
         variant="confirmation"
         buttons={["accept"]}
@@ -268,7 +255,7 @@ const AddNotesPage = () => {
         title="Eliminar usuario"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete(userId)}
+        onAccept={() => handleConfirmDelete(noteId)}
       >
         Este usuario será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>

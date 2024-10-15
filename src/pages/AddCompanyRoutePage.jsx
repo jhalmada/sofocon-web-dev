@@ -152,6 +152,7 @@ const AddCompanyRoutePage = ({
         <div className="space-y-2">
           <form onSubmit={handleSubmit(onSubmit)}>
             <NextAutoComplete
+              label2={"Empresas asignadas"}
               array={transformData(companiesResponse || []) || []}
               name={"empresas"}
               label={"Agregar Empresas"}

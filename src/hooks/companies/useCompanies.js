@@ -22,10 +22,9 @@ const useCompanies = () => {
         search,
       });
       //aqui haces con el resultado lo que necesites
-      console.log(data);
+
       setTotalPage(data.pagination.totalPages);
       setCompaniesResponse(data.result);
-      console.log(data);
     } catch (e) {
       console.log(e);
     } finally {

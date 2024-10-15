@@ -3,9 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 
 const Breadcrumbs = () => {
   const location = useLocation();
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
   const generateBreadcrumbs = () => {
-    const pathnames = location.pathname.split("/").filter((x) => x);
+    const pathnames = location.pathname
+      .split("/")
+      .filter((x) => x && !uuidRegex.test(x));
     return [
       ...pathnames.map((name, index) => {
         const path = `/${pathnames.slice(0, index + 1).join("/")}`;

@@ -1,4 +1,5 @@
 import { Select, SelectItem } from "@nextui-org/select";
+import { s } from "framer-motion/client";
 import { useNavigate } from "react-router-dom";
 
 const RouteRow = ({
@@ -13,6 +14,10 @@ const RouteRow = ({
   onEditClick,
   onDeleteClick,
 }) => {
+  console.log(state);
+
+  const opciones = ["Activo", "Inactivo"];
+
   const navigate = useNavigate();
 
   const handleRowClick = () => {
@@ -36,11 +41,12 @@ const RouteRow = ({
 
         <td className="p-2 text-md font-semibold leading-[1.16rem]">
           <Select
-            defaultSelectedKeys={[state ? "true" : "false"]}
+            defaultSelectedKeys={[state ? "Activo" : "Inactivo"]}
             className="mb-4 mt-4 rounded-lg border"
           >
-            <SelectItem key={"true"}>Activo</SelectItem>
-            <SelectItem key={"false"}>Inactivo</SelectItem>
+            {opciones.map((opcion) => (
+              <SelectItem key={opcion}>{opcion}</SelectItem>
+            ))}
           </Select>
         </td>
       </>

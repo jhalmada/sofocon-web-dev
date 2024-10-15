@@ -67,32 +67,7 @@ const ReusableModal = ({
             </div>
           </div>
         ) : (
-          <form onSubmit={onSubmit}>
-            <div className="space-y-8">{children}</div>
-            <div className="mt-10 flex justify-between">
-              {buttons.includes("cancel") && (
-                <Button
-                  text="Cancelar"
-                  color="cancel"
-                  type="button"
-                  onClick={handleCancelClick}
-                  iconPosition="left"
-                  width="w-20"
-                />
-              )}
-              {buttons.includes("save") && (
-                <div>
-                  <Button
-                    text="GUARDAR"
-                    color="save"
-                    type="submit"
-                    icon={CheckLgIcon}
-                    iconPosition="right"
-                  />
-                </div>
-              )}
-            </div>
-          </form>
+          <div className="space-y-8">{children}</div>
         )}
       </div>
     </div>
