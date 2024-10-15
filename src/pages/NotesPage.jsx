@@ -9,6 +9,8 @@ import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
+import CheckLgIcon from "../assets/icons/check-lg.svg";
+import XlgIcon from "../assets/icons/x-lg.svg";
 import useNotes from "../hooks/notes/useNotes.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
@@ -17,6 +19,7 @@ import { useForm } from "react-hook-form";
 import useDeleteNotes from "../hooks/notes/useDeleteNotes.js";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import NotesRow from "../components/NotesRow.jsx";
+
 const NOTES_TAB = "notes";
 const NotesPage = () => {
   const [notePage, setNotePage] = useState(5);
@@ -44,12 +47,14 @@ const NotesPage = () => {
     setModified,
     setClient,
   } = useNotes();
+
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
+
   const openModal = (id) => {
     const noteToEdit = notesResponse.find((note) => note.id === id);
     if (noteToEdit) {
@@ -105,6 +110,7 @@ const NotesPage = () => {
     }
   };
   const onSubmit = (data) => {
+    console.log("on submit!");
     const { title, description, date } = data;
     handleNoteCreation({
       title,
@@ -222,74 +228,89 @@ const NotesPage = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
         title="Editar Nota"
-        onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >
-        <div className="flex flex-col">
-          <Input
-            label={"Nombre de nota"}
-            placeholder={"Escribir..."}
-            {...register("title", {
-              required: "El nombre es obligatorio",
-            })}
-            errorApi={errors.title}
-            msjError={errors.title ? errors.title.message : ""}
-          />
-          <Input
-            label={"Contenido"}
-            placeholder={"Escribir..."}
-            {...register("description", {
-              required: "El contenido es obligatorio",
-            })}
-            errorApi={errors.description}
-            msjError={errors.description ? errors.description.message : ""}
-          />
-          {errors.permissions && (
-            <span className="font-roboto text-xs text-red_e">
-              {errors.permissions.message}
-            </span>
-          )}
-        </div>
-        <div className="flex gap-[4.4rem]">
-          <div>
-            <Checkbox
-              defaultSelected={checkSelected === "existente"}
-              isSelected={checkSelected === "existente"}
-              onClick={() => setCheckSelected("existente")}
-              radius="full"
-              className="font-light"
-            >
-              <span className="text-sm font-light leading-[1rem] text-black_b">
-                Asignar fecha
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col">
+            <Input
+              label={"Nombre de nota"}
+              placeholder={"Escribir..."}
+              {...register("title", {
+                required: "El nombre es obligatorio",
+              })}
+              errorApi={errors.title}
+              msjError={errors.title ? errors.title.message : ""}
+            />
+            <Input
+              label={"Contenido"}
+              placeholder={"Escribir..."}
+              {...register("description", {
+                required: "El contenido es obligatorio",
+              })}
+              errorApi={errors.description}
+              msjError={errors.description ? errors.description.message : ""}
+            />
+            {errors.permissions && (
+              <span className="font-roboto text-xs text-red_e">
+                {errors.permissions.message}
               </span>
-            </Checkbox>
-            <div className="flex w-[18rem]">
-              <DatePicker
-                label="Birth date"
-                className="max-w-[18rem] rounded-[.5rem] border"
-                {...register("date", {
-                  required: "La fecha es obligatoria",
-                })}
-                errorApi={errors.date}
-                msjError={errors.date ? errors.date.message : ""}
+            )}
+          </div>
+          <div className="flex gap-[4.4rem]">
+            <div>
+              <Checkbox
+                defaultSelected={checkSelected === "existente"}
+                isSelected={checkSelected === "existente"}
+                onClick={() => setCheckSelected("existente")}
+                radius="full"
+                className="font-light"
+              >
+                <span className="text-sm font-light leading-[1rem] text-black_b">
+                  Asignar fecha
+                </span>
+              </Checkbox>
+              <div className="flex w-[18rem]">
+                <DatePicker
+                  className="max-w-[18rem] rounded-[.5rem] border"
+                  {...register("date", {})}
+                />
+              </div>
+            </div>
+            <div className="w-[12.6rem]">
+              <Checkbox
+                defaultSelected={checkSelected === "existente"}
+                isSelected={checkSelected === "existente"}
+                onClick={() => setCheckSelected("existente")}
+                radius="full"
+                className="font-light"
+              >
+                <span className="text-sm font-light leading-[1rem] text-black_m">
+                  Destacar como recordatorio
+                </span>
+              </Checkbox>
+            </div>
+          </div>
+          <div className="mt-10 flex justify-between">
+            <Button
+              text="Cancelar"
+              color="cancel"
+              type="button"
+              onClick={handleCancelClick}
+              iconPosition="left"
+              width="w-20"
+            />
+            <div>
+              <Button
+                text="GUARDAR"
+                color="save"
+                type="submit"
+                icon={CheckLgIcon}
+                iconPosition="right"
               />
             </div>
           </div>
-          <div className="w-[12.6rem]">
-            <Checkbox
-              defaultSelected={checkSelected === "existente"}
-              isSelected={checkSelected === "existente"}
-              onClick={() => setCheckSelected("existente")}
-              radius="full"
-              className="font-light"
-            >
-              <span className="text-sm font-light leading-[1rem] text-black_m">
-                Destacar como recordatorio
-              </span>
-            </Checkbox>
-          </div>
-        </div>
+        </form>
       </ReusableModal>
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}
