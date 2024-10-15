@@ -219,19 +219,18 @@ const CompaniesPage = () => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            Volver
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio" className="text-sm font-medium leading-4">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              Volver
+            </div>
+          </Link>
+        </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Empresas
@@ -332,6 +331,7 @@ const CompaniesPage = () => {
                 {companiesResponse.map((companie, index) => (
                   <CompanieRow
                     key={index}
+                    id={companie.id}
                     name={companie.name}
                     departament={companie.department}
                     direction={companie.address}

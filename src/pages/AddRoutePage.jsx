@@ -13,8 +13,6 @@ import useCompanies from "../hooks/companies/useCompanies";
 import AddSellersRoutes from "../hooks/sellerRoutes/useAddSellerRoutes";
 import SearchInput from "../components/inputs/SearchInput";
 const AddRoutePage = () => {
-
-
   const options = ["Activo", "Inactivo"];
   const {
     register,
@@ -85,19 +83,18 @@ const AddRoutePage = () => {
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio/rutas"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            Volver
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio/rutas" className="text-sm font-medium leading-4">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              Volver
+            </div>
+          </Link>
+        </div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Rutas
         </h1>

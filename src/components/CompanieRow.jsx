@@ -28,6 +28,7 @@ const CompanieRow = ({
   onEditClick,
   onDeleteClick,
   onClick,
+  id,
 }) => {
   return (
     <tr className="border-b border-gray">
@@ -57,7 +58,7 @@ const CompanieRow = ({
       </td>
       <td className="p-2">
         <div className="flex justify-center gap-4">
-          <Link to={"notas"}>
+          <Link to={`notas/${id}`}>
             <img
               src={notesIcon}
               alt="notes icon"

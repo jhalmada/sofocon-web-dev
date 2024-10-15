@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
@@ -32,6 +32,7 @@ const NotesPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [noteData, setNoteData] = useState(null);
+  const { id } = useParams();
 
   const {
     notesResponse,
@@ -41,6 +42,7 @@ const NotesPage = () => {
     page,
     itemsPerPage,
     setModified,
+    setClient,
   } = useNotes();
   const {
     register,
@@ -51,18 +53,9 @@ const NotesPage = () => {
   const openModal = (id) => {
     const noteToEdit = notesResponse.find((note) => note.id === id);
     if (noteToEdit) {
-      setNoteData({
-        title: noteToEdit.title,
-        description: noteToEdit.description,
-        date: noteToEdit.date,
-        client: {
-          id: noteToEdit.client.id,
-        },
-      });
       setValue("title", noteToEdit.title);
       setValue("description", noteToEdit.description);
       setValue("date", noteToEdit.date);
-      setValue("client", noteToEdit.client.id);
     }
     setIsModalOpen(true);
     setNoteId(id);
@@ -112,35 +105,35 @@ const NotesPage = () => {
     }
   };
   const onSubmit = (data) => {
-    const { title, description, date, id } = data;
+    const { title, description, date } = data;
     handleNoteCreation({
       title,
       description,
       date,
-      client: {
-        id,
-      },
     });
   };
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+
+  useEffect(() => {
+    setClient(id);
+  }, [id]);
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
-        <Link
-          to="/inicio/empresas"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
-          <div className="mb-4 flex items-center">
-            <img
-              src={ChevronLeftIcon}
-              alt="arrow left"
-              className="-ml-1 h-4 w-4"
-            />
-            Volver
-          </div>
-        </Link>
+        <div className="w-[4rem]">
+          <Link to="/inicio/empresas" className="text-sm font-medium leading-4">
+            <div className="mb-4 flex w-[4rem] items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
+              />
+              Volver
+            </div>
+          </Link>
+        </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Empresas
