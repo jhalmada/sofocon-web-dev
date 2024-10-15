@@ -74,7 +74,6 @@ const CompaniesPage = () => {
       (company) => company.id === id,
     );
     if (companyToEdit) {
-      // Set form values
       setValue("name", companyToEdit?.name || "");
       setValue("department", companyToEdit?.department || "");
       setValue("neighborhood", companyToEdit?.neighborhood || "");
