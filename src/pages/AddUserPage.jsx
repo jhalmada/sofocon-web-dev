@@ -62,7 +62,7 @@ const AddUserPage = () => {
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
-          state,
+          isActive: state === "Activo" ? true : false,
           fullName,
           ci,
           phone,
@@ -73,7 +73,7 @@ const AddUserPage = () => {
         break;
       default:
         handleUserCreation({
-          state,
+          isActive: state === "Activo" ? true : false,
           fullName,
           ci,
           phone,
@@ -130,7 +130,7 @@ const AddUserPage = () => {
             <Select
               labelPlacement="outside"
               label="Estado"
-              placeholder="Activo"
+              selectedKeys={["Activo"]}
               className="mb-3 w-1/6 rounded-lg border"
               {...register("state", {})}
               onSelectionChange={(value) => setValue("state", value)}

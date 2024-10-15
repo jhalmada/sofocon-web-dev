@@ -54,15 +54,16 @@ const NextAutoComplete = ({
       </div>
       <label className="mt-2 block font-roboto text-sm">{label}</label>
       <Autocomplete
+        disabledKeys={selectedItems.map((item) => item.id)}
         className="w-full rounded-lg border"
         selectedKey={""}
         placeholder="Buscar"
         startContent={<img src={search}></img>}
         onInputChange={(e) => onChange(e)}
       >
-        {array.map((item, index) => (
+        {array.map((item) => (
           <AutocompleteItem
-            key={index}
+            key={item.id}
             value={item.id}
             onClick={() => handleSelect(item)}
             endContent={selectedItems.includes(item) && <p>Seleccionado</p>}
