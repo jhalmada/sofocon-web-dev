@@ -15,26 +15,26 @@ import useNotes from "../hooks/notes/useNotes.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutNotes from "../hooks/notes/usePutNotes.js";
-import { useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import useDeleteNotes from "../hooks/notes/useDeleteNotes.js";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import NotesRow from "../components/NotesRow.jsx";
+import { I18nProvider } from "@react-aria/i18n";
+import { parseAbsoluteToLocal } from "@internationalized/date";
 
 const NOTES_TAB = "notes";
 const NotesPage = () => {
-  const [notePage, setNotePage] = useState(5);
+  const [dateSelected, setDateSelected] = useState(false);
   const { changedNote, isChanged } = usePutNotes();
   const [noteId, setNoteId] = useState(null);
   const { deleteNote, isDeleted, isLoading } = useDeleteNotes();
   const [activeTab, setActiveTab] = useState(NOTES_TAB);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [noteData, setNoteData] = useState(null);
+  const [reminderSelected, setReminderSelected] = useState(false);
   const { id } = useParams();
 
   const {
@@ -52,19 +52,24 @@ const NotesPage = () => {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
   } = useForm();
 
-  const openModal = (id) => {
-    const noteToEdit = notesResponse.find((note) => note.id === id);
+  const openModal = (noteId) => {
+    const noteToEdit = notesResponse.find((note) => note.id === noteId);
     if (noteToEdit) {
       setValue("title", noteToEdit.title);
       setValue("description", noteToEdit.description);
       setValue("date", noteToEdit.date);
+      setValue("dateV", parseAbsoluteToLocal(noteToEdit.date));
+      setReminderSelected(noteToEdit.isReminder);
+      setDateSelected(true);
     }
     setIsModalOpen(true);
-    setNoteId(id);
+    setNoteId(noteId);
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setConfirmCancelModalOpen(false);
@@ -74,7 +79,6 @@ const NotesPage = () => {
 
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
-  const openSaveConfirmationModal = () => setSaveConfirmationModalOpen(true);
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
@@ -85,7 +89,7 @@ const NotesPage = () => {
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
   const handleConfirmDelete = () => {
-    deleteNote(noteId);
+    deleteNote(noteId, setModified);
     closeConfirmDeleteModal();
   };
   const handleCancelClick = () => openConfirmCancelModal();
@@ -95,7 +99,7 @@ const NotesPage = () => {
   };
   const handleNoteCreation = async (noteData) => {
     try {
-      const newNote = await changedNote(noteData, noteId);
+      const newNote = await changedNote(noteData, noteId, setModified);
 
       if (newNote) {
         setSaveConfirmationModalOpen(true);
@@ -110,21 +114,33 @@ const NotesPage = () => {
     }
   };
   const onSubmit = (data) => {
-    console.log("on submit!");
-    const { title, description, date } = data;
+    const { title, description, dateV } = data;
+    const newdata = new Date(
+      dateV?.year || 1,
+      dateV?.month - 1 || 1,
+      dateV?.day || 1,
+    );
+    const formattedDate = newdata.toISOString();
     handleNoteCreation({
       title,
       description,
-      date,
+      isReminder: reminderSelected,
+      date: formattedDate,
     });
-  };
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
   };
 
   useEffect(() => {
     setClient(id);
   }, [id]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${day}/${month}/${year}`;
+  };
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -202,7 +218,7 @@ const NotesPage = () => {
                     key={index}
                     name={note.title}
                     content={note.description}
-                    date={note.date}
+                    date={formatDate(note.date)}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     onEditClick={() => openModal(note.id)}
@@ -224,45 +240,42 @@ const NotesPage = () => {
         )}
       </div>
       <ReusableModal
-        width="w-[46rem]"
+        width="w-[45.37rem]"
         isOpen={isModalOpen}
-        onClose={closeModal}
+        onClose={() => setIsModalOpen(false)}
         title="Editar Nota"
         buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
+        handleCancelClick={() => setIsModalOpen(false)}
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col">
-            <Input
-              label={"Nombre de nota"}
-              placeholder={"Escribir..."}
-              {...register("title", {
-                required: "El nombre es obligatorio",
-              })}
-              errorApi={errors.title}
-              msjError={errors.title ? errors.title.message : ""}
-            />
-            <Input
-              label={"Contenido"}
-              placeholder={"Escribir..."}
-              {...register("description", {
-                required: "El contenido es obligatorio",
-              })}
-              errorApi={errors.description}
-              msjError={errors.description ? errors.description.message : ""}
-            />
-            {errors.permissions && (
-              <span className="font-roboto text-xs text-red_e">
-                {errors.permissions.message}
-              </span>
-            )}
-          </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+          <Input
+            label={"Nombre de nota"}
+            placeholder={"Escribir..."}
+            {...register("title", {
+              required: "El nombre es obligatorio",
+            })}
+            errorApi={errors.title}
+            msjError={errors.title ? errors.title.message : ""}
+          />
+          <Input
+            label={"Contenido"}
+            placeholder={"Escribir..."}
+            {...register("description", {
+              required: "El contenido es obligatorio",
+            })}
+            errorApi={errors.description}
+            msjError={errors.description ? errors.description.message : ""}
+          />
+          {errors.permissions && (
+            <span className="font-roboto text-xs text-red_e">
+              {errors.permissions.message}
+            </span>
+          )}
           <div className="flex gap-[4.4rem]">
             <div>
               <Checkbox
-                defaultSelected={checkSelected === "existente"}
-                isSelected={checkSelected === "existente"}
-                onClick={() => setCheckSelected("existente")}
+                defaultSelected={dateSelected}
+                onClick={() => setDateSelected(!dateSelected)}
                 radius="full"
                 className="font-light"
               >
@@ -270,44 +283,40 @@ const NotesPage = () => {
                   Asignar fecha
                 </span>
               </Checkbox>
-              <div className="flex w-[18rem]">
-                <DatePicker
-                  className="max-w-[18rem] rounded-[.5rem] border"
-                  {...register("date", {})}
-                />
+              <div className="flex w-[18rem] flex-col">
+                <I18nProvider locale="es-ES">
+                  <Controller
+                    name={"dateV"}
+                    control={control}
+                    render={({ field }) => (
+                      <DatePicker
+                        className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
+                        {...field}
+                        label={""}
+                        placeholder="Seleccione una fecha"
+                        granularity="day"
+                      />
+                    )}
+                    rules={{
+                      required: dateSelected && "La fecha es obligatoria",
+                    }}
+                  />
+                  <p className="font-roboto text-xs text-red_e">
+                    {errors.dateV ? errors.dateV.message : ""}
+                  </p>
+                </I18nProvider>
               </div>
             </div>
             <div className="w-[12.6rem]">
               <Checkbox
-                defaultSelected={checkSelected === "existente"}
-                isSelected={checkSelected === "existente"}
-                onClick={() => setCheckSelected("existente")}
+                defaultSelected={reminderSelected}
+                onClick={() => setReminderSelected(!reminderSelected)}
                 radius="full"
-                className="font-light"
               >
-                <span className="text-sm font-light leading-[1rem] text-black_m">
+                <span className="text-sm font-light leading-[1rem] text-black_b">
                   Destacar como recordatorio
                 </span>
               </Checkbox>
-            </div>
-          </div>
-          <div className="mt-10 flex justify-between">
-            <Button
-              text="Cancelar"
-              color="cancel"
-              type="button"
-              onClick={handleCancelClick}
-              iconPosition="left"
-              width="w-20"
-            />
-            <div>
-              <Button
-                text="GUARDAR"
-                color="save"
-                type="submit"
-                icon={CheckLgIcon}
-                iconPosition="right"
-              />
             </div>
           </div>
         </form>
