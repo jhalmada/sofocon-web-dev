@@ -1,5 +1,4 @@
-import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import Button from "../components/buttons/Button";
@@ -12,6 +11,8 @@ import useUsers from "../hooks/users/use.users";
 import useCompanies from "../hooks/companies/useCompanies";
 import AddSellersRoutes from "../hooks/sellerRoutes/useAddSellerRoutes";
 import SearchInput from "../components/inputs/SearchInput";
+import BackButton from "../components/buttons/BackButton";
+
 const AddRoutePage = () => {
   const options = ["Activo", "Inactivo"];
   const {
@@ -29,6 +30,8 @@ const AddRoutePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
+  const { route } = useParams();
+
   const handleSellerCreation = async (sellerData) => {
     try {
       const newSeller = await postAddSellersRoutes(sellerData);
@@ -71,30 +74,25 @@ const AddRoutePage = () => {
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-  const closeModalMap = () => {
-    setIsMapModal(false);
-  };
+
   const closeSaveConfirmationModal = () => {
     navigate("/inicio/rutas");
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
   const handleCancelClick = () => closeModal();
+
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
-        <div className="w-[4rem]">
-          <Link to="/inicio/rutas" className="text-sm font-medium leading-4">
-            <div className="mb-4 flex items-center">
-              <img
-                src={ChevronLeftIcon}
-                alt="arrow left"
-                className="-ml-1 h-4 w-4"
-              />
-              Volver
-            </div>
-          </Link>
-        </div>
+        {route === "true" ? (
+          <BackButton route={"/inicio/empresas"} />
+        ) : (
+          <div className="w-[4rem]">
+            <BackButton route={"/inicio/rutas"} />
+          </div>
+        )}
+
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Rutas
         </h1>
@@ -155,7 +153,8 @@ const AddRoutePage = () => {
                 placeholder="Estado"
                 className="rounded-lg border"
                 {...register("status", {
-                  required: "Debes seleccionar una opción",
+                  validate: (value) =>
+                    value ? true : "Debes seleccionar una opción",
                 })}
                 errorApi={errors.status}
                 msjError={errors.status ? errors.status.message : ""}
@@ -229,7 +228,7 @@ const AddRoutePage = () => {
         <ReusableModal
           width="w-[45.37rem]"
           isOpen={isMapModal}
-          onClose={closeModalMap}
+          onClose={handleCancelClick}
           title="Marcar ubicación en el mapa"
           onSubmit={handleSubmit(onSubmit)}
           buttons={["cancel", "save"]}

@@ -5,12 +5,13 @@ import ReusableModal from "../components/modals/ReusableModal";
 import Input from "../components/inputs/Input";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import useNotes from "../hooks/notes/useNotes.js";
-import usePutNotes from "../hooks/notes/usePutNotes.js";
 import { Controller, useForm } from "react-hook-form";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import useAddNotes from "../hooks/notes/useAddNotes.js";
 import { I18nProvider } from "@react-aria/i18n";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import BackButton from "../components/buttons/BackButton.jsx";
 const NOTES_TAB = "notes";
 const AddNotesPage = () => {
   const [noteId, setNoteId] = useState(null);
@@ -116,16 +117,7 @@ const AddNotesPage = () => {
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
         <div className="w-[4rem]">
-          <Link to="/inicio/empresas" className="text-sm font-medium leading-4">
-            <div className="mb-4 flex items-center">
-              <img
-                src={ChevronLeftIcon}
-                alt="arrow left"
-                className="-ml-1 h-4 w-4"
-              />
-              Volver
-            </div>
-          </Link>
+          <BackButton route="/inicio/empresas" />
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
@@ -190,6 +182,7 @@ const AddNotesPage = () => {
                     control={control}
                     render={({ field }) => (
                       <DatePicker
+                        minValue={today(getLocalTimeZone())}
                         className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
                         {...field}
                         label={""}

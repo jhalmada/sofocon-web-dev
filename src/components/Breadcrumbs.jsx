@@ -9,7 +9,7 @@ const Breadcrumbs = () => {
   const generateBreadcrumbs = () => {
     const pathnames = location.pathname
       .split("/")
-      .filter((x) => x && !uuidRegex.test(x));
+      .filter((x) => x && !uuidRegex.test(x) && x !== "true" && x !== "false");
     return [
       ...pathnames.map((name, index) => {
         const path = `/${pathnames.slice(0, index + 1).join("/")}`;

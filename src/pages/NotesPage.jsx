@@ -18,7 +18,11 @@ import useDeleteNotes from "../hooks/notes/useDeleteNotes.js";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import NotesRow from "../components/NotesRow.jsx";
 import { I18nProvider } from "@react-aria/i18n";
-import { parseAbsoluteToLocal } from "@internationalized/date";
+import {
+  getLocalTimeZone,
+  parseAbsoluteToLocal,
+  today,
+} from "@internationalized/date";
 
 const NOTES_TAB = "notes";
 const NotesPage = () => {
@@ -240,7 +244,7 @@ const NotesPage = () => {
       <ReusableModal
         width="w-[45.37rem]"
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleCancelClick}
         title="Editar Nota"
         buttons={["cancel", "save"]}
         handleCancelClick={() => setIsModalOpen(false)}
@@ -288,6 +292,7 @@ const NotesPage = () => {
                     control={control}
                     render={({ field }) => (
                       <DatePicker
+                        minValue={today(getLocalTimeZone())}
                         className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
                         {...field}
                         label={""}

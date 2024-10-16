@@ -149,6 +149,13 @@ const AddUserPage = () => {
               msjError={errors.fullName ? errors.fullName.message : ""}
             />
             <Input
+              type={"text"}
+              pattern="[0-9]*"
+              onKeyPress={(e) => {
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
               label={"CI"}
               placeholder={"123456789"}
               {...register("ci", {
@@ -158,6 +165,13 @@ const AddUserPage = () => {
               msjError={errors.fullName ? errors.fullName.message : ""}
             />
             <Input
+              type={"text"}
+              pattern="[0-9]*"
+              onKeyPress={(e) => {
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
               label={"Teléfono de contacto"}
               placeholder={"123456789"}
               {...register("phone", {

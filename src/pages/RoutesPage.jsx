@@ -145,7 +145,7 @@ const RoutesPage = () => {
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
             {activeTab === SELLER_TAB && (
               <div className="flex space-x-4">
-                <Link to={"agregar-ruta"}>
+                <Link to={`agregar-ruta/${false}`}>
                   <Button text="Nueva ruta" icon={PlusIcon} />
                 </Link>
               </div>
@@ -223,7 +223,7 @@ const RoutesPage = () => {
       </div>
       <ReusableModal
         isOpen={isModalOpen}
-        onClose={closeModal}
+        onClose={handleCancelClick}
         title="Editar Ruta"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
@@ -276,7 +276,8 @@ const RoutesPage = () => {
               placeholder="Estado"
               className="rounded-lg border"
               {...register("status", {
-                required: "Debes seleccionar una opción",
+                validate: (value) =>
+                  value ? true : "Debes seleccionar una opción",
               })}
             >
               <SelectItem key={true}>Activo</SelectItem>
