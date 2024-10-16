@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import x from "../../assets/icons/x.svg";
 import search from "../../assets/icons/search.svg";
-
+//array es el array de objetos que se va a mostrar en el autocomplete
+//array2 es el array de los objetos ya seleccionados.
 const NextAutoComplete = ({
   array,
   label,
@@ -10,9 +11,10 @@ const NextAutoComplete = ({
   setValue,
   onChange,
   label2,
+  array2,
 }) => {
   //estados
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState(array2 || []);
 
   const handleSelect = (item) => {
     if (!selectedItems.includes(item)) {
