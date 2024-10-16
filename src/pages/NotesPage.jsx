@@ -9,8 +9,6 @@ import PlusIcon from "../assets/icons/plus.svg";
 import FilterRightIcon from "../assets/icons/filter-right.svg";
 import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import CheckLgIcon from "../assets/icons/check-lg.svg";
-import XlgIcon from "../assets/icons/x-lg.svg";
 import useNotes from "../hooks/notes/useNotes.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";

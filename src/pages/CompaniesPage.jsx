@@ -659,7 +659,6 @@ const CompaniesPage = () => {
           </div>
         </form>
       </ReusableModal>
-
       <ReusableModal
         isOpen={isExportModalOpen}
         onClose={closeModal}
