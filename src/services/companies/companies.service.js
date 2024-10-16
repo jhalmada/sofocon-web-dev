@@ -13,4 +13,10 @@ export class CompaniesService {
 
   static deleteCompanyApi = async (companyId) =>
     await axios.delete(`${companiesRoutes.deleteClients}/${companyId}`);
+
+  static putUsersCompanyApi = async (listUsers, companyId) =>
+    await axios.put(
+      `${companiesRoutes.putClients}/${companyId}/users`,
+      listUsers,
+    );
 }

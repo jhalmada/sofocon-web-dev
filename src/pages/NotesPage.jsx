@@ -248,6 +248,7 @@ const NotesPage = () => {
         title="Editar Nota"
         buttons={["cancel", "save"]}
         handleCancelClick={() => setIsModalOpen(false)}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <Input
