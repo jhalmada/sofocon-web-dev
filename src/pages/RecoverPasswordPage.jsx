@@ -1,14 +1,35 @@
+import { useForm } from "react-hook-form";
 import Input from "../components/inputs/Input";
 import { Link } from "react-router-dom";
 const RecoverPasswordPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
-    <div className="w-full font-roboto">
+    <form className="w-full font-roboto" onSubmit={handleSubmit(onSubmit)}>
       <Input
-        placeholder={"Example@ejemail.com"}
-        label={"Confirma tu correo"}
-        msjError={
-          "*Este campo debe contener una direccion de correo válida vinculada a la plataforma."
-        }
+        placeholder={"Escribe tu correo"}
+        label={"Dirección de correo"}
+        {...register("email", {
+          required: {
+            value: true,
+            message: "Campo obligatorio",
+          },
+          pattern: {
+            value:
+              /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
+            message: "Formato de email incorrecto",
+          },
+        })} // Add this line
+        errorApi={errors.email}
+        msjError={errors.email ? errors.email.message : ""}
       />
       <p className="mt-4 max-w-[27.1875rem] text-xs font-light">
         Introduce tu dirección de correo electrónico y te enviaremos un enlace
@@ -21,13 +42,15 @@ const RecoverPasswordPage = () => {
         >
           VOLVER
         </Link>
-        <Link to={"/login/nueva-contraseña"}>
-          <button className="shadow-gray-500 mt-5 h-11 w-[13.25rem] rounded-[1.3rem] bg-red_b font-roboto text-sm font-medium uppercase text-white shadow-md">
-            ENVIAR CODIGO
-          </button>
-        </Link>
+
+        <button
+          type="submit"
+          className="shadow-gray-500 mt-5 h-11 w-[13.25rem] rounded-[1.3rem] bg-red_b font-roboto text-sm font-medium uppercase text-white shadow-md"
+        >
+          ENVIAR CODIGO
+        </button>
       </div>
-    </div>
+    </form>
   );
 };
 export default RecoverPasswordPage;
