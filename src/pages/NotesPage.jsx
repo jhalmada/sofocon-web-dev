@@ -301,6 +301,11 @@ const NotesPage = () => {
                         label={""}
                         placeholder="Seleccione una fecha"
                         granularity="day"
+                        errorMessage={(value) => {
+                          if (value.isInvalid) {
+                            return "La fecha de visita expiró";
+                          }
+                        }}
                       />
                     )}
                     rules={{

@@ -61,7 +61,7 @@ const UsersPage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const roleOptions = ["Admin", "User", "Guest"];
+  const roleOptions = ["Admin", "User", "Guest", "test"];
   const stateOptions = ["Activo", "Inactivo"];
 
   const openModal = (id) => {

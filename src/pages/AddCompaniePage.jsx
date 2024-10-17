@@ -419,6 +419,11 @@ const AddCompaniePage = () => {
                       {...field}
                       label={""}
                       placeholder="Seleccione una fecha"
+                      errorMessage={(value) => {
+                        if (value.isInvalid) {
+                          return "La fecha de visita expiró";
+                        }
+                      }}
                     />
                   )}
                   rules={{

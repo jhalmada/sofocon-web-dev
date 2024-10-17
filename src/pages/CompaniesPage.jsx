@@ -66,6 +66,7 @@ const CompaniesPage = () => {
   const [checkSelected, setCheckSelected] = useState("RUT");
   const [competenceName, setCompetenceName] = useState("");
   const [listUsers, setListUsers] = useState([]);
+  const [errorDataPicker, setErrorDataPicker] = useState(false);
   const {
     register,
     handleSubmit,
@@ -635,14 +636,25 @@ const CompaniesPage = () => {
                 name={"nextVisit"}
                 control={control}
                 render={({ field }) => (
-                  <DatePicker
-                    granularity="day"
-                    minValue={today(getLocalTimeZone())}
-                    className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
-                    {...field}
-                    label={""}
-                    placeholder="Seleccione una fecha"
-                  />
+                  <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
+                    <DatePicker
+                      granularity="day"
+                      minValue={today(getLocalTimeZone())}
+                      className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
+                      {...field}
+                      label={""}
+                      placeholder="Seleccione una fecha"
+                      errorMessage={(value) => {
+                        if (value.isInvalid) {
+                          setErrorDataPicker(true);
+                          return "";
+                        } else {
+                          setErrorDataPicker(false);
+                          return "";
+                        }
+                      }}
+                    />
+                  </div>
                 )}
                 rules={{
                   required: {
@@ -653,6 +665,9 @@ const CompaniesPage = () => {
               />
               <p className="font-roboto text-xs text-red_e">
                 {errors.nextVisit ? errors.nextVisit.message : ""}
+              </p>
+              <p className="font-roboto text-xs text-red_e">
+                {errorDataPicker ? "La fecha de visita expiró" : ""}
               </p>
             </I18nProvider>
           </div>

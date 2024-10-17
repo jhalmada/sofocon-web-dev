@@ -181,13 +181,20 @@ const AddNotesPage = () => {
                     name={"dateV"}
                     control={control}
                     render={({ field }) => (
-                      <DatePicker
-                        minValue={today(getLocalTimeZone())}
-                        className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
-                        {...field}
-                        label={""}
-                        placeholder="Seleccione una fecha"
-                      />
+                      <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
+                        <DatePicker
+                          minValue={today(getLocalTimeZone())}
+                          className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
+                          {...field}
+                          label={""}
+                          placeholder="Seleccione una fecha"
+                          errorMessage={(value) => {
+                            if (value.isInvalid) {
+                              return "La fecha de visita expiró";
+                            }
+                          }}
+                        />
+                      </div>
                     )}
                     rules={{
                       required: dateSelected && "La fecha es obligatoria",
