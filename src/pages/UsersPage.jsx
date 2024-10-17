@@ -10,9 +10,6 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/react";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
-import FilterRightIcon from "../assets/icons/filter-right.svg";
-import ChevronDownIcon from "../assets/icons/chevron-down.svg";
-import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import useUsers from "../hooks/users/use.users.js";
 import editIcon from "../assets/icons/pencil-square.svg";
@@ -26,6 +23,7 @@ import { BASE_URL } from "../utils/Constants.js";
 import SellersPage from "./SellersPage.jsx";
 import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
 import BackButton from "../components/buttons/BackButton.jsx";
+import FilterSelect from "../components/filters/FilterSelect.jsx";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
@@ -36,6 +34,7 @@ const UsersPage = () => {
     usersResponse,
     setItemsPerPage,
     totalPage,
+    total,
     setPage,
     page,
     itemsPerPage,
@@ -53,12 +52,18 @@ const UsersPage = () => {
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [stateFilter, setStateFilter] = useState("");
+
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
+  const roleOptions = ["Admin", "User", "Guest", "test"];
+  const stateOptions = ["Activo", "Inactivo"];
+
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
     if (userToEdit) {
@@ -161,6 +166,13 @@ const UsersPage = () => {
         });
     }
   };
+  const handleRoleFilterChange = (value) => {
+    setRoleFilter(value);
+  };
+  const handleStateFilterChange = (value) => {
+    setStateFilter(value);
+  };
+
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -239,23 +251,23 @@ const UsersPage = () => {
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Email
                   </th>
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex gap-2">
-                      <h3>Rol</h3>
-                      <img
-                        src={FilterRightIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                      <img
-                        src={ChevronDownIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                    <div className="flex flex-col gap-2">
+                      <FilterSelect
+                        options={roleOptions}
+                        placeholder="Rol"
+                        onChange={handleRoleFilterChange}
                       />
                     </div>
                   </th>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Estado
+                    <div className="flex flex-col gap-2">
+                      <FilterSelect
+                        options={stateOptions}
+                        placeholder="Estado"
+                        onChange={handleStateFilterChange}
+                      />
+                    </div>
                   </th>
                   <th className="p-2 text-md font-semibold leading-[1.125rem]">
                     Acción
@@ -263,20 +275,28 @@ const UsersPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {usersResponse.map((user, index) => (
-                  <UserRow
-                    key={index}
-                    fullName={`${user.userInfo.fullName} `}
-                    email={user.email}
-                    role={user?.role?.name}
-                    editIconSrc={editIcon}
-                    deleteIconSrc={deleteIcon}
-                    onEditClick={() => {
-                      openModal(user.id);
-                    }}
-                    onDeleteClick={() => openConfirmDeleteModal(user.id)}
-                  />
-                ))}
+                {usersResponse
+                  .filter((user) => {
+                    return (
+                      (roleFilter === "" || user?.role?.name === roleFilter) &&
+                      (stateFilter === "" ||
+                        (user.state ? "Activo" : "Inactivo") === stateFilter)
+                    );
+                  })
+                  .map((user, index) => (
+                    <UserRow
+                      key={index}
+                      fullName={`${user.userInfo.fullName} `}
+                      email={user.email}
+                      role={user?.role?.name}
+                      editIconSrc={editIcon}
+                      deleteIconSrc={deleteIcon}
+                      onEditClick={() => {
+                        openModal(user.id);
+                      }}
+                      onDeleteClick={() => openConfirmDeleteModal(user.id)}
+                    />
+                  ))}
               </tbody>
             </table>
             <div className="flex justify-center p-6">
@@ -286,6 +306,7 @@ const UsersPage = () => {
                 totalPages={totalPage}
                 onPageChange={setPage}
                 itemPerPage={itemsPerPage}
+                total={total}
               />
             </div>
           </div>

@@ -51,15 +51,12 @@ const TableRole = () => {
   const [roleId, setRoleId] = useState("");
   const [rolePage, setRolePage] = useState(5);
   const { RolesResponse, setRolModified } = useRoles();
-
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-
   const [modalTitle, setModalTitle] = useState("");
   const [modalButtons, setModalButtons] = useState([]);
-
   const totalRoles = RolesResponse ? RolesResponse.length : 0;
   const totalPages = Math.ceil(totalRoles / rolePage);
   const [currentPage, setCurrentPage] = useState(0);

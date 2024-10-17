@@ -6,6 +6,7 @@ const useNotes = () => {
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
+  const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
   const [client, setClient] = useState(null);
@@ -19,6 +20,7 @@ const useNotes = () => {
         client,
       });
       setTotalPage(data.pagination.totalPages);
+      setTotal(data.pagination.total);
       setNotesResponse(data.result);
     } catch (e) {
       console.log(e);
@@ -35,6 +37,7 @@ const useNotes = () => {
     loading,
     setItemsPerPage,
     totalPage,
+    total,
     setPage,
     page,
     itemsPerPage,

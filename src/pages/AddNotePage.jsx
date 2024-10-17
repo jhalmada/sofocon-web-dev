@@ -28,6 +28,7 @@ const AddNotesPage = () => {
   const [reminderSelected, setReminderSelected] = useState(false);
   const { id } = useParams();
   const [idCliente, setIdCliente] = useState(null);
+  const [errorDataPicker, setErrorDataPicker] = useState(false);
 
   useEffect(() => {
     setIdCliente(id);
@@ -181,13 +182,24 @@ const AddNotesPage = () => {
                     name={"dateV"}
                     control={control}
                     render={({ field }) => (
-                      <DatePicker
-                        minValue={today(getLocalTimeZone())}
-                        className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
-                        {...field}
-                        label={""}
-                        placeholder="Seleccione una fecha"
-                      />
+                      <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
+                        <DatePicker
+                          minValue={today(getLocalTimeZone())}
+                          className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
+                          {...field}
+                          label={""}
+                          placeholder="Seleccione una fecha"
+                          errorMessage={(value) => {
+                            if (value.isInvalid) {
+                              setErrorDataPicker(true);
+                              return "";
+                            } else {
+                              setErrorDataPicker(false);
+                              return "";
+                            }
+                          }}
+                        />
+                      </div>
                     )}
                     rules={{
                       required: dateSelected && "La fecha es obligatoria",

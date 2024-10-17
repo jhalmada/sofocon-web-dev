@@ -6,6 +6,7 @@ const useSellerRoutes = () => {
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
+  const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -18,6 +19,7 @@ const useSellerRoutes = () => {
         itemsPerPage,
       });
       setTotalPage(data.pagination.totalPages);
+      setTotal(data.pagination.total);
       setSellerRouteResponse(data.result);
     } catch (e) {
       console.log(e);
@@ -34,6 +36,7 @@ const useSellerRoutes = () => {
     loading,
     setItemsPerPage,
     totalPage,
+    total,
     setPage,
     page,
     itemsPerPage,
