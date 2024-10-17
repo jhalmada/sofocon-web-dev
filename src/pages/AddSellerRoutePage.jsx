@@ -15,6 +15,7 @@ const AddSellerRoutePage = ({
   setItemsPerPage,
   page,
   totalPage,
+  total,
   setPage,
   itemsPerPage,
   isSellersModalOpen,
@@ -123,6 +124,7 @@ const AddSellerRoutePage = ({
             totalPages={totalPage}
             onPageChange={setPage}
             itemPerPage={itemsPerPage}
+            total={total}
           />
         </div>
       </div>

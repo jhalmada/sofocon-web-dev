@@ -43,6 +43,7 @@ const NotesPage = () => {
     notesResponse,
     setItemsPerPage,
     totalPage,
+    total,
     setPage,
     page,
     itemsPerPage,
@@ -236,6 +237,7 @@ const NotesPage = () => {
                 totalPages={totalPage}
                 onPageChange={setPage}
                 itemPerPage={itemsPerPage}
+                total={total}
               />
             </div>
           </div>

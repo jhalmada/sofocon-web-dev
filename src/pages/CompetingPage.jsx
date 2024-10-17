@@ -23,6 +23,7 @@ const CompetingPage = () => {
     companiesResponse,
     setItemsPerPage,
     totalPage,
+    total,
     setPage,
     page,
     itemsPerPage,
@@ -132,6 +133,7 @@ const CompetingPage = () => {
           totalPages={totalPage}
           onPageChange={setPage}
           itemsPerPage={itemsPerPage}
+          total={total}
         />
       </div>
     </div>

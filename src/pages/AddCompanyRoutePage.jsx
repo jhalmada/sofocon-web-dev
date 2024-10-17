@@ -15,6 +15,7 @@ const AddCompanyRoutePage = ({
   setPage,
   page,
   totalPage,
+  total,
   itemsPerPage,
   arrayCompanies,
   isModalOpen,
@@ -139,6 +140,7 @@ const AddCompanyRoutePage = ({
           totalPages={totalPage}
           onPageChange={setPage}
           itemsPerPage={itemsPerPage}
+          total={total}
         />
       </div>
       <ReusableModal

@@ -45,6 +45,7 @@ const CompaniesPage = () => {
     companiesResponse,
     setItemsPerPage,
     totalPage,
+    total,
     setPage,
     page,
     itemsPerPage,
@@ -384,6 +385,7 @@ const CompaniesPage = () => {
                 totalPages={totalPage}
                 onPageChange={setPage}
                 itemsPerPage={itemsPerPage}
+                total={total}
               />
             </div>
           </div>
