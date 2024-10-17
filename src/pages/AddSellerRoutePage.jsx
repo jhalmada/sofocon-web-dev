@@ -129,7 +129,7 @@ const AddSellerRoutePage = ({
       <ReusableModal
         onSubmit={handleSubmit(onSubmit)}
         isOpen={isSellersModalOpen}
-        onClose={closeModal}
+        onClose={handleCancelClick}
         title="Agregar vendedor/es a Ruta 1"
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}

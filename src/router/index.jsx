@@ -92,6 +92,11 @@ export const router = createBrowserRouter([
             element: <AddCompaniePage />,
           },
           {
+            path: ADD_ROUTE_ROUTE,
+            element: <AddRoutePage />,
+          },
+
+          {
             path: NOTES_ROUTE,
             element: <NotesLayout />,
             children: [

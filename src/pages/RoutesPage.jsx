@@ -18,7 +18,6 @@ import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
-import { s } from "framer-motion/client";
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
@@ -223,7 +222,7 @@ const RoutesPage = () => {
       </div>
       <ReusableModal
         isOpen={isModalOpen}
-        onClose={closeModal}
+        onClose={handleCancelClick}
         title="Editar Ruta"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
@@ -276,7 +275,8 @@ const RoutesPage = () => {
               placeholder="Estado"
               className="rounded-lg border"
               {...register("status", {
-                required: "Debes seleccionar una opción",
+                validate: (value) =>
+                  value ? true : "Debes seleccionar una opción",
               })}
             >
               <SelectItem key={true}>Activo</SelectItem>

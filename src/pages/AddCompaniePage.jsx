@@ -12,6 +12,8 @@ import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
 import { Controller, useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
 import { I18nProvider } from "@react-aria/i18n";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import BackButton from "../components/buttons/BackButton";
 const AddCompaniePage = () => {
   const {
     register,
@@ -117,16 +119,7 @@ const AddCompaniePage = () => {
     <div className="flex min-h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
         <div className="w-[4rem]">
-          <Link to="/inicio/empresas" className="text-sm font-medium leading-4">
-            <div className="mb-4 flex items-center">
-              <img
-                src={ChevronLeftIcon}
-                alt="arrow left"
-                className="-ml-1 h-4 w-4"
-              />
-              Volver
-            </div>
-          </Link>
+          <BackButton route="/inicio/empresas" />
         </div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Empresas
@@ -273,19 +266,27 @@ const AddCompaniePage = () => {
               msjError={errors.managerName ? errors.managerName.message : ""}
             />
             <Input
-              type={"number"}
+              type={"text"}
+              pattern="[0-9]*"
+              onKeyPress={(e) => {
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
               label={"Contacto"}
               placeholder={"Escribe el teléfono del contacto..."}
               {...register("phone", {
                 required: "Este campo es requerido",
                 minLength: {
                   value: 15,
-                  message: "Ingrese los 15 digitos de su numero.",
+                  message: "Ingrese los 15 digitos de su número.",
                 },
                 maxLength: {
                   value: 15,
-                  message: "Ingrese solo los 15 digitos de su numero.",
+                  message: "Ingrese solo los 15 digitos de su número.",
                 },
+                validate: (value) =>
+                  /^[0-9]+$/.test(value) || "Ingrese solo números",
               })}
               errorApi={errors.phone}
               msjError={errors.phone ? errors.phone.message : ""}
@@ -302,7 +303,13 @@ const AddCompaniePage = () => {
                   <label className="text-sm">Asignar R.U.T.:</label>
                 </Checkbox>
                 <Input
-                  type={"number"}
+                  type={"text"}
+                  pattern="[0-9]*"
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   isSelected={checkSelected === "RUT"}
                   disabled={checkSelected !== "RUT"}
                   placeholder={"Escribe los 12 caracteres del RUT..."}
@@ -317,6 +324,8 @@ const AddCompaniePage = () => {
                       value: 12,
                       message: "Ingrese solo los 12 digitos de su RUT.",
                     },
+                    validate: (value) =>
+                      /^[0-9]+$/.test(value) || "Ingrese solo números",
                   })}
                   errorApi={checkSelected === "RUT" && errors.rut}
                   msjError={
@@ -339,7 +348,13 @@ const AddCompaniePage = () => {
                   </label>
                 </Checkbox>
                 <Input
-                  type={"number"}
+                  type={"text"}
+                  pattern="[0-9]*"
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   disabled={checkSelected !== "CI"}
                   placeholder={"Escribe los 8 caracteres del CI..."}
                   {...register("ci", {
@@ -353,6 +368,8 @@ const AddCompaniePage = () => {
                       value: 8,
                       message: "Ingrese solo los 8 digitos de su CI.",
                     },
+                    validate: (value) =>
+                      /^[0-9]+$/.test(value) || "Ingrese solo números",
                   })}
                   errorApi={checkSelected === "CI" && errors.ci}
                   msjError={
@@ -371,7 +388,8 @@ const AddCompaniePage = () => {
                 placeholder="Seleccionar estado"
                 className={`rounded-lg border ${errors.status ? "border-red_e" : ""}`}
                 {...register("status", {
-                  required: "Este campo es requerido",
+                  validate: (value) =>
+                    value ? true : "Este campo es requerido",
                 })}
                 onSelectionChange={(values) => setValue("status", values)}
               >
@@ -396,6 +414,7 @@ const AddCompaniePage = () => {
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      minValue={today(getLocalTimeZone())}
                       className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
                       {...field}
                       label={""}
@@ -442,7 +461,7 @@ const AddCompaniePage = () => {
         <ReusableModal
           width="w-[45.37rem]"
           isOpen={isMapModal}
-          onClose={closeModalMap}
+          onClose={handleCancelClick}
           title="Marcar ubicación en el mapa"
           buttons={["cancel", "save"]}
           handleCancelClick={handleCancelClick}

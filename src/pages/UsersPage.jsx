@@ -25,6 +25,7 @@ import { permisos } from "../utils/permisons";
 import { BASE_URL } from "../utils/Constants.js";
 import SellersPage from "./SellersPage.jsx";
 import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
+import BackButton from "../components/buttons/BackButton.jsx";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
@@ -164,16 +165,7 @@ const UsersPage = () => {
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
         <div className="w-[4rem]">
-          <Link to="/inicio" className="text-sm font-medium leading-4">
-            <div className="mb-4 flex items-center">
-              <img
-                src={ChevronLeftIcon}
-                alt="arrow left"
-                className="-ml-1 h-4 w-4"
-              />
-              Volver
-            </div>
-          </Link>
+          <BackButton route="/inicio" />
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
@@ -305,7 +297,7 @@ const UsersPage = () => {
       </div>
       <ReusableModal
         isOpen={isModalOpen}
-        onClose={closeModal}
+        onClose={handleCancelClick}
         title="Editar Usuario"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}

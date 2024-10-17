@@ -404,6 +404,9 @@ const RouteMapDetailsPage = () => {
           />
         )}
       </div>
+
+      {/* Vendedores */}
+
       <ReusableModal
         isOpen={isSellersExportModalOpen}
         onClose={closeModal}
@@ -414,7 +417,11 @@ const RouteMapDetailsPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getUsersExcel}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getUsersExcel}/?route=${id}`}
+            download
+            target="_blank"
+          >
             <Button
               text="Descargar archivo Excel"
               icon={DownloadIcon}
@@ -424,7 +431,11 @@ const RouteMapDetailsPage = () => {
             />
           </a>
 
-          <a href={`${BASE_URL}/${getUsersPdf}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getUsersPdf}/?route=${id}`}
+            download
+            target="_blank"
+          >
             <Button
               text="Descargar archivo PDF"
               icon={DownloadIcon}
@@ -435,6 +446,9 @@ const RouteMapDetailsPage = () => {
           </a>
         </div>
       </ReusableModal>
+
+      {/* Empresas */}
+
       <ReusableModal
         isOpen={isExportModalOpen}
         onClose={closeModal}
@@ -445,7 +459,11 @@ const RouteMapDetailsPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getClientsExcel}/?route=${id}`}
+            download
+            target="_blank"
+          >
             <Button
               text="Descargar archivo Excel"
               icon={DownloadIcon}
@@ -455,7 +473,11 @@ const RouteMapDetailsPage = () => {
             />
           </a>
 
-          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getClientsPdf}/?route=${id}`}
+            download
+            target="_blank"
+          >
             <Button
               text="Descargar archivo PDF"
               icon={DownloadIcon}

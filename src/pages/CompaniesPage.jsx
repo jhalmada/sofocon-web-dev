@@ -26,11 +26,14 @@ import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
 import { I18nProvider } from "@react-aria/i18n";
-import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import {
   getClientsExcel,
   getClientsPdf,
 } from "../services/companies/companies.routes.js";
+import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
+import useUsersSellers from "../hooks/users/useUsersSellers.js";
+import useUserCompany from "../hooks/companies/useUsersCompany.js";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -60,7 +63,8 @@ const CompaniesPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [competence, setCompetence] = useState(false);
   const [checkSelected, setCheckSelected] = useState("RUT");
-
+  const [competenceName, setCompetenceName] = useState("");
+  const [listUsers, setListUsers] = useState([]);
   const {
     register,
     handleSubmit,
@@ -69,6 +73,9 @@ const CompaniesPage = () => {
     formState: { errors },
   } = useForm();
 
+  const { handleSubmit: handleSubmit2, setValue: setValue2 } = useForm();
+  const { userSellerResponse, setSearch } = useUsersSellers();
+  const { addUsersCompany } = useUserCompany();
   const openModal = (id) => {
     const companyToEdit = companiesResponse.find(
       (company) => company.id === id,
@@ -157,6 +164,7 @@ const CompaniesPage = () => {
   };
 
   const onSubmit = (data) => {
+    console.log(data);
     const {
       nextVisit,
       name,
@@ -216,6 +224,22 @@ const CompaniesPage = () => {
     return `${day}/${month}/${year}`;
   };
 
+  //funcion para transformar los Arrays
+  const transformData = (array) => {
+    return array.map((item) => ({
+      id: item.id,
+      name: item.name,
+    }));
+  };
+
+  const submit = (data) => {
+    const user = data.sellers.map((seller) => ({ id: seller.id }));
+    const datos = addUsersCompany({ user }, companyId, setModified);
+    if (datos) {
+      setIsSellersModalOpen(false);
+    }
+  };
+
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -265,7 +289,7 @@ const CompaniesPage = () => {
                 <Link to={"agregar-empresa"}>
                   <Button text="Nueva Empresa" icon={PlusIcon} />
                 </Link>
-                <Link to={"/inicio/rutas/agregar-ruta"}>
+                <Link to={"/inicio/empresas/agregar-ruta"}>
                   <Button text="Nueva Ruta" color={"save"} icon={PlusIcon} />
                 </Link>
               </div>
@@ -343,7 +367,12 @@ const CompaniesPage = () => {
                     notesIcon={notesIcon}
                     onEditClick={() => openModal(companie.id)}
                     onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-                    onClick={() => openSellersModal(companie.id)}
+                    onClick={() => {
+                      openSellersModal(companie.id),
+                        setCompetenceName(companie.name),
+                        setCompanyId(companie.id),
+                        setListUsers(companie.user);
+                    }}
                   />
                 ))}
               </tbody>
@@ -364,7 +393,7 @@ const CompaniesPage = () => {
 
       <ReusableModal
         isOpen={isModalOpen}
-        onClose={closeModal}
+        onClose={handleCancelClick}
         title="Editar Empresa"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
@@ -382,23 +411,7 @@ const CompaniesPage = () => {
               msjError={errors.name ? errors.name.message : ""}
             />
           </div>
-          <Input
-            label={"Empresa actual"}
-            placeholder={"Nombre..."}
-            {...register("name", {
-              required: "Este campo es requerido",
-              minLength: {
-                value: 2,
-                message: "El nombre debe contener al menos 2 caracteres.",
-              },
-              maxLength: {
-                value: 50,
-                message: "El nombre no puede exceder los 50 caracteres.",
-              },
-            })}
-            errorApi={errors.name}
-            msjError={errors.name ? errors.name.message : ""}
-          />
+
           <div>
             <Checkbox
               defaultSelected={competence}
@@ -595,15 +608,12 @@ const CompaniesPage = () => {
               Asignar estado:
             </label>
             <Select
-              placeholder="estado"
-              className={`${errors.status ? "text-red_e" : ""} ${errors.status ? "border-red_e" : ""} rounded-lg border`}
+              placeholder="Seleccionar estado"
+              className={`rounded-lg border ${errors.status ? "border-red_e" : ""}`}
               {...register("status", {
-                required: {
-                  value: true,
-                  message: "El estado es obligatorio",
-                },
+                validate: (value) => (value ? true : "Este campo es requerido"),
               })}
-              onSelectionChange={(value) => setValue("status", value)}
+              onSelectionChange={(values) => setValue("status", values)}
             >
               <SelectItem key={"FRECUENT"}>Frecuente</SelectItem>
               <SelectItem key={"POTENTIAL"}>Potencial</SelectItem>
@@ -625,6 +635,7 @@ const CompaniesPage = () => {
                 render={({ field }) => (
                   <DatePicker
                     granularity="day"
+                    minValue={today(getLocalTimeZone())}
                     className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
                     {...field}
                     label={""}
@@ -732,46 +743,33 @@ const CompaniesPage = () => {
 
       <ReusableModal
         isOpen={isSellersModalOpen}
-        onClose={closeModal}
-        title="Nombre Empresa"
-        onSubmit={handleSubmit(onSubmit)}
+        onClose={handleCancelClick}
+        title={competenceName}
+        onSubmit={handleSubmit2(submit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >
-        <div className="space-y-2">
-          <p className="text-sm font-light leading-[1rem] text-black_b">
-            Vendedores asignados
-          </p>
-          <Button
-            text="Vendedor 1"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
+        <form onSubmit={handleSubmit2(submit)}>
+          <NextAutoComplete
+            label={"Agregar vendedores"}
+            label2={"Vendedores asignados"}
+            array={
+              userSellerResponse?.result?.map((seller) => ({
+                id: seller.id,
+                name: seller.userInfo.fullName,
+              })) || []
+            }
+            array2={
+              listUsers.map((seller) => ({
+                id: seller.id,
+                name: seller.userInfo.fullName,
+              })) || []
+            }
+            name={"sellers"}
+            setValue={setValue2}
+            onChange={setSearch}
           />
-          <Button
-            text="Vendedor 2"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
-          <Button
-            text="Vendedor 3"
-            icon={closeIcon}
-            color={"selected"}
-            width="w-full"
-          />
-        </div>
-        <div>
-          <p className="mb-2 text-sm font-light leading-[1rem] text-black_b">
-            Agregar vendedores
-          </p>
-          <SearchInput
-            placeholder="Buscar..."
-            border="border"
-            rounded="rounded-[0.375rem]"
-            visibility="block"
-          />
-        </div>
+        </form>
       </ReusableModal>
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}

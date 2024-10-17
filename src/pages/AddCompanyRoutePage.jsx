@@ -143,7 +143,7 @@ const AddCompanyRoutePage = ({
       </div>
       <ReusableModal
         isOpen={isModalOpen}
-        onClose={closeModal}
+        onClose={handleCancelClick}
         title="Agregar empresa/s a Ruta 1"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}

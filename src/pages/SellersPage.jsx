@@ -20,6 +20,10 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
+  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+    useState(false);
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const options = ["Activo", "Inactivo"];
   //hooks
   const {
@@ -56,6 +60,23 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
     }
     setIsModalOpen(true);
     setUserId(id);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setConfirmCancelModalOpen(false);
+    setSaveConfirmationModalOpen(false);
+    setConfirmDeleteModalOpen(false);
+  };
+  const closeSaveConfirmationModal = () => {
+    setSaveConfirmationModalOpen(false);
+    closeModal();
+  };
+  const handleCancelClick = () => openConfirmCancelModal();
+  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
+  const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
+  const handleConfirmCancel = () => {
+    closeConfirmCancelModal();
+    closeModal();
   };
 
   //funcion para transformar los Arrays
@@ -120,11 +141,11 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
       {/**modal para editar */}
       <ReusableModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleCancelClick}
         title="Editar Usuario"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
-        handleCancelClick={() => setIsModalOpen(false)}
+        handleCancelClick={handleCancelClick}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <Input
@@ -204,8 +225,10 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
               placeholder="Seleccione un estado"
               className="mt-2 rounded-lg border"
               {...register("state", {
-                required:
-                  "Este campo es obligatorio, por favor seleccione un rol",
+                validate: (value) =>
+                  value
+                    ? true
+                    : "Este campo es requerido, Porfavor elija un rol",
               })}
               onSelectionChange={(value) => setValue("state", value)}
             >
@@ -243,6 +266,26 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
             </Select>
           </div>
         </form>
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isConfirmCancelModalOpen}
+        onClose={closeConfirmCancelModal}
+        title="Cambios sin guardar"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isSaveConfirmationModalOpen}
+        onClose={closeSaveConfirmationModal}
+        title="Cambios guardados"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={closeSaveConfirmationModal}
+      >
+        Los cambios fueron guardados exitosamente.
       </ReusableModal>
     </div>
   );
