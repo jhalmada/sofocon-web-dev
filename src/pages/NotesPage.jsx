@@ -13,7 +13,7 @@ import useNotes from "../hooks/notes/useNotes.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutNotes from "../hooks/notes/usePutNotes.js";
-import { Controller, set, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import useDeleteNotes from "../hooks/notes/useDeleteNotes.js";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import NotesRow from "../components/NotesRow.jsx";
@@ -37,6 +37,7 @@ const NotesPage = () => {
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [reminderSelected, setReminderSelected] = useState(false);
+  const [errorDataPicker, setErrorDataPicker] = useState(false);
   const { id } = useParams();
 
   const {
@@ -303,7 +304,11 @@ const NotesPage = () => {
                         granularity="day"
                         errorMessage={(value) => {
                           if (value.isInvalid) {
-                            return "La fecha de visita expiró";
+                            setErrorDataPicker(true);
+                            return "";
+                          } else {
+                            setErrorDataPicker(false);
+                            return "";
                           }
                         }}
                       />

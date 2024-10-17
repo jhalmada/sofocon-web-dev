@@ -28,6 +28,7 @@ const AddNotesPage = () => {
   const [reminderSelected, setReminderSelected] = useState(false);
   const { id } = useParams();
   const [idCliente, setIdCliente] = useState(null);
+  const [errorDataPicker, setErrorDataPicker] = useState(false);
 
   useEffect(() => {
     setIdCliente(id);
@@ -190,7 +191,11 @@ const AddNotesPage = () => {
                           placeholder="Seleccione una fecha"
                           errorMessage={(value) => {
                             if (value.isInvalid) {
-                              return "La fecha de visita expiró";
+                              setErrorDataPicker(true);
+                              return "";
+                            } else {
+                              setErrorDataPicker(false);
+                              return "";
                             }
                           }}
                         />
