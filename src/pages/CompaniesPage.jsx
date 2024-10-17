@@ -289,7 +289,7 @@ const CompaniesPage = () => {
                 <Link to={"agregar-empresa"}>
                   <Button text="Nueva Empresa" icon={PlusIcon} />
                 </Link>
-                <Link to={`/inicio/rutas/agregar-ruta/${true}`}>
+                <Link to={"/inicio/empresas/agregar-ruta"}>
                   <Button text="Nueva Ruta" color={"save"} icon={PlusIcon} />
                 </Link>
               </div>

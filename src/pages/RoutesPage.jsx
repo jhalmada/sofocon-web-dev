@@ -18,7 +18,6 @@ import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
-import { s } from "framer-motion/client";
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
@@ -145,7 +144,7 @@ const RoutesPage = () => {
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
             {activeTab === SELLER_TAB && (
               <div className="flex space-x-4">
-                <Link to={`agregar-ruta/${false}`}>
+                <Link to={"agregar-ruta"}>
                   <Button text="Nueva ruta" icon={PlusIcon} />
                 </Link>
               </div>
