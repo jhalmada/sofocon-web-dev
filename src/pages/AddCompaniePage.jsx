@@ -32,6 +32,7 @@ const AddCompaniePage = () => {
   const [msjError, setMsjError] = useState("");
   const [checkSelected, setCheckSelected] = useState("RUT");
   const [competence, setCompetence] = useState(false);
+  const [errorDataPicker, setErrorDataPicker] = useState(false);
   const handleCompanyCreation = async (companyData) => {
     try {
       const newCompany = await postAddCompany(companyData);
@@ -419,6 +420,15 @@ const AddCompaniePage = () => {
                       {...field}
                       label={""}
                       placeholder="Seleccione una fecha"
+                      errorMessage={(value) => {
+                        if (value.isInvalid) {
+                          setErrorDataPicker(true);
+                          return "";
+                        } else {
+                          setErrorDataPicker(false);
+                          return "";
+                        }
+                      }}
                     />
                   )}
                   rules={{

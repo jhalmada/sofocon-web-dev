@@ -4,20 +4,17 @@ import Pagination from "../components/Pagination";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import useUsersSellers from "../hooks/users/useUsersSellers";
-import { set, useForm } from "react-hook-form";
-import { permisos } from "../utils/permisons";
+import { useForm } from "react-hook-form";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
 import useRoles from "../hooks/roles/use.roles";
 import Input from "../components/inputs/Input";
-import { tr } from "framer-motion/client";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 
 const SellersPage = ({ openConfirmDeleteModal }) => {
   //estados
-  const [checkSelected, setCheckSelected] = useState("existente");
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState(null);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -36,6 +33,7 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
     userSellerResponse,
     setItemsPerPage,
     totalPage,
+    total,
     setPage,
     page,
     itemsPerPage,
@@ -136,6 +134,7 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
           totalPages={totalPage}
           onPageChange={setPage}
           itemPerPage={itemsPerPage}
+          total={total}
         />
       </div>
       {/**modal para editar */}

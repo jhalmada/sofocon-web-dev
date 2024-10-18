@@ -27,6 +27,7 @@ const RoutesPage = () => {
     sellerRoutesResponse,
     setItemsPerPage,
     totalPage,
+    total,
     setPage,
     page,
     itemsPerPage,
@@ -215,6 +216,7 @@ const RoutesPage = () => {
                 totalPages={totalPage}
                 onPageChange={setPage}
                 itemPerPage={itemsPerPage}
+                total={total}
               />
             </div>
           </div>

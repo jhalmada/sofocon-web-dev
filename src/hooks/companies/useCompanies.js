@@ -6,6 +6,7 @@ const useCompanies = () => {
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
+  const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [route, setRoutes] = useState(null);
   const [search, setSearch] = useState("");
@@ -24,6 +25,7 @@ const useCompanies = () => {
       //aqui haces con el resultado lo que necesites
 
       setTotalPage(data.pagination.totalPages);
+      setTotal(data.pagination.total);
       setCompaniesResponse(data.result);
     } catch (e) {
       console.log(e);
@@ -40,6 +42,7 @@ const useCompanies = () => {
     loading,
     setItemsPerPage,
     totalPage,
+    total,
     setPage,
     page,
     itemsPerPage,
