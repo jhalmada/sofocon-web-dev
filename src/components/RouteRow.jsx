@@ -26,28 +26,37 @@ const RouteRow = ({
   return (
     <tr className="border-b border-gray transition-all duration-300 hover:bg-gray">
       <>
-        <td className="cursor-pointer p-2" onClick={handleRowClick}>
+        <td
+          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          title={name}
+          onClick={handleRowClick}
+        >
           {name}
         </td>
-        <td className="cursor-pointer p-2" onClick={handleRowClick}>
+        <td
+          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          title={zone}
+          onClick={handleRowClick}
+        >
           {zone}
         </td>
-        <td className="cursor-pointer p-2" onClick={handleRowClick}>
+        <td
+          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          title={companies}
+          onClick={handleRowClick}
+        >
           {companies}
         </td>
-        <td className="cursor-pointer p-2" onClick={handleRowClick}>
+        <td
+          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          title={sellers}
+          onClick={handleRowClick}
+        >
           {sellers}
         </td>
 
-        <td className="p-2 text-md font-semibold leading-[1.16rem]">
-          <Select
-            defaultSelectedKeys={[state ? "Activo" : "Inactivo"]}
-            className="mb-4 mt-4 rounded-lg border"
-          >
-            {opciones.map((opcion) => (
-              <SelectItem key={opcion}>{opcion}</SelectItem>
-            ))}
-          </Select>
+        <td className="p-2 text-md leading-[1.16rem]">
+          {state ? "Activo" : "Inactivo"}
         </td>
       </>
 

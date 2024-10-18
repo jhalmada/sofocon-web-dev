@@ -10,21 +10,13 @@ const UserRow = ({
   onDeleteClick,
   state,
 }) => {
-  const opciones = ["Activo", "Inactivo"];
   return (
     <tr className="border-b border-gray">
       <td className="p-2">{fullName}</td>
       <td className="p-2">{email}</td>
-      <td className="p-2">{role}</td>
-      <td className="p-2 text-md font-semibold leading-[1.16rem]">
-        <Select
-          defaultSelectedKeys={[state ? "Activo" : "Inactivo"]}
-          className="mb-4 mt-4 rounded-lg border"
-        >
-          {opciones.map((opcion) => (
-            <SelectItem key={opcion}>{opcion}</SelectItem>
-          ))}
-        </Select>
+      <td className="p-2 text-center">{role}</td>
+      <td className="p-2 text-center text-md font-semibold leading-[1.16rem]">
+        {state ? "Activo" : "Inactivo"}
       </td>
       <td className="p-2">
         <div className="flex justify-center gap-4">

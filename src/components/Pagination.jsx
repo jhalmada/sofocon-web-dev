@@ -2,18 +2,17 @@ import SkipPreviousFilledIcon from "../assets/icons/SkipPreviousFilled.svg";
 import ChevronLeftFilledIcon from "../assets/icons/ChevronLeftFilled.svg";
 import ChevronRightFilledIcon from "../assets/icons/ChevronRightFilled.svg";
 import SkipNextFilledIcon from "../assets/icons/SkipNextFilled.svg";
-import { Select, SelectItem } from "@nextui-org/select";
 
 const Pagination = ({
   currentPage = 0,
   totalPages = 0,
   onPageChange,
   pageIndex,
-  itemPerPage = 10,
+  itemsPerPage = 10,
   total = 0,
 }) => {
-  const startItem = total > 0 ? currentPage * itemPerPage + 1 : 0;
-  const endItem = Math.min((currentPage + 1) * itemPerPage, total);
+  const startItem = total > 0 ? currentPage * itemsPerPage + 1 : 0;
+  const endItem = Math.min((currentPage + 1) * itemsPerPage, total);
 
   return (
     <div className="flex flex-col items-center px-1.5">
@@ -60,19 +59,18 @@ const Pagination = ({
         >
           <img src={SkipNextFilledIcon} alt="Skip next icon" />
         </button>
-        <Select
-          value={itemPerPage}
-          onChange={(value) => {
-            pageIndex(value);
+        <select
+          className="w-[7rem] rounded-lg border bg-white outline-none"
+          onChange={(e) => {
+            pageIndex(Number(e.target.value));
             onPageChange(0);
           }}
-          className="w-[7rem] rounded-lg border bg-white outline-none"
-          placeholder="10 / pág."
+          value={itemsPerPage}
         >
-          <SelectItem value={10}>10 / pág.</SelectItem>
-          <SelectItem value={20}>20 / pág.</SelectItem>
-          <SelectItem value={30}>30 / pág.</SelectItem>
-        </Select>
+          <option value={10}>10 / Pág.</option>
+          <option value={20}>20 / Pág.</option>
+          <option value={30}>30 / Pág.</option>
+        </select>
       </div>
     </div>
   );

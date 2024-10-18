@@ -8,6 +8,7 @@ const Button = ({
   iconPosition = "right",
   width = "min-w-[11rem]",
   justify = "justify-center",
+  disabled = false,
 }) => {
   const colorClasses = {
     default: "bg-blue_b text-white shadow-blur",
@@ -21,6 +22,7 @@ const Button = ({
   return (
     <div className={`flex ${justify} `}>
       <button
+        disabled={disabled}
         className={`relative flex h-10 ${width} items-center justify-center rounded-2xl px-5 py-1 ${buttonColorClass} gap-2 ${iconPosition === "left" ? "flex-row-reverse" : "flex-row"} ${shadow}`}
         onClick={onClick}
         type={type}

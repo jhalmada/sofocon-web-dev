@@ -6,6 +6,7 @@ const useUsersSellers = () => {
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
+  const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
   const [route, setRoute] = useState(null);
@@ -19,6 +20,7 @@ const useUsersSellers = () => {
         route,
       });
       setTotalPage(data.pagination.totalPages);
+      setTotal(data.pagination.total);
       setUsersSellerResponse(data);
     } catch (e) {
       console.log(e);
@@ -35,6 +37,7 @@ const useUsersSellers = () => {
     loading,
     setItemsPerPage,
     totalPage,
+    total,
     setPage,
     page,
     itemsPerPage,

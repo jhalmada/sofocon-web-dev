@@ -7,10 +7,20 @@ const RouteSellerDetailsRow = ({
 }) => {
   return (
     <tr className="border-b border-gray">
-      <td className="p-2">{name}</td>
-      <td className="p-2">{contact}</td>
+      <td
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={name}
+      >
+        {name}
+      </td>
+      <td
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={contact}
+      >
+        {contact}
+      </td>
 
-      <td className="p-2 text-md leading-[1.16rem]">{state}</td>
+      <td className="p-2 text-center text-md leading-[1.16rem]">{state}</td>
       <td className="p-2">
         <div className="flex justify-center gap-4">
           <img

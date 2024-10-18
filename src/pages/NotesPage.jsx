@@ -23,6 +23,7 @@ import {
   parseAbsoluteToLocal,
   today,
 } from "@internationalized/date";
+import FilterSelect from "../components/filters/FilterSelect.jsx";
 
 const NOTES_TAB = "notes";
 const NotesPage = () => {
@@ -38,8 +39,10 @@ const NotesPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [reminderSelected, setReminderSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
+  const [visitFilter, setVisitFilter] = useState("");
   const { id } = useParams();
 
+  const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
   const {
     notesResponse,
     setItemsPerPage,
@@ -145,6 +148,10 @@ const NotesPage = () => {
 
     return `${day}/${month}/${year}`;
   };
+
+  const handleVisitFilterChange = (value) => {
+    setVisitFilter(value);
+  };
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -197,17 +204,11 @@ const NotesPage = () => {
                     Contenido
                   </th>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex gap-4">
-                      <h3>Fecha importante</h3>
-                      <img
-                        src={FilterRightIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                      <img
-                        src={ChevronDownIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
+                    <div className="flex flex-col gap-2">
+                      <FilterSelect
+                        options={visitOptions}
+                        placeholder="Próx. visita"
+                        onChange={handleVisitFilterChange}
                       />
                     </div>
                   </th>
@@ -231,16 +232,6 @@ const NotesPage = () => {
                 ))}
               </tbody>
             </table>
-            <div className="flex justify-center p-6">
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemPerPage={itemsPerPage}
-                total={total}
-              />
-            </div>
           </div>
         )}
       </div>

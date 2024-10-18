@@ -9,8 +9,18 @@ const NotesRow = ({
 }) => {
   return (
     <tr className="border-b border-gray">
-      <td className="p-2">{name}</td>
-      <td className="p-2">{content}</td>
+      <td
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={name}
+      >
+        {name}
+      </td>
+      <td
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={content}
+      >
+        {content}
+      </td>
       <td className="p-2">{date}</td>
       <td className="p-2">
         <div className="flex justify-center gap-4">

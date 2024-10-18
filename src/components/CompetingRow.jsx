@@ -35,12 +35,27 @@ const CompetingRow = ({
           alt="watch icon"
           title="Cliente próximo a vencer"
         />
-        <td className="p-2">{name}</td>
+        <td
+          className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          title={name}
+        >
+          {name}
+        </td>
       </div>
-      <td className="max-w-[15rem] p-2">{direction}</td>
-      <td className="p-2">{currentCompany}</td>
-      <td className="p-2">{nextVisits}</td>
-      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+      <td
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={direction}
+      >
+        {direction}
+      </td>
+      <td
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={currentCompany}
+      >
+        {currentCompany}
+      </td>
+      <td className="p-2 text-center">{nextVisits}</td>
+      <td className="p-2 text-center text-md font-semibold leading-[1.16rem]">
         {translateState(state)}
       </td>
       <td className="p-2">

@@ -1,5 +1,3 @@
-import FilterRightIcon from "../assets/icons/filter-right.svg";
-import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import deleteIcon from "../assets/icons/trash3.svg";
 import RouteSellerDetailsRow from "../components/RouteSellerDetailsRow";
@@ -9,6 +7,7 @@ import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 import { useState } from "react";
+import FilterSelect from "../components/filters/FilterSelect";
 
 const AddSellerRoutePage = ({
   arraySeller,
@@ -23,10 +22,14 @@ const AddSellerRoutePage = ({
   handleCancelClick,
   setModified,
   idCompany,
+  nameCompany,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [sellerId, setSellerId] = useState(null);
+  const [stateFilter, setStateFilter] = useState("");
+
+  const stateOptions = ["Activo", "Inactivo"];
   //Hooks
   const { userSellerResponse, setSearch } = useUsersSellers();
   const { changedSellerRoute } = usePutSellerRoute();
@@ -71,7 +74,9 @@ const AddSellerRoutePage = ({
       name: item.userInfo.fullName,
     }));
   };
-
+  const handleStateFilterChange = (value) => {
+    setStateFilter(value);
+  };
   return (
     <div>
       <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
@@ -84,18 +89,12 @@ const AddSellerRoutePage = ({
               <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                 Contacto
               </th>
-              <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                <div className="flex gap-2">
-                  <h3>Estado</h3>
-                  <img
-                    src={FilterRightIcon}
-                    alt="chevron-down icon"
-                    className="h-5 w-5 cursor-pointer"
-                  />
-                  <img
-                    src={ChevronDownIcon}
-                    alt="chevron-down icon"
-                    className="h-5 w-5 cursor-pointer"
+              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                <div className="flex flex-col gap-2">
+                  <FilterSelect
+                    options={stateOptions}
+                    placeholder="Estado"
+                    onChange={handleStateFilterChange}
                   />
                 </div>
               </th>
@@ -110,7 +109,7 @@ const AddSellerRoutePage = ({
                 key={seller.id}
                 name={seller.userInfo.fullName}
                 contact={seller.email}
-                state="Activo"
+                state={seller.isActive ? "Activo" : "Inactivo"}
                 deleteIconSrc={deleteIcon}
                 onDeleteClick={() => openConfirmDeleteModal(seller.id)}
               />
@@ -132,7 +131,7 @@ const AddSellerRoutePage = ({
         onSubmit={handleSubmit(onSubmit)}
         isOpen={isSellersModalOpen}
         onClose={handleCancelClick}
-        title="Agregar vendedor/es a Ruta 1"
+        title={`${nameCompany}`}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >

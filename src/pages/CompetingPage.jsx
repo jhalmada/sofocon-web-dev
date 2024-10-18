@@ -8,11 +8,16 @@ import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import notesIcon from "../assets/icons/sticky-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies";
 import { useState } from "react";
+import FilterSelect from "../components/filters/FilterSelect";
 const CompetingPage = () => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [competence, setCompetence] = useState(false);
+  const [visitFilter, setVisitFilter] = useState("");
+  const [stateFilter, setStateFilter] = useState("");
+  const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
+  const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
     handleSubmit,
@@ -68,6 +73,12 @@ const CompetingPage = () => {
     setCompanyId(id);
     setConfirmDeleteModalOpen(true);
   };
+  const handleVisitFilterChange = (value) => {
+    setVisitFilter(value);
+  };
+  const handleStateFilterChange = (value) => {
+    setStateFilter(value);
+  };
   return (
     <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
@@ -84,20 +95,20 @@ const CompetingPage = () => {
             </th>
 
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Próx. visita
-            </th>
-            <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-              <div className="flex gap-2">
-                <h3>Estado</h3>
-                <img
-                  src={FilterRightIcon}
-                  alt="chevron-down icon"
-                  className="h-5 w-5 cursor-pointer"
+              <div className="flex flex-col gap-2">
+                <FilterSelect
+                  options={visitOptions}
+                  placeholder="Próx. visita"
+                  onChange={handleVisitFilterChange}
                 />
-                <img
-                  src={ChevronDownIcon}
-                  alt="chevron-down icon"
-                  className="h-5 w-5 cursor-pointer"
+              </div>
+            </th>
+            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+              <div className="flex flex-col gap-2">
+                <FilterSelect
+                  options={stateOptions}
+                  placeholder="Estado"
+                  onChange={handleStateFilterChange}
                 />
               </div>
             </th>

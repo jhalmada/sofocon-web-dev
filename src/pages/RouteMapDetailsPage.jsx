@@ -38,6 +38,7 @@ const RouteMapDetailsPage = () => {
     setItemsPerPage,
     page,
     totalPage,
+    total,
     setPage,
     itemsPerPage,
     setModified,
@@ -53,6 +54,7 @@ const RouteMapDetailsPage = () => {
     companiesResponse,
     setItemsPerPage: setItemsPerPageCompanies,
     totalPage: totalPageCompanies,
+    total: totalCompanies,
     setPage: setPageCompanies,
     page: pageCompanies,
     itemsPerPage: itemsPerPageCompanies,
@@ -68,12 +70,14 @@ const RouteMapDetailsPage = () => {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isSellersExportModalOpen, setIsSellersExportModalOpen] =
     useState(false);
+  const [nameCompany, setNameCompany] = useState("");
 
   const oneRute = async (id) => {
     const newdatos = await getOneSellerRoute(id);
     setRoute(id);
     setRoutesCompanies(id);
     setDatos(newdatos);
+    setNameCompany(newdatos.name);
   };
 
   useEffect(() => {
@@ -344,16 +348,6 @@ const RouteMapDetailsPage = () => {
                   <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
                     <div className="flex gap-2">
                       <h3>Estado</h3>
-                      <img
-                        src={FilterRightIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                      <img
-                        src={ChevronDownIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
                     </div>
                   </th>
                 </tr>
@@ -379,6 +373,7 @@ const RouteMapDetailsPage = () => {
             setItemsPerPage={setItemsPerPage}
             setPage={setPage}
             totalPage={totalPage}
+            total={total}
             isSellersModalOpen={isSellersModalOpen}
             closeModal={closeModal}
             isConfirmDeleteModalOpen={isConfirmDeleteModalOpen}
@@ -386,6 +381,7 @@ const RouteMapDetailsPage = () => {
             handleCancelClick={handleCancelClick}
             setModified={setModified}
             idCompany={id}
+            nameCompany={datos?.name}
           />
         )}
         {activeTab === COMPANIES_TAB && (
@@ -394,6 +390,7 @@ const RouteMapDetailsPage = () => {
             itemsPerPage={itemsPerPageCompanies}
             setPage={setPageCompanies}
             totalPage={totalPageCompanies}
+            total={totalCompanies}
             setItemsPerPage={setItemsPerPageCompanies}
             arrayCompanies={companiesResponse}
             isModalOpen={isModalOpen}
@@ -401,6 +398,7 @@ const RouteMapDetailsPage = () => {
             handleCancelClick={handleCancelClick}
             setModified={setModifiedCompanies}
             idCompany={id}
+            nameCompany={datos?.name}
           />
         )}
       </div>
@@ -418,7 +416,7 @@ const RouteMapDetailsPage = () => {
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
           <a
-            href={`${BASE_URL}/${getUsersExcel}/?route=${id}`}
+            href={`${BASE_URL}/${getUsersExcel}?isSeller=true&route=${id}`}
             download
             target="_blank"
           >
@@ -432,7 +430,7 @@ const RouteMapDetailsPage = () => {
           </a>
 
           <a
-            href={`${BASE_URL}/${getUsersPdf}/?route=${id}`}
+            href={`${BASE_URL}/${getUsersPdf}/?isSeller=true&route=${id}`}
             download
             target="_blank"
           >

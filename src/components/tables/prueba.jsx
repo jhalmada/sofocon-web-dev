@@ -11,9 +11,6 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
 import { Controller, useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import { I18nProvider } from "@react-aria/i18n";
-import Cards from "../components/cards/Cards";
 
 const AddCompaniePage = () => {
   const {
@@ -23,16 +20,6 @@ const AddCompaniePage = () => {
     setError,
     control,
     formState: { errors },
-  } = useForm();
-
-  //notas
-  const {
-    register: register2,
-    handleSubmit: handleSubmit2,
-    setValue: setValue2,
-    setError: setError2,
-    control: control2,
-    formState: { errors: errors2 },
   } = useForm();
   const navigate = useNavigate();
   const { postAddCompany } = useAddCompany();
@@ -44,13 +31,6 @@ const AddCompaniePage = () => {
 
   const [checkSelected, setCheckSelected] = useState("RUT");
   const [competence, setCompetence] = useState(false);
-  const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const [isModalOpenNote, setIsModalOpenNote] = useState("");
-  const [notes, setNotes] = useState([]);
-  const [indexEdit, setIndexEdit] = useState(null);
-  const [dateSelected, setDateSelected] = useState(false);
-  const [reminderSelected, setReminderSelected] = useState(false);
-  const [modalEditSave, setModalEditSave] = useState(false);
 
   const handleCompanyCreation = async (companyData) => {
     console.log("entra aqui");
@@ -102,7 +82,6 @@ const AddCompaniePage = () => {
           nextVisit: newdata,
           rut: data.rut,
           competenceName: competence ? data.competenceName : "",
-          note: notes,
         });
         break;
       default:
@@ -117,7 +96,6 @@ const AddCompaniePage = () => {
           nextVisit: formattedDate,
           ci: data.ci,
           competenceName: competence ? data.competenceName : "",
-          note: notes,
         });
     }
   };
@@ -148,54 +126,6 @@ const AddCompaniePage = () => {
   };
 
   const handleCancelClick = () => closeModal();
-
-  //Para las notas
-  const onSubmit2 = (data) => {
-    const { title, description, dateV } = data;
-    const notesArray = [...notes];
-    const newdata = new Date(
-      dateV?.year || 1,
-      dateV?.month - 1 || 1,
-      dateV?.day || 1,
-    );
-    const formattedDate = newdata.toISOString();
-    if (indexEdit === null) {
-      notesArray.push({
-        title,
-        description,
-        date: formattedDate,
-        isReminder: reminderSelected,
-      });
-    } else {
-      notesArray.splice(indexEdit, 1, {
-        title,
-        description,
-        date: formattedDate,
-        isReminder: reminderSelected,
-      });
-    }
-    setNotes([...notesArray]);
-    setValue2("title", "");
-    setValue2("description", "");
-    setIndexEdit(null);
-    setModalEditSave(true);
-    setIsModalOpenNote(false);
-  };
-
-  const handleEdit = (index) => {
-    const noteT = [...notes];
-    setIndexEdit(index);
-    setValue2("title", noteT[index].title);
-    setValue2("description", noteT[index].description);
-    setIsModalOpenNote(true);
-    setReminderSelected(noteT[index].isReminder);
-  };
-
-  const handleDelete = (index) => {
-    const noteT = [...notes];
-    noteT.splice(index, 1);
-    setNotes(noteT);
-  };
 
   return (
     <div className="flex min-h-full flex-col justify-between bg-gray">
@@ -479,12 +409,11 @@ const AddCompaniePage = () => {
                 control={control}
                 render={({ field }) => (
                   <DatePicker
-                    minValue={today(getLocalTimeZone())}
-                    className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
+                    className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
                     {...field}
                     label={""}
                     placeholder="Seleccione una fecha"
-                    granularity="day"
+                    format="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
                   />
                 )}
                 rules={{
@@ -498,32 +427,20 @@ const AddCompaniePage = () => {
                 {errors.nextVisit ? errors.nextVisit.message : ""}
               </p>
             </div>
-            <div className="mt-4 flex flex-col justify-between">
-              <div className="max-w-[10rem] space-y-2">
-                <span>Notas</span>
+            <div className="mt-4 flex justify-between">
+              <Tooltip content="Viene en una mejora" placement="bottom">
+                <div className="space-y-2">
+                  <span>Notasss</span>
 
-                <Button
-                  text="Nueva Nota"
-                  icon={PlusFillIcon}
-                  iconPosition={"left"}
-                  width="w-40"
-                  color={"cancel"}
-                  onClick={() => setIsModalOpenNote(true)}
-                  disabled={notes.length > 2 && true}
-                />
-              </div>
-
-              <div className="flex gap-4">
-                {notes.map((note, index) => (
-                  <Cards
-                    handleDelete={() => handleDelete(index)}
-                    handleEdite={() => handleEdit(index)}
-                    key={note.id}
-                    titleNote={note.title}
-                    bodyNote={note.description}
+                  <Button
+                    text="Nueva No"
+                    icon={PlusFillIcon}
+                    iconPosition={"left"}
+                    width="w-40"
+                    color={"cancel"}
                   />
-                ))}
-              </div>
+                </div>
+              </Tooltip>
             </div>
           </div>
 
@@ -571,110 +488,6 @@ const AddCompaniePage = () => {
           onAccept={() => setIsModalOpen(false)}
         >
           {msjError}
-        </ReusableModal>
-
-        <ReusableModal
-          width="w-[45.37rem]"
-          isOpen={isModalOpenNote}
-          onClose={() => setIsModalOpenNote(false)}
-          title="Editar Nota"
-          buttons={["cancel", "save"]}
-          handleCancelClick={() => setIsModalOpenNote(false)}
-          onSubmit={handleSubmit2(onSubmit2)}
-        >
-          <form onSubmit={handleSubmit2(onSubmit2)} className="flex flex-col">
-            <Input
-              label={"Nombre de nota"}
-              placeholder={"Escribir..."}
-              {...register2("title", {
-                required: "El nombre es obligatorio",
-              })}
-              errorApi={errors2.title}
-              msjError={errors2.title ? errors2.title.message : ""}
-            />
-            <Input
-              label={"Contenido"}
-              placeholder={"Escribir..."}
-              {...register2("description", {
-                required: "El contenido es obligatorio",
-              })}
-              errorApi={errors2.description}
-              msjError={errors2.description ? errors2.description.message : ""}
-            />
-            {errors2.permissions && (
-              <span className="font-roboto text-xs text-red_e">
-                {errors2.permissions.message}
-              </span>
-            )}
-            <div className="flex gap-[4.4rem]">
-              <div>
-                <Checkbox
-                  defaultSelected={dateSelected}
-                  onClick={() => setDateSelected(!dateSelected)}
-                  radius="full"
-                  className="font-light"
-                >
-                  <span className="text-sm font-light leading-[1rem] text-black_b">
-                    Asignar fecha
-                  </span>
-                </Checkbox>
-                <div className="flex w-[18rem] flex-col">
-                  <I18nProvider locale="es-ES">
-                    <Controller
-                      name={"dateV"}
-                      control={control2}
-                      render={({ field }) => (
-                        <DatePicker
-                          minValue={today(getLocalTimeZone())}
-                          className={`${errors2.dateV ? "text-red_e" : ""} ${errors2.dateV ? "border-red_e" : ""} rounded-lg border`}
-                          {...field}
-                          label={""}
-                          placeholder="Seleccione una fecha"
-                          granularity="day"
-                          errorMessage={(value) => {
-                            if (value.isInvalid) {
-                              setErrorDataPicker(true);
-                              return "";
-                            } else {
-                              setErrorDataPicker(false);
-                              return "";
-                            }
-                          }}
-                        />
-                      )}
-                      rules={{
-                        required: dateSelected && "La fecha es obligatoria",
-                      }}
-                    />
-                    <p className="font-roboto text-xs text-red_e">
-                      {errors2.dateV ? errors2.dateV.message : ""}
-                    </p>
-                  </I18nProvider>
-                </div>
-              </div>
-              <div className="w-[12.6rem]">
-                <Checkbox
-                  defaultSelected={reminderSelected}
-                  onClick={() => setReminderSelected(!reminderSelected)}
-                  radius="full"
-                >
-                  <span className="text-sm font-light leading-[1rem] text-black_b">
-                    Destacar como recordatorio
-                  </span>
-                </Checkbox>
-              </div>
-            </div>
-          </form>
-        </ReusableModal>
-        <ReusableModal
-          isOpen={modalEditSave}
-          onClose={() => setModalEditSave(false)}
-          title="Cambios guardados"
-          variant="confirmation"
-          buttons={["accept"]}
-          onAccept={() => setModalEditSave(false)}
-        >
-          Los cambios fueron guardados exitosamente.
         </ReusableModal>
       </div>
     </div>

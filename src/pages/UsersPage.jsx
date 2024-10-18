@@ -54,15 +54,15 @@ const UsersPage = () => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const [roleFilter, setRoleFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
-
+  const roleOptions = ["Admin", "User", "Guest", "test"];
+  const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-  const roleOptions = ["Admin", "User", "Guest", "test"];
-  const stateOptions = ["Activo", "Inactivo"];
+
 
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
@@ -141,24 +141,24 @@ const UsersPage = () => {
       case "existente":
         handleUserCreation({
           email,
-          password,
           userInfo: {
             fullName,
             ci,
             phone,
           },
           role: { id: role },
+          isActive: state === "Activo" ? true : false,
         });
         break;
       default:
         handleUserCreation({
           email,
-          password,
           fullName: {
             fullName,
             ci,
             phone,
           },
+          isActive: state === "Activo" ? true : false,
           role: {
             name: nameRole,
             permissions: [...permissions, "USER_ADMIN"],
@@ -285,6 +285,7 @@ const UsersPage = () => {
                   })
                   .map((user, index) => (
                     <UserRow
+                      state={user.isActive}
                       key={index}
                       fullName={`${user.userInfo.fullName} `}
                       email={user.email}
