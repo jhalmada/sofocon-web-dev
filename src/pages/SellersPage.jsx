@@ -11,6 +11,7 @@ import useRoles from "../hooks/roles/use.roles";
 import Input from "../components/inputs/Input";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
+import FilterSelect from "../components/filters/FilterSelect";
 
 const SellersPage = ({ openConfirmDeleteModal }) => {
   //estados
@@ -21,7 +22,9 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const options = ["Activo", "Inactivo"];
+  const [stateFilter, setStateFilter] = useState("");
+
+  const stateOptions = ["Activo", "Inactivo"];
   //hooks
   const {
     register,
@@ -41,6 +44,7 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
   const { RolesResponse } = useRoles();
 
   const { sellerRoutesResponse, setSearch } = useSellerRoutes();
+
   //funciones
   const onSubmit = (data) => {};
   //funcion para editar
@@ -84,6 +88,9 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
       name: item.name,
     }));
   };
+  const handleStateFilterChange = (value) => {
+    setStateFilter(value);
+  };
   return (
     <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
@@ -99,7 +106,13 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
               Ruta
             </th>
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Estado
+              <div className="flex flex-col gap-2">
+                <FilterSelect
+                  options={stateOptions}
+                  placeholder="Estado"
+                  onChange={handleStateFilterChange}
+                />
+              </div>
             </th>
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
               Mas info
@@ -231,7 +244,7 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
               })}
               onSelectionChange={(value) => setValue("state", value)}
             >
-              {options.map((option) => (
+              {stateOptions.map((option) => (
                 <SelectItem key={option}>{option}</SelectItem>
               ))}
             </Select>

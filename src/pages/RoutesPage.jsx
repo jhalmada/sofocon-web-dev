@@ -8,8 +8,6 @@ import Input from "../components/inputs/Input.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
-import FilterRightIcon from "../assets/icons/filter-right.svg";
-import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
@@ -18,6 +16,7 @@ import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
+import FilterSelect from "../components/filters/FilterSelect.jsx";
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
@@ -40,6 +39,9 @@ const RoutesPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [stateFilter, setStateFilter] = useState("");
+
+  const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
     handleSubmit,
@@ -112,6 +114,9 @@ const RoutesPage = () => {
     };
     handleRouteCreation(sellerData);
   };
+  const handleStateFilterChange = (value) => {
+    setStateFilter(value);
+  };
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -169,18 +174,12 @@ const RoutesPage = () => {
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Vendedores
                   </th>
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex gap-2">
-                      <h3>Estado</h3>
-                      <img
-                        src={FilterRightIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                      <img
-                        src={ChevronDownIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                    <div className="flex flex-col gap-2">
+                      <FilterSelect
+                        options={stateOptions}
+                        placeholder="Estado"
+                        onChange={handleStateFilterChange}
                       />
                     </div>
                   </th>

@@ -54,15 +54,15 @@ const UsersPage = () => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const [roleFilter, setRoleFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
-
+  const roleOptions = ["Admin", "User", "Guest", "test"];
+  const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-  const roleOptions = ["Admin", "User", "Guest", "test"];
-  const stateOptions = ["Activo", "Inactivo"];
+
 
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);

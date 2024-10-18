@@ -14,18 +14,28 @@ const SellerRow = ({
   const opciones = ["Activo", "Inactivo"];
   return (
     <tr className="border-b border-gray">
-      <td className="p-2">{fullName}</td>
       <td
-        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={fullName}
+      >
+        {fullName}
+      </td>
+      <td
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={email}
       >
         {email}
       </td>
-      <td className="p-2">{route}</td>
-      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+      <td
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={route}
+      >
+        {route}
+      </td>
+      <td className="p-2 text-center text-md font-semibold leading-[1.16rem]">
         <Select
           defaultSelectedKeys={[state ? "Activo" : "Inactivo"]}
-          className="mb-4 mt-4 rounded-lg border"
+          className="mb-4 mt-4 rounded-lg border text-center"
         >
           {opciones.map((opcion) => (
             <SelectItem key={opcion}>{opcion}</SelectItem>

@@ -7,8 +7,6 @@ import Input from "../components/inputs/Input";
 import { Select, SelectItem } from "@nextui-org/select";
 import SearchInput from "../components/inputs/SearchInput";
 import PlusIcon from "../assets/icons/plus.svg";
-import FilterRightIcon from "../assets/icons/filter-right.svg";
-import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import editIcon from "../assets/icons/pencil-square.svg";
@@ -21,7 +19,6 @@ import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
-import closeIcon from "../assets/icons/x-lg.svg";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
@@ -34,6 +31,7 @@ import {
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import useUserCompany from "../hooks/companies/useUsersCompany.js";
+import FilterSelect from "../components/filters/FilterSelect.jsx";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -67,6 +65,11 @@ const CompaniesPage = () => {
   const [competenceName, setCompetenceName] = useState("");
   const [listUsers, setListUsers] = useState([]);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
+  const [visitFilter, setVisitFilter] = useState("");
+  const [stateFilter, setStateFilter] = useState("");
+
+  const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
+  const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
     handleSubmit,
@@ -241,6 +244,12 @@ const CompaniesPage = () => {
       setIsSellersModalOpen(false);
     }
   };
+  const handleVisitFilterChange = (value) => {
+    setVisitFilter(value);
+  };
+  const handleStateFilterChange = (value) => {
+    setStateFilter(value);
+  };
 
   return (
     <div className="flex h-full flex-col justify-between">
@@ -331,20 +340,20 @@ const CompaniesPage = () => {
                   </th>
 
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Próx. visita
-                  </th>
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex gap-2">
-                      <h3>Estado</h3>
-                      <img
-                        src={FilterRightIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
+                    <div className="flex flex-col gap-2">
+                      <FilterSelect
+                        options={visitOptions}
+                        placeholder="Próx. visita"
+                        onChange={handleVisitFilterChange}
                       />
-                      <img
-                        src={ChevronDownIcon}
-                        alt="chevron-down icon"
-                        className="h-5 w-5 cursor-pointer"
+                    </div>
+                  </th>
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                    <div className="flex flex-col gap-2">
+                      <FilterSelect
+                        options={stateOptions}
+                        placeholder="Estado"
+                        onChange={handleStateFilterChange}
                       />
                     </div>
                   </th>

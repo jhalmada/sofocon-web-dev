@@ -1,7 +1,21 @@
 import { Link } from "react-router-dom";
-
+const translateState = (state) => {
+  switch (state) {
+    case "POTENTIAL":
+      return "Potencial";
+    case "UNSUBSCRIBED":
+      return "De baja";
+    case "FRECUENT":
+      return "Frecuente";
+    case "COMPETENCE":
+      return "Competencia";
+    default:
+      return state;
+  }
+};
 const RouteCompanieDetailsRow = ({
   name,
+  id,
   direction,
   nextVisits,
   state,
@@ -11,7 +25,12 @@ const RouteCompanieDetailsRow = ({
 }) => {
   return (
     <tr className="border-b border-gray">
-      <td className="p-2">{name}</td>
+      <td
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={name}
+      >
+        {name}
+      </td>
 
       <td
         className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
@@ -22,8 +41,10 @@ const RouteCompanieDetailsRow = ({
 
       <td className="p-2">{nextVisits}</td>
 
-      <td className="p-2 text-md leading-[1.16rem]">{state}</td>
-      <Link to={"/inicio/empresas/notas"}>
+      <td className="p-2 text-center text-md font-semibold leading-[1.16rem]">
+        {translateState(state)}
+      </td>
+      <Link to={`/inicio/empresas/notas/${id}`}>
         <td className="p-2 underline">{notes}</td>
       </Link>
       <td className="p-2">
