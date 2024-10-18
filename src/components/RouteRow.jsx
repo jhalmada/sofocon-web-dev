@@ -39,15 +39,8 @@ const RouteRow = ({
           {sellers}
         </td>
 
-        <td className="p-2 text-md font-semibold leading-[1.16rem]">
-          <Select
-            defaultSelectedKeys={[state ? "Activo" : "Inactivo"]}
-            className="mb-4 mt-4 rounded-lg border"
-          >
-            {opciones.map((opcion) => (
-              <SelectItem key={opcion}>{opcion}</SelectItem>
-            ))}
-          </Select>
+        <td className="p-2 text-md leading-[1.16rem]">
+          {state ? "Activo" : "Inactivo"}
         </td>
       </>
 

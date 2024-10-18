@@ -68,12 +68,14 @@ const RouteMapDetailsPage = () => {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isSellersExportModalOpen, setIsSellersExportModalOpen] =
     useState(false);
+  const [nameCompany, setNameCompany] = useState("");
 
   const oneRute = async (id) => {
     const newdatos = await getOneSellerRoute(id);
     setRoute(id);
     setRoutesCompanies(id);
     setDatos(newdatos);
+    setNameCompany(newdatos.name);
   };
 
   useEffect(() => {
@@ -386,6 +388,7 @@ const RouteMapDetailsPage = () => {
             handleCancelClick={handleCancelClick}
             setModified={setModified}
             idCompany={id}
+            nameCompany={datos?.name}
           />
         )}
         {activeTab === COMPANIES_TAB && (
@@ -401,6 +404,7 @@ const RouteMapDetailsPage = () => {
             handleCancelClick={handleCancelClick}
             setModified={setModifiedCompanies}
             idCompany={id}
+            nameCompany={datos?.name}
           />
         )}
       </div>

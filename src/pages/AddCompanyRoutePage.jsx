@@ -23,6 +23,7 @@ const AddCompanyRoutePage = ({
   handleCancelClick,
   idCompany,
   setModified,
+  nameCompany,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -146,7 +147,7 @@ const AddCompanyRoutePage = ({
       <ReusableModal
         isOpen={isModalOpen}
         onClose={handleCancelClick}
-        title="Agregar empresa/s a Ruta 1"
+        title={`${nameCompany}`}
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}

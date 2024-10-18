@@ -23,6 +23,7 @@ const AddSellerRoutePage = ({
   handleCancelClick,
   setModified,
   idCompany,
+  nameCompany,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -110,7 +111,7 @@ const AddSellerRoutePage = ({
                 key={seller.id}
                 name={seller.userInfo.fullName}
                 contact={seller.email}
-                state="Activo"
+                state={seller.isActive ? "Activo" : "Inactivo"}
                 deleteIconSrc={deleteIcon}
                 onDeleteClick={() => openConfirmDeleteModal(seller.id)}
               />
@@ -132,7 +133,7 @@ const AddSellerRoutePage = ({
         onSubmit={handleSubmit(onSubmit)}
         isOpen={isSellersModalOpen}
         onClose={handleCancelClick}
-        title="Agregar vendedor/es a Ruta 1"
+        title={`${nameCompany}`}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >
