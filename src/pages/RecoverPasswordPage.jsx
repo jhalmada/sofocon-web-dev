@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import Input from "../components/inputs/Input";
 import { Link } from "react-router-dom";
+import useRecovery from "../hooks/auth/useRecovery";
 const RecoverPasswordPage = () => {
   const {
     register,
@@ -8,8 +9,12 @@ const RecoverPasswordPage = () => {
     formState: { errors },
   } = useForm();
 
+  const { postRecoveryPassword } = useRecovery();
+
   const onSubmit = (data) => {
-    console.log(data);
+    const { email } = data;
+    const respuesta = postRecoveryPassword({ email });
+    console.log(respuesta);
   };
 
   return (

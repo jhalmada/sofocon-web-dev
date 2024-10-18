@@ -11,7 +11,6 @@ const SellerRow = ({
   onEditClick,
   onDeleteClick,
 }) => {
-  const opciones = ["Activo", "Inactivo"];
   return (
     <tr className="border-b border-gray">
       <td

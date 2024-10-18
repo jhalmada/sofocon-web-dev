@@ -1,5 +1,3 @@
-import { Select, SelectItem } from "@nextui-org/select";
-
 const RouteMapDetailsRow = ({ name, zone, companies, sellers, state }) => {
   return (
     <>

@@ -12,6 +12,7 @@ import Input from "../components/inputs/Input";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import FilterSelect from "../components/filters/FilterSelect";
+import usePutusers from "../hooks/users/usePutUsers";
 
 const SellersPage = ({ openConfirmDeleteModal }) => {
   //estados
@@ -25,6 +26,7 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
   const [stateFilter, setStateFilter] = useState("");
 
   const stateOptions = ["Activo", "Inactivo"];
+  const [mnsError, setMnsError] = useState("");
   //hooks
   const {
     register,
@@ -40,13 +42,43 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
     setPage,
     page,
     itemsPerPage,
+    setModified,
   } = useUsersSellers();
   const { RolesResponse } = useRoles();
+  const { changedUser } = usePutusers();
 
   const { sellerRoutesResponse, setSearch } = useSellerRoutes();
 
   //funciones
-  const onSubmit = (data) => {};
+
+  const handleUserCreation = async (userData) => {
+    try {
+      const newUser = await changedUser(userData, userId, setModified);
+      if (newUser) {
+        setSaveConfirmationModalOpen(true);
+      } else {
+        console.error(
+          "No se recibió un nuevo usuario después de la actualización",
+        );
+      }
+    } catch (error) {
+      console.error("Error al actualizar el usuario:", error);
+      setIsModalOpen(true);
+    }
+  };
+  const onSubmit = (data) => {
+    const { phone, ci, fullName, email, role, state, route } = data;
+    handleUserCreation({
+      email,
+      userInfo: {
+        fullName,
+        ci,
+        phone,
+      },
+      role: { id: role },
+      isActive: state === "Activo" ? true : false,
+    });
+  };
   //funcion para editar
   const openModal = (id) => {
     const userToEdit = userSellerResponse?.result.find(
@@ -132,6 +164,7 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
               info={"Ver más"}
               editIconSrc={editIcon}
               deleteIconSrc={deleteIcon}
+              state={user.isActive}
               onEditClick={() => {
                 openModal(user.id);
               }}
