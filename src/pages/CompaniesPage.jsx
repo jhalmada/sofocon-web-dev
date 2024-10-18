@@ -71,6 +71,7 @@ const CompaniesPage = () => {
   const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
   const stateOptions = ["Activo", "Inactivo"];
   const {
+    clearErrors,
     register,
     handleSubmit,
     setValue,
@@ -82,6 +83,7 @@ const CompaniesPage = () => {
   const { userSellerResponse, setSearch } = useUsersSellers();
   const { addUsersCompany } = useUserCompany();
   const openModal = (id) => {
+    clearErrors();
     const companyToEdit = companiesResponse.find(
       (company) => company.id === id,
     );
@@ -127,7 +129,9 @@ const CompaniesPage = () => {
   };
 
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
-  const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
+  const closeConfirmCancelModal = () => {
+    setConfirmCancelModalOpen(false);
+  };
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
@@ -417,7 +421,7 @@ const CompaniesPage = () => {
               label={"Nombre de la empresa"}
               placeholder={"Escribe el nombre del local..."}
               {...register("name", {
-                required: "Este campo es obligatorio",
+                required: "Este campo es requerido",
               })}
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}
