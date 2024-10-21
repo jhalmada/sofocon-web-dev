@@ -364,7 +364,7 @@ const WorkshopPage = () => {
                     Vendedor
                   </th>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col">
+                    <div className="flex flex-col items-center">
                       <FilterSelect
                         options={stateOptions}
                         placeholder="Estado"
@@ -380,9 +380,9 @@ const WorkshopPage = () => {
                   id={""}
                   name={"Nombre de la empresa"}
                   orderId={"ID de orden"}
-                  direction={"Fecha de ingreso"}
-                  sellers={"Fecha de retiro"}
-                  nextVisits={"Vendedor"}
+                  entryDate={"Fecha de ingreso"}
+                  withdrawalDate={"Fecha de retiro"}
+                  seller={"Vendedor"}
                   state={"estado"}
                 />
               </tbody>

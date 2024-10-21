@@ -54,7 +54,7 @@ const UsersPage = () => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const [roleFilter, setRoleFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
-  
+
   const roleOptions = ["Admin", "User", "Guest", "test"];
   const stateOptions = ["Activo", "Inactivo"];
   const {
@@ -252,7 +252,7 @@ const UsersPage = () => {
                     Email
                   </th>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-center gap-2">
                       <FilterSelect
                         options={roleOptions}
                         placeholder="Rol"
@@ -261,7 +261,7 @@ const UsersPage = () => {
                     </div>
                   </th>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-center gap-2">
                       <FilterSelect
                         options={stateOptions}
                         placeholder="Estado"

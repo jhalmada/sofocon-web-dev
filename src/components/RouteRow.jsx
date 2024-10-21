@@ -16,46 +16,43 @@ const RouteRow = ({
 }) => {
   console.log(state);
 
-  const opciones = ["Activo", "Inactivo"];
-
   const navigate = useNavigate();
 
   const handleRowClick = () => {
     navigate(`/inicio/rutas/mapa/${id}`);
   };
   return (
-    <tr className="border-b border-gray transition-all duration-300 hover:bg-gray">
+    <tr
+      className="border-b border-gray transition-all duration-300 hover:bg-gray"
+      onClick={handleRowClick}
+    >
       <>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={name}
-          onClick={handleRowClick}
         >
           {name}
         </td>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="max-w-[10rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={zone}
-          onClick={handleRowClick}
         >
           {zone}
         </td>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-center"
           title={companies}
-          onClick={handleRowClick}
         >
           {companies}
         </td>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-center"
           title={sellers}
-          onClick={handleRowClick}
         >
           {sellers}
         </td>
 
-        <td className="p-2 text-md leading-[1.16rem]">
+        <td className="p-2 text-center text-md leading-[1.16rem]">
           {state ? "Activo" : "Inactivo"}
         </td>
       </>

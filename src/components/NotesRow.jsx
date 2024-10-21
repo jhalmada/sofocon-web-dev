@@ -10,13 +10,13 @@ const NotesRow = ({
   return (
     <tr className="border-b border-gray">
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={name}
       >
         {name}
       </td>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={content}
       >
         {content}

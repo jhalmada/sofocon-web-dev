@@ -60,7 +60,7 @@ const Pagination = ({
           <img src={SkipNextFilledIcon} alt="Skip next icon" />
         </button>
         <select
-          className="w-[7rem] rounded-lg border bg-white outline-none"
+          className="w-[7rem] cursor-pointer rounded-lg border bg-white outline-none"
           onChange={(e) => {
             pageIndex(Number(e.target.value));
             onPageChange(0);

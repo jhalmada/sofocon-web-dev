@@ -274,7 +274,7 @@ const CompaniesPage = () => {
           <Link to="/inicio" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
               <img
-                src={ChevronLeftIcon} 
+                src={ChevronLeftIcon}
                 alt="arrow left"
                 className="-ml-1 h-4 w-4"
               />
@@ -356,7 +356,7 @@ const CompaniesPage = () => {
                   </th>
 
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-center gap-2">
                       <FilterSelect
                         options={visitOptions}
                         placeholder="Próx. visita"
@@ -365,7 +365,7 @@ const CompaniesPage = () => {
                     </div>
                   </th>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-center gap-2">
                       <FilterSelect
                         options={stateOptions}
                         placeholder="Estado"
@@ -373,7 +373,7 @@ const CompaniesPage = () => {
                       />
                     </div>
                   </th>
-                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 font-semibold leading-[1.125rem]">
                     Acción
                   </th>
                 </tr>
