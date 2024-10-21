@@ -23,13 +23,14 @@ const AddCompanyRoutePage = ({
   idCompany,
   setModified,
   nameCompany,
+  setStatus,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [companyId, setCompanyId] = useState(null);
   const [stateFilter, setStateFilter] = useState("");
 
-  const stateOptions = ["Activo", "Inactivo"];
+  const stateOptions = ["frecuente", "potencial", "de baja"];
   //hooks
   const { companiesResponse, setSearch } = useCompanies();
   const { changedSellerRoute } = usePutSellerRoute();
@@ -82,7 +83,20 @@ const AddCompanyRoutePage = ({
     return `${month}/${day}/${year}`;
   };
   const handleStateFilterChange = (value) => {
-    setStateFilter(value);
+    switch (value) {
+      case "frecuente":
+        setStatus("FRECUENT");
+        break;
+      case "potencial":
+        setStatus("POTENTIAL");
+        break;
+      case "de baja":
+        setStatus("UNSUBSCRIBED");
+        break;
+      default:
+        setStatus("");
+        break;
+    }
   };
 
   return (

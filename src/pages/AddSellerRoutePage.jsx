@@ -23,6 +23,7 @@ const AddSellerRoutePage = ({
   setModified,
   idCompany,
   nameCompany,
+  setIsActive,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -75,7 +76,17 @@ const AddSellerRoutePage = ({
     }));
   };
   const handleStateFilterChange = (value) => {
-    setStateFilter(value);
+    switch (value) {
+      case "Activo":
+        setIsActive(true);
+        break;
+      case "Inactivo":
+        setIsActive(false);
+        break;
+      default:
+        setIsActive(null);
+        break;
+    }
   };
   return (
     <div>

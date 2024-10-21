@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
 import watchIcon2 from "../assets/icons/Frame 1.svg";
-import watchIcon3 from "../assets/icons/Frame 1.svg";
+import watchIcon3 from "../assets/icons/watch 3.svg";
 import { useEffect, useState } from "react";
 const translateState = (state) => {
   switch (state) {
@@ -51,16 +51,17 @@ const CompanieRow = ({
       visitDate.getMonth() -
       today.getMonth() +
       12 * (visitDate.getFullYear() - today.getFullYear());
-
+    console.log(diffInMonths);
     // Selección de la imagen según la diferencia en meses
     if (diffInMonths <= 1) {
       setIcon(watchIcon); // Menos de 1 mes
       setMsjIcon("Cliente próximo a vencer");
-    } else if (diffInMonths === 2) {
+    } else if (diffInMonths <= 2) {
       setIcon(watchIcon2); // 2 meses
       setMsjIcon("Vencimiento en 2 meses");
     } else {
-      setIcon(null); // No se muestra ninguna imagen si supera 3 meses
+      setIcon(watchIcon3); // No se muestra ninguna imagen si supera 3 meses
+      setMsjIcon("Vencimiento en mas de 2 meses");
     }
   }, [nextVisits]); // Se ejecuta cada vez que `nextVisit` cambie
   return (

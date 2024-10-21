@@ -14,10 +14,6 @@ const RouteRow = ({
   onEditClick,
   onDeleteClick,
 }) => {
-  console.log(state);
-
-  const opciones = ["Activo", "Inactivo"];
-
   const navigate = useNavigate();
 
   const handleRowClick = () => {

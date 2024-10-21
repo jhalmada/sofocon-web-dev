@@ -31,15 +31,15 @@ const RoutesPage = () => {
     page,
     itemsPerPage,
     setModified,
+    setIsActive,
+    setSearch,
   } = useSellerRoutes();
-  const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(SELLER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [stateFilter, setStateFilter] = useState("");
 
   const stateOptions = ["Activo", "Inactivo"];
   const {
@@ -115,7 +115,16 @@ const RoutesPage = () => {
     handleRouteCreation(sellerData);
   };
   const handleStateFilterChange = (value) => {
-    setStateFilter(value);
+    switch (value) {
+      case "Activo":
+        setIsActive(true);
+        break;
+      case "Inactivo":
+        setIsActive(false);
+        break;
+      default:
+        setIsActive(null);
+    }
   };
   return (
     <div className="flex h-full flex-col justify-between">
@@ -136,7 +145,7 @@ const RoutesPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Rutas
           </h1>
-          <SearchInput placeholder="Buscar..." />
+          <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
         <div className="flex items-center">
           <div className="flex">
@@ -189,30 +198,23 @@ const RoutesPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {sellerRoutesResponse
-                  .filter((seller) => {
-                    return (
-                      stateFilter === "" ||
-                      (seller.isActive ? "Activo" : "Inactivo") === stateFilter
-                    );
-                  })
-                  .map((seller, index) => (
-                    <RouteRow
-                      id={seller.id}
-                      key={index}
-                      name={seller.name}
-                      zone={seller.zone}
-                      companies={seller.totalClients}
-                      sellers={seller.user.length}
-                      state={seller.isActive}
-                      editIconSrc={editIcon}
-                      deleteIconSrc={deleteIcon}
-                      onEditClick={() => {
-                        openModal(seller.id);
-                      }}
-                      onDeleteClick={() => openConfirmDeleteModal(seller.id)}
-                    />
-                  ))}
+                {sellerRoutesResponse.map((seller, index) => (
+                  <RouteRow
+                    id={seller.id}
+                    key={index}
+                    name={seller.name}
+                    zone={seller.zone}
+                    companies={seller.totalClients}
+                    sellers={seller.user.length}
+                    state={seller.isActive}
+                    editIconSrc={editIcon}
+                    deleteIconSrc={deleteIcon}
+                    onEditClick={() => {
+                      openModal(seller.id);
+                    }}
+                    onDeleteClick={() => openConfirmDeleteModal(seller.id)}
+                  />
+                ))}
               </tbody>
             </table>
             <div className="flex justify-center p-6">

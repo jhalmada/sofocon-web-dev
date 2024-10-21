@@ -10,7 +10,7 @@ const useCompanies = () => {
   const [modified, setModified] = useState(false);
   const [route, setRoutes] = useState(null);
   const [search, setSearch] = useState("");
-  const [nexVisit, setNextVisit] = useState(1);
+  const [nextVisit, setNextVisit] = useState(null);
   const [status, setStatus] = useState(null);
 
   //la funcion principal
@@ -23,7 +23,7 @@ const useCompanies = () => {
         itemsPerPage,
         route,
         search,
-        nexVisit,
+        nextVisit,
         status,
       });
       //aqui haces con el resultado lo que necesites
@@ -40,7 +40,7 @@ const useCompanies = () => {
   //que permite actualizar las lista de empresa cada vez que se modifica el paginado, o se elimina una empresa
   useEffect(() => {
     getAllCompanies();
-  }, [page, itemsPerPage, modified, route, search, nexVisit, status]);
+  }, [page, itemsPerPage, modified, route, search, nextVisit, status]);
   return {
     companiesResponse,
     loading,

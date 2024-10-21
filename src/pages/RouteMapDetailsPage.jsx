@@ -42,6 +42,8 @@ const RouteMapDetailsPage = () => {
     setPage,
     itemsPerPage,
     setModified,
+    setSearch,
+    setIsActive,
   } = useUsersSellers();
   const { usersResponse } = useUsers();
   const [companyId, setCompanyId] = useState(null);
@@ -60,6 +62,8 @@ const RouteMapDetailsPage = () => {
     itemsPerPage: itemsPerPageCompanies,
     setModified: setModifiedCompanies,
     setRoutes: setRoutesCompanies,
+    setSearch: setCompanySearch,
+    setStatus,
   } = useCompanies();
 
   const [activeTab, setActiveTab] = useState(MAP_TAB);
@@ -264,8 +268,11 @@ const RouteMapDetailsPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Nombre de ruta
           </h1>
-          {(activeTab === SELLERS_TAB || activeTab === COMPANIES_TAB) && (
-            <SearchInput placeholder="Buscar..." />
+          {activeTab === SELLERS_TAB && (
+            <SearchInput placeholder="Buscar..." onChange={setSearch} />
+          )}
+          {activeTab === COMPANIES_TAB && (
+            <SearchInput placeholder="Buscar..." onChange={setCompanySearch} />
           )}
         </div>
         <div className="flex items-center">
@@ -382,6 +389,7 @@ const RouteMapDetailsPage = () => {
             setModified={setModified}
             idCompany={id}
             nameCompany={datos?.name}
+            setIsActive={setIsActive}
           />
         )}
         {activeTab === COMPANIES_TAB && (
@@ -399,6 +407,7 @@ const RouteMapDetailsPage = () => {
             setModified={setModifiedCompanies}
             idCompany={id}
             nameCompany={datos?.name}
+            setStatus={setStatus}
           />
         )}
       </div>
@@ -421,6 +430,7 @@ const RouteMapDetailsPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -435,6 +445,7 @@ const RouteMapDetailsPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}
@@ -463,6 +474,7 @@ const RouteMapDetailsPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -477,6 +489,7 @@ const RouteMapDetailsPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}

@@ -29,7 +29,7 @@ const useUsers = () => {
 
   useEffect(() => {
     getAllUsers();
-  }, [page, itemsPerPage, modified]);
+  }, [page, itemsPerPage, modified, search]);
   return {
     usersResponse,
     loading,

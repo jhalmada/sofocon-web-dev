@@ -10,6 +10,7 @@ const useUsersSellers = () => {
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
   const [route, setRoute] = useState(null);
+  const [isActive, setIsActive] = useState(null);
   const getUsersSellers = async () => {
     try {
       setLoading(true);
@@ -18,6 +19,7 @@ const useUsersSellers = () => {
         itemsPerPage,
         search,
         route,
+        isActive,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
@@ -31,7 +33,7 @@ const useUsersSellers = () => {
 
   useEffect(() => {
     getUsersSellers();
-  }, [page, itemsPerPage, modified, search, route]);
+  }, [page, itemsPerPage, modified, search, route, isActive]);
   return {
     userSellerResponse,
     loading,
@@ -45,6 +47,7 @@ const useUsersSellers = () => {
     modified,
     setSearch,
     setRoute,
+    setIsActive,
   };
 };
 

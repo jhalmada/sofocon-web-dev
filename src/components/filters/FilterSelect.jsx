@@ -3,7 +3,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 const FilterSelect = ({ options, placeholder, onChange }) => {
   return (
     <Select
-      className="w-full rounded-lg border"
+      className="w-[10rem] rounded-lg border"
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
     >
