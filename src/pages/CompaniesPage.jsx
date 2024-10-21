@@ -48,6 +48,7 @@ const CompaniesPage = () => {
     page,
     itemsPerPage,
     setModified,
+    setStatus,
   } = useCompanies();
   const { changedCompany } = usePutCompany();
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
@@ -69,7 +70,7 @@ const CompaniesPage = () => {
   const [stateFilter, setStateFilter] = useState("");
 
   const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
-  const stateOptions = ["Activo", "Inactivo"];
+  const stateOptions = ["frecuente", "potencial", "de baja", "competencia"];
   const {
     clearErrors,
     register,
@@ -252,7 +253,20 @@ const CompaniesPage = () => {
     setVisitFilter(value);
   };
   const handleStateFilterChange = (value) => {
-    setStateFilter(value);
+    switch (value) {
+      case "frecuente":
+        setStatus("FRECUENT");
+        break;
+      case "potencial":
+        setStatus("POTENTIAL");
+        break;
+      case "de baja":
+        setStatus("UNSUBSCRIBED");
+        break;
+      default:
+        setStatus("");
+        break;
+    }
   };
 
   return (

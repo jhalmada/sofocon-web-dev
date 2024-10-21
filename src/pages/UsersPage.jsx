@@ -54,7 +54,7 @@ const UsersPage = () => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const [roleFilter, setRoleFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
-  const roleOptions = ["Admin", "User", "Guest", "test"];
+  const roleOptions = RolesResponse?.map((role) => role.name) || [];
   const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
@@ -62,7 +62,6 @@ const UsersPage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-
 
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
@@ -170,6 +169,7 @@ const UsersPage = () => {
     setRoleFilter(value);
   };
   const handleStateFilterChange = (value) => {
+    console.log(value);
     setStateFilter(value);
   };
 
@@ -280,7 +280,7 @@ const UsersPage = () => {
                     return (
                       (roleFilter === "" || user?.role?.name === roleFilter) &&
                       (stateFilter === "" ||
-                        (user.state ? "Activo" : "Inactivo") === stateFilter)
+                        (user.isActive ? "Activo" : "Inactivo") === stateFilter)
                     );
                   })
                   .map((user, index) => (

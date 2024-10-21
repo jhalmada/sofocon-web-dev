@@ -104,16 +104,23 @@ const AddSellerRoutePage = ({
             </tr>
           </thead>
           <tbody>
-            {arraySeller?.map((seller) => (
-              <RouteSellerDetailsRow
-                key={seller.id}
-                name={seller.userInfo.fullName}
-                contact={seller.email}
-                state={seller.isActive ? "Activo" : "Inactivo"}
-                deleteIconSrc={deleteIcon}
-                onDeleteClick={() => openConfirmDeleteModal(seller.id)}
-              />
-            ))}
+            {arraySeller
+              ?.filter((seller) => {
+                return (
+                  stateFilter === "" ||
+                  (seller.isActive ? "Activo" : "Inactivo") === stateFilter
+                );
+              })
+              .map((seller) => (
+                <RouteSellerDetailsRow
+                  key={seller.id}
+                  name={seller.userInfo.fullName}
+                  contact={seller.email}
+                  state={seller.isActive ? "Activo" : "Inactivo"}
+                  deleteIconSrc={deleteIcon}
+                  onDeleteClick={() => openConfirmDeleteModal(seller.id)}
+                />
+              ))}
           </tbody>
         </table>
         <div className="flex justify-center p-6">

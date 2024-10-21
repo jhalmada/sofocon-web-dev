@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import useUsersSellers from "../hooks/users/useUsersSellers";
+import CardProducts from "../components/cards/CardProducts";
 
 const HomePage = () => {
   const { userSellerResponse, setSearch } = useUsersSellers();
@@ -25,7 +26,9 @@ const HomePage = () => {
         <div className="h-[7.875rem] w-[15.44rem] bg-white"></div>
         <div className="h-[7.875rem] w-[15.44rem] bg-white"></div>
       </div>
-      <div className="mt-10 h-[16rem] bg-white"></div>
+      <div className="mt-10 h-[18rem] bg-white p-5">
+        <CardProducts />
+      </div>
     </div>
   );
 };
