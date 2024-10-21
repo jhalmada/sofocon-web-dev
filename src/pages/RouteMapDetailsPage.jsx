@@ -421,6 +421,7 @@ const RouteMapDetailsPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -435,6 +436,7 @@ const RouteMapDetailsPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}
@@ -463,6 +465,7 @@ const RouteMapDetailsPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -477,6 +480,7 @@ const RouteMapDetailsPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}

@@ -48,6 +48,7 @@ const CompaniesPage = () => {
     page,
     itemsPerPage,
     setModified,
+    setNexVisit,
   } = useCompanies();
   const { changedCompany } = usePutCompany();
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
@@ -65,7 +66,6 @@ const CompaniesPage = () => {
   const [competenceName, setCompetenceName] = useState("");
   const [listUsers, setListUsers] = useState([]);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const [visitFilter, setVisitFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
 
   const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
@@ -249,7 +249,19 @@ const CompaniesPage = () => {
     }
   };
   const handleVisitFilterChange = (value) => {
-    setVisitFilter(value);
+    switch (value) {
+      case "< 1 mes":
+        setNexVisit(1);
+        break;
+      case "< 2 meses":
+        setNexVisit(2);
+        break;
+      case "< 3 meses":
+        setNexVisit(3);
+        break;
+      default:
+        "selecciona una opción válida";
+    }
   };
   const handleStateFilterChange = (value) => {
     setStateFilter(value);
@@ -262,7 +274,7 @@ const CompaniesPage = () => {
           <Link to="/inicio" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
               <img
-                src={ChevronLeftIcon}
+                src={ChevronLeftIcon} 
                 alt="arrow left"
                 className="-ml-1 h-4 w-4"
               />
@@ -712,6 +724,7 @@ const CompaniesPage = () => {
         <div className="mt-4 flex flex-col space-y-4">
           <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -722,6 +735,7 @@ const CompaniesPage = () => {
 
           <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}
@@ -747,6 +761,7 @@ const CompaniesPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -761,6 +776,7 @@ const CompaniesPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}

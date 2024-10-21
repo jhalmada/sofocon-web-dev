@@ -54,6 +54,7 @@ const UsersPage = () => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const [roleFilter, setRoleFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
+  
   const roleOptions = ["Admin", "User", "Guest", "test"];
   const stateOptions = ["Activo", "Inactivo"];
   const {
@@ -62,7 +63,6 @@ const UsersPage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-
 
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
@@ -455,6 +455,7 @@ const UsersPage = () => {
         <div className="mt-4 flex flex-col space-y-4">
           <a href={`${BASE_URL}/${getUsersExcel}`} download target="_blank">
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -465,6 +466,7 @@ const UsersPage = () => {
 
           <a href={`${BASE_URL}/${getUsersPdf}`} download target="_blank">
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}
@@ -490,6 +492,7 @@ const UsersPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -504,6 +507,7 @@ const UsersPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}
