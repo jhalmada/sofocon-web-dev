@@ -20,6 +20,7 @@ import {
   PRODUCTS_ROUTE,
   ORDERS_ROUTE,
   WORKSHOP_ROUTE,
+  UNIT_TEMPLATE_ROUTE,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
 import RecoverPasswordPage from "../pages/RecoverPasswordPage";
@@ -46,7 +47,9 @@ import RedirectionPage from "../pages/RedirectionPage";
 import OrdersPage from "../pages/OrdersPage";
 import NotesPage from "../pages/NotesPage";
 import RouteMapDetailsPage from "../pages/RouteMapDetailsPage";
+import WorkshopLayout from "../layouts/Workshop";
 import WorkshopPage from "../pages/WorkshopPage";
+import UnitTemplate from "../pages/UnitTemplate";
 
 export const router = createBrowserRouter([
   {
@@ -91,6 +94,7 @@ export const router = createBrowserRouter([
             path: ADD_COMPANIE_ROUTE,
             element: <AddCompaniePage />,
           },
+
           {
             path: ADD_ROUTE_ROUTE,
             element: <AddRoutePage />,
@@ -162,7 +166,17 @@ export const router = createBrowserRouter([
       },
       {
         path: WORKSHOP_ROUTE,
-        element: <WorkshopPage />,
+        element: <WorkshopLayout />,
+        children: [
+          {
+            index: true,
+            element: <WorkshopPage />,
+          },
+          {
+            path: UNIT_TEMPLATE_ROUTE,
+            element: <UnitTemplate />,
+          },
+        ],
       },
     ],
   },

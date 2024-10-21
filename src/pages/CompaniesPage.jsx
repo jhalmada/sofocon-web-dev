@@ -48,6 +48,9 @@ const CompaniesPage = () => {
     page,
     itemsPerPage,
     setModified,
+    setStatus,
+    setNextVisit,
+    setSearch: setSearchCompanies,
   } = useCompanies();
   const { changedCompany } = usePutCompany();
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
@@ -65,11 +68,10 @@ const CompaniesPage = () => {
   const [competenceName, setCompetenceName] = useState("");
   const [listUsers, setListUsers] = useState([]);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const [visitFilter, setVisitFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
 
-  const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
-  const stateOptions = ["Activo", "Inactivo"];
+  const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
+  const stateOptions = ["frecuente", "potencial", "de baja"];
   const {
     clearErrors,
     register,
@@ -249,10 +251,37 @@ const CompaniesPage = () => {
     }
   };
   const handleVisitFilterChange = (value) => {
-    setVisitFilter(value);
+    console.log(value);
+    switch (value) {
+      case "< 1 mes":
+        setNextVisit(1);
+        break;
+      case "< 2 meses":
+        setNextVisit(2);
+        break;
+      case "> 2 meses":
+        setNextVisit(3);
+        break;
+      default:
+        setNextVisit(null);
+        "selecciona una opción válida";
+    }
   };
   const handleStateFilterChange = (value) => {
-    setStateFilter(value);
+    switch (value) {
+      case "frecuente":
+        setStatus("FRECUENT");
+        break;
+      case "potencial":
+        setStatus("POTENTIAL");
+        break;
+      case "de baja":
+        setStatus("UNSUBSCRIBED");
+        break;
+      default:
+        setStatus("");
+        break;
+    }
   };
 
   return (
@@ -274,7 +303,7 @@ const CompaniesPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Empresas
           </h1>
-          <SearchInput placeholder="Buscar..." />
+          <SearchInput placeholder="Buscar..." onChange={setSearchCompanies} />
         </div>
 
         <div className="flex items-center">
@@ -712,6 +741,7 @@ const CompaniesPage = () => {
         <div className="mt-4 flex flex-col space-y-4">
           <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -722,6 +752,7 @@ const CompaniesPage = () => {
 
           <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}
@@ -747,6 +778,7 @@ const CompaniesPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -761,6 +793,7 @@ const CompaniesPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}

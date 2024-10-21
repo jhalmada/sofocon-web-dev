@@ -50,7 +50,8 @@ const Public = () => {
               <img
                 src={isOpen ? LogoOpen : LogoClose}
                 alt="Logo img"
-                className="mt-2.5 h-20 p-4"
+                className="mt-2.5 h-20 cursor-pointer p-4"
+                onClick={() => navigate("/inicio")}
               />
             </div>
             <div className="flex h-[30.625rem] flex-col items-center space-y-4 p-2">

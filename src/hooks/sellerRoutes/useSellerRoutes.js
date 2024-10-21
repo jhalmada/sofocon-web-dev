@@ -9,6 +9,7 @@ const useSellerRoutes = () => {
   const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
+  const [isActive, setIsActive] = useState(null);
 
   //la funcion principal
   const getAllSellerRoutes = async () => {
@@ -17,6 +18,8 @@ const useSellerRoutes = () => {
       const { data } = await sellerRoutesService.getAllSellerRoutesApi({
         page,
         itemsPerPage,
+        isActive,
+        search,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
@@ -30,7 +33,7 @@ const useSellerRoutes = () => {
   //que permite actualizar las lista cada vez que se modifica el paginado, se elimina o se agrega un nuevo registro
   useEffect(() => {
     getAllSellerRoutes();
-  }, [page, itemsPerPage, modified]);
+  }, [page, itemsPerPage, modified, isActive, search]);
   return {
     sellerRoutesResponse,
     loading,
@@ -44,6 +47,7 @@ const useSellerRoutes = () => {
     modified,
     search,
     setSearch,
+    setIsActive,
   };
 };
 

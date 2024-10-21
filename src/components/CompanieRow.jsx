@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
+import watchIcon2 from "../assets/icons/Frame 1.svg";
+import watchIcon3 from "../assets/icons/watch 3.svg";
+import { useEffect, useState } from "react";
 const translateState = (state) => {
   switch (state) {
     case "POTENTIAL":
@@ -13,6 +16,11 @@ const translateState = (state) => {
     default:
       return state;
   }
+};
+
+const parseDate = (dateString) => {
+  const [day, month, year] = dateString.split("/").map(Number);
+  return new Date(year, month - 1, day); // Se asume que 'aa' es del siglo XXI
 };
 
 const CompanieRow = ({
@@ -30,14 +38,36 @@ const CompanieRow = ({
   onClick,
   id,
 }) => {
+  const [icon, setIcon] = useState(null);
+  const [msjIcon, setMsjIcon] = useState(null);
+
+  useEffect(() => {
+    const today = new Date(); // Fecha actual
+    const visitDate = parseDate(nextVisits); // Fecha convertida
+    console.log(visitDate);
+
+    // Cálculo de la diferencia en meses
+    const diffInMonths =
+      visitDate.getMonth() -
+      today.getMonth() +
+      12 * (visitDate.getFullYear() - today.getFullYear());
+    console.log(diffInMonths);
+    // Selección de la imagen según la diferencia en meses
+    if (diffInMonths <= 1) {
+      setIcon(watchIcon); // Menos de 1 mes
+      setMsjIcon("Cliente próximo a vencer");
+    } else if (diffInMonths <= 2) {
+      setIcon(watchIcon2); // 2 meses
+      setMsjIcon("Vencimiento en 2 meses");
+    } else {
+      setIcon(watchIcon3); // No se muestra ninguna imagen si supera 3 meses
+      setMsjIcon("Vencimiento en mas de 2 meses");
+    }
+  }, [nextVisits]); // Se ejecuta cada vez que `nextVisit` cambie
   return (
     <tr className="border-b border-gray">
       <div className="flex">
-        <img
-          src={watchIcon}
-          alt="watch icon"
-          title="Cliente próximo a vencer"
-        />
+        {icon && <img src={icon} alt="watch icon" title={msjIcon} />}
         <td
           className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={name}

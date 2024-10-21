@@ -457,12 +457,10 @@ const AddCompaniePage = () => {
               })}
               onSelectionChange={(values) => setValue("status", values)}
             >
-              <SelectItem key={"Frecuente"}>Frecuente</SelectItem>
-              <SelectItem key={"Potencial"}>Potencial</SelectItem>
-              <SelectItem key={"de Baja"}>De Baja</SelectItem>
-              <SelectItem key={"Potencial/Competencia"}>
-                Potencial/Competencia
-              </SelectItem>
+              <SelectItem key={"FRECUENT"}>Frecuente</SelectItem>
+              <SelectItem key={"POTENTIAL"}>Potencial</SelectItem>
+              <SelectItem key={"UNSUBSCRIBED"}>De Baja</SelectItem>
+              <SelectItem key={"COMPETENCE"}>Competencia</SelectItem>
             </Select>
             <p className="mt-1 font-roboto text-xs text-red_e">
               {errors.status ? errors.status.message : ""}

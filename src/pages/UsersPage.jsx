@@ -39,6 +39,7 @@ const UsersPage = () => {
     page,
     itemsPerPage,
     setModified,
+    setSearch,
   } = useUsers();
   const { RolesResponse } = useRoles();
   const { deleteUser } = useDeleteUsers();
@@ -54,7 +55,7 @@ const UsersPage = () => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const [roleFilter, setRoleFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
-  const roleOptions = ["Admin", "User", "Guest", "test"];
+  const roleOptions = RolesResponse?.map((role) => role.name) || [];
   const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
@@ -62,7 +63,6 @@ const UsersPage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-
 
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
@@ -170,6 +170,7 @@ const UsersPage = () => {
     setRoleFilter(value);
   };
   const handleStateFilterChange = (value) => {
+    console.log(value);
     setStateFilter(value);
   };
 
@@ -183,7 +184,7 @@ const UsersPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Personal
           </h1>
-          <SearchInput placeholder="Buscar..." />
+          <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
         <div className="flex items-center">
           <div className="flex">
@@ -280,7 +281,7 @@ const UsersPage = () => {
                     return (
                       (roleFilter === "" || user?.role?.name === roleFilter) &&
                       (stateFilter === "" ||
-                        (user.state ? "Activo" : "Inactivo") === stateFilter)
+                        (user.isActive ? "Activo" : "Inactivo") === stateFilter)
                     );
                   })
                   .map((user, index) => (
@@ -455,6 +456,7 @@ const UsersPage = () => {
         <div className="mt-4 flex flex-col space-y-4">
           <a href={`${BASE_URL}/${getUsersExcel}`} download target="_blank">
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -465,6 +467,7 @@ const UsersPage = () => {
 
           <a href={`${BASE_URL}/${getUsersPdf}`} download target="_blank">
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}
@@ -490,6 +493,7 @@ const UsersPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo Excel"
               icon={DownloadIcon}
               color={"cancel"}
@@ -504,6 +508,7 @@ const UsersPage = () => {
             target="_blank"
           >
             <Button
+              width="min-w-[14rem]"
               text="Descargar archivo PDF"
               icon={DownloadIcon}
               color={"cancel"}
