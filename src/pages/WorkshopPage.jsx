@@ -317,14 +317,14 @@ const WorkshopPage = () => {
                   color={"cancel"}
                   onClick={() => openExportModal()}
                 />
-                <Link to={"agregar-empresa"}>
-                  <Button text="Escanear producto" icon={CameraIcon} />
+                <Link to={"/inicio/taller/plantilla-unit"}>
+                  <Button text="Plantilla UNIT" icon={FileIcon} />
                 </Link>
                 <Link to={"/inicio/taller/plantilla-unit"}>
                   <Button
-                    text="Plantilla UNIT"
+                    text="Escanear producto"
                     color={"save"}
-                    icon={FileIcon}
+                    icon={CameraIcon}
                   />
                 </Link>
               </div>
@@ -349,21 +349,21 @@ const WorkshopPage = () => {
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Empresa
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     ID de orden
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Fecha de ingreso
                   </th>
 
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Fecha de retiro
                   </th>
 
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Vendedor
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     <div className="flex flex-col">
                       <FilterSelect
                         options={stateOptions}
@@ -380,9 +380,9 @@ const WorkshopPage = () => {
                   id={""}
                   name={"Nombre de la empresa"}
                   orderId={"ID de orden"}
-                  direction={"Fecha de ingreso"}
-                  sellers={"Fecha de retiro"}
-                  nextVisits={"Vendedor"}
+                  entryData={"Fecha de ingreso"}
+                  retirementDate={"Fecha de retiro"}
+                  seller={"Vendedor"}
                   state={"estado"}
                 />
               </tbody>

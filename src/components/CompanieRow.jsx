@@ -65,24 +65,24 @@ const CompanieRow = ({
     }
   }, [nextVisits]); // Se ejecuta cada vez que `nextVisit` cambie
   return (
-    <tr className="border-b border-gray">
+    <tr className="border-b border-gray text-center">
       <div className="flex">
         {icon && <img src={icon} alt="watch icon" title={msjIcon} />}
         <td
-          className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={name}
         >
           {name}
         </td>
       </div>
       <td
-        className="max-w-[6rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={departament}
       >
         {departament}
       </td>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={direction}
       >
         {direction}
@@ -91,9 +91,9 @@ const CompanieRow = ({
         {sellers}
       </td>
 
-      <td className="p-2 text-center">{nextVisits}</td>
+      <td className="p-2">{nextVisits}</td>
 
-      <td className="p-2 text-center text-md font-semibold leading-[1.16rem]">
+      <td className="p-2 text-md font-semibold leading-[1.16rem]">
         {translateState(state)}
       </td>
       <td className="p-2">

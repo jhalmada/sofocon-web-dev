@@ -15,7 +15,7 @@ const translateState = (state) => {
   }
 };
 
-const CompanieRow = ({
+const StorageRow = ({
   name,
   orderId,
   entryData,
@@ -68,4 +68,4 @@ const CompanieRow = ({
   );
 };
 
-export default CompanieRow;
+export default StorageRow;

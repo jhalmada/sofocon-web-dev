@@ -1,5 +1,3 @@
-import { Select, SelectItem } from "@nextui-org/select";
-import { s } from "framer-motion/client";
 import { useNavigate } from "react-router-dom";
 
 const RouteRow = ({
@@ -20,31 +18,31 @@ const RouteRow = ({
     navigate(`/inicio/rutas/mapa/${id}`);
   };
   return (
-    <tr className="border-b border-gray transition-all duration-300 hover:bg-gray">
+    <tr className="border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
           title={name}
           onClick={handleRowClick}
         >
           {name}
         </td>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="max-w-[10rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={zone}
           onClick={handleRowClick}
         >
           {zone}
         </td>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={companies}
           onClick={handleRowClick}
         >
           {companies}
         </td>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={sellers}
           onClick={handleRowClick}
         >

@@ -24,9 +24,9 @@ const RouteCompanieDetailsRow = ({
   onDeleteClick,
 }) => {
   return (
-    <tr className="border-b border-gray">
+    <tr className="border-b border-gray text-center">
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={name}
       >
         {name}
@@ -41,7 +41,7 @@ const RouteCompanieDetailsRow = ({
 
       <td className="p-2">{nextVisits}</td>
 
-      <td className="p-2 text-center text-md font-semibold leading-[1.16rem]">
+      <td className="p-2 text-md font-semibold leading-[1.16rem]">
         {translateState(state)}
       </td>
       <Link to={`/inicio/empresas/notas/${id}`}>

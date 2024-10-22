@@ -361,14 +361,14 @@ const CompaniesPage = () => {
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Nombre
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Departamento
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Barrio
                   </th>
 
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Vendedores
                   </th>
 
@@ -390,7 +390,7 @@ const CompaniesPage = () => {
                       />
                     </div>
                   </th>
-                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
                 </tr>

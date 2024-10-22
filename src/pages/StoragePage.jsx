@@ -7,6 +7,7 @@ import notesIcon from "../assets/icons/sticky-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
+import StorageRow from "../components/StorageRow";
 const StoragePage = () => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -85,26 +86,20 @@ const StoragePage = () => {
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
               Empresa
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               ID de orden
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Fecha de ingreso
             </th>
 
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              <div className="flex flex-col gap-2">
-                <FilterSelect
-                  options={visitOptions}
-                  placeholder="Fecha de retiro"
-                  onChange={handleVisitFilterChange}
-                />
-              </div>
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+              Fecha de retiro
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Vendedor
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               <div className="flex flex-col gap-2">
                 <FilterSelect
                   options={stateOptions}
@@ -116,23 +111,16 @@ const StoragePage = () => {
           </tr>
         </thead>
         <tbody>
-          {companiesResponse
-            .filter((comp) => comp.status === "COMPETENCE")
-            .map((companie, index) => (
-              <CompetingRow
-                key={index}
-                name={companie.name}
-                direction={companie.address}
-                currentCompany={companie.name}
-                nextVisits={formatDate(companie.nextVisit)}
-                state={companie.status}
-                editIconSrc={editIcon}
-                deleteIconSrc={deleteIcon}
-                notesIcon={notesIcon}
-                onEditClick={() => openModal(companie.id)}
-                onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-              />
-            ))}
+          <StorageRow
+            key={""}
+            id={""}
+            name={"Nombre de la empresa"}
+            orderId={"ID de orden"}
+            entryData={"Fecha de ingreso"}
+            retirementDate={"Fecha de retiro"}
+            seller={"Vendedor"}
+            state={"estado"}
+          />
         </tbody>
       </table>
       <div className="flex justify-center p-6">
