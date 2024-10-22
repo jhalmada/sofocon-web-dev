@@ -69,20 +69,20 @@ const CompanieRow = ({
       <div className="flex">
         {icon && <img src={icon} alt="watch icon" title={msjIcon} />}
         <td
-          className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={name}
         >
           {name}
         </td>
       </div>
       <td
-        className="max-w-[6rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={departament}
       >
         {departament}
       </td>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={direction}
       >
         {direction}

@@ -7,6 +7,8 @@ import notesIcon from "../assets/icons/sticky-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
+import { parseAbsoluteToLocal } from "@internationalized/date";
+import StorageRow from "../components/StorageRow";
 const StoragePage = () => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,7 +16,7 @@ const StoragePage = () => {
   const [competence, setCompetence] = useState(false);
   const [visitFilter, setVisitFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
-  const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
+  const visitOptions = ["< 1 mes", "< 2 meses", "> 3 meses"];
   const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
@@ -93,7 +95,7 @@ const StoragePage = () => {
             </th>
 
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col items-center gap-2">
                 <FilterSelect
                   options={visitOptions}
                   placeholder="Fecha de retiro"
@@ -105,7 +107,7 @@ const StoragePage = () => {
               Vendedor
             </th>
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col items-center gap-2">
                 <FilterSelect
                   options={stateOptions}
                   placeholder="Estado"
@@ -116,23 +118,16 @@ const StoragePage = () => {
           </tr>
         </thead>
         <tbody>
-          {companiesResponse
-            .filter((comp) => comp.status === "COMPETENCE")
-            .map((companie, index) => (
-              <CompetingRow
-                key={index}
-                name={companie.name}
-                direction={companie.address}
-                currentCompany={companie.name}
-                nextVisits={formatDate(companie.nextVisit)}
-                state={companie.status}
-                editIconSrc={editIcon}
-                deleteIconSrc={deleteIcon}
-                notesIcon={notesIcon}
-                onEditClick={() => openModal(companie.id)}
-                onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-              />
-            ))}
+          <StorageRow
+            key={""}
+            id={""}
+            name={"Nombre de la empresa"}
+            orderId={"ID de orden"}
+            entryDate={"Fecha de ingreso"}
+            withdrawalDate={"Fecha de retiro"}
+            seller={"Vendedor"}
+            state={"estado"}
+          />
         </tbody>
       </table>
       <div className="flex justify-center p-6">

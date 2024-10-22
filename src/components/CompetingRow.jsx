@@ -36,20 +36,20 @@ const CompetingRow = ({
           title="Cliente próximo a vencer"
         />
         <td
-          className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={name}
         >
           {name}
         </td>
       </div>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={direction}
       >
         {direction}
       </td>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={currentCompany}
       >
         {currentCompany}

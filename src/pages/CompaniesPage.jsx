@@ -373,7 +373,7 @@ const CompaniesPage = () => {
                   </th>
 
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-center gap-2">
                       <FilterSelect
                         options={visitOptions}
                         placeholder="Próx. visita"
@@ -382,7 +382,7 @@ const CompaniesPage = () => {
                     </div>
                   </th>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-center gap-2">
                       <FilterSelect
                         options={stateOptions}
                         placeholder="Estado"
@@ -390,7 +390,7 @@ const CompaniesPage = () => {
                       />
                     </div>
                   </th>
-                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 font-semibold leading-[1.125rem]">
                     Acción
                   </th>
                 </tr>

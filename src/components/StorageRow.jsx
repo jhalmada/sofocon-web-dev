@@ -16,7 +16,7 @@ const translateState = (state) => {
   }
 };
 
-const CompanieRow = ({
+const StorageRow = ({
   name,
   orderId,
   entryDate,
@@ -64,7 +64,7 @@ const CompanieRow = ({
       >
         {entryDate}
       </td>
-      <td className="cursor-pointer p-2">{withdrawalDate}</td>
+      <td className="cursor-pointer p-2 text-center">{withdrawalDate}</td>
 
       <td className="p-2">{seller}</td>
 
@@ -82,4 +82,4 @@ const CompanieRow = ({
   );
 };
 
-export default CompanieRow;
+export default StorageRow;
