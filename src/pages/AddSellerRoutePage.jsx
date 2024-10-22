@@ -97,10 +97,10 @@ const AddSellerRoutePage = ({
               <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                 Nombre completo
               </th>
-              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                 Contacto
               </th>
-              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                 <div className="flex flex-col gap-2">
                   <FilterSelect
                     options={stateOptions}

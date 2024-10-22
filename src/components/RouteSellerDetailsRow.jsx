@@ -8,7 +8,7 @@ const RouteSellerDetailsRow = ({
   return (
     <tr className="border-b border-gray text-center">
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
         title={name}
       >
         {name}

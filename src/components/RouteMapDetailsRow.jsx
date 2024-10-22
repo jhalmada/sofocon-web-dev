@@ -3,7 +3,7 @@ const RouteMapDetailsRow = ({ name, zone, companies, sellers, state }) => {
     <>
       <tr className="text-center">
         <td
-          className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
           title={name}
         >
           {name}
