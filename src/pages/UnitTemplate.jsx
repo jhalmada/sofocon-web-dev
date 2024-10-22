@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import RouteRow from "../components/RouteRow.jsx";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Pagination from "../components/Pagination.jsx";
@@ -8,15 +7,17 @@ import Input from "../components/inputs/Input.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import editIcon from "../assets/icons/pencil-square.svg";
-import deleteIcon from "../assets/icons/trash3.svg";
 import { useForm } from "react-hook-form";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
-import FilterSelect from "../components/filters/FilterSelect.jsx";
 import DownloadIcon from "../assets/icons/download.svg";
 import UnitTemplateRow from "../components/UnitTemplateRow.jsx";
+import { BASE_URL } from "../utils/Constants.js";
+import {
+  getClientsExcel,
+  getClientsPdf,
+} from "../services/companies/companies.routes.js";
 const UnitTemplate = () => {
   const { changedSellerRoute } = usePutSellerRoute();
   const { deleteSellerRoute } = useDeleteSellerRoute();
@@ -40,8 +41,6 @@ const UnitTemplate = () => {
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-
-  const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
     handleSubmit,
@@ -61,6 +60,7 @@ const UnitTemplate = () => {
     setRouteId(id);
   };
   const closeModal = () => {
+    setIsExportModalOpen(false);
     setIsModalOpen(false);
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
@@ -133,7 +133,7 @@ const UnitTemplate = () => {
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
         <div className="w-[4rem]">
-          <Link to="/inicio" className="text-sm font-medium leading-4">
+          <Link to="/inicio/taller" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
               <img
                 src={ChevronLeftIcon}
@@ -146,7 +146,7 @@ const UnitTemplate = () => {
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Rutas
+            Taller
           </h1>
           <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
@@ -158,16 +158,40 @@ const UnitTemplate = () => {
               Planilla UNIT
             </h2>
           </div>
+          <div className="flex items-center">
+            <h2
+              className={`cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 text-black_m`}
+            >
+              Período
+            </h2>
+
+            <Select
+              className="w-52"
+              placeholder="OCTUBRE 2024"
+              onSelectionChange={(values) => setValue("status", values)}
+            >
+              <SelectItem>Enero 2024</SelectItem>
+              <SelectItem>Febrero 2024</SelectItem>
+              <SelectItem>Marzo 2024</SelectItem>
+              <SelectItem>Abril 2024</SelectItem>
+              <SelectItem>Mayo 2024</SelectItem>
+              <SelectItem>Junio 2024</SelectItem>
+              <SelectItem>Julio 2024</SelectItem>
+              <SelectItem>Agosto 2024</SelectItem>
+              <SelectItem>Septiembre 2024</SelectItem>
+              <SelectItem>Octubre 2024</SelectItem>
+              <SelectItem>Noviembre 2024</SelectItem>
+              <SelectItem>Diciembre 2024</SelectItem>
+            </Select>
+          </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
             <div className="flex space-x-4">
-              <Link to={"agregar-ruta"}>
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                  onClick={() => openExportModal()}
-                />
-              </Link>
+              <Button
+                text="Exportar lista"
+                icon={DownloadIcon}
+                color={"cancel"}
+                onClick={() => openExportModal()}
+              />
             </div>
           </div>
         </div>
@@ -175,6 +199,23 @@ const UnitTemplate = () => {
         <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
           <table className="w-full">
             <thead>
+              <tr className="border-b border-gray">
+                <th></th>
+
+                <th className="text-center text-md font-semibold leading-[1.125rem]">
+                  Empresa
+                </th>
+                <th></th>
+                <th></th>
+                <th className="text-center text-md font-semibold leading-[1.125rem]">
+                  Polvo
+                </th>
+                <th></th>
+                <th></th>
+                <th className="text-center text-md font-semibold leading-[1.125rem]">
+                  Marca UNIT
+                </th>
+              </tr>
               <tr>
                 <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                   Fecha ing.
@@ -315,6 +356,39 @@ const UnitTemplate = () => {
             </p>
           </div>
         </form>
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isExportModalOpen}
+        onClose={closeModal}
+        title="Exportar lista"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Elige el formato en el que desea descargar el contenido de la lista:
+        <div className="mt-4 flex flex-col space-y-4">
+          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+            <Button
+              width="min-w-[14rem]"
+              text="Descargar archivo Excel"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+
+          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+            <Button
+              width="min-w-[14rem]"
+              text="Descargar archivo PDF"
+              icon={DownloadIcon}
+              color={"cancel"}
+              shadow="shadow-blur"
+              iconPosition={"left"}
+            />
+          </a>
+        </div>
       </ReusableModal>
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}

@@ -71,7 +71,7 @@ const CompaniesPage = () => {
   const [stateFilter, setStateFilter] = useState("");
 
   const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
-  const stateOptions = ["frecuente", "potencial", "de baja"];
+  const stateOptions = ["Frecuente", "Potencial", "De baja"];
   const {
     clearErrors,
     register,
@@ -269,13 +269,13 @@ const CompaniesPage = () => {
   };
   const handleStateFilterChange = (value) => {
     switch (value) {
-      case "frecuente":
+      case "Frecuente":
         setStatus("FRECUENT");
         break;
-      case "potencial":
+      case "Potencial":
         setStatus("POTENTIAL");
         break;
-      case "de baja":
+      case "De baja":
         setStatus("UNSUBSCRIBED");
         break;
       default:
