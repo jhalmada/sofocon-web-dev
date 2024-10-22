@@ -50,6 +50,7 @@ import RouteMapDetailsPage from "../pages/RouteMapDetailsPage";
 import WorkshopLayout from "../layouts/Workshop";
 import WorkshopPage from "../pages/WorkshopPage";
 import UnitTemplate from "../pages/UnitTemplate";
+import AddProductPage from "../pages/AddProductPage";
 
 export const router = createBrowserRouter([
   {
@@ -159,6 +160,10 @@ export const router = createBrowserRouter([
       {
         path: PRODUCTS_ROUTE,
         element: <ProductsPage />,
+      },
+      {
+        path: "/inicio/addProduct",
+        element: <AddProductPage />,
       },
       {
         path: ORDERS_ROUTE,

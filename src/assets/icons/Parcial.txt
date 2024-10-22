@@ -1,0 +1,6 @@
+Profesor si puede lea el readme.md en el punto de auth para poder hacer la petición con postman
+ya la documentación que le integre todavía no esta terminada
+
+api url: localhost:3000/api/v1
+
+https://github.com/HeymerDev/api-cul
