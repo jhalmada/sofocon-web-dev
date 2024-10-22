@@ -19,10 +19,11 @@ const translateState = (state) => {
 const CompanieRow = ({
   name,
   orderId,
-  entryDate,
-  withdrawalDate,
+  entryData,
+  retirementDate,
   seller,
   state,
+  id,
 }) => {
   const navigate = useNavigate();
   const handleRowClick = () => {
@@ -36,7 +37,7 @@ const CompanieRow = ({
   ];
   return (
     <tr
-      className="cursor-pointer border-b border-gray transition-all duration-300 hover:bg-gray"
+      className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray"
       onClick={handleRowClick}
     >
       <div className="flex">
@@ -46,7 +47,7 @@ const CompanieRow = ({
           title="Cliente próximo a vencer"
         />
         <td
-          className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
           title={name}
         >
           {name}
@@ -59,24 +60,17 @@ const CompanieRow = ({
         {orderId}
       </td>
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
-        title={entryDate}
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        title={entryData}
       >
-        {entryDate}
+        {entryData}
       </td>
-      <td className="cursor-pointer p-2">{withdrawalDate}</td>
+      <td className="p-2">{retirementDate}</td>
 
       <td className="p-2">{seller}</td>
 
-      <td className="p-2 text-center text-md font-semibold leading-[1.16rem]">
-        <Select
-          placeholder="Selecciona un estado"
-          className={`rounded-lg border`}
-        >
-          {options.map((option, index) => (
-            <SelectItem key={index}>{option}</SelectItem>
-          ))}
-        </Select>
+      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+        {translateState(state)}
       </td>
     </tr>
   );

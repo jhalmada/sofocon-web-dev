@@ -189,6 +189,7 @@ const AddNotesPage = () => {
                           {...field}
                           label={""}
                           placeholder="Seleccione una fecha"
+                          isDisabled={!dateSelected}
                           errorMessage={(value) => {
                             if (value.isInvalid) {
                               setErrorDataPicker(true);

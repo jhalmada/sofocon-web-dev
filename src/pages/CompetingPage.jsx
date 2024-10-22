@@ -87,10 +87,10 @@ const CompetingPage = () => {
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
               Nombre
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Dirección
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Empresa actual
             </th>
 
@@ -112,7 +112,7 @@ const CompetingPage = () => {
                 />
               </div>
             </th>
-            <th className="p-2 text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Acción
             </th>
           </tr>

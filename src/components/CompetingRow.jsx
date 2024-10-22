@@ -28,7 +28,7 @@ const CompetingRow = ({
   onDeleteClick,
 }) => {
   return (
-    <tr className="border-b border-gray">
+    <tr className="border-b border-gray text-center">
       <div className="flex">
         <img
           src={watchIcon}
@@ -54,8 +54,8 @@ const CompetingRow = ({
       >
         {currentCompany}
       </td>
-      <td className="p-2 text-center">{nextVisits}</td>
-      <td className="p-2 text-center text-md font-semibold leading-[1.16rem]">
+      <td className="p-2">{nextVisits}</td>
+      <td className="p-2 text-md font-semibold leading-[1.16rem]">
         {translateState(state)}
       </td>
       <td className="p-2">

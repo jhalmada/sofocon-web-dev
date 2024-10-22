@@ -7,7 +7,6 @@ import notesIcon from "../assets/icons/sticky-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
-import { parseAbsoluteToLocal } from "@internationalized/date";
 import StorageRow from "../components/StorageRow";
 const StoragePage = () => {
   const [companyId, setCompanyId] = useState(null);
@@ -87,27 +86,21 @@ const StoragePage = () => {
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
               Empresa
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               ID de orden
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Fecha de ingreso
             </th>
 
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              <div className="flex flex-col items-center gap-2">
-                <FilterSelect
-                  options={visitOptions}
-                  placeholder="Fecha de retiro"
-                  onChange={handleVisitFilterChange}
-                />
-              </div>
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+              Fecha de retiro
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Vendedor
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              <div className="flex flex-col items-center gap-2">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+              <div className="flex flex-col gap-2">
                 <FilterSelect
                   options={stateOptions}
                   placeholder="Estado"
@@ -123,8 +116,8 @@ const StoragePage = () => {
             id={""}
             name={"Nombre de la empresa"}
             orderId={"ID de orden"}
-            entryDate={"Fecha de ingreso"}
-            withdrawalDate={"Fecha de retiro"}
+            entryData={"Fecha de ingreso"}
+            retirementDate={"Fecha de retiro"}
             seller={"Vendedor"}
             state={"estado"}
           />

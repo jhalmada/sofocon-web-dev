@@ -12,21 +12,21 @@ const SellerRow = ({
   onDeleteClick,
 }) => {
   return (
-    <tr className="border-b border-gray">
+    <tr className="border-b border-gray text-center">
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
         title={fullName}
       >
         {fullName}
       </td>
       <td
-        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={email}
       >
         {email}
       </td>
       <td
-        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={route}
       >
         {route}

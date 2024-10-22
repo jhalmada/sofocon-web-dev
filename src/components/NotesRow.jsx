@@ -8,7 +8,7 @@ const NotesRow = ({
   onDeleteClick,
 }) => {
   return (
-    <tr className="border-b border-gray">
+    <tr className="border-b border-gray text-center">
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={name}

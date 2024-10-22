@@ -1,5 +1,3 @@
-import { Select, SelectItem } from "@nextui-org/select";
-import { s } from "framer-motion/client";
 import { useNavigate } from "react-router-dom";
 
 const RouteRow = ({
@@ -20,13 +18,10 @@ const RouteRow = ({
     navigate(`/inicio/rutas/mapa/${id}`);
   };
   return (
-    <tr
-      className="border-b border-gray transition-all duration-300 hover:bg-gray"
-      onClick={handleRowClick}
-    >
+    <tr className="border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <>
         <td
-          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
           title={name}
         >
           {name}
@@ -38,13 +33,13 @@ const RouteRow = ({
           {zone}
         </td>
         <td
-          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-center"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={companies}
         >
           {companies}
         </td>
         <td
-          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-center"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={sellers}
         >
           {sellers}

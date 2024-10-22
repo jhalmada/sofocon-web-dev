@@ -1,7 +1,7 @@
 const RouteMapDetailsRow = ({ name, zone, companies, sellers, state }) => {
   return (
     <>
-      <tr>
+      <tr className="text-center">
         <td
           className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={name}
@@ -9,19 +9,19 @@ const RouteMapDetailsRow = ({ name, zone, companies, sellers, state }) => {
           {name}
         </td>
         <td
-          className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={zone}
         >
           {zone}
         </td>
         <td
-          className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-center"
+          className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={companies}
         >
           {companies}
         </td>
         <td
-          className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-center"
+          className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={sellers}
         >
           {sellers}

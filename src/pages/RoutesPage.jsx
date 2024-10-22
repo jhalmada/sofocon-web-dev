@@ -174,7 +174,7 @@ const RoutesPage = () => {
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Nombre
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Zona
                   </th>
                   <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
@@ -183,8 +183,8 @@ const RoutesPage = () => {
                   <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Vendedores
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col items-center gap-2">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    <div className="flex flex-col gap-2">
                       <FilterSelect
                         options={stateOptions}
                         placeholder="Estado"
