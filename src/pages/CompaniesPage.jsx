@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
@@ -283,6 +283,11 @@ const CompaniesPage = () => {
         break;
     }
   };
+  useEffect(() => {
+    if (activeTab === COMPETING_TAB) {
+      return setStatus(""), setNextVisit(null);
+    }
+  }, [activeTab]);
 
   return (
     <div className="flex h-full flex-col justify-between">

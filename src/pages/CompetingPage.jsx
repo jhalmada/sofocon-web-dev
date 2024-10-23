@@ -3,11 +3,10 @@ import { useForm } from "react-hook-form";
 import CompetingRow from "../components/CompetingRow";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import FilterRightIcon from "../assets/icons/filter-right.svg";
-import ChevronDownIcon from "../assets/icons/chevron-down.svg";
+import { parseAbsoluteToLocal } from "@internationalized/date";
 import notesIcon from "../assets/icons/sticky-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 const CompetingPage = () => {
   const [companyId, setCompanyId] = useState(null);
@@ -33,13 +32,15 @@ const CompetingPage = () => {
     page,
     itemsPerPage,
     setModified,
+    setCompetence: setCompetenceCompanies,
   } = useCompanies();
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    return `${month}/${day}/${year}`;
+    return `${day}/${month}/${year}`;
   };
   const openModal = (id) => {
     const companyToEdit = companiesResponse.find(
@@ -79,6 +80,10 @@ const CompetingPage = () => {
   const handleStateFilterChange = (value) => {
     setStateFilter(value);
   };
+
+  useEffect(() => {
+    setCompetenceCompanies(true);
+  }, []);
   return (
     <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
@@ -118,23 +123,21 @@ const CompetingPage = () => {
           </tr>
         </thead>
         <tbody>
-          {companiesResponse
-            .filter((comp) => comp.status === "COMPETENCE")
-            .map((companie, index) => (
-              <CompetingRow
-                key={index}
-                name={companie.name}
-                direction={companie.address}
-                currentCompany={companie.name}
-                nextVisits={formatDate(companie.nextVisit)}
-                state={companie.status}
-                editIconSrc={editIcon}
-                deleteIconSrc={deleteIcon}
-                notesIcon={notesIcon}
-                onEditClick={() => openModal(companie.id)}
-                onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-              />
-            ))}
+          {companiesResponse.map((companie, index) => (
+            <CompetingRow
+              key={index}
+              name={companie.name}
+              direction={companie.address}
+              currentCompany={companie.name}
+              nextVisits={formatDate(companie.nextVisit)}
+              state={companie.status}
+              editIconSrc={editIcon}
+              deleteIconSrc={deleteIcon}
+              notesIcon={notesIcon}
+              onEditClick={() => openModal(companie.id)}
+              onDeleteClick={() => openConfirmDeleteModal(companie.id)}
+            />
+          ))}
         </tbody>
       </table>
       <div className="flex justify-center p-6">

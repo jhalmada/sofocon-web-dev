@@ -21,6 +21,8 @@ import {
   ORDERS_ROUTE,
   WORKSHOP_ROUTE,
   UNIT_TEMPLATE_ROUTE,
+  PRODUCTS_INVENTORY,
+  PRODUCTS_ADD,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
 import RecoverPasswordPage from "../pages/RecoverPasswordPage";
@@ -51,6 +53,8 @@ import WorkshopLayout from "../layouts/Workshop";
 import WorkshopPage from "../pages/WorkshopPage";
 import UnitTemplate from "../pages/UnitTemplate";
 import AddProductPage from "../pages/AddProductPage";
+import Products from "../layouts/Products";
+import InventoryPage from "../pages/InventoryPage";
 
 export const router = createBrowserRouter([
   {
@@ -159,11 +163,21 @@ export const router = createBrowserRouter([
       },
       {
         path: PRODUCTS_ROUTE,
-        element: <ProductsPage />,
-      },
-      {
-        path: "/inicio/addProduct",
-        element: <AddProductPage />,
+        element: <Products />,
+        children: [
+          {
+            index: true,
+            element: <ProductsPage />,
+          },
+          {
+            path: PRODUCTS_INVENTORY,
+            element: <InventoryPage />,
+          },
+          {
+            path: PRODUCTS_ADD,
+            element: <AddProductPage />,
+          },
+        ],
       },
       {
         path: ORDERS_ROUTE,
