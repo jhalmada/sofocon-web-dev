@@ -343,7 +343,7 @@ const RouteMapDetailsPage = () => {
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Nombre
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Zona
                   </th>
                   <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
@@ -352,10 +352,8 @@ const RouteMapDetailsPage = () => {
                   <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Vendedores
                   </th>
-                  <th className="flex gap-4 p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex gap-2">
-                      <h3>Estado</h3>
-                    </div>
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Estado
                   </th>
                 </tr>
               </thead>

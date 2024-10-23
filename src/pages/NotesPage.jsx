@@ -42,7 +42,7 @@ const NotesPage = () => {
   const [visitFilter, setVisitFilter] = useState("");
   const { id } = useParams();
 
-  const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
+  const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
   const {
     notesResponse,
     setItemsPerPage,
@@ -53,6 +53,7 @@ const NotesPage = () => {
     itemsPerPage,
     setModified,
     setClient,
+    setNextVisit,
   } = useNotes();
 
   const {
@@ -150,7 +151,21 @@ const NotesPage = () => {
   };
 
   const handleVisitFilterChange = (value) => {
-    setVisitFilter(value);
+    console.log(value);
+    switch (value) {
+      case "< 1 mes":
+        setNextVisit(1);
+        break;
+      case "< 2 meses":
+        setNextVisit(2);
+        break;
+      case "> 2 meses":
+        setNextVisit(3);
+        break;
+      default:
+        setNextVisit(null);
+        "selecciona una opción válida";
+    }
   };
   return (
     <div className="flex h-full flex-col justify-between">
@@ -200,11 +215,11 @@ const NotesPage = () => {
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Nombre
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Contenido
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col items-center gap-2">
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    <div className="flex flex-col gap-2">
                       <FilterSelect
                         options={visitOptions}
                         placeholder="Próx. visita"
