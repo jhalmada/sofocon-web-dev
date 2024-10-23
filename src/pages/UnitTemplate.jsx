@@ -47,18 +47,7 @@ const UnitTemplate = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const openModal = (id) => {
-    const sellerToEdit = sellerRoutesResponse.find(
-      (seller) => seller.id === id,
-    );
-    if (sellerToEdit) {
-      setValue("name", sellerToEdit.name);
-      setValue("zone", sellerToEdit.zone);
-      setValue("status", sellerToEdit.isActive);
-    }
-    setIsModalOpen(true);
-    setRouteId(id);
-  };
+
   const closeModal = () => {
     setIsExportModalOpen(false);
     setIsModalOpen(false);
@@ -72,10 +61,7 @@ const UnitTemplate = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-  const openConfirmDeleteModal = (id) => {
-    setRouteId(id);
-    setConfirmDeleteModalOpen(true);
-  };
+
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
   const handleConfirmDelete = () => {
     deleteSellerRoute(routeId, setModified);
@@ -116,18 +102,6 @@ const UnitTemplate = () => {
       isActive: stringToBoolean(status),
     };
     handleRouteCreation(sellerData);
-  };
-  const handleStateFilterChange = (value) => {
-    switch (value) {
-      case "Activo":
-        setIsActive(true);
-        break;
-      case "Inactivo":
-        setIsActive(false);
-        break;
-      default:
-        setIsActive(null);
-    }
   };
   return (
     <div className="flex h-full flex-col justify-between">

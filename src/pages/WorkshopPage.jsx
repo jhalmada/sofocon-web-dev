@@ -4,29 +4,21 @@ import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
-import { Select, SelectItem } from "@nextui-org/select";
 import SearchInput from "../components/inputs/SearchInput";
 import CameraIcon from "../assets/icons/camera.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import RechargeRow from "../components/RechargeRow.jsx";
 import FileIcon from "../assets/icons/file-earmark-ruled.svg";
-import { Controller, useForm } from "react-hook-form";
-
-import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
-import PlusFillIcon from "../assets/icons/plus-fill.svg";
+import { useForm } from "react-hook-form";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
-import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
-import { I18nProvider } from "@react-aria/i18n";
-import { getLocalTimeZone, today } from "@internationalized/date";
 import {
   getClientsExcel,
   getClientsPdf,
 } from "../services/companies/companies.routes.js";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import useUserCompany from "../hooks/companies/useUsersCompany.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
@@ -61,14 +53,9 @@ const WorkshopPage = () => {
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [competence, setCompetence] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("RUT");
-  const [competenceName, setCompetenceName] = useState("");
-  const [listUsers, setListUsers] = useState([]);
-  const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [stateFilter, setStateFilter] = useState("");
   const [openScannerModal, setOpenScannerModal] = useState(false);
 
-  const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
   const stateOptions = [
     "Solicitado",
     "En preparación",
@@ -80,54 +67,19 @@ const WorkshopPage = () => {
     register,
     handleSubmit,
     setValue,
-    control,
     formState: { errors },
   } = useForm();
 
   const { handleSubmit: handleSubmit2, setValue: setValue2 } = useForm();
   const { userSellerResponse, setSearch } = useUsersSellers();
   const { addUsersCompany } = useUserCompany();
-  const openModal = (id) => {
-    clearErrors();
-    const companyToEdit = companiesResponse.find(
-      (company) => company.id === id,
-    );
-    if (companyToEdit) {
-      setValue("name", companyToEdit?.name || "");
-      setValue("department", companyToEdit?.department || "");
-      setValue("neighborhood", companyToEdit?.neighborhood || "");
-      setValue("address", companyToEdit?.address || "");
-      setValue("managerName", companyToEdit?.managerName || "");
-      setValue("phone", companyToEdit?.phone || "");
-      setValue("rut", companyToEdit?.rut || "");
-      setValue("status", companyToEdit?.status || "");
-      setValue(
-        "nextVisit",
-        parseAbsoluteToLocal(
-          companyToEdit?.nextVisit || "2024-10-02T21:46:00.330Z",
-        ),
-      );
-      companyToEdit.competenceName
-        ? setValue("competenceName", companyToEdit.competenceName)
-        : setValue("competenceName", "");
-      companyToEdit.competenceName ? setCompetence(true) : setCompetence(false);
-    }
-    setIsModalOpen(true);
-    setCompanyId(id);
-    setIsModalOpen(true);
-  };
-  const openScanModal = () => {
-    setOpenScannerModal(true);
-  };
+
   const openExportModal = () => {
     setIsExportModalOpen(true);
   };
 
   const openExportCompetingModal = () => {
     setIsExportCompetingModalOpen(true);
-  };
-  const openSellersModal = () => {
-    setIsSellersModalOpen(true);
   };
 
   const closeModal = () => {
@@ -138,7 +90,6 @@ const WorkshopPage = () => {
     setIsSellersModalOpen(false);
   };
 
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => {
     setConfirmCancelModalOpen(false);
   };
@@ -146,10 +97,7 @@ const WorkshopPage = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-  const openConfirmDeleteModal = (id) => {
-    setCompanyId(id);
-    setConfirmDeleteModalOpen(true);
-  };
+
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
@@ -195,7 +143,6 @@ const WorkshopPage = () => {
       status,
       address,
       neighborhood,
-      competenceName,
     } = data;
     const newdata = new Date(
       nextVisit.year,
@@ -217,7 +164,6 @@ const WorkshopPage = () => {
           neighborhood,
           nextVisit: newdata,
           rut: data.rut,
-          competenceName: competence ? competenceName : "",
         });
         break;
       default:
@@ -231,7 +177,6 @@ const WorkshopPage = () => {
           neighborhood,
           nextVisit: formattedDate,
           ci: data.ci,
-          competenceName: competence ? competenceName : "",
         });
     }
   };
@@ -506,37 +451,6 @@ const WorkshopPage = () => {
             />
           </a>
         </div>
-      </ReusableModal>
-
-      <ReusableModal
-        isOpen={isSellersModalOpen}
-        onClose={handleCancelClick}
-        title={competenceName}
-        onSubmit={handleSubmit2(submit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <form onSubmit={handleSubmit2(submit)}>
-          <NextAutoComplete
-            label={"Agregar vendedores"}
-            label2={"Vendedores asignados"}
-            array={
-              userSellerResponse?.result?.map((seller) => ({
-                id: seller.id,
-                name: seller.userInfo.fullName,
-              })) || []
-            }
-            array2={
-              listUsers.map((seller) => ({
-                id: seller.id,
-                name: seller.userInfo.fullName,
-              })) || []
-            }
-            name={"sellers"}
-            setValue={setValue2}
-            onChange={setSearch}
-          />
-        </form>
       </ReusableModal>
 
       <ReusableModal
