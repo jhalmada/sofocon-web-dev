@@ -15,7 +15,7 @@ const StoragePage = () => {
   const [competence, setCompetence] = useState(false);
   const [visitFilter, setVisitFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
-  const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
+  const visitOptions = ["< 1 mes", "< 2 meses", "> 3 meses"];
   const stateOptions = ["Activo", "Inactivo"];
   const {
     register,

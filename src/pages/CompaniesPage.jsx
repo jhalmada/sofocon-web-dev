@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
@@ -283,6 +283,11 @@ const CompaniesPage = () => {
         break;
     }
   };
+  useEffect(() => {
+    if (activeTab === COMPETING_TAB) {
+      return setStatus(""), setNextVisit(null);
+    }
+  }, [activeTab]);
 
   return (
     <div className="flex h-full flex-col justify-between">
@@ -373,7 +378,7 @@ const CompaniesPage = () => {
                   </th>
 
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-center gap-2">
                       <FilterSelect
                         options={visitOptions}
                         placeholder="Próx. visita"
@@ -382,7 +387,7 @@ const CompaniesPage = () => {
                     </div>
                   </th>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-center gap-2">
                       <FilterSelect
                         options={stateOptions}
                         placeholder="Estado"

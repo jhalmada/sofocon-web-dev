@@ -1,5 +1,6 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate, useNavigate } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
+import { Select, SelectItem } from "@nextui-org/select";
 const translateState = (state) => {
   switch (state) {
     case "POTENTIAL":
@@ -28,6 +29,12 @@ const CompanieRow = ({
   const handleRowClick = () => {
     navigate(`/inicio/taller/recarga`);
   };
+  const options = [
+    "Solicitado",
+    "En preparación",
+    "Listo para retirar",
+    "Egreso",
+  ];
   return (
     <tr
       className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray"

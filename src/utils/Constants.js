@@ -28,3 +28,5 @@ export const REDIRECTION_ROUTE = "/";
 export const SOFOCON_JWT_TOKEN = "SOFOCON_JWT_TOKEN";
 export const SOFOCON_JWT_REFRESH_TOKEN = "SOFOCON_JWT_REFRESH_TOKEN";
 export const SOFOCON_PERMISSIONS = "SOFOCON_PERMISSIONS";
+export const PRODUCTS_INVENTORY = "inventario";
+export const PRODUCTS_ADD = "agregar-producto";

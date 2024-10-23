@@ -24,6 +24,8 @@ import {
   RECHARGE_ROUTE,
   RECHARGE_DATA_ROUTE,
   DEPOSIT_ROUTE,
+  PRODUCTS_INVENTORY,
+  PRODUCTS_ADD,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
 import RecoverPasswordPage from "../pages/RecoverPasswordPage";
@@ -56,6 +58,9 @@ import UnitTemplate from "../pages/UnitTemplate";
 import RechargePage from "../pages/RechargePage";
 import RechargeDataPage from "../pages/RechargeDataPage";
 import DepositPage from "../pages/DepositPage";
+import AddProductPage from "../pages/AddProductPage";
+import Products from "../layouts/Products";
+import InventoryPage from "../pages/InventoryPage";
 
 export const router = createBrowserRouter([
   {
@@ -164,7 +169,21 @@ export const router = createBrowserRouter([
       },
       {
         path: PRODUCTS_ROUTE,
-        element: <ProductsPage />,
+        element: <Products />,
+        children: [
+          {
+            index: true,
+            element: <ProductsPage />,
+          },
+          {
+            path: PRODUCTS_INVENTORY,
+            element: <InventoryPage />,
+          },
+          {
+            path: PRODUCTS_ADD,
+            element: <AddProductPage />,
+          },
+        ],
       },
       {
         path: ORDERS_ROUTE,

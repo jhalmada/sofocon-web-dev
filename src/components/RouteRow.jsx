@@ -21,35 +21,35 @@ const RouteRow = ({
     <tr className="border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <>
         <td
+          onClick={handleRowClick}
           className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
           title={name}
-          onClick={handleRowClick}
         >
           {name}
         </td>
         <td
+          onClick={handleRowClick}
           className="max-w-[10rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={zone}
-          onClick={handleRowClick}
         >
           {zone}
         </td>
         <td
+          onClick={handleRowClick}
           className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={companies}
-          onClick={handleRowClick}
         >
           {companies}
         </td>
         <td
+          onClick={handleRowClick}
           className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={sellers}
-          onClick={handleRowClick}
         >
           {sellers}
         </td>
 
-        <td className="p-2 text-md leading-[1.16rem]">
+        <td className="p-2 text-center text-md leading-[1.16rem]">
           {state ? "Activo" : "Inactivo"}
         </td>
       </>

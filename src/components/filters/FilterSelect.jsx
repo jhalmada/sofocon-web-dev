@@ -6,6 +6,7 @@ const FilterSelect = ({ options, placeholder, onChange }) => {
       className="min-w-[8rem] rounded-lg border"
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
+      title={placeholder}
     >
       {options.map((option) => (
         <SelectItem key={option} value={option}>
