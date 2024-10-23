@@ -28,7 +28,7 @@ const AddUserPage = () => {
     useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [mnsError, setMnsError] = useState("");
-  const options = ["Activo", "Inactivo"];
+
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await postAddUsers(userData);
@@ -127,18 +127,6 @@ const AddUserPage = () => {
           className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
         >
           <div>
-            <Select
-              labelPlacement="outside"
-              label="Estado"
-              selectedKeys={["Activo"]}
-              className="mb-3 w-1/6 rounded-lg border"
-              {...register("state", {})}
-              onSelectionChange={(value) => setValue("state", value)}
-            >
-              {options.map((option) => (
-                <SelectItem key={option}>{option}</SelectItem>
-              ))}
-            </Select>
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
@@ -324,7 +312,7 @@ const AddUserPage = () => {
               </div>
             </div>
           </div>
-          <div className="flex w-full justify-end">
+          <div className="mt-5 flex w-full justify-end">
             <Button
               text={"GUARDAR"}
               color={"save"}

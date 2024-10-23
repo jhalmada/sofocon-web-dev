@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
-import { Select, SelectItem } from "@nextui-org/select";
 const translateState = (state) => {
   switch (state) {
     case "POTENTIAL":
@@ -27,7 +26,7 @@ const CompanieRow = ({
 }) => {
   const navigate = useNavigate();
   const handleRowClick = () => {
-    navigate(`/inicio`);
+    navigate(`/inicio/taller/recarga`);
   };
   const options = [
     "Solicitado",

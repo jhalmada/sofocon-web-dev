@@ -33,7 +33,7 @@ const useNotes = () => {
 
   useEffect(() => {
     getAllNotes();
-  }, [page, itemsPerPage, modified, client, nextVisit]);
+  }, [page, itemsPerPage, modified, client, nextVisit, search]);
   return {
     notesResponse,
     loading,
