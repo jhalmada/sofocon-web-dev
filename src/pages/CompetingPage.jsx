@@ -15,7 +15,7 @@ const CompetingPage = () => {
   const [competence, setCompetence] = useState(false);
   const [visitFilter, setVisitFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
-  const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
+  const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
   const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
@@ -32,6 +32,7 @@ const CompetingPage = () => {
     page,
     itemsPerPage,
     setModified,
+    setNextVisit,
     setCompetence: setCompetenceCompanies,
   } = useCompanies();
 
@@ -75,7 +76,21 @@ const CompetingPage = () => {
     setConfirmDeleteModalOpen(true);
   };
   const handleVisitFilterChange = (value) => {
-    setVisitFilter(value);
+    console.log(value);
+    switch (value) {
+      case "< 1 mes":
+        setNextVisit(1);
+        break;
+      case "< 2 meses":
+        setNextVisit(2);
+        break;
+      case "> 2 meses":
+        setNextVisit(3);
+        break;
+      default:
+        setNextVisit(null);
+        "selecciona una opción válida";
+    }
   };
   const handleStateFilterChange = (value) => {
     setStateFilter(value);
@@ -84,6 +99,7 @@ const CompetingPage = () => {
   useEffect(() => {
     setCompetenceCompanies(true);
   }, []);
+  
   return (
     <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
       <table className="w-full">
