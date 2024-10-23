@@ -1,6 +1,5 @@
-import { useNavigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
-import { Select, SelectItem } from "@nextui-org/select";
 const translateState = (state) => {
   switch (state) {
     case "POTENTIAL":

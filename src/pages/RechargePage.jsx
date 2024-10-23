@@ -1,17 +1,13 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
-import IconEye from "../assets/icons/IconEye.svg";
-import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
-import { permisos } from "../utils/permisons";
 import { Select, SelectItem } from "@nextui-org/select";
 import useRoles from "../hooks/roles/use.roles";
-import { Checkbox } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 const RechargePage = () => {
   const {
