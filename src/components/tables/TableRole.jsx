@@ -141,25 +141,25 @@ const TableRole = () => {
       <table className="w-full">
         <thead>
           <tr>
-            <th className="w-[40.4%] p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
               Rol
             </th>
-            <th className="flex p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Permisos
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Acción
             </th>
           </tr>
         </thead>
         <tbody>
           {paginatedRoles.map((role, index) => (
-            <tr key={index} className="border-b border-gray">
-              <td className="p-2">{role.name}</td>
+            <tr key={index} className="border-b border-gray text-center">
+              <td className="p-2 text-left">{role.name}</td>
               <td className="p-2">{formatPermisos(role.permissions)}</td>
 
               <td className="p-2">
-                <div className="flex gap-4">
+                <div className="flex justify-center gap-4">
                   <img
                     src={editIcon}
                     alt="Edit icon"

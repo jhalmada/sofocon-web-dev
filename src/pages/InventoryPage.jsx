@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import UserRow from "../components/UserRow.jsx";
 import TableRole from "../components/tables/TableRole.jsx";
@@ -24,7 +24,6 @@ import SellersPage from "./SellersPage.jsx";
 import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
 import BackButton from "../components/buttons/BackButton.jsx";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
-import useUsersSellers from "../hooks/users/useUsersSellers.js";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
@@ -41,22 +40,7 @@ const UsersPage = () => {
     itemsPerPage,
     setModified,
     setSearch,
-    setIsActive,
-    setRole,
   } = useUsers();
-
-  const {
-    userSellerResponse,
-    setItemsPerPage: setItemsPerPageSellers,
-    totalPage: totalPageSellers,
-    total: totalSellers,
-    setPage: setPageSellers,
-    page: pageSellers,
-    itemsPerPage: itemsPerPageSellers,
-    setModified: setModifiedSellers,
-    setIsActive: setIsActiveSellers,
-    setSearch: setSearchSellers,
-  } = useUsersSellers();
   const { RolesResponse } = useRoles();
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
@@ -69,6 +53,8 @@ const UsersPage = () => {
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [stateFilter, setStateFilter] = useState("");
   const roleOptions = RolesResponse?.map((role) => role.name) || [];
   const stateOptions = ["Activo", "Inactivo"];
   const {
@@ -124,83 +110,15 @@ const UsersPage = () => {
     closeConfirmCancelModal();
     closeModal();
   };
-  const handleUserCreation = async (userData) => {
-    try {
-      const newUser = await changedUser(userData, userId, setModified);
-      if (newUser) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        console.error(
-          "No se recibió un nuevo usuario después de la actualización",
-        );
-      }
-    } catch (error) {
-      console.error("Error al actualizar el usuario:", error);
-      setIsModalOpen(true);
-    }
-  };
-  const onSubmit = (data) => {
-    const { fullName, ci, phone, email, role, nameRole, permissions, state } =
-      data;
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          email,
-          userInfo: {
-            fullName,
-            ci,
-            phone,
-          },
-          role: { id: role },
-          isActive: state === "Activo" ? true : false,
-        });
-        break;
-      default:
-        handleUserCreation({
-          email,
-          fullName: {
-            fullName,
-            ci,
-            phone,
-          },
-          isActive: state === "Activo" ? true : false,
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-          },
-        });
-    }
-  };
+  const handleUserCreation = async (userData) => {};
+  const onSubmit = (data) => {};
   const handleRoleFilterChange = (value) => {
-    const rolselect = RolesResponse.filter((rol) => rol.name === value);
-    if (rolselect.length > 0) {
-      setRole(rolselect[0].id);
-    } else {
-      setRole(null);
-    }
+    setRoleFilter(value);
   };
   const handleStateFilterChange = (value) => {
-    switch (value) {
-      case "Activo":
-        setIsActive(true);
-        break;
-      case "Inactivo":
-        setIsActive(false);
-        break;
-      default:
-        setIsActive(null);
-    }
+    console.log(value);
+    setStateFilter(value);
   };
-
-  useEffect(() => {
-    if (activeTab === SELLERS_TAB || activeTab === ROLES_TAB) {
-      setRole(null);
-      setIsActive(null);
-    }
-    if (activeTab === USER_TAB) {
-      setIsActiveSellers(null);
-    }
-  }, [activeTab]);
 
   return (
     <div className="flex h-full flex-col justify-between">
@@ -210,71 +128,30 @@ const UsersPage = () => {
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Personal
+            Inventario
           </h1>
-          {activeTab === USER_TAB && (
-            <SearchInput placeholder="Buscar..." onChange={setSearch} />
-          )}
-          {activeTab === SELLERS_TAB && (
-            <SearchInput placeholder="Buscarh..." onChange={setSearchSellers} />
-          )}
-          {activeTab === ROLES_TAB && (
-            <SearchInput placeholder="Buscarh..." onChange={setSearchSellers} />
-          )}
+          <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
         <div className="flex items-center">
           <div className="flex">
             <h2
-              onClick={() => setActiveTab(USER_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Usuarios
-            </h2>
-            <h2
-              onClick={() => setActiveTab(SELLERS_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERS_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
-            >
-              Vendedores
-            </h2>
-            <h2
-              onClick={() => setActiveTab(ROLES_TAB)}
-              className={`${activeTab === ROLES_TAB ? "bg-white" : "bg-gray"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
-            >
-              Roles
+              Nombre de la categoria
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
-            {activeTab === USER_TAB && (
-              <div className="flex space-x-4">
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                  onClick={() => openExportModal()}
-                />
-                <Link to={"agregar-usuario"}>
-                  <Button text="Nuevo Usuario" icon={PlusIcon} />
-                </Link>
-              </div>
-            )}
-            {activeTab === SELLERS_TAB && (
-              <div className="flex space-x-4">
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                  onClick={() => openExportSellersModal()}
-                />
-                <Link to={"agregar-vendedor"}>
-                  <Button text="Nuevo Vendedor" icon={PlusIcon} />
-                </Link>
-              </div>
-            )}
-            {activeTab === ROLES_TAB && (
-              <Link to="agregar-rol">
-                <Button text="Nuevo Rol" icon={PlusIcon} />
+            <div className="flex space-x-4">
+              <Button
+                text="Exportar lista"
+                icon={DownloadIcon}
+                color={"cancel"}
+                onClick={() => openExportModal()}
+              />
+              <Link to={"//agregar-producto"}>
+                <Button text="Nuevo Producto" icon={PlusIcon} />
               </Link>
-            )}
+            </div>
           </div>
         </div>
         {activeTab === USER_TAB && (
@@ -312,21 +189,29 @@ const UsersPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {usersResponse.map((user, index) => (
-                  <UserRow
-                    state={user.isActive}
-                    key={index}
-                    fullName={`${user.userInfo.fullName} `}
-                    email={user.email}
-                    role={user?.role?.name}
-                    editIconSrc={editIcon}
-                    deleteIconSrc={deleteIcon}
-                    onEditClick={() => {
-                      openModal(user.id);
-                    }}
-                    onDeleteClick={() => openConfirmDeleteModal(user.id)}
-                  />
-                ))}
+                {usersResponse
+                  .filter((user) => {
+                    return (
+                      (roleFilter === "" || user?.role?.name === roleFilter) &&
+                      (stateFilter === "" ||
+                        (user.isActive ? "Activo" : "Inactivo") === stateFilter)
+                    );
+                  })
+                  .map((user, index) => (
+                    <UserRow
+                      state={user.isActive}
+                      key={index}
+                      fullName={`${user.userInfo.fullName} `}
+                      email={user.email}
+                      role={user?.role?.name}
+                      editIconSrc={editIcon}
+                      deleteIconSrc={deleteIcon}
+                      onEditClick={() => {
+                        openModal(user.id);
+                      }}
+                      onDeleteClick={() => openConfirmDeleteModal(user.id)}
+                    />
+                  ))}
               </tbody>
             </table>
             <div className="flex justify-center p-6">
@@ -342,18 +227,7 @@ const UsersPage = () => {
           </div>
         )}
         {activeTab === SELLERS_TAB && (
-          <SellersPage
-            openConfirmDeleteModal={openConfirmDeleteModal}
-            userSellerResponse={userSellerResponse}
-            setItemsPerPage={setItemsPerPageSellers}
-            totalPage={totalPageSellers}
-            total={totalSellers}
-            setPage={setPageSellers}
-            page={pageSellers}
-            itemsPerPage={itemsPerPageSellers}
-            setModified={setModifiedSellers}
-            setIsActive={setIsActiveSellers}
-          />
+          <SellersPage openConfirmDeleteModal={openConfirmDeleteModal} />
         )}
         {activeTab === ROLES_TAB && <TableRole />}
       </div>

@@ -28,7 +28,7 @@ const CompetingRow = ({
   onDeleteClick,
 }) => {
   return (
-    <tr className="border-b border-gray">
+    <tr className="border-b border-gray text-center">
       <div className="flex">
         <img
           src={watchIcon}
@@ -36,26 +36,26 @@ const CompetingRow = ({
           title="Cliente próximo a vencer"
         />
         <td
-          className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
           title={name}
         >
           {name}
         </td>
       </div>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={direction}
       >
         {direction}
       </td>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={currentCompany}
       >
         {currentCompany}
       </td>
-      <td className="p-2 text-center">{nextVisits}</td>
-      <td className="p-2 text-center text-md font-semibold leading-[1.16rem]">
+      <td className="p-2">{nextVisits}</td>
+      <td className="p-2 text-md font-semibold leading-[1.16rem]">
         {translateState(state)}
       </td>
       <td className="p-2">

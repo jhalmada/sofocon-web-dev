@@ -12,30 +12,30 @@ const SellerRow = ({
   onDeleteClick,
 }) => {
   return (
-    <tr className="border-b border-gray">
+    <tr className="border-b border-gray text-center">
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
         title={fullName}
       >
         {fullName}
       </td>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={email}
       >
         {email}
       </td>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={route}
       >
         {route}
       </td>
 
-      <td className="p-2 text-md leading-[1.16rem]">
+      <td className="p-2 text-center text-md leading-[1.16rem]">
         {state ? "Activo" : "Inactivo"}
       </td>
-      <td className="cursor-pointer p-2 underline">{info}</td>
+      <td className="cursor-pointer p-2 text-center underline">{info}</td>
       <td className="p-2">
         <div className="flex justify-center gap-4">
           <img

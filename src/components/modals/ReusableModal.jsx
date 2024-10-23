@@ -2,6 +2,7 @@ import Button from "../buttons/Button";
 import ChevronLeftIcon from "../../assets/icons/chevron-left.svg";
 import CheckLgIcon from "../../assets/icons/check-lg.svg";
 import XlgIcon from "../../assets/icons/x-lg.svg";
+import arrowRightIcon from "../../assets/icons/arrow-right.svg";
 
 const ReusableModal = ({
   isOpen,
@@ -13,7 +14,7 @@ const ReusableModal = ({
   buttons = [],
   handleCancelClick,
   onAccept,
-  width = "w-[27.75rem]",
+  width = "w-[25.063rem]",
 }) => {
   if (!isOpen) return null;
 
@@ -68,32 +69,42 @@ const ReusableModal = ({
           </div>
         ) : (
           <form onSubmit={onSubmit}>
-          <div className="space-y-8">{children}</div>
-          <div className="mt-10 flex justify-between">
-            {buttons.includes("cancel") && (
-              <Button
-                text="Cancelar"
-                color="cancel"
-                type="button"
-                onClick={handleCancelClick}
-                iconPosition="left"
-                width="w-20"
-              />
-            )}
-            {buttons.includes("save") && (
-              <div>
+            <div className="space-y-8">{children}</div>
+            <div className="mt-10 flex justify-between">
+              {buttons.includes("cancel") && (
                 <Button
-                  text="GUARDAR"
-                  color="save"
-                  type="submit"
-                  icon={CheckLgIcon}
-                  iconPosition="right"
+                  text="Cancelar"
+                  color="cancel"
+                  type="button"
+                  onClick={handleCancelClick}
+                  iconPosition="left"
+                  width="w-20"
                 />
-              </div>
-            )}
-          </div>
-        </form>
-
+              )}
+              {buttons.includes("save") && (
+                <div>
+                  <Button
+                    text="GUARDAR"
+                    color="save"
+                    type="submit"
+                    icon={CheckLgIcon}
+                    iconPosition="right"
+                  />
+                </div>
+              )}
+              {buttons.includes("scan") && (
+                <div>
+                  <Button
+                    text="SCANNER"
+                    color="save"
+                    type="submit"
+                    icon={arrowRightIcon}
+                    iconPosition="right"
+                  />
+                </div>
+              )}
+            </div>
+          </form>
         )}
       </div>
     </div>

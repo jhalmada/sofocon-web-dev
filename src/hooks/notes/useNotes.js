@@ -10,6 +10,7 @@ const useNotes = () => {
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
   const [client, setClient] = useState(null);
+  const [nextVisit, setNextVisit] = useState(null);
   const getAllNotes = async () => {
     try {
       setLoading(true);
@@ -18,6 +19,7 @@ const useNotes = () => {
         itemsPerPage,
         search,
         client,
+        nextVisit,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
@@ -31,7 +33,7 @@ const useNotes = () => {
 
   useEffect(() => {
     getAllNotes();
-  }, [page, itemsPerPage, modified, client]);
+  }, [page, itemsPerPage, modified, client, nextVisit]);
   return {
     notesResponse,
     loading,
@@ -44,6 +46,7 @@ const useNotes = () => {
     setModified,
     modified,
     setSearch,
+    setNextVisit,
     client,
     setClient,
   };

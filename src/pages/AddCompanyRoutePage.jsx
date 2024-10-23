@@ -30,7 +30,7 @@ const AddCompanyRoutePage = ({
   const [companyId, setCompanyId] = useState(null);
   const [stateFilter, setStateFilter] = useState("");
 
-  const stateOptions = ["frecuente", "potencial", "de baja"];
+  const stateOptions = ["Frecuente", "Potencial", "De baja"];
   //hooks
   const { companiesResponse, setSearch } = useCompanies();
   const { changedSellerRoute } = usePutSellerRoute();
@@ -108,14 +108,14 @@ const AddCompanyRoutePage = ({
               Nombre
             </th>
 
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Dirección
             </th>
 
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Próx. visita
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               <div className="flex flex-col gap-2">
                 <FilterSelect
                   options={stateOptions}
@@ -124,7 +124,7 @@ const AddCompanyRoutePage = ({
                 />
               </div>
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Notas
             </th>
             <th className="p-2 text-md font-semibold leading-[1.125rem]">

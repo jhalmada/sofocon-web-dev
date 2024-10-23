@@ -6,7 +6,7 @@ const SearchInput = ({
   placeholder,
   border = "none",
   rounded = "rounded-[2rem]",
-  onChange,
+  onChange = () => {},
 }) => {
   const [search, setSearch] = useState("");
   onChange(search);

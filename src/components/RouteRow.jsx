@@ -1,5 +1,3 @@
-import { Select, SelectItem } from "@nextui-org/select";
-import { s } from "framer-motion/client";
 import { useNavigate } from "react-router-dom";
 
 const RouteRow = ({
@@ -20,38 +18,38 @@ const RouteRow = ({
     navigate(`/inicio/rutas/mapa/${id}`);
   };
   return (
-    <tr className="border-b border-gray transition-all duration-300 hover:bg-gray">
+    <tr className="border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
-          title={name}
           onClick={handleRowClick}
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
+          title={name}
         >
           {name}
         </td>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
-          title={zone}
           onClick={handleRowClick}
+          className="max-w-[10rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          title={zone}
         >
           {zone}
         </td>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
-          title={companies}
           onClick={handleRowClick}
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          title={companies}
         >
           {companies}
         </td>
         <td
-          className="max-w-[8rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
-          title={sellers}
           onClick={handleRowClick}
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          title={sellers}
         >
           {sellers}
         </td>
 
-        <td className="p-2 text-md leading-[1.16rem]">
+        <td className="p-2 text-center text-md leading-[1.16rem]">
           {state ? "Activo" : "Inactivo"}
         </td>
       </>

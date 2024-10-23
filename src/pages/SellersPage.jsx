@@ -14,7 +14,18 @@ import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import FilterSelect from "../components/filters/FilterSelect";
 import usePutusers from "../hooks/users/usePutUsers";
 
-const SellersPage = ({ openConfirmDeleteModal }) => {
+const SellersPage = ({
+  openConfirmDeleteModal,
+  userSellerResponse,
+  setItemsPerPage,
+  totalPage,
+  total,
+  setPage,
+  page,
+  itemsPerPage,
+  setModified,
+  setIsActive,
+}) => {
   //estados
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,16 +45,6 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
     setValue,
     formState: { errors },
   } = useForm();
-  const {
-    userSellerResponse,
-    setItemsPerPage,
-    totalPage,
-    total,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-  } = useUsersSellers();
   const { RolesResponse } = useRoles();
   const { changedUser } = usePutusers();
 
@@ -121,7 +122,17 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
     }));
   };
   const handleStateFilterChange = (value) => {
-    setStateFilter(value);
+    switch (value) {
+      case "Activo":
+        setIsActive(true);
+        break;
+      case "Inactivo":
+        setIsActive(false);
+        break;
+      default:
+        setIsActive(null);
+        break;
+    }
   };
   return (
     <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
@@ -131,13 +142,13 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
               Nombre Completo
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Contacto
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Ruta
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="text-lecenterft p-2 text-md font-semibold leading-[1.125rem]">
               <div className="flex flex-col gap-2">
                 <FilterSelect
                   options={stateOptions}
@@ -146,10 +157,10 @@ const SellersPage = ({ openConfirmDeleteModal }) => {
                 />
               </div>
             </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Mas info
             </th>
-            <th className="p-2 text-md font-semibold leading-[1.125rem]">
+            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
               Acción
             </th>
           </tr>

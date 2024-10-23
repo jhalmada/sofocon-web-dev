@@ -9,6 +9,8 @@ const useUsers = () => {
   const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
+  const [isActive, setIsActive] = useState(null);
+  const [role, setRole] = useState(null);
   const getAllUsers = async () => {
     try {
       setLoading(true);
@@ -16,6 +18,8 @@ const useUsers = () => {
         page,
         itemsPerPage,
         search,
+        isActive,
+        role,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
@@ -29,7 +33,7 @@ const useUsers = () => {
 
   useEffect(() => {
     getAllUsers();
-  }, [page, itemsPerPage, modified, search]);
+  }, [page, itemsPerPage, modified, search, isActive, role]);
   return {
     usersResponse,
     loading,
@@ -42,6 +46,8 @@ const useUsers = () => {
     setModified,
     modified,
     setSearch,
+    setIsActive,
+    setRole,
   };
 };
 
