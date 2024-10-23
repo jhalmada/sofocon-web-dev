@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
 const translateState = (state) => {
   switch (state) {
@@ -24,8 +24,9 @@ const CompanieRow = ({
   state,
   id,
 }) => {
+  const navigate = useNavigate();
   const handleRowClick = () => {
-    Navigate(`/inicio/rutas/mapa/${id}`);
+    navigate(`/inicio/taller/recarga`);
   };
   return (
     <tr

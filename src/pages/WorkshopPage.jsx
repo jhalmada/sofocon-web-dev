@@ -41,7 +41,6 @@ const WorkshopPage = () => {
     setModified,
     setNexVisit,
   } = useCompanies();
-  const { changedCompany } = usePutCompany();
   const [activeTab, setActiveTab] = useState(RECHARGE_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -52,14 +51,13 @@ const WorkshopPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [competence, setCompetence] = useState(false);
   const [stateFilter, setStateFilter] = useState("");
   const [openScannerModal, setOpenScannerModal] = useState(false);
 
   const stateOptions = [
     "Solicitado",
     "En preparación",
-    "Listo para retirar",
+    "Para retirar",
     "Egreso",
   ];
   const {
@@ -69,10 +67,6 @@ const WorkshopPage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-
-  const { handleSubmit: handleSubmit2, setValue: setValue2 } = useForm();
-  const { userSellerResponse, setSearch } = useUsersSellers();
-  const { addUsersCompany } = useUserCompany();
 
   const openExportModal = () => {
     setIsExportModalOpen(true);
@@ -112,25 +106,6 @@ const WorkshopPage = () => {
     closeConfirmCancelModal();
     closeModal();
   };
-  //esta funcion se encarga de crear una nueva empresa, la podemos sacar a un hook y que ademas de pedir los datos de la empresa, tambien pida el metodo(POST, PUT, DELETE) y el id de la empresa a modificar
-  const handleCompanyCreation = async (companyData) => {
-    try {
-      const newCompany = await changedCompany(
-        companyData,
-        companyId,
-        setModified,
-      );
-
-      if (newCompany) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        setIsModalOpen(true);
-      }
-    } catch (error) {
-      console.error("Error al crear la empresa:", error);
-      setIsModalOpen(true);
-    }
-  };
 
   const onSubmit = (data) => {
     console.log(data);
@@ -152,74 +127,8 @@ const WorkshopPage = () => {
 
     //formate la fecha para que sea aceptada por el back
     const formattedDate = newdata.toISOString();
-    switch (checkSelected) {
-      case "RUT":
-        handleCompanyCreation({
-          name,
-          department,
-          managerName,
-          phone,
-          status,
-          address,
-          neighborhood,
-          nextVisit: newdata,
-          rut: data.rut,
-        });
-        break;
-      default:
-        handleCompanyCreation({
-          name,
-          department,
-          managerName,
-          phone,
-          status,
-          address,
-          neighborhood,
-          nextVisit: formattedDate,
-          ci: data.ci,
-        });
-    }
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${day}/${month}/${year}`;
-  };
-
-  //funcion para transformar los Arrays
-  const transformData = (array) => {
-    return array.map((item) => ({
-      id: item.id,
-      name: item.name,
-    }));
-  };
-
-  const submit = (data) => {
-    const user = data.sellers.map((seller) => ({ id: seller.id }));
-    const datos = addUsersCompany({ user }, companyId, setModified);
-    if (datos) {
-      setIsSellersModalOpen(false);
-    }
-  };
-  const handleVisitFilterChange = (value) => {
-    switch (value) {
-      case "< 1 mes":
-        setNexVisit(1);
-        break;
-      case "< 2 meses":
-        setNexVisit(2);
-        break;
-      case "< 3 meses":
-        setNexVisit(3);
-        break;
-      default:
-        "selecciona una opción válida";
-    }
-  };
   const handleStateFilterChange = (value) => {
     setStateFilter(value);
   };
@@ -250,15 +159,15 @@ const WorkshopPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(RECHARGE_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === RECHARGE_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-52 cursor-pointer rounded-t-lg ${activeTab === RECHARGE_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Recarga
+              Pedidos con recarga
             </h2>
             <h2
               onClick={() => setActiveTab(STORAGE_TAB)}
-              className={`${activeTab === STORAGE_TAB ? "bg-white" : "bg-gray"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === STORAGE_TAB ? "bg-white" : "bg-gray"} w-52 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Depósito
+              Pedidos sin recarga
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">

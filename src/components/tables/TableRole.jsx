@@ -247,14 +247,6 @@ const TableRole = () => {
       >
         Los cambios fueron guardados exitosamente.
       </ReusableModal>
-      <div className="flex justify-center p-6">
-        <Pagination
-          pageIndex={pageIndexChange}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
     </div>
   );
 };
