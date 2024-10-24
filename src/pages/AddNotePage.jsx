@@ -115,8 +115,8 @@ const AddNotesPage = () => {
   };
 
   return (
-    <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <BackButton route="/inicio/empresas" />
         </div>
@@ -129,7 +129,7 @@ const AddNotesPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(NOTES_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Nueva nota
             </h2>
@@ -137,7 +137,7 @@ const AddNotesPage = () => {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="rounded-tr-lg bg-white px-14 py-4 shadow-t"
+          className="flex-grow rounded-tr-lg bg-white px-14 py-4"
         >
           <div className="flex flex-col">
             <Input

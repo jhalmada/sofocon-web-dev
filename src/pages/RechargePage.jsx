@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+import ChevronRightIcon from "../assets/icons/chevron-right.svg";
 import { useState } from "react";
 import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
@@ -88,6 +89,7 @@ const RechargePage = () => {
           },
         });
     }
+    navigate("/inicio/taller");
   };
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -100,10 +102,10 @@ const RechargePage = () => {
     navigate("/inicio/personal");
   };
   return (
-    <div className="flex min-h-full flex-col justify-between bg-gray">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
-          <Link to="/inicio/personal" className="text-sm font-medium leading-4">
+          <Link to="/inicio/taller" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
               <img
                 src={ChevronLeftIcon}
@@ -127,11 +129,13 @@ const RechargePage = () => {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
+          className="flex-grow rounded-tr-lg bg-white px-14 py-10"
         >
           <div>
             <Select
               className="mb-4 w-1/6 rounded-lg border"
+              label="Estado"
+              labelPlacement="outside"
               placeholder="Estado"
             >
               {stateOptions.map((option) => (
@@ -206,36 +210,42 @@ const RechargePage = () => {
               />
             </div>
             <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Recarga"}
-                placeholder={"Arena"}
-                disabled
-              />
-              <div className="flex space-x-2">
+              <div className="flex w-1/2">
                 <Input
                   bg="bg-gray"
+                  width="w-[14rem]"
                   placeholderColor="placeholder-black_b"
                   border="none"
-                  label={"Matrícula"}
-                  placeholder={"M404"}
+                  label={"Recarga"}
+                  placeholder={"Arena"}
                   disabled
                 />
-                <Input
-                  bg="bg-gray"
-                  placeholderColor="placeholder-black_b"
-                  border="none"
-                  label={"Código de barras"}
-                  placeholder={"3kg"}
-                  disabled
-                />
+                <div className="-ml-4 flex space-x-2">
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Matrícula"}
+                    placeholder={"M404"}
+                    disabled
+                  />
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Código de barras"}
+                    placeholder={"3kg"}
+                    disabled
+                  />
+                </div>
               </div>
-              <div className="flex items-center">
-                <span className="flex h-[2.3rem] items-center rounded-lg bg-green-500 px-1 text-white">
+              <div className="mt-2 flex w-1/2 items-center justify-between">
+                <span className="bg-green flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg px-1 text-white">
                   Habilitado
                 </span>
+                <Link to={"/inicio/taller/datos-recarga"}>
+                  <Button text="Datos Recarga" icon={ChevronRightIcon} />
+                </Link>
               </div>
             </div>
           </div>

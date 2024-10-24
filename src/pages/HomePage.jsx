@@ -21,16 +21,16 @@ const HomePage = () => {
 
   const onSubmit = (data) => {};
   return (
-    <div className="min-h-full bg-gray p-6">
+    <div className="min-h-[calc(100vh-4.375rem)] bg-gray p-6">
       <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
         Inicio
       </h1>
       <div className="flex justify-between">
-        <img src={cardDashImg} alt="" className="h-[10.5rem]" />
+        <img src={cardDashImg} alt="" className="w-full max-w-[20rem]" />
 
-        <img src={cardDash2Img} alt="" className="h-[10.5rem]" />
+        <img src={cardDash2Img} alt="" className="w-full max-w-[20rem]" />
 
-        <img src={cardDash3Img} alt="" className="h-[10.5rem]" />
+        <img src={cardDash3Img} alt="" className="w-full max-w-[20rem]" />
       </div>
       <img src={secondCardImg} alt="" className="w-full" />
       <div className="flex justify-between">

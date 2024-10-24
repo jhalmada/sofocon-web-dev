@@ -136,7 +136,8 @@ const SellersPage = ({
     }
   };
   return (
-    <div className="flex flex-col items-center overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+      <div></div>
       {userSellerResponse.length === 0 ? (
         <tr>
           <td colSpan="5" className="p-4 text-center">

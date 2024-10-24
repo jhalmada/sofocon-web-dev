@@ -122,7 +122,7 @@ const UsersPage = () => {
 
   return (
     <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <BackButton route="/inicio" />
         </div>
@@ -155,7 +155,7 @@ const UsersPage = () => {
           </div>
         </div>
         {activeTab === USER_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+          <div className="flex-grow overflow-auto rounded-tr-lg bg-white p-5">
             <table className="w-full">
               <thead>
                 <tr>

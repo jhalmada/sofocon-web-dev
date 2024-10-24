@@ -3,7 +3,7 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 
 const OrdersPage = () => {
   return (
-    <div className="flex h-full flex-col justify-between bg-gray">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
         <div className="w-[4rem]">
           <Link to="/inicio">

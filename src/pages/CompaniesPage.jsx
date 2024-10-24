@@ -291,8 +291,8 @@ const CompaniesPage = () => {
   }, [activeTab]);
 
   return (
-    <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <Link to="/inicio" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -316,13 +316,13 @@ const CompaniesPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(COMPANIE_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === COMPANIE_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === COMPANIE_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listado
             </h2>
             <h2
               onClick={() => setActiveTab(COMPETING_TAB)}
-              className={`${activeTab === COMPETING_TAB ? "bg-white" : "bg-gray"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === COMPETING_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Competencia
             </h2>
@@ -360,89 +360,94 @@ const CompaniesPage = () => {
           </div>
         </div>
         {activeTab === COMPANIE_TAB && (
-          <div className="flex flex-col items-center overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            {companiesResponse.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="p-4 text-center">
-                  <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                    Ningún elemento coincide con tu búsqueda, inténtalo de
-                    nuevo. <br /> Puedes encontrar a las empresas creadas aquí.
-                  </p>
-                  <img
-                    src={pageLostImg}
-                    alt="Tabla vacía"
-                    className="mx-auto"
-                  />
-                </td>
-              </tr>
-            ) : (
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                      Nombre
-                    </th>
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Departamento
-                    </th>
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Barrio
-                    </th>
-
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Vendedores
-                    </th>
-
-                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                      <div className="flex flex-col items-center gap-2">
-                        <FilterSelect
-                          options={visitOptions}
-                          placeholder="Próx. visita"
-                          onChange={handleVisitFilterChange}
-                        />
-                      </div>
-                    </th>
-                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                      <div className="flex flex-col items-center gap-2">
-                        <FilterSelect
-                          options={stateOptions}
-                          placeholder="Estado"
-                          onChange={handleStateFilterChange}
-                        />
-                      </div>
-                    </th>
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Acción
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {companiesResponse.map((companie, index) => (
-                    <CompanieRow
-                      key={index}
-                      id={companie.id}
-                      name={companie.name}
-                      departament={companie.department}
-                      direction={companie.address}
-                      sellers={"Vendedores"}
-                      nextVisits={formatDate(companie.nextVisit)}
-                      state={companie.status}
-                      editIconSrc={editIcon}
-                      deleteIconSrc={deleteIcon}
-                      notesIcon={notesIcon}
-                      onEditClick={() => openModal(companie.id)}
-                      onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-                      onClick={() => {
-                        openSellersModal(companie.id),
-                          setCompetenceName(companie.name),
-                          setCompanyId(companie.id),
-                          setListUsers(companie.user);
-                      }}
+          <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+            <div>
+              {companiesResponse.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="p-4 text-center">
+                    <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                      Ningún elemento coincide con tu búsqueda, inténtalo de
+                      nuevo. <br /> Puedes encontrar a las empresas creadas
+                      aquí.
+                    </p>
+                    <img
+                      src={pageLostImg}
+                      alt="Tabla vacía"
+                      className="mx-auto"
                     />
-                  ))}
-                </tbody>
-              </table>
-            )}
+                  </td>
+                </tr>
+              ) : (
+                <table className="w-full">
+                  <thead>
+                    <tr>
+                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                        Nombre
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Departamento
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Barrio
+                      </th>
+
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Vendedores
+                      </th>
+
+                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                        <div className="flex flex-col items-center gap-2">
+                          <FilterSelect
+                            options={visitOptions}
+                            placeholder="Próx. visita"
+                            onChange={handleVisitFilterChange}
+                          />
+                        </div>
+                      </th>
+                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                        <div className="flex flex-col items-center gap-2">
+                          <FilterSelect
+                            options={stateOptions}
+                            placeholder="Estado"
+                            onChange={handleStateFilterChange}
+                          />
+                        </div>
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Acción
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {companiesResponse.map((companie, index) => (
+                      <CompanieRow
+                        key={index}
+                        id={companie.id}
+                        name={companie.name}
+                        departament={companie.department}
+                        direction={companie.address}
+                        sellers={"Vendedores"}
+                        nextVisits={formatDate(companie.nextVisit)}
+                        state={companie.status}
+                        editIconSrc={editIcon}
+                        deleteIconSrc={deleteIcon}
+                        notesIcon={notesIcon}
+                        onEditClick={() => openModal(companie.id)}
+                        onDeleteClick={() =>
+                          openConfirmDeleteModal(companie.id)
+                        }
+                        onClick={() => {
+                          openSellersModal(companie.id),
+                            setCompetenceName(companie.name),
+                            setCompanyId(companie.id),
+                            setListUsers(companie.user);
+                        }}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
 
             <div
               className={
