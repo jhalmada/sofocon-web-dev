@@ -6,7 +6,7 @@ import cardDash3Img from "../assets/images/cardDash_3.svg";
 import secondCardImg from "../assets/images/secondCard.svg";
 import blockImg from "../assets/images/block.svg";
 import block2Img from "../assets/images/block_2.svg";
-import frame44Img from "../assets/images/frame44.svg";
+import frameHomeImg from "../assets/images/frameHome.svg";
 
 const HomePage = () => {
   const { userSellerResponse, setSearch } = useUsersSellers();
@@ -37,7 +37,7 @@ const HomePage = () => {
         <img src={blockImg} alt="" className="h-[17rem]" />
         <img src={block2Img} alt="" className="h-[17rem]" />
       </div>
-      <img src={frame44Img} alt="" />
+      <img src={frameHomeImg} alt="" />
     </div>
   );
 };
