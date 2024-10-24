@@ -239,7 +239,7 @@ const UsersPage = () => {
             </h2>
             <h2
               onClick={() => setActiveTab(ROLES_TAB)}
-              className={`${activeTab === ROLES_TAB ? "bg-white" : "bg-gray"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === ROLES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Roles
             </h2>
