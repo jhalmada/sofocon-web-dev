@@ -12,11 +12,11 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import { useForm } from "react-hook-form";
-import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
+import disconnectedImg from "../assets/images/disconnected.svg";
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
@@ -167,57 +167,80 @@ const RoutesPage = () => {
           </div>
         </div>
         {activeTab === SELLER_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Zona
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Empresas
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Vendedores
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
-                      <FilterSelect
-                        options={stateOptions}
-                        placeholder="Estado"
-                        onChange={handleStateFilterChange}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
-                    Acción
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {sellerRoutesResponse.map((seller, index) => (
-                  <RouteRow
-                    id={seller.id}
-                    key={index}
-                    name={seller.name}
-                    zone={seller.zone}
-                    companies={seller.totalClients}
-                    sellers={seller.user.length}
-                    state={seller.isActive}
-                    editIconSrc={editIcon}
-                    deleteIconSrc={deleteIcon}
-                    onEditClick={() => {
-                      openModal(seller.id);
-                    }}
-                    onDeleteClick={() => openConfirmDeleteModal(seller.id)}
+          <div className="flex flex-col items-center overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+            {sellerRoutesResponse.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="p-4 text-center">
+                  <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                    Ningún elemento coincide con tu búsqueda, inténtalo de
+                    nuevo. <br /> Puedes encontrar las rutas creadas aquí.
+                  </p>
+                  <img
+                    src={disconnectedImg}
+                    alt="Tabla vacía"
+                    className="mx-auto"
                   />
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-center p-6">
+                </td>
+              </tr>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Nombre
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Zona
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Empresas
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Vendedores
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      <div className="flex flex-col gap-2">
+                        <FilterSelect
+                          options={stateOptions}
+                          placeholder="Estado"
+                          onChange={handleStateFilterChange}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2 text-md font-semibold leading-[1.125rem]">
+                      Acción
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sellerRoutesResponse.map((seller, index) => (
+                    <RouteRow
+                      id={seller.id}
+                      key={index}
+                      name={seller.name}
+                      zone={seller.zone}
+                      companies={seller.totalClients}
+                      sellers={seller.user.length}
+                      state={seller.isActive}
+                      editIconSrc={editIcon}
+                      deleteIconSrc={deleteIcon}
+                      onEditClick={() => {
+                        openModal(seller.id);
+                      }}
+                      onDeleteClick={() => openConfirmDeleteModal(seller.id)}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            )}
+
+            <div
+              className={
+                sellerRoutesResponse.length === 0
+                  ? "hidden"
+                  : `flex justify-center p-6`
+              }
+            >
               <Pagination
                 pageIndex={setItemsPerPage}
                 currentPage={page}

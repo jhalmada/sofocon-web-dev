@@ -23,6 +23,7 @@ import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import AddSellerRoutePage from "./AddSellerRoutePage.jsx";
 import AddCompanyRoutePage from "./AddCompanyRoutePage.jsx";
 import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
+import disconnectedImg from "../assets/images/disconnected.svg";
 
 const MAP_TAB = "map";
 const SELLERS_TAB = "sellers";

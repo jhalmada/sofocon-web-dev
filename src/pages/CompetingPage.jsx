@@ -8,6 +8,7 @@ import notesIcon from "../assets/icons/sticky-fill.svg";
 import useCompanies from "../hooks/companies/useCompanies";
 import { useEffect, useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
+import pageLostImg from "../assets/images/pageLost.svg";
 const CompetingPage = () => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -99,64 +100,81 @@ const CompetingPage = () => {
   useEffect(() => {
     setCompetenceCompanies(true);
   }, []);
-  
-  return (
-    <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-      <table className="w-full">
-        <thead>
-          <tr>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Nombre
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Dirección
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Empresa actual
-            </th>
 
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              <div className="flex flex-col items-center gap-2">
-                <FilterSelect
-                  options={visitOptions}
-                  placeholder="Próx. visita"
-                  onChange={handleVisitFilterChange}
-                />
-              </div>
-            </th>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              <div className="flex flex-col items-center gap-2">
-                <FilterSelect
-                  options={stateOptions}
-                  placeholder="Estado"
-                  onChange={handleStateFilterChange}
-                />
-              </div>
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Acción
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {companiesResponse.map((companie, index) => (
-            <CompetingRow
-              key={index}
-              name={companie.name}
-              direction={companie.address}
-              currentCompany={companie.name}
-              nextVisits={formatDate(companie.nextVisit)}
-              state={companie.status}
-              editIconSrc={editIcon}
-              deleteIconSrc={deleteIcon}
-              notesIcon={notesIcon}
-              onEditClick={() => openModal(companie.id)}
-              onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-            />
-          ))}
-        </tbody>
-      </table>
-      <div className="flex justify-center p-6">
+  return (
+    <div className="flex flex-col items-center overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+      {companiesResponse.length === 0 ? (
+        <tr>
+          <td colSpan="5" className="p-4 text-center">
+            <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+              Ningún elemento coincide con tu búsqueda, inténtalo de nuevo.{" "}
+              <br /> Puedes encontrar a las empresas de la competencia aquí.
+            </p>
+            <img src={pageLostImg} alt="Tabla vacía" className="mx-auto" />
+          </td>
+        </tr>
+      ) : (
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                Nombre
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Dirección
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Empresa actual
+              </th>
+
+              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                <div className="flex flex-col items-center gap-2">
+                  <FilterSelect
+                    options={visitOptions}
+                    placeholder="Próx. visita"
+                    onChange={handleVisitFilterChange}
+                  />
+                </div>
+              </th>
+              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                <div className="flex flex-col items-center gap-2">
+                  <FilterSelect
+                    options={stateOptions}
+                    placeholder="Estado"
+                    onChange={handleStateFilterChange}
+                  />
+                </div>
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Acción
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {companiesResponse.map((companie, index) => (
+              <CompetingRow
+                key={index}
+                name={companie.name}
+                direction={companie.address}
+                currentCompany={companie.name}
+                nextVisits={formatDate(companie.nextVisit)}
+                state={companie.status}
+                editIconSrc={editIcon}
+                deleteIconSrc={deleteIcon}
+                notesIcon={notesIcon}
+                onEditClick={() => openModal(companie.id)}
+                onDeleteClick={() => openConfirmDeleteModal(companie.id)}
+              />
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      <div
+        className={
+          companiesResponse.length === 0 ? "hidden" : `flex justify-center p-6`
+        }
+      >
         <Pagination
           pageIndex={setItemsPerPage}
           currentPage={page}

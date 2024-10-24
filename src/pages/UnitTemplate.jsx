@@ -138,7 +138,6 @@ const UnitTemplate = () => {
             >
               Período
             </h2>
-
             <Select
               className="w-52"
               placeholder="OCTUBRE 2024"

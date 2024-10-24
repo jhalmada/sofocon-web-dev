@@ -195,7 +195,7 @@ const AddRoutePage = () => {
                 Asignar empresas
               </label>
               <SearchInput
-                placeholder="Buscar vendedores..."
+                placeholder="Buscar empresas..."
                 border="border"
                 rounded="rounded-[0.375rem]"
                 visibility="block"

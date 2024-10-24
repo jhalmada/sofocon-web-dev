@@ -23,6 +23,7 @@ import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import useUserCompany from "../hooks/companies/useUsersCompany.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import StoragePage from "./StoragePage.jsx";
+import { Select, SelectItem } from "@nextui-org/select";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
@@ -149,9 +150,31 @@ const WorkshopPage = () => {
           </Link>
         </div>
         <div className="flex justify-between">
-          <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Taller
-          </h1>
+          <div className="mb-5 flex items-center justify-between space-x-4">
+            <h1 className="text-xl font-medium leading-6 text-black_m">
+              Taller
+            </h1>
+            <div className="flex items-center">
+              <Select
+                className="w-52"
+                placeholder="OCTUBRE 2024"
+                onSelectionChange={(values) => setValue("status", values)}
+              >
+                <SelectItem>Enero 2024</SelectItem>
+                <SelectItem>Febrero 2024</SelectItem>
+                <SelectItem>Marzo 2024</SelectItem>
+                <SelectItem>Abril 2024</SelectItem>
+                <SelectItem>Mayo 2024</SelectItem>
+                <SelectItem>Junio 2024</SelectItem>
+                <SelectItem>Julio 2024</SelectItem>
+                <SelectItem>Agosto 2024</SelectItem>
+                <SelectItem>Septiembre 2024</SelectItem>
+                <SelectItem>Octubre 2024</SelectItem>
+                <SelectItem>Noviembre 2024</SelectItem>
+                <SelectItem>Diciembre 2024</SelectItem>
+              </Select>
+            </div>
+          </div>
           <SearchInput placeholder="Buscar..." />
         </div>
 
