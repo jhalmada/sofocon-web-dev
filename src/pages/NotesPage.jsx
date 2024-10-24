@@ -166,8 +166,8 @@ const NotesPage = () => {
     }
   };
   return (
-    <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <Link to="/inicio/empresas" className="text-sm font-medium leading-4">
             <div className="mb-4 flex w-[4rem] items-center">
@@ -190,7 +190,7 @@ const NotesPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(NOTES_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Notas
             </h2>
@@ -206,7 +206,7 @@ const NotesPage = () => {
           </div>
         </div>
         {activeTab === NOTES_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+          <div className="flex-grow overflow-auto rounded-tr-lg bg-white p-5">
             <table className="w-full">
               <thead>
                 <tr>

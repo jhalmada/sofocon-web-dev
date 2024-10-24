@@ -104,8 +104,8 @@ const UnitTemplate = () => {
     handleRouteCreation(sellerData);
   };
   return (
-    <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <Link to="/inicio/taller" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -138,7 +138,6 @@ const UnitTemplate = () => {
             >
               Período
             </h2>
-
             <Select
               className="w-52"
               placeholder="OCTUBRE 2024"
@@ -170,87 +169,89 @@ const UnitTemplate = () => {
           </div>
         </div>
 
-        <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray">
-                <th></th>
+        <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+          <div>
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray">
+                  <th></th>
 
-                <th className="text-center text-md font-semibold leading-[1.125rem]">
-                  Empresa
-                </th>
-                <th></th>
-                <th></th>
-                <th className="text-center text-md font-semibold leading-[1.125rem]">
-                  Polvo
-                </th>
-                <th></th>
-                <th></th>
-                <th className="text-center text-md font-semibold leading-[1.125rem]">
-                  Marca UNIT
-                </th>
-              </tr>
-              <tr>
-                <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                  Fecha ing.
-                </th>
-                <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Nombre
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Dirección
-                </th>
-                <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Tipo
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Mar./Color
-                </th>
-                <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Cap.(kg/l)
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Fabr.
-                </th>
-                <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Actual
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Matrícula
-                </th>
-                <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Ensayo
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Presión (MPa)
-                </th>
-                <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Exp. Rem. (%)
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Baja
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <UnitTemplateRow
-                id={""}
-                entryDate={"12/07/2024"}
-                name={"Nombre"}
-                direction={"Calle 123"}
-                type={"A"}
-                color={"AB"}
-                capacity={"4"}
-                factory={"Si"}
-                current={"1234"}
-                registration={"N12345"}
-                trial={"12/24"}
-                pressure={"34"}
-                exp={"1,3"}
-                discontinued={"No"}
-              />
-            </tbody>
-          </table>
+                  <th className="text-center text-md font-semibold leading-[1.125rem]">
+                    Empresa
+                  </th>
+                  <th></th>
+                  <th></th>
+                  <th className="text-center text-md font-semibold leading-[1.125rem]">
+                    Polvo
+                  </th>
+                  <th></th>
+                  <th></th>
+                  <th className="text-center text-md font-semibold leading-[1.125rem]">
+                    Marca UNIT
+                  </th>
+                </tr>
+                <tr>
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                    Fecha ing.
+                  </th>
+                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Nombre
+                  </th>
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Dirección
+                  </th>
+                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Tipo
+                  </th>
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Mar./Color
+                  </th>
+                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Cap.(kg/l)
+                  </th>
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Fabr.
+                  </th>
+                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Actual
+                  </th>
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Matrícula
+                  </th>
+                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Ensayo
+                  </th>
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Presión (MPa)
+                  </th>
+                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Exp. Rem. (%)
+                  </th>
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Baja
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <UnitTemplateRow
+                  id={""}
+                  entryDate={"12/07/2024"}
+                  name={"Nombre"}
+                  direction={"Calle 123"}
+                  type={"A"}
+                  color={"AB"}
+                  capacity={"4"}
+                  factory={"Si"}
+                  current={"1234"}
+                  registration={"N12345"}
+                  trial={"12/24"}
+                  pressure={"34"}
+                  exp={"1,3"}
+                  discontinued={"No"}
+                />
+              </tbody>
+            </table>
+          </div>
           <div className="flex justify-center p-6">
             <Pagination
               pageIndex={setItemsPerPage}

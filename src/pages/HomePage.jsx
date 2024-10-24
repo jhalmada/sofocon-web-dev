@@ -1,6 +1,12 @@
 import { useForm } from "react-hook-form";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import useUsersSellers from "../hooks/users/useUsersSellers";
+import cardDashImg from "../assets/images/cardDash.svg";
+import cardDash2Img from "../assets/images/cardDash_2.svg";
+import cardDash3Img from "../assets/images/cardDash_3.svg";
+import secondCardImg from "../assets/images/secondCard.svg";
+import blockImg from "../assets/images/block.svg";
+import block2Img from "../assets/images/block_2.svg";
+import frame44Img from "../assets/images/frame44.svg";
 
 const HomePage = () => {
   const { userSellerResponse, setSearch } = useUsersSellers();
@@ -15,17 +21,23 @@ const HomePage = () => {
 
   const onSubmit = (data) => {};
   return (
-    <div className="min-h-full bg-gray p-6">
+    <div className="min-h-[calc(100vh-4.375rem)] bg-gray p-6">
       <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
         Inicio
       </h1>
       <div className="flex justify-between">
-        <div className="h-[7.875rem] w-[15.44rem] bg-white"></div>
-        <div className="h-[7.875rem] w-[15.44rem] bg-white"></div>
-        <div className="h-[7.875rem] w-[15.44rem] bg-white"></div>
-        <div className="h-[7.875rem] w-[15.44rem] bg-white"></div>
+        <img src={cardDashImg} alt="" className="w-full max-w-[20rem]" />
+
+        <img src={cardDash2Img} alt="" className="w-full max-w-[20rem]" />
+
+        <img src={cardDash3Img} alt="" className="w-full max-w-[20rem]" />
       </div>
-      <div className="mt-10 h-[16rem] bg-white"></div>
+      <img src={secondCardImg} alt="" className="w-full" />
+      <div className="flex justify-between">
+        <img src={blockImg} alt="" className="h-[17rem]" />
+        <img src={block2Img} alt="" className="h-[17rem]" />
+      </div>
+      <img src={frame44Img} alt="" />
     </div>
   );
 };

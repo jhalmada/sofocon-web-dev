@@ -3,6 +3,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 const FilterSelect = ({ options, placeholder, onChange }) => {
   return (
     <Select
+      maxMenuHeight={200}
       className="min-w-[8rem] rounded-lg border"
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}

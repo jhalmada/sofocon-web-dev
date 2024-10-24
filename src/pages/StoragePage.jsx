@@ -79,50 +79,52 @@ const StoragePage = () => {
     setStateFilter(value);
   };
   return (
-    <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-      <table className="w-full">
-        <thead>
-          <tr>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Empresa
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              ID de orden
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Fecha de ingreso
-            </th>
+    <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+      <div>
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                Empresa
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                ID de orden
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Fecha de ingreso
+              </th>
 
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Fecha de retiro
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Vendedor
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              <div className="flex flex-col gap-2">
-                <FilterSelect
-                  options={stateOptions}
-                  placeholder="Estado"
-                  onChange={handleStateFilterChange}
-                />
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <StorageRow
-            key={""}
-            id={""}
-            name={"Nombre de la empresa"}
-            orderId={"ID de orden"}
-            entryData={"Fecha de ingreso"}
-            retirementDate={"Fecha de retiro"}
-            seller={"Vendedor"}
-            state={"estado"}
-          />
-        </tbody>
-      </table>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Fecha de retiro
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Vendedor
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                <div className="flex flex-col gap-2">
+                  <FilterSelect
+                    options={stateOptions}
+                    placeholder="Estado"
+                    onChange={handleStateFilterChange}
+                  />
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <StorageRow
+              key={""}
+              id={""}
+              name={"Nombre de la empresa"}
+              orderId={"ID de orden"}
+              entryData={"Fecha de ingreso"}
+              retirementDate={"Fecha de retiro"}
+              seller={"Vendedor"}
+              state={"estado"}
+            />
+          </tbody>
+        </table>
+      </div>
       <div className="flex justify-center p-6">
         <Pagination
           pageIndex={setItemsPerPage}

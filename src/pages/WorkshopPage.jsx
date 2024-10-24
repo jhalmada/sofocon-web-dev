@@ -23,6 +23,7 @@ import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import useUserCompany from "../hooks/companies/useUsersCompany.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import StoragePage from "./StoragePage.jsx";
+import { Select, SelectItem } from "@nextui-org/select";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
@@ -134,8 +135,8 @@ const WorkshopPage = () => {
   };
 
   return (
-    <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <Link to="/inicio" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -149,9 +150,11 @@ const WorkshopPage = () => {
           </Link>
         </div>
         <div className="flex justify-between">
-          <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Taller
-          </h1>
+          <div className="mb-5 flex items-center justify-between space-x-4">
+            <h1 className="text-xl font-medium leading-6 text-black_m">
+              Taller
+            </h1>
+          </div>
           <SearchInput placeholder="Buscar..." />
         </div>
 
@@ -159,13 +162,13 @@ const WorkshopPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(RECHARGE_TAB)}
-              className={`w-52 cursor-pointer rounded-t-lg ${activeTab === RECHARGE_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-52 cursor-pointer rounded-t-lg ${activeTab === RECHARGE_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Pedidos con recarga
             </h2>
             <h2
               onClick={() => setActiveTab(STORAGE_TAB)}
-              className={`${activeTab === STORAGE_TAB ? "bg-white" : "bg-gray"} w-52 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === STORAGE_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-52 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Pedidos sin recarga
             </h2>
@@ -204,51 +207,74 @@ const WorkshopPage = () => {
           </div>
         </div>
         {activeTab === RECHARGE_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Empresa
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    ID de orden
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Fecha de ingreso
-                  </th>
+          <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="ml-2 text-black_m">Período</p>
+                <Select
+                  className="w-52 rounded-lg border"
+                  placeholder="OCTUBRE 2024 "
+                  onSelectionChange={(values) => setValue("status", values)}
+                >
+                  <SelectItem>Enero 2024</SelectItem>
+                  <SelectItem>Febrero 2024</SelectItem>
+                  <SelectItem>Marzo 2024</SelectItem>
+                  <SelectItem>Abril 2024</SelectItem>
+                  <SelectItem>Mayo 2024</SelectItem>
+                  <SelectItem>Junio 2024</SelectItem>
+                  <SelectItem>Julio 2024</SelectItem>
+                  <SelectItem>Agosto 2024</SelectItem>
+                  <SelectItem>Septiembre 2024</SelectItem>
+                  <SelectItem>Octubre 2024</SelectItem>
+                  <SelectItem>Noviembre 2024</SelectItem>
+                  <SelectItem>Diciembre 2024</SelectItem>
+                </Select>
+              </div>
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Empresa
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      ID de orden
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Fecha de ingreso
+                    </th>
 
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Fecha de retiro
-                  </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Fecha de retiro
+                    </th>
 
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Vendedor
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col">
-                      <FilterSelect
-                        options={stateOptions}
-                        placeholder="Estado"
-                        onChange={handleStateFilterChange}
-                      />
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <RechargeRow
-                  key={""}
-                  id={""}
-                  name={"Nombre de la empresa"}
-                  orderId={"ID de orden"}
-                  entryData={"Fecha de ingreso"}
-                  retirementDate={"Fecha de retiro"}
-                  seller={"Vendedor"}
-                  state={"estado"}
-                />
-              </tbody>
-            </table>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Vendedor
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      <div className="flex flex-col">
+                        <FilterSelect
+                          options={stateOptions}
+                          placeholder="Estado"
+                          onChange={handleStateFilterChange}
+                        />
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <RechargeRow
+                    key={""}
+                    id={""}
+                    name={"Nombre de la empresa"}
+                    orderId={"ID de orden"}
+                    entryData={"Fecha de ingreso"}
+                    retirementDate={"Fecha de retiro"}
+                    seller={"Vendedor"}
+                    state={"estado"}
+                  />
+                </tbody>
+              </table>
+            </div>
             <div className="flex justify-center p-6">
               <Pagination
                 pageIndex={setItemsPerPage}

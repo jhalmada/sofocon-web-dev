@@ -1,6 +1,4 @@
 import { useState } from "react";
-import Pagination from "../Pagination";
-
 import editIcon from "../../assets/icons/pencil-square.svg";
 import deleteIcon from "../../assets/icons/trash3.svg";
 import useDeleteRoles from "../../hooks/roles/useDeleteRoles";
@@ -11,6 +9,7 @@ import { useForm } from "react-hook-form";
 import useRoles from "../../hooks/roles/use.roles";
 import ReusableModal from "../modals/ReusableModal";
 import Input from "../inputs/Input";
+import notFoundImg from "../../assets/images/notFound.svg";
 
 const translatePermission = (permission) => {
   switch (permission) {
@@ -137,53 +136,65 @@ const TableRole = () => {
   };
 
   return (
-    <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-      <table className="w-full">
-        <thead>
-          <tr>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Rol
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Permisos
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Acción
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedRoles.map((role, index) => (
-            <tr key={index} className="border-b border-gray text-center">
-              <td className="p-2 text-left">{role.name}</td>
-              <td className="p-2">{formatPermisos(role.permissions)}</td>
-
-              <td className="p-2">
-                <div className="flex justify-center gap-4">
-                  <img
-                    src={editIcon}
-                    alt="Edit icon"
-                    className="h-5 w-5 cursor-pointer"
-                    onClick={() => {
-                      handleEditClick(role.id);
-                      setRoleId(role.id);
-                    }}
-                  />
-                  <img
-                    src={deleteIcon}
-                    alt="Delete icon"
-                    className="h-5 w-5 cursor-pointer"
-                    onClick={() => {
-                      handleDeleteClick();
-                      setRoleId(role.id);
-                    }}
-                  />
-                </div>
-              </td>
+    <div className="flex flex-col items-center overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+      {paginatedRoles.length === 0 ? (
+        <tr>
+          <td colSpan="5" className="p-4 text-center">
+            <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+              Tu búsqueda no arrojó resultados. !Prueba algo distinto!. <br />{" "}
+              Puedes encontrar los roles creados aquí.
+            </p>
+            <img src={notFoundImg} alt="Tabla vacía" className="mx-auto" />
+          </td>
+        </tr>
+      ) : (
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                Rol
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Permisos
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Acción
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {paginatedRoles.map((role, index) => (
+              <tr key={index} className="border-b border-gray text-center">
+                <td className="p-2 text-left">{role.name}</td>
+                <td className="p-2">{formatPermisos(role.permissions)}</td>
+
+                <td className="p-2">
+                  <div className="flex justify-center gap-4">
+                    <img
+                      src={editIcon}
+                      alt="Edit icon"
+                      className="h-5 w-5 cursor-pointer"
+                      onClick={() => {
+                        handleEditClick(role.id);
+                        setRoleId(role.id);
+                      }}
+                    />
+                    <img
+                      src={deleteIcon}
+                      alt="Delete icon"
+                      className="h-5 w-5 cursor-pointer"
+                      onClick={() => {
+                        handleDeleteClick();
+                        setRoleId(role.id);
+                      }}
+                    />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       <ReusableModal
         isOpen={isModalOpen}

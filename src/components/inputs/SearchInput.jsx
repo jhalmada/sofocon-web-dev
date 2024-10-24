@@ -20,11 +20,12 @@ const SearchInput = ({
         }}
         placeholder={placeholder || "Buscar..."}
         className={`h-10 min-w-64 bg-white pl-10 pr-10 outline-none ${rounded}`}
+        required
       />
       <img
         src={SearchIcon}
         alt="Search icon"
-        className="absolute left-2 top-1/2 h-8 w-8 -translate-y-1/2 transform cursor-pointer rounded-[1.875rem] p-1"
+        className="absolute left-2 top-[1.3rem] h-8 w-8 -translate-y-1/2 transform cursor-pointer rounded-[1.875rem] p-1"
       />
 
       <img

@@ -25,6 +25,7 @@ import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
 import BackButton from "../components/buttons/BackButton.jsx";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
+import notFoundImg from "../assets/images/notFound.svg";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
@@ -203,8 +204,8 @@ const UsersPage = () => {
   }, [activeTab]);
 
   return (
-    <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <BackButton route="/inicio" />
         </div>
@@ -216,29 +217,29 @@ const UsersPage = () => {
             <SearchInput placeholder="Buscar..." onChange={setSearch} />
           )}
           {activeTab === SELLERS_TAB && (
-            <SearchInput placeholder="Buscarh..." onChange={setSearchSellers} />
+            <SearchInput placeholder="Buscar..." onChange={setSearchSellers} />
           )}
           {activeTab === ROLES_TAB && (
-            <SearchInput placeholder="Buscarh..." onChange={setSearchSellers} />
+            <SearchInput placeholder="Buscar..." onChange={setSearchSellers} />
           )}
         </div>
         <div className="flex items-center">
           <div className="flex">
             <h2
               onClick={() => setActiveTab(USER_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Usuarios
             </h2>
             <h2
               onClick={() => setActiveTab(SELLERS_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERS_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Vendedores
             </h2>
             <h2
               onClick={() => setActiveTab(ROLES_TAB)}
-              className={`${activeTab === ROLES_TAB ? "bg-white" : "bg-gray"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === ROLES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Roles
             </h2>
@@ -278,64 +279,88 @@ const UsersPage = () => {
           </div>
         </div>
         {activeTab === USER_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
+          <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+            <div>
+              {usersResponse.length === 0 ? (
                 <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre Completo
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Email
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
-                      <FilterSelect
-                        options={roleOptions}
-                        placeholder="Rol"
-                        onChange={handleRoleFilterChange}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col items-center gap-2">
-                      <FilterSelect
-                        options={stateOptions}
-                        placeholder="Estado"
-                        onChange={handleStateFilterChange}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Acción
-                  </th>
+                  <td colSpan="5" className="p-4 text-center">
+                    <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                      Tu búsqueda no arrojó resultados. !Prueba algo distinto!.{" "}
+                      <br /> Puedes encontrar a los usuarios creados aquí.
+                    </p>
+                    <img
+                      src={notFoundImg}
+                      alt="Tabla vacía"
+                      className="mx-auto"
+                    />
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {usersResponse.map((user, index) => (
-                  <UserRow
-                    state={user.isActive}
-                    key={index}
-                    fullName={`${user.userInfo.fullName} `}
-                    email={user.email}
-                    role={user?.role?.name}
-                    editIconSrc={editIcon}
-                    deleteIconSrc={deleteIcon}
-                    onEditClick={() => {
-                      openModal(user.id);
-                    }}
-                    onDeleteClick={() => openConfirmDeleteModal(user.id)}
-                  />
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-center p-6">
+              ) : (
+                <table className="w-full">
+                  <thead>
+                    <tr>
+                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                        Nombre Completo
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Email
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        <div className="flex flex-col gap-2">
+                          <FilterSelect
+                            options={roleOptions}
+                            placeholder="Rol"
+                            onChange={handleRoleFilterChange}
+                          />
+                        </div>
+                      </th>
+                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                        <div className="flex flex-col items-center gap-2">
+                          <FilterSelect
+                            options={stateOptions}
+                            placeholder="Estado"
+                            onChange={handleStateFilterChange}
+                          />
+                        </div>
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Acción
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {usersResponse.map((user, index) => (
+                      <UserRow
+                        state={user.isActive}
+                        key={index}
+                        fullName={`${user.userInfo.fullName} `}
+                        email={user.email}
+                        role={user?.role?.name}
+                        editIconSrc={editIcon}
+                        deleteIconSrc={deleteIcon}
+                        onEditClick={() => {
+                          openModal(user.id);
+                        }}
+                        onDeleteClick={() => openConfirmDeleteModal(user.id)}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+            <div
+              className={
+                usersResponse.length === 0
+                  ? "hidden"
+                  : `flex justify-center p-6`
+              }
+            >
               <Pagination
                 pageIndex={setItemsPerPage}
                 currentPage={page}
                 totalPages={totalPage}
                 onPageChange={setPage}
-                itemPerPage={itemsPerPage}
+                itemsPerPage={itemsPerPage}
                 total={total}
               />
             </div>
