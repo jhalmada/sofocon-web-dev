@@ -124,7 +124,7 @@ const UsersPage = () => {
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
         <div className="w-[4rem]">
-          <BackButton route="/inicio" />
+          <BackButton />
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
@@ -148,7 +148,7 @@ const UsersPage = () => {
                 color={"cancel"}
                 onClick={() => openExportModal()}
               />
-              <Link to={"//agregar-producto"}>
+              <Link to={"agregar-producto"}>
                 <Button text="Nuevo Producto" icon={PlusIcon} />
               </Link>
             </div>

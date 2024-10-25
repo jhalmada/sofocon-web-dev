@@ -449,23 +449,44 @@ const AddCompaniePage = () => {
             >
               Asignar estado:
             </label>
-            <Select
-              placeholder="Seleccionar estado"
-              className={`rounded-lg border ${errors.status ? "border-red_e" : ""}`}
-              {...register("status", {
-                required: "Este campo es requerido",
-              })}
-              onSelectionChange={(values) => setValue("status", values)}
-            >
-              <SelectItem key={"FRECUENT"}>Frecuente</SelectItem>
-              <SelectItem key={"POTENTIAL"}>Potencial</SelectItem>
-              <SelectItem key={"UNSUBSCRIBED"}>De Baja</SelectItem>
-              <SelectItem key={"COMPETENCE"}>Competencia</SelectItem>
-            </Select>
-            <p className="mt-1 font-roboto text-xs text-red_e">
-              {errors.status ? errors.status.message : ""}
-              {console.log(errors.status)}
-            </p>
+            {competence ? (
+              <>
+                <Select
+                  placeholder="Seleccionar estado"
+                  className={`rounded-lg border ${errors.status ? "border-red_e" : ""}`}
+                  {...register("status", {
+                    required: "Este campo es requerido",
+                  })}
+                  onSelectionChange={(values) => setValue("status", values)}
+                >
+                  <SelectItem key={"COMPETENCE"}>Competencia</SelectItem>
+                </Select>
+                <p className="mt-1 font-roboto text-xs text-red_e">
+                  {errors.status ? errors.status.message : ""}
+                  {console.log(errors.status)}
+                </p>
+              </>
+            ) : (
+              <>
+                <Select
+                  placeholder="Seleccionar estado"
+                  className={`rounded-lg border ${errors.status ? "border-red_e" : ""}`}
+                  {...register("status", {
+                    required: "Este campo es requerido",
+                  })}
+                  onSelectionChange={(values) => setValue("status", values)}
+                >
+                  <SelectItem key={"FRECUENT"}>Frecuente</SelectItem>
+                  <SelectItem key={"POTENTIAL"}>Potencial</SelectItem>
+                  <SelectItem key={"UNSUBSCRIBED"}>De Baja</SelectItem>
+                </Select>
+                <p className="mt-1 font-roboto text-xs text-red_e">
+                  {errors.status ? errors.status.message : ""}
+                  {console.log(errors.status)}
+                </p>
+              </>
+            )}
+
             <div className="h-full w-[28.3rem]">
               <label
                 className={`${errors.nextVisit ? "text-red_e" : "text-black"} text-sm font-light`}

@@ -50,8 +50,10 @@ const CompaniesPage = () => {
     setModified,
     setStatus,
     setNextVisit,
+    setCompetence,
     setSearch: setSearchCompanies,
   } = useCompanies();
+
   const { changedCompany } = usePutCompany();
   const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,12 +65,11 @@ const CompaniesPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [competence, setCompetence] = useState(false);
+  const [competence, setCompetenceEdit] = useState(false);
   const [checkSelected, setCheckSelected] = useState("RUT");
   const [competenceName, setCompetenceName] = useState("");
   const [listUsers, setListUsers] = useState([]);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const [stateFilter, setStateFilter] = useState("");
 
   const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
   const stateOptions = ["Frecuente", "Potencial", "De baja"];
@@ -107,7 +108,9 @@ const CompaniesPage = () => {
       companyToEdit.competenceName
         ? setValue("competenceName", companyToEdit.competenceName)
         : setValue("competenceName", "");
-      companyToEdit.competenceName ? setCompetence(true) : setCompetence(false);
+      companyToEdit.competenceName
+        ? setCompetenceEdit(true)
+        : setCompetenceEdit(false);
     }
     setIsModalOpen(true);
     setCompanyId(id);
@@ -285,7 +288,11 @@ const CompaniesPage = () => {
   };
   useEffect(() => {
     if (activeTab === COMPETING_TAB) {
-      return setStatus(""), setNextVisit(null);
+      setStatus("");
+      setNextVisit(null);
+      setCompetence(true);
+    } else {
+      setCompetence(false);
     }
   }, [activeTab]);
 
@@ -308,6 +315,7 @@ const CompaniesPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Empresas
           </h1>
+
           <SearchInput placeholder="Buscar..." onChange={setSearchCompanies} />
         </div>
 
@@ -438,7 +446,17 @@ const CompaniesPage = () => {
             </div>
           </div>
         )}
-        {activeTab === COMPETING_TAB && <CompetingPage />}
+        {activeTab === COMPETING_TAB && (
+          <CompetingPage
+            companiesResponse={companiesResponse || []}
+            setItemsPerPage={setItemsPerPage}
+            totalPage={totalPage}
+            total={total}
+            setPage={setPage}
+            page={page}
+            itemsPerPage={itemsPerPage}
+          />
+        )}
       </div>
 
       <ReusableModal
@@ -465,7 +483,7 @@ const CompaniesPage = () => {
           <div>
             <Checkbox
               defaultSelected={competence}
-              onClick={() => setCompetence(!competence)}
+              onClick={() => setCompetenceEdit(!competence)}
               radius="full"
               className="font-light"
               size="sm"
@@ -717,20 +735,6 @@ const CompaniesPage = () => {
                 {errorDataPicker ? "La fecha de visita expiró" : ""}
               </p>
             </I18nProvider>
-          </div>
-          <div className="space-y-2">
-            <span>Notas</span>
-            <Tooltip content="vendra en una mejora" placement="bottom-start">
-              <div className="flex">
-                <Button
-                  text="Nueva Nota"
-                  icon={PlusFillIcon}
-                  iconPosition={"left"}
-                  width="w-40"
-                  color={"cancel"}
-                />
-              </div>
-            </Tooltip>
           </div>
         </form>
       </ReusableModal>

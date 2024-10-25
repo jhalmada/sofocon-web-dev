@@ -23,6 +23,7 @@ import {
   UNIT_TEMPLATE_ROUTE,
   PRODUCTS_INVENTORY,
   PRODUCTS_ADD,
+  CATEGORY_ADD,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
 import RecoverPasswordPage from "../pages/RecoverPasswordPage";
@@ -55,6 +56,8 @@ import UnitTemplate from "../pages/UnitTemplate";
 import AddProductPage from "../pages/AddProductPage";
 import Products from "../layouts/Products";
 import InventoryPage from "../pages/InventoryPage";
+import Inventory from "../layouts/Inventory";
+import AddCategoryPage from "../pages/AddCategoryPage";
 
 export const router = createBrowserRouter([
   {
@@ -171,11 +174,22 @@ export const router = createBrowserRouter([
           },
           {
             path: PRODUCTS_INVENTORY,
-            element: <InventoryPage />,
+            element: <Inventory />,
+            children: [
+              {
+                index: true,
+                element: <InventoryPage />,
+              },
+              {
+                path: PRODUCTS_ADD,
+                element: <AddProductPage />,
+              },
+            ],
           },
+
           {
-            path: PRODUCTS_ADD,
-            element: <AddProductPage />,
+            path: CATEGORY_ADD,
+            element: <AddCategoryPage />,
           },
         ],
       },

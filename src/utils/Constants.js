@@ -27,3 +27,5 @@ export const SOFOCON_JWT_REFRESH_TOKEN = "SOFOCON_JWT_REFRESH_TOKEN";
 export const SOFOCON_PERMISSIONS = "SOFOCON_PERMISSIONS";
 export const PRODUCTS_INVENTORY = "inventario";
 export const PRODUCTS_ADD = "agregar-producto";
+export const CATEGORY_ADD = "agregar-categoria";
+export const IMAGE_BASE = "https://nyc3.digitaloceanspaces.com/tribe-s3/";
