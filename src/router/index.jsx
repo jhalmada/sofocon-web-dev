@@ -27,6 +27,7 @@ import {
   PRODUCTS_INVENTORY,
   PRODUCTS_ADD,
   CATEGORY_ADD,
+  PASSWORD_CODE_ROUTE,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
 import RecoverPasswordPage from "../pages/RecoverPasswordPage";
@@ -66,6 +67,7 @@ import StoragePage from "../pages/StoragePage";
 import DepositPage from "../pages/DepositPage";
 import Inventory from "../layouts/Inventory";
 import AddCategoryPage from "../pages/AddCategoryPage";
+import PasswordCodePage from "../pages/PasswordCodePage";
 
 export const router = createBrowserRouter([
   {
@@ -87,6 +89,10 @@ export const router = createBrowserRouter([
       {
         path: PASSWORD_CHANGED_ROUTE,
         element: <PasswordPage />,
+      },
+      {
+        path: PASSWORD_CODE_ROUTE,
+        element: <PasswordCodePage />,
       },
     ],
   },

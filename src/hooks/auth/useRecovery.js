@@ -11,7 +11,7 @@ const useRecovery = () => {
       return data;
     } catch (e) {
       console.log(e);
-      throw e;
+      return e;
     } finally {
       setLoading(false);
     }
