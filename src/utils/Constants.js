@@ -23,6 +23,7 @@ export const WORKSHOP_ROUTE = "taller";
 export const UNIT_TEMPLATE_ROUTE = "plantilla-unit";
 export const RECHARGE_ROUTE = "recarga";
 export const RECHARGE_DATA_ROUTE = "datos-recarga";
+
 export const DEPOSIT_ROUTE = "deposito";
 export const REDIRECTION_ROUTE = "/";
 export const SOFOCON_JWT_TOKEN = "SOFOCON_JWT_TOKEN";
