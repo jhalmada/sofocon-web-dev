@@ -8,7 +8,7 @@ const Login = () => {
         <img
           src={LogoSofocon}
           alt="logo"
-          className="mb-10 h-[6.3025rem] w-[17.1575rem]"
+          className="mb-10 h-[9.5rem] w-[17.1575rem]"
         />
         <Outlet />
       </div>

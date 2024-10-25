@@ -68,7 +68,9 @@ const NotesPage = () => {
       setValue("title", noteToEdit.title);
       setValue("description", noteToEdit.description);
       setValue("date", noteToEdit.date);
-      setValue("dateV", parseAbsoluteToLocal(noteToEdit.date));
+      if (noteToEdit.date) {
+        setValue("dateV", parseAbsoluteToLocal(noteToEdit.date));
+      }
       setReminderSelected(noteToEdit.isReminder);
       setDateSelected(true);
     }
@@ -230,7 +232,7 @@ const NotesPage = () => {
                     key={index}
                     name={note.title}
                     content={note.description}
-                    date={formatDate(note.date)}
+                    date={note.date ? formatDate(note.date) : "Sin fecha"}
                     editIconSrc={editIcon}
                     deleteIconSrc={deleteIcon}
                     onEditClick={() => openModal(note.id)}
