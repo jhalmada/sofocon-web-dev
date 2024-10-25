@@ -105,7 +105,7 @@ const ProductsPage = () => {
     }
   };
   return (
-    <div className="flex min-h-full flex-col justify-between bg-gray">
+    <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
         <div className="w-[4rem]">
           <Link to=".." className="text-sm font-medium leading-4">
@@ -128,13 +128,13 @@ const ProductsPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(INVENTORY_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === INVENTORY_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === INVENTORY_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Inventario
             </h2>
             <h2
               onClick={() => setActiveTab(PRICES_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === PRICES_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === PRICES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listas de precios
             </h2>

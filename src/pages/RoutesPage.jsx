@@ -16,6 +16,7 @@ import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
+import disconnectedImg from "../assets/images/disconnected.svg";
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
@@ -126,8 +127,8 @@ const RoutesPage = () => {
     }
   };
   return (
-    <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <Link to="/inicio" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -150,7 +151,7 @@ const RoutesPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(SELLER_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLER_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLER_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listado
             </h2>
@@ -166,57 +167,81 @@ const RoutesPage = () => {
           </div>
         </div>
         {activeTab === SELLER_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
+          <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+            <div>
+              {sellerRoutesResponse.length === 0 ? (
                 <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Zona
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Empresas
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Vendedores
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
-                      <FilterSelect
-                        options={stateOptions}
-                        placeholder="Estado"
-                        onChange={handleStateFilterChange}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-md font-semibold leading-[1.125rem]">
-                    Acción
-                  </th>
+                  <td colSpan="5" className="p-4 text-center">
+                    <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                      Ningún elemento coincide con tu búsqueda, inténtalo de
+                      nuevo. <br /> Puedes encontrar las rutas creadas aquí.
+                    </p>
+                    <img
+                      src={disconnectedImg}
+                      alt="Tabla vacía"
+                      className="mx-auto"
+                    />
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {sellerRoutesResponse.map((seller, index) => (
-                  <RouteRow
-                    id={seller.id}
-                    key={index}
-                    name={seller.name}
-                    zone={seller.zone}
-                    companies={seller.totalClients}
-                    sellers={seller.user.length}
-                    state={seller.isActive}
-                    editIconSrc={editIcon}
-                    deleteIconSrc={deleteIcon}
-                    onEditClick={() => {
-                      openModal(seller.id);
-                    }}
-                    onDeleteClick={() => openConfirmDeleteModal(seller.id)}
-                  />
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-center p-6">
+              ) : (
+                <table className="w-full">
+                  <thead>
+                    <tr>
+                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                        Nombre
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Zona
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Empresas
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Vendedores
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        <div className="flex flex-col gap-2">
+                          <FilterSelect
+                            options={stateOptions}
+                            placeholder="Estado"
+                            onChange={handleStateFilterChange}
+                          />
+                        </div>
+                      </th>
+                      <th className="p-2 text-md font-semibold leading-[1.125rem]">
+                        Acción
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sellerRoutesResponse.map((seller, index) => (
+                      <RouteRow
+                        id={seller.id}
+                        key={index}
+                        name={seller.name}
+                        zone={seller.zone}
+                        companies={seller.totalClients}
+                        sellers={seller.user.length}
+                        state={seller.isActive}
+                        editIconSrc={editIcon}
+                        deleteIconSrc={deleteIcon}
+                        onEditClick={() => {
+                          openModal(seller.id);
+                        }}
+                        onDeleteClick={() => openConfirmDeleteModal(seller.id)}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+            <div
+              className={
+                sellerRoutesResponse.length === 0
+                  ? "hidden"
+                  : `flex justify-center p-6`
+              }
+            >
               <Pagination
                 pageIndex={setItemsPerPage}
                 currentPage={page}

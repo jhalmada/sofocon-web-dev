@@ -13,6 +13,7 @@ import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import FilterSelect from "../components/filters/FilterSelect";
 import usePutusers from "../hooks/users/usePutUsers";
+import notFoundImg from "../assets/images/notFound.svg";
 
 const SellersPage = ({
   openConfirmDeleteModal,
@@ -135,56 +136,74 @@ const SellersPage = ({
     }
   };
   return (
-    <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-      <table className="w-full">
-        <thead>
-          <tr>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Nombre Completo
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Contacto
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Ruta
-            </th>
-            <th className="text-lecenterft p-2 text-md font-semibold leading-[1.125rem]">
-              <div className="flex flex-col gap-2">
-                <FilterSelect
-                  options={stateOptions}
-                  placeholder="Estado"
-                  onChange={handleStateFilterChange}
-                />
-              </div>
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Mas info
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Acción
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {userSellerResponse?.result?.map((user, index) => (
-            <SellerRow
-              key={index}
-              fullName={`${user.userInfo.fullName} `}
-              email={user.email}
-              route={"Ruta"}
-              info={"Ver más"}
-              editIconSrc={editIcon}
-              deleteIconSrc={deleteIcon}
-              state={user.isActive}
-              onEditClick={() => {
-                openModal(user.id);
-              }}
-              onDeleteClick={() => openConfirmDeleteModal(user.id)}
-            />
-          ))}
-        </tbody>
-      </table>
-      <div className="flex justify-center p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+      <div></div>
+      {userSellerResponse.length === 0 ? (
+        <tr>
+          <td colSpan="5" className="p-4 text-center">
+            <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+              Tu búsqueda no arrojó resultados. !Prueba algo distinto!. <br />{" "}
+              Puedes encontrar a los vendedores creados aquí.
+            </p>
+            <img src={notFoundImg} alt="Tabla vacía" className="mx-auto" />
+          </td>
+        </tr>
+      ) : (
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                Nombre Completo
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Contacto
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Ruta
+              </th>
+              <th className="text-lecenterft p-2 text-md font-semibold leading-[1.125rem]">
+                <div className="flex flex-col gap-2">
+                  <FilterSelect
+                    options={stateOptions}
+                    placeholder="Estado"
+                    onChange={handleStateFilterChange}
+                  />
+                </div>
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Mas info
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Acción
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {userSellerResponse?.result?.map((user, index) => (
+              <SellerRow
+                key={index}
+                fullName={`${user.userInfo.fullName} `}
+                email={user.email}
+                route={"Ruta"}
+                info={"Ver más"}
+                editIconSrc={editIcon}
+                deleteIconSrc={deleteIcon}
+                state={user.isActive}
+                onEditClick={() => {
+                  openModal(user.id);
+                }}
+                onDeleteClick={() => openConfirmDeleteModal(user.id)}
+              />
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      <div
+        className={
+          userSellerResponse.length === 0 ? "hidden" : `flex justify-center p-6`
+        }
+      >
         <Pagination
           pageIndex={setItemsPerPage}
           currentPage={page}

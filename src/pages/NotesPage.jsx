@@ -2,12 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
-import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
 import SearchInput from "../components/inputs/SearchInput";
 import PlusIcon from "../assets/icons/plus.svg";
-import FilterRightIcon from "../assets/icons/filter-right.svg";
-import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import useNotes from "../hooks/notes/useNotes.js";
 import editIcon from "../assets/icons/pencil-square.svg";
@@ -54,6 +51,7 @@ const NotesPage = () => {
     setModified,
     setClient,
     setNextVisit,
+    setSearch,
   } = useNotes();
 
   const {
@@ -168,8 +166,8 @@ const NotesPage = () => {
     }
   };
   return (
-    <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <Link to="/inicio/empresas" className="text-sm font-medium leading-4">
             <div className="mb-4 flex w-[4rem] items-center">
@@ -186,13 +184,13 @@ const NotesPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Empresas
           </h1>
-          <SearchInput placeholder="Buscar..." />
+          <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
         <div className="flex items-center">
           <div className="flex">
             <h2
               onClick={() => setActiveTab(NOTES_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Notas
             </h2>
@@ -208,7 +206,7 @@ const NotesPage = () => {
           </div>
         </div>
         {activeTab === NOTES_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+          <div className="flex-grow overflow-auto rounded-tr-lg bg-white p-5">
             <table className="w-full">
               <thead>
                 <tr>
@@ -219,13 +217,7 @@ const NotesPage = () => {
                     Contenido
                   </th>
                   <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
-                      <FilterSelect
-                        options={visitOptions}
-                        placeholder="Próx. visita"
-                        onChange={handleVisitFilterChange}
-                      />
-                    </div>
+                    Fecha
                   </th>
                   <th className="p-2 text-md font-semibold leading-[1.125rem]">
                     Acción

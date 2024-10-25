@@ -12,6 +12,10 @@ const Input = forwardRef(
       errorApi = false,
       name,
       onChange,
+      border = "border",
+      placeholderColor = "placeholder-gray-400",
+      bg = "bg-transparent",
+      width = "w-full",
       ...props
     },
     ref,
@@ -40,7 +44,7 @@ const Input = forwardRef(
             ref={ref}
             type={inputType}
             placeholder={placeholder}
-            className={`placeholder-gray-400 relative h-10 w-full rounded-md border p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${
+            className={`${placeholderColor} relative h-10 ${bg} ${width} rounded-md ${border} p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${
               errorApi || msjError
                 ? "border-red_e placeholder-red_e"
                 : "border-gray-300"

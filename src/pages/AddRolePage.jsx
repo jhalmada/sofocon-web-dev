@@ -34,8 +34,8 @@ const AddRolePage = () => {
     setSaveConfirmationModalOpen(false);
   };
   return (
-    <div className="flex min-h-full flex-col justify-between overflow-auto bg-gray">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between overflow-auto bg-gray">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <BackButton route="/inicio/personal" />
         </div>
@@ -51,47 +51,51 @@ const AddRolePage = () => {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
+          className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10"
         >
-          <div className="flex flex-col">
-            <Input
-              {...register("name", {
-                required: "Este campo es obligatorio",
-              })}
-              label={"Nombre del rol"}
-              placeholder={"Escribe el nombre del rol..."}
-              errorApi={errors.name}
-              msjError={errors.name ? errors.name.message : ""}
-            />
-            <Select
-              labelPlacement="outside"
-              label="Asignar permisos"
-              selectionMode="multiple"
-              placeholder="Permisos"
-              className="max-w mt-10 rounded-lg border font-roboto font-medium"
-              {...register("permissions", {
-                required: "Debes asignar al menos un permiso",
-              })}
-              onSelectionChange={(values) => setValue("permissions", values)}
-            >
-              {permisos.map((permiso) => (
-                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-              ))}
-            </Select>
-            {errors.permissions && (
-              <span className="font-roboto text-xs text-red_e">
-                {errors.permissions.message}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-end pt-6">
-            <div>
-              <Button
-                text={"GUARDAR"}
-                color={"save"}
-                type={"submit"}
-                icon={ArrowRightIcon}
+          <div>
+            <div className="flex flex-col">
+              <Input
+                {...register("name", {
+                  required: "Este campo es obligatorio",
+                })}
+                label={"Nombre del rol"}
+                placeholder={"Escribe el nombre del rol..."}
+                errorApi={errors.name}
+                msjError={errors.name ? errors.name.message : ""}
               />
+              <Select
+                labelPlacement="outside"
+                label="Asignar permisos"
+                selectionMode="multiple"
+                placeholder="Permisos"
+                className="max-w mt-10 rounded-lg border font-roboto font-medium"
+                {...register("permissions", {
+                  required: "Debes asignar al menos un permiso",
+                })}
+                onSelectionChange={(values) => setValue("permissions", values)}
+              >
+                {permisos.map((permiso) => (
+                  <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+                ))}
+              </Select>
+              {errors.permissions && (
+                <span className="font-roboto text-xs text-red_e">
+                  {errors.permissions.message}
+                </span>
+              )}
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-end pt-6">
+              <div>
+                <Button
+                  text={"GUARDAR"}
+                  color={"save"}
+                  type={"submit"}
+                  icon={ArrowRightIcon}
+                />
+              </div>
             </div>
           </div>
         </form>

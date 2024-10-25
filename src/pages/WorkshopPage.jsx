@@ -4,33 +4,26 @@ import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
-import { Select, SelectItem } from "@nextui-org/select";
 import SearchInput from "../components/inputs/SearchInput";
 import CameraIcon from "../assets/icons/camera.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import RechargeRow from "../components/RechargeRow.jsx";
 import FileIcon from "../assets/icons/file-earmark-ruled.svg";
-import { Controller, useForm } from "react-hook-form";
-
-import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
-import PlusFillIcon from "../assets/icons/plus-fill.svg";
+import { useForm } from "react-hook-form";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
-import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
-import { I18nProvider } from "@react-aria/i18n";
-import { getLocalTimeZone, today } from "@internationalized/date";
 import {
   getClientsExcel,
   getClientsPdf,
 } from "../services/companies/companies.routes.js";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import useUserCompany from "../hooks/companies/useUsersCompany.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import StoragePage from "./StoragePage.jsx";
+import { Select, SelectItem } from "@nextui-org/select";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
@@ -49,7 +42,6 @@ const WorkshopPage = () => {
     setModified,
     setNexVisit,
   } = useCompanies();
-  const { changedCompany } = usePutCompany();
   const [activeTab, setActiveTab] = useState(RECHARGE_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -60,19 +52,13 @@ const WorkshopPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [competence, setCompetence] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("RUT");
-  const [competenceName, setCompetenceName] = useState("");
-  const [listUsers, setListUsers] = useState([]);
-  const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [stateFilter, setStateFilter] = useState("");
   const [openScannerModal, setOpenScannerModal] = useState(false);
 
-  const visitOptions = ["< 1 mes", "< 2 meses", "< 3 meses"];
   const stateOptions = [
     "Solicitado",
     "En preparación",
-    "Listo para retirar",
+    "Para retirar",
     "Egreso",
   ];
   const {
@@ -80,54 +66,15 @@ const WorkshopPage = () => {
     register,
     handleSubmit,
     setValue,
-    control,
     formState: { errors },
   } = useForm();
 
-  const { handleSubmit: handleSubmit2, setValue: setValue2 } = useForm();
-  const { userSellerResponse, setSearch } = useUsersSellers();
-  const { addUsersCompany } = useUserCompany();
-  const openModal = (id) => {
-    clearErrors();
-    const companyToEdit = companiesResponse.find(
-      (company) => company.id === id,
-    );
-    if (companyToEdit) {
-      setValue("name", companyToEdit?.name || "");
-      setValue("department", companyToEdit?.department || "");
-      setValue("neighborhood", companyToEdit?.neighborhood || "");
-      setValue("address", companyToEdit?.address || "");
-      setValue("managerName", companyToEdit?.managerName || "");
-      setValue("phone", companyToEdit?.phone || "");
-      setValue("rut", companyToEdit?.rut || "");
-      setValue("status", companyToEdit?.status || "");
-      setValue(
-        "nextVisit",
-        parseAbsoluteToLocal(
-          companyToEdit?.nextVisit || "2024-10-02T21:46:00.330Z",
-        ),
-      );
-      companyToEdit.competenceName
-        ? setValue("competenceName", companyToEdit.competenceName)
-        : setValue("competenceName", "");
-      companyToEdit.competenceName ? setCompetence(true) : setCompetence(false);
-    }
-    setIsModalOpen(true);
-    setCompanyId(id);
-    setIsModalOpen(true);
-  };
-  const openScanModal = () => {
-    setOpenScannerModal(true);
-  };
   const openExportModal = () => {
     setIsExportModalOpen(true);
   };
 
   const openExportCompetingModal = () => {
     setIsExportCompetingModalOpen(true);
-  };
-  const openSellersModal = () => {
-    setIsSellersModalOpen(true);
   };
 
   const closeModal = () => {
@@ -138,7 +85,6 @@ const WorkshopPage = () => {
     setIsSellersModalOpen(false);
   };
 
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => {
     setConfirmCancelModalOpen(false);
   };
@@ -146,10 +92,7 @@ const WorkshopPage = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-  const openConfirmDeleteModal = (id) => {
-    setCompanyId(id);
-    setConfirmDeleteModalOpen(true);
-  };
+
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
@@ -164,25 +107,6 @@ const WorkshopPage = () => {
     closeConfirmCancelModal();
     closeModal();
   };
-  //esta funcion se encarga de crear una nueva empresa, la podemos sacar a un hook y que ademas de pedir los datos de la empresa, tambien pida el metodo(POST, PUT, DELETE) y el id de la empresa a modificar
-  const handleCompanyCreation = async (companyData) => {
-    try {
-      const newCompany = await changedCompany(
-        companyData,
-        companyId,
-        setModified,
-      );
-
-      if (newCompany) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        setIsModalOpen(true);
-      }
-    } catch (error) {
-      console.error("Error al crear la empresa:", error);
-      setIsModalOpen(true);
-    }
-  };
 
   const onSubmit = (data) => {
     console.log(data);
@@ -195,7 +119,6 @@ const WorkshopPage = () => {
       status,
       address,
       neighborhood,
-      competenceName,
     } = data;
     const newdata = new Date(
       nextVisit.year,
@@ -205,83 +128,15 @@ const WorkshopPage = () => {
 
     //formate la fecha para que sea aceptada por el back
     const formattedDate = newdata.toISOString();
-    switch (checkSelected) {
-      case "RUT":
-        handleCompanyCreation({
-          name,
-          department,
-          managerName,
-          phone,
-          status,
-          address,
-          neighborhood,
-          nextVisit: newdata,
-          rut: data.rut,
-          competenceName: competence ? competenceName : "",
-        });
-        break;
-      default:
-        handleCompanyCreation({
-          name,
-          department,
-          managerName,
-          phone,
-          status,
-          address,
-          neighborhood,
-          nextVisit: formattedDate,
-          ci: data.ci,
-          competenceName: competence ? competenceName : "",
-        });
-    }
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${day}/${month}/${year}`;
-  };
-
-  //funcion para transformar los Arrays
-  const transformData = (array) => {
-    return array.map((item) => ({
-      id: item.id,
-      name: item.name,
-    }));
-  };
-
-  const submit = (data) => {
-    const user = data.sellers.map((seller) => ({ id: seller.id }));
-    const datos = addUsersCompany({ user }, companyId, setModified);
-    if (datos) {
-      setIsSellersModalOpen(false);
-    }
-  };
-  const handleVisitFilterChange = (value) => {
-    switch (value) {
-      case "< 1 mes":
-        setNexVisit(1);
-        break;
-      case "< 2 meses":
-        setNexVisit(2);
-        break;
-      case "< 3 meses":
-        setNexVisit(3);
-        break;
-      default:
-        "selecciona una opción válida";
-    }
-  };
   const handleStateFilterChange = (value) => {
     setStateFilter(value);
   };
 
   return (
-    <div className="flex h-full flex-col justify-between">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <Link to="/inicio" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -295,9 +150,11 @@ const WorkshopPage = () => {
           </Link>
         </div>
         <div className="flex justify-between">
-          <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Taller
-          </h1>
+          <div className="mb-5 flex items-center justify-between space-x-4">
+            <h1 className="text-xl font-medium leading-6 text-black_m">
+              Taller
+            </h1>
+          </div>
           <SearchInput placeholder="Buscar..." />
         </div>
 
@@ -305,15 +162,15 @@ const WorkshopPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(RECHARGE_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === RECHARGE_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-52 cursor-pointer rounded-t-lg ${activeTab === RECHARGE_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Recarga
+              Pedidos con recarga
             </h2>
             <h2
               onClick={() => setActiveTab(STORAGE_TAB)}
-              className={`${activeTab === STORAGE_TAB ? "bg-white" : "bg-gray"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === STORAGE_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-52 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Depósito
+              Pedidos sin recarga
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
@@ -350,51 +207,74 @@ const WorkshopPage = () => {
           </div>
         </div>
         {activeTab === RECHARGE_TAB && (
-          <div className="overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Empresa
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    ID de orden
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Fecha de ingreso
-                  </th>
+          <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="ml-2 text-black_m">Período</p>
+                <Select
+                  className="w-52 rounded-lg border"
+                  placeholder="OCTUBRE 2024 "
+                  onSelectionChange={(values) => setValue("status", values)}
+                >
+                  <SelectItem>Enero 2024</SelectItem>
+                  <SelectItem>Febrero 2024</SelectItem>
+                  <SelectItem>Marzo 2024</SelectItem>
+                  <SelectItem>Abril 2024</SelectItem>
+                  <SelectItem>Mayo 2024</SelectItem>
+                  <SelectItem>Junio 2024</SelectItem>
+                  <SelectItem>Julio 2024</SelectItem>
+                  <SelectItem>Agosto 2024</SelectItem>
+                  <SelectItem>Septiembre 2024</SelectItem>
+                  <SelectItem>Octubre 2024</SelectItem>
+                  <SelectItem>Noviembre 2024</SelectItem>
+                  <SelectItem>Diciembre 2024</SelectItem>
+                </Select>
+              </div>
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Empresa
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      ID de orden
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Fecha de ingreso
+                    </th>
 
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Fecha de retiro
-                  </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Fecha de retiro
+                    </th>
 
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Vendedor
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col">
-                      <FilterSelect
-                        options={stateOptions}
-                        placeholder="Estado"
-                        onChange={handleStateFilterChange}
-                      />
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <RechargeRow
-                  key={""}
-                  id={""}
-                  name={"Nombre de la empresa"}
-                  orderId={"ID de orden"}
-                  entryData={"Fecha de ingreso"}
-                  retirementDate={"Fecha de retiro"}
-                  seller={"Vendedor"}
-                  state={"estado"}
-                />
-              </tbody>
-            </table>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Vendedor
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      <div className="flex flex-col">
+                        <FilterSelect
+                          options={stateOptions}
+                          placeholder="Estado"
+                          onChange={handleStateFilterChange}
+                        />
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <RechargeRow
+                    key={""}
+                    id={""}
+                    name={"Nombre de la empresa"}
+                    orderId={"ID de orden"}
+                    entryData={"Fecha de ingreso"}
+                    retirementDate={"Fecha de retiro"}
+                    seller={"Vendedor"}
+                    state={"estado"}
+                  />
+                </tbody>
+              </table>
+            </div>
             <div className="flex justify-center p-6">
               <Pagination
                 pageIndex={setItemsPerPage}
@@ -506,37 +386,6 @@ const WorkshopPage = () => {
             />
           </a>
         </div>
-      </ReusableModal>
-
-      <ReusableModal
-        isOpen={isSellersModalOpen}
-        onClose={handleCancelClick}
-        title={competenceName}
-        onSubmit={handleSubmit2(submit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <form onSubmit={handleSubmit2(submit)}>
-          <NextAutoComplete
-            label={"Agregar vendedores"}
-            label2={"Vendedores asignados"}
-            array={
-              userSellerResponse?.result?.map((seller) => ({
-                id: seller.id,
-                name: seller.userInfo.fullName,
-              })) || []
-            }
-            array2={
-              listUsers.map((seller) => ({
-                id: seller.id,
-                name: seller.userInfo.fullName,
-              })) || []
-            }
-            name={"sellers"}
-            setValue={setValue2}
-            onChange={setSearch}
-          />
-        </form>
       </ReusableModal>
 
       <ReusableModal

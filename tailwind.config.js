@@ -21,6 +21,7 @@ export default {
         pink: "#F7CCCC",
         blue_b: "#4071D1",
         blue_l: "#81ACFF",
+        green: "#25B574",
       },
       boxShadow: {
         bl: "2px 3px 6px rgba(0, 0, 0, 0.2)",

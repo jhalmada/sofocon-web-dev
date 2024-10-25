@@ -28,7 +28,7 @@ const AddUserPage = () => {
     useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const [mnsError, setMnsError] = useState("");
-  const options = ["Activo", "Inactivo"];
+
   const handleUserCreation = async (userData) => {
     try {
       const newUser = await postAddUsers(userData);
@@ -97,8 +97,8 @@ const AddUserPage = () => {
     navigate("/inicio/personal");
   };
   return (
-    <div className="flex min-h-full flex-col justify-between bg-gray">
-      <div className="flex-grow p-6">
+    <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
+      <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
           <Link to="/inicio/personal" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -124,21 +124,9 @@ const AddUserPage = () => {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="rounded-tr-lg bg-white px-14 py-10 shadow-t"
+          className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10"
         >
           <div>
-            <Select
-              labelPlacement="outside"
-              label="Estado"
-              selectedKeys={["Activo"]}
-              className="mb-3 w-1/6 rounded-lg border"
-              {...register("state", {})}
-              onSelectionChange={(value) => setValue("state", value)}
-            >
-              {options.map((option) => (
-                <SelectItem key={option}>{option}</SelectItem>
-              ))}
-            </Select>
             <Input
               label={"Nombre Completo"}
               placeholder={"Escribe el nombre completo del usuario..."}
@@ -324,7 +312,7 @@ const AddUserPage = () => {
               </div>
             </div>
           </div>
-          <div className="flex w-full justify-end">
+          <div className="mt-5 flex w-full justify-end">
             <Button
               text={"GUARDAR"}
               color={"save"}

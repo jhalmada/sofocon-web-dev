@@ -21,6 +21,9 @@ import {
   ORDERS_ROUTE,
   WORKSHOP_ROUTE,
   UNIT_TEMPLATE_ROUTE,
+  RECHARGE_ROUTE,
+  RECHARGE_DATA_ROUTE,
+  DEPOSIT_ROUTE,
   PRODUCTS_INVENTORY,
   PRODUCTS_ADD,
   CATEGORY_ADD,
@@ -53,6 +56,9 @@ import RouteMapDetailsPage from "../pages/RouteMapDetailsPage";
 import WorkshopLayout from "../layouts/Workshop";
 import WorkshopPage from "../pages/WorkshopPage";
 import UnitTemplate from "../pages/UnitTemplate";
+import RechargePage from "../pages/RechargePage";
+import RechargeDataPage from "../pages/RechargeDataPage";
+import DepositPage from "../pages/DepositPage";
 import AddProductPage from "../pages/AddProductPage";
 import Products from "../layouts/Products";
 import InventoryPage from "../pages/InventoryPage";
@@ -208,6 +214,18 @@ export const router = createBrowserRouter([
           {
             path: UNIT_TEMPLATE_ROUTE,
             element: <UnitTemplate />,
+          },
+          {
+            path: RECHARGE_ROUTE,
+            element: <RechargePage />,
+          },
+          {
+            path: RECHARGE_DATA_ROUTE,
+            element: <RechargeDataPage />,
+          },
+          {
+            path: DEPOSIT_ROUTE,
+            element: <DepositPage />,
           },
         ],
       },
