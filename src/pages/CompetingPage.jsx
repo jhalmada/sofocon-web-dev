@@ -9,8 +9,6 @@ import {
   today,
 } from "@internationalized/date";
 import notesIcon from "../assets/icons/sticky-fill.svg";
-import useCompanies from "../hooks/companies/useCompanies";
-import { useEffect, useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import { I18nProvider } from "@react-aria/i18n";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -18,6 +16,7 @@ import Input from "../components/inputs/Input";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
 import pageLostImg from "../assets/images/pageLost.svg";
+import { useState } from "react";
 const CompetingPage = ({
   companiesResponse,
   setItemsPerPage,
@@ -26,6 +25,7 @@ const CompetingPage = ({
   setPage,
   page,
   itemsPerPage,
+  setNextVisit,
 }) => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,7 +36,7 @@ const CompetingPage = ({
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [checkSelected, setCheckSelected] = useState("RUT");
   const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
-  const stateOptions = ["Activo", "Inactivo"];
+  const stateOptions = ["Competencia"];
   const {
     register,
     handleSubmit,

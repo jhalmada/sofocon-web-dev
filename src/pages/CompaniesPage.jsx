@@ -316,8 +316,18 @@ const CompaniesPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Empresas
           </h1>
-
-          <SearchInput placeholder="Buscar..." onChange={setSearchCompanies} />
+          {activeTab === COMPANIE_TAB && (
+            <SearchInput
+              placeholder="Buscar..."
+              onChange={setSearchCompanies}
+            />
+          )}
+          {activeTab === COMPETING_TAB && (
+            <SearchInput
+              placeholder="Buscar...."
+              onChange={setSearchCompanies}
+            />
+          )}
         </div>
 
         <div className="flex items-center">
@@ -484,6 +494,7 @@ const CompaniesPage = () => {
             setPage={setPage}
             page={page}
             itemsPerPage={itemsPerPage}
+            setNextVisit={setNextVisit}
           />
         )}
       </div>
