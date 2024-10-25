@@ -1,5 +1,5 @@
 import Pagination from "../components/Pagination";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import CompetingRow from "../components/CompetingRow";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
@@ -26,6 +26,9 @@ const CompetingPage = ({
   page,
   itemsPerPage,
   setNextVisit,
+  changedCompany,
+  setModified,
+  setSaveConfirmationModalOpen,
 }) => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -107,9 +110,78 @@ const CompetingPage = ({
     setStateFilter(value);
   };
 
-  const onSubmit = (data) => {
-    alert(JSON.stringify(data));
+  const handleCompanyCreation = async (companyData) => {
+    try {
+      const newCompany = await changedCompany(
+        companyData,
+        companyId,
+        setModified,
+      );
+
+      if (newCompany) {
+        setSaveConfirmationModalOpen(true);
+        setIsModalOpen(false);
+      } else {
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error al crear la empresa:", error);
+      setIsModalOpen(true);
+    }
   };
+
+  const onSubmit = (data) => {
+    console.log(data);
+    const {
+      nextVisit,
+      name,
+      department,
+      managerName,
+      phone,
+      status,
+      address,
+      neighborhood,
+      competenceName,
+    } = data;
+    const newdata = new Date(
+      nextVisit.year,
+      nextVisit.month - 1,
+      nextVisit.day,
+    );
+
+    //formate la fecha para que sea aceptada por el back
+    const formattedDate = newdata.toISOString();
+    switch (checkSelected) {
+      case "RUT":
+        handleCompanyCreation({
+          name,
+          department,
+          managerName,
+          phone,
+          status,
+          address,
+          neighborhood,
+          nextVisit: newdata,
+          rut: data.rut,
+          competenceName: competence ? competenceName : "",
+        });
+        break;
+      default:
+        handleCompanyCreation({
+          name,
+          department,
+          managerName,
+          phone,
+          status,
+          address,
+          neighborhood,
+          nextVisit: formattedDate,
+          ci: data.ci,
+          competenceName: competence ? competenceName : "",
+        });
+    }
+  };
+
   return (
     <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div>

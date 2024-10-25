@@ -105,6 +105,14 @@ const AddCategoryPage = () => {
               placeholder={"Escribir..."}
               {...register("name", {
                 required: "Este campo es obligatorio",
+                maxLength: {
+                  value: 50,
+                  message: "Este campo no debe exceder los 50 caracteres",
+                },
+                minLength: {
+                  value: 3,
+                  message: "Este campo debe tener al menos 3 caracteres",
+                },
               })}
               errorApi={errors.name}
               msjError={errors.name ? errors.name.message : ""}
@@ -114,6 +122,14 @@ const AddCategoryPage = () => {
               placeholder={"Escribir..."}
               {...register("description", {
                 required: "Este campo es obligatorio",
+                maxLength: {
+                  value: 50,
+                  message: "Este campo no debe exceder los 50 caracteres",
+                },
+                minLength: {
+                  value: 3,
+                  message: "Este campo debe tener al menos 3 caracteres",
+                },
               })}
               errorApi={errors.description}
               msjError={errors.description ? errors.description.message : ""}

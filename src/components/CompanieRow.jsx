@@ -47,16 +47,18 @@ const CompanieRow = ({
     console.log(visitDate);
 
     // Cálculo de la diferencia en meses
-    const diffInMonths =
-      visitDate.getMonth() -
-      today.getMonth() +
-      12 * (visitDate.getFullYear() - today.getFullYear());
-    console.log(diffInMonths);
+    const diffInDays = (visitDate, today) => {
+      const msPerDay = 1000 * 60 * 60 * 24; // Milisegundos en un día
+      const diffInMs = visitDate - today; // Diferencia en milisegundos
+      return Math.floor(diffInMs / msPerDay); // Convertir a días y redondear hacia abajo
+    };
+    const result = diffInDays(visitDate, today);
+
     // Selección de la imagen según la diferencia en meses
-    if (diffInMonths <= 1) {
+    if (result <= 30) {
       setIcon(watchIcon); // Menos de 1 mes
       setMsjIcon("Cliente próximo a vencer");
-    } else if (diffInMonths <= 2) {
+    } else if (result <= 60) {
       setIcon(watchIcon2); // 2 meses
       setMsjIcon("Vencimiento en 2 meses");
     } else {
