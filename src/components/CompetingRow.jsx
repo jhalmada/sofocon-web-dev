@@ -26,6 +26,7 @@ const CompetingRow = ({
   notesIcon,
   onEditClick,
   onDeleteClick,
+  id,
 }) => {
   return (
     <tr className="border-b border-gray text-center">
@@ -60,7 +61,7 @@ const CompetingRow = ({
       </td>
       <td className="p-2">
         <div className="flex justify-center gap-4">
-          <Link to={"notas"}>
+          <Link to={`notas/${id}`}>
             <img
               src={notesIcon}
               alt="notes icon"
