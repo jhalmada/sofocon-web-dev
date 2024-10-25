@@ -16,7 +16,9 @@ import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
+
 import disconnectedImg from "../assets/images/disconnected.svg";
+
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
@@ -168,7 +170,7 @@ const RoutesPage = () => {
         </div>
         {activeTab === SELLER_TAB && (
           <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-            <div>
+            <div className="flex justify-center">
               {sellerRoutesResponse.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="p-4 text-center">

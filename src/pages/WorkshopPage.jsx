@@ -10,20 +10,24 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import RechargeRow from "../components/RechargeRow.jsx";
 import FileIcon from "../assets/icons/file-earmark-ruled.svg";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
-import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
 import {
   getClientsExcel,
   getClientsPdf,
 } from "../services/companies/companies.routes.js";
-import useUsersSellers from "../hooks/users/useUsersSellers.js";
-import useUserCompany from "../hooks/companies/useUsersCompany.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import StoragePage from "./StoragePage.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
+import editIcon from "../assets/icons/pencil-square.svg";
+import deleteIcon from "../assets/icons/trash3.svg";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import { Checkbox, DatePicker } from "@nextui-org/react";
+import { I18nProvider } from "@react-aria/i18n";
+import useUsersSellers from "../hooks/users/useUsersSellers.js";
+import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
@@ -31,6 +35,7 @@ const STORAGE_TAB = "deposito";
 const WorkshopPage = () => {
   const [companyId, setCompanyId] = useState(null);
   const { deleteCompany } = useDeleteCompanies();
+  const { userSellerResponse, setSearch } = useUsersSellers();
   const {
     companiesResponse,
     setItemsPerPage,
@@ -54,6 +59,8 @@ const WorkshopPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [stateFilter, setStateFilter] = useState("");
   const [openScannerModal, setOpenScannerModal] = useState(false);
+  const [errorDataPicker, setErrorDataPicker] = useState(false);
+  const [dateSelected, setDateSelected] = useState(false);
 
   const stateOptions = [
     "Solicitado",
@@ -61,13 +68,22 @@ const WorkshopPage = () => {
     "Para retirar",
     "Egreso",
   ];
+  const pricesList = ["Lista 1", "Lista 2", "Lista 3"];
   const {
+    control,
     clearErrors,
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+  const openConfirmDeleteModal = () => {
+    setConfirmDeleteModalOpen(true);
+  };
 
   const openExportModal = () => {
     setIsExportModalOpen(true);
@@ -94,6 +110,7 @@ const WorkshopPage = () => {
   };
 
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
+  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
 
   const handleConfirmDelete = () => {
     deleteCompany(companyId, setModified);
@@ -101,6 +118,7 @@ const WorkshopPage = () => {
   };
 
   const handleCancelClick = () => {
+    openConfirmCancelModal();
     setOpenScannerModal(false);
   };
   const handleConfirmCancel = () => {
@@ -259,6 +277,9 @@ const WorkshopPage = () => {
                         />
                       </div>
                     </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Acción
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -271,6 +292,12 @@ const WorkshopPage = () => {
                     retirementDate={"Fecha de retiro"}
                     seller={"Vendedor"}
                     state={"estado"}
+                    editIconSrc={editIcon}
+                    deleteIconSrc={deleteIcon}
+                    onEditClick={() => {
+                      openModal();
+                    }}
+                    onDeleteClick={() => openConfirmDeleteModal()}
                   />
                 </tbody>
               </table>
@@ -289,7 +316,133 @@ const WorkshopPage = () => {
         )}
         {activeTab === STORAGE_TAB && <StoragePage />}
       </div>
+      <ReusableModal
+        isOpen={isModalOpen}
+        onClose={handleCancelClick}
+        title="Editar Órden"
+        onSubmit={handleSubmit(onSubmit)}
+        buttons={["cancel", "save"]}
+        handleCancelClick={handleCancelClick}
+      >
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <label className="text-gray-700 block text-sm font-light">
+            Asignar estado:
+          </label>
+          <Select
+            placeholder="Estado"
+            className="mb-4 rounded-lg border"
+            {...register("status")}
+            onSelectionChange={(value) => setValue("status", value)}
+          >
+            {stateOptions.map((option) => (
+              <SelectItem key={option}>{option}</SelectItem>
+            ))}
+          </Select>
 
+          <Input
+            label={"ID de órden"}
+            placeholder={"Escribir..."}
+            {...register("orderId", {
+              required: "Este campo es obligatorio",
+            })}
+          />
+          <Input
+            label={"Cliente"}
+            placeholder={"Escribir..."}
+            {...register("client", {
+              required: "Este campo es obligatorio",
+            })}
+          />
+          <Input
+            label={"R.U.T./CI"}
+            placeholder={"Escribir..."}
+            {...register("rut", {
+              required: "Este campo es obligatorio",
+            })}
+          />
+          <span className="text-sm font-light leading-[1rem] text-black_b">
+            Fecha de venta
+          </span>
+          <I18nProvider locale="es-ES">
+            <Controller
+              name={"dateV"}
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  minValue={today(getLocalTimeZone())}
+                  className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
+                  {...field}
+                  label={""}
+                  placeholder="Seleccione una fecha"
+                  granularity="day"
+                  errorMessage={(value) => {
+                    if (value.isInvalid) {
+                      setErrorDataPicker(true);
+                      return "";
+                    } else {
+                      setErrorDataPicker(false);
+                      return "";
+                    }
+                  }}
+                />
+              )}
+              rules={{
+                required: dateSelected && "La fecha es obligatoria",
+              }}
+            />
+            <p className="font-roboto text-xs text-red_e">
+              {errors.dateV ? errors.dateV.message : ""}
+            </p>
+          </I18nProvider>
+          <div className="mt-4">
+            <Input
+              label={"Vendedor"}
+              placeholder={"Escribir..."}
+              {...register("seller", {
+                required: "Este campo es obligatorio",
+              })}
+            />
+
+            <label className="block text-sm font-light text-black_b">
+              Detalle
+            </label>
+            <Select
+              placeholder="Elegir lista de precios..."
+              className="rounded-lg border"
+              {...register("status")}
+              onSelectionChange={(value) => setValue("status", value)}
+            >
+              {pricesList.map((option) => (
+                <SelectItem key={option}>{option}</SelectItem>
+              ))}
+            </Select>
+            <div className="-mt-9">
+              <NextAutoComplete
+                array2={[]}
+                label2={"Vendedores Asignados"}
+                label={"Vendedores"}
+                array={[]}
+                name={"products"}
+                setValue={setValue}
+                onChange={setSearch}
+                placeholder="Producto 1"
+              />
+              <p>{errors.vendedores && errors.vendedores.message}</p>
+            </div>
+          </div>
+          <div className="mt-9 rounded-lg border p-2">
+            {" "}
+            <Checkbox
+              placeholder="Retiro de extintores"
+              radius="full"
+              className="font-light"
+              size="sm"
+            >
+              Retiro de extintores
+            </Checkbox>
+          </div>
+        </form>
+      </ReusableModal>
       <ReusableModal
         isOpen={openScannerModal}
         onClose={handleCancelClick}
@@ -387,7 +540,16 @@ const WorkshopPage = () => {
           </a>
         </div>
       </ReusableModal>
-
+      <ReusableModal
+        isOpen={isConfirmCancelModalOpen}
+        onClose={closeConfirmCancelModal}
+        title="Cambios sin guardar"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={handleConfirmCancel}
+      >
+        Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
+      </ReusableModal>
       <ReusableModal
         isOpen={isSaveConfirmationModalOpen}
         onClose={closeSaveConfirmationModal}
@@ -402,12 +564,12 @@ const WorkshopPage = () => {
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
-        title="Eliminar Empresa"
+        title="Eliminar órden"
         variant="confirmation"
         buttons={["back", "accept"]}
         onAccept={() => handleConfirmDelete(companyId)}
       >
-        Esta empresa será eliminada de forma permanente. ¿Desea continuar?
+        Esta orden será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

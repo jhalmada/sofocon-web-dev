@@ -379,7 +379,7 @@ const CompaniesPage = () => {
         </div>
         {activeTab === COMPANIE_TAB && (
           <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-            <div>
+            <div className="flex justify-center">
               {companiesResponse.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="p-4 text-center">
@@ -468,11 +468,11 @@ const CompaniesPage = () => {
             </div>
 
             <div
-              className={
-                companiesResponse.length === 0
-                  ? "hidden"
-                  : `flex justify-center p-6`
-              }
+            // className={
+            //   companiesResponse.length === 0
+            //     ? "hidden"
+            //     : `flex justify-center p-6`
+            // }
             >
               <Pagination
                 pageIndex={setItemsPerPage}

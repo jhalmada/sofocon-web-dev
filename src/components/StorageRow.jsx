@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
 const translateState = (state) => {
   switch (state) {
@@ -23,15 +23,17 @@ const StorageRow = ({
   seller,
   state,
   id,
+  editIconSrc,
+  deleteIconSrc,
+  onEditClick,
+  onDeleteClick,
 }) => {
+  const navigate = useNavigate();
   const handleRowClick = () => {
-    Navigate(`/inicio/rutas/mapa/${id}`);
+    navigate(`/inicio/taller/deposito`);
   };
   return (
-    <tr
-      className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray"
-      onClick={handleRowClick}
-    >
+    <tr className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <div className="flex">
         <img
           src={watchIcon}
@@ -40,6 +42,7 @@ const StorageRow = ({
         />
         <td
           className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
+          onClick={handleRowClick}
           title={name}
         >
           {name}
@@ -47,22 +50,47 @@ const StorageRow = ({
       </div>
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        onClick={handleRowClick}
         title={orderId}
       >
         {orderId}
       </td>
       <td
         className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        onClick={handleRowClick}
         title={entryData}
       >
         {entryData}
       </td>
-      <td className="p-2">{retirementDate}</td>
+      <td className="p-2" onClick={handleRowClick}>
+        {retirementDate}
+      </td>
 
-      <td className="p-2">{seller}</td>
+      <td className="p-2" onClick={handleRowClick}>
+        {seller}
+      </td>
 
-      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+      <td
+        className="p-2 text-md font-semibold leading-[1.16rem]"
+        onClick={handleRowClick}
+      >
         {translateState(state)}
+      </td>
+      <td className="p-2">
+        <div className="flex justify-center gap-4">
+          <img
+            src={editIconSrc}
+            alt="Edit icon"
+            className="h-5 w-5 cursor-pointer"
+            onClick={onEditClick}
+          />
+          <img
+            src={deleteIconSrc}
+            alt="Delete icon"
+            className="h-5 w-5 cursor-pointer"
+            onClick={onDeleteClick}
+          />
+        </div>
       </td>
     </tr>
   );

@@ -58,10 +58,12 @@ import WorkshopPage from "../pages/WorkshopPage";
 import UnitTemplate from "../pages/UnitTemplate";
 import RechargePage from "../pages/RechargePage";
 import RechargeDataPage from "../pages/RechargeDataPage";
-import DepositPage from "../pages/DepositPage";
+
 import AddProductPage from "../pages/AddProductPage";
 import Products from "../layouts/Products";
 import InventoryPage from "../pages/InventoryPage";
+import StoragePage from "../pages/StoragePage";
+import DepositPage from "../pages/DepositPage";
 import Inventory from "../layouts/Inventory";
 import AddCategoryPage from "../pages/AddCategoryPage";
 

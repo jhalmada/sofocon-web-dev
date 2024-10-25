@@ -90,7 +90,7 @@ const AddSellerRoutePage = ({
   };
   return (
     <div>
-      <div className="min-h-[calc(100vh-4.375rem)] overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+      <div className="min-h-[calc(100vh-4.375rem)] overflow-auto rounded-tr-lg bg-white p-5">
         <table className="w-full">
           <thead>
             <tr>

@@ -14,6 +14,13 @@ const Pagination = ({
   const startItem = total > 0 ? currentPage * itemsPerPage + 1 : 0;
   const endItem = Math.min((currentPage + 1) * itemsPerPage, total);
 
+  // Calcular el grupo de botones visibles en el rango de 5
+  const startIndex = Math.floor(currentPage / 5) * 5;
+  const pageButtons = Array.from(
+    { length: Math.min(5, totalPages - startIndex) },
+    (_, i) => startIndex + i,
+  );
+
   return (
     <div className="flex flex-col items-center px-1.5">
       <div className="flex space-x-2">
@@ -36,7 +43,25 @@ const Pagination = ({
         >
           <img src={ChevronLeftFilledIcon} alt="Chevron left icon" />
         </button>
-        {Array.from({ length: totalPages }, (_, index) => (
+
+        {/* Botón para la primera página */}
+        {currentPage > 4 && (
+          <>
+            <button
+              key={0}
+              className={`rounded-full px-4 py-2 ${currentPage === 0 ? "bg-black_l" : "bg-black/5"}`}
+              onClick={() => onPageChange(0)}
+            >
+              1
+            </button>
+            <div className="flex items-center">
+              <span className="px-2">...</span>
+            </div>
+          </>
+        )}
+
+        {/* Botones de paginación en el grupo de 5 */}
+        {pageButtons.map((index) => (
           <button
             key={index}
             className={`rounded-full px-4 py-2 ${currentPage === index ? "bg-black_l" : ""}`}
@@ -45,6 +70,23 @@ const Pagination = ({
             {index + 1}
           </button>
         ))}
+
+        {/* Botón para la última página */}
+        {currentPage < totalPages - 5 && (
+          <>
+            <div className="flex items-center">
+              <span className="px-2">...</span>
+            </div>
+            <button
+              key={totalPages - 1}
+              className={`rounded-full px-4 py-2 ${currentPage === totalPages - 1 ? "bg-black_l" : "bg-black/5"}`}
+              onClick={() => onPageChange(totalPages - 1)}
+            >
+              {totalPages}
+            </button>
+          </>
+        )}
+
         <button
           className="rounded px-4 py-2"
           onClick={() => onPageChange(currentPage + 1)}
