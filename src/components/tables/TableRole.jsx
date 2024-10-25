@@ -136,7 +136,7 @@ const TableRole = () => {
   };
 
   return (
-    <div className="flex flex-col items-center overflow-auto rounded-tr-lg bg-white p-5 shadow-t">
+    <div className="flex flex-grow flex-col items-center overflow-auto rounded-tr-lg bg-white p-5">
       {paginatedRoles.length === 0 ? (
         <tr>
           <td colSpan="5" className="p-4 text-center">

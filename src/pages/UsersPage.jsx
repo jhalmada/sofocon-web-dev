@@ -280,7 +280,7 @@ const UsersPage = () => {
         </div>
         {activeTab === USER_TAB && (
           <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-            <div>
+            <div className="flex justify-center">
               {usersResponse.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="p-4 text-center">
