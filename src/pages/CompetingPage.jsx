@@ -184,7 +184,7 @@ const CompetingPage = ({
 
   return (
     <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-      <div>
+      <div className="flex justify-center">
         {companiesResponse.length === 0 ? (
           <tr>
             <td colSpan="5" className="p-4 text-center">

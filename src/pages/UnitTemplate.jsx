@@ -42,6 +42,7 @@ const UnitTemplate = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const {
+    control,
     register,
     handleSubmit,
     setValue,
@@ -173,7 +174,7 @@ const UnitTemplate = () => {
           <div>
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray">
+                <tr>
                   <th></th>
 
                   <th className="text-center text-md font-semibold leading-[1.125rem]">
@@ -186,7 +187,7 @@ const UnitTemplate = () => {
                   </th>
                   <th></th>
                   <th></th>
-                  <th className="text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="min-w-[6rem] text-center text-md font-semibold leading-[1.125rem]">
                     Marca UNIT
                   </th>
                 </tr>

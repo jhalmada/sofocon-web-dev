@@ -17,6 +17,7 @@ const NextAutoComplete = ({
   onChange,
   label2,
   array2,
+  placeholder = "Buscar...",
 }) => {
   //estados
   const [selectedItems, setSelectedItems] = useState(array2 || []);
@@ -40,7 +41,7 @@ const NextAutoComplete = ({
 
   return (
     <div>
-      <div className="mt-2 flex w-full flex-wrap">
+      <div className="mt-9 flex w-full flex-wrap">
         {selectedItems.length > 0 && (
           <p className="font-roboto text-sm">{label2}</p>
         )}
@@ -59,12 +60,12 @@ const NextAutoComplete = ({
           </span>
         ))}
       </div>
-      <label className="mt-2 block font-roboto text-sm">{label}</label>
+      <label className="mt-4 block font-roboto text-sm">{label}</label>
       <Autocomplete
         disabledKeys={selectedItems.map((item) => item.id)}
         className="w-full rounded-lg border"
         selectedKey={""}
-        placeholder="Buscar"
+        placeholder={placeholder}
         startContent={<img src={search}></img>}
         onInputChange={(e) => onChange(e)}
       >
