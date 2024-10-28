@@ -468,11 +468,11 @@ const CompaniesPage = () => {
             </div>
 
             <div
-            // className={
-            //   companiesResponse.length === 0
-            //     ? "hidden"
-            //     : `flex justify-center p-6`
-            // }
+              className={
+                companiesResponse.length === 0
+                  ? "hidden"
+                  : `flex justify-center p-6`
+              }
             >
               <Pagination
                 pageIndex={setItemsPerPage}

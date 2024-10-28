@@ -141,7 +141,7 @@ const AddCompanyRoutePage = ({
               direction={companie.address}
               nextVisits={formatDate(companie.nextVisit)}
               state={companie.status}
-              notes={"ver notas"}
+              notes={"Ver notas"}
               deleteIconSrc={deleteIcon}
               onDeleteClick={() => openConfirmDeleteModal(companie.id)}
             />

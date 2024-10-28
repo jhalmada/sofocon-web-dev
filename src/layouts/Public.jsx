@@ -50,7 +50,7 @@ const Public = () => {
               <img
                 src={isOpen ? LogoOpen : LogoClose}
                 alt="Logo img"
-                className="mt-2.5 h-20 cursor-pointer p-4"
+                className={`${isOpen ? "" : "h-20"} mt-2.5 cursor-pointer p-4`}
                 onClick={() => navigate("/inicio")}
               />
             </div>
