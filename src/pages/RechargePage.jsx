@@ -191,7 +191,7 @@ const RechargePage = () => {
                 disabled
               />
             </div>
-            <div className="flex w-[28.5rem] space-x-2">
+            <div className="flex w-1/2 space-x-2">
               <Input
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
@@ -209,18 +209,19 @@ const RechargePage = () => {
                 disabled
               />
             </div>
-            <div className="flex space-x-2">
-              <div className="flex w-1/2">
-                <Input
-                  bg="bg-gray"
-                  width="w-[14rem]"
-                  placeholderColor="placeholder-black_b"
-                  border="none"
-                  label={"Recarga"}
-                  placeholder={"Arena"}
-                  disabled
-                />
-                <div className="-ml-4 flex space-x-2">
+            <div className="flex">
+              <div className="flex w-1/2 space-x-2">
+                <div className="w-1/2">
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Recarga"}
+                    placeholder={"Arena"}
+                    disabled
+                  />
+                </div>
+                <div className="flex w-1/2 space-x-2">
                   <Input
                     bg="bg-gray"
                     placeholderColor="placeholder-black_b"
@@ -233,14 +234,14 @@ const RechargePage = () => {
                     bg="bg-gray"
                     placeholderColor="placeholder-black_b"
                     border="none"
-                    label={"Código de barras"}
-                    placeholder={"3kg"}
+                    label={"Cód. de barras"}
+                    placeholder={"1234567890"}
                     disabled
                   />
                 </div>
               </div>
-              <div className="mt-2 flex w-1/2 items-center justify-between">
-                <span className="bg-green flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg px-1 text-white">
+              <div className="mt-2 flex w-1/2 items-center justify-between pl-2">
+                <span className="flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg bg-green px-1 text-white">
                   Habilitado
                 </span>
                 <Link to={"/inicio/taller/datos-recarga"}>

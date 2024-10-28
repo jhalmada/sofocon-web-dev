@@ -156,7 +156,7 @@ const UsersPage = () => {
         </div>
         {activeTab === USER_TAB && (
           <div className="flex-grow overflow-auto rounded-tr-lg bg-white p-5">
-            <table className="w-full">
+            <table className="mt-2 w-full">
               <thead>
                 <tr>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">

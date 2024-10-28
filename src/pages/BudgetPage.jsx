@@ -4,12 +4,11 @@ import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import useCompanies from "../hooks/companies/useCompanies";
 import { useState } from "react";
-import FilterSelect from "../components/filters/FilterSelect";
-import StorageRow from "../components/StorageRow";
-import { Checkbox, DatePicker, Select, SelectItem } from "@nextui-org/react";
+import { Checkbox, Select, SelectItem } from "@nextui-org/react";
 import { Input } from "postcss";
 import ReusableModal from "../components/modals/ReusableModal";
-const StoragePage = () => {
+import BudgetRow from "../components/BudgetRow";
+const BudgetPage = () => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -17,7 +16,7 @@ const StoragePage = () => {
   const [competence, setCompetence] = useState(false);
   const [visitFilter, setVisitFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
-
+  const visitOptions = ["< 1 mes", "< 2 meses", "> 3 meses"];
   const stateOptions = ["Activo", "Inactivo"];
   const monthsOptions = [
     "Enero",
@@ -139,39 +138,26 @@ const StoragePage = () => {
                 ID de orden
               </th>
               <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Fecha de ingreso
+                Fecha
               </th>
 
               <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Fecha de retiro
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                 Vendedor
               </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                <div className="flex flex-col gap-2">
-                  <FilterSelect
-                    options={stateOptions}
-                    placeholder="Estado"
-                    onChange={handleStateFilterChange}
-                  />
-                </div>
-              </th>
+
               <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                 Acción
               </th>
             </tr>
           </thead>
           <tbody>
-            <StorageRow
+            <BudgetRow
               key={""}
               id={""}
               name={"Nombre de la empresa"}
               orderId={"ID de orden"}
-              entryData={"Fecha de ingreso"}
-              retirementDate={"Fecha de retiro"}
+              date={"14/09/2024"}
               seller={"Vendedor"}
-              state={"estado"}
               editIconSrc={editIcon}
               deleteIconSrc={deleteIcon}
               onEditClick={() => {
@@ -265,4 +251,4 @@ const StoragePage = () => {
     </div>
   );
 };
-export default StoragePage;
+export default BudgetPage;
