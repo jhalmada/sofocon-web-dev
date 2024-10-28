@@ -8,6 +8,7 @@ import { Checkbox, Select, SelectItem } from "@nextui-org/react";
 import { Input } from "postcss";
 import ReusableModal from "../components/modals/ReusableModal";
 import BudgetRow from "../components/BudgetRow";
+import downloadIcon from "../assets/icons/download.svg";
 const BudgetPage = () => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -135,7 +136,7 @@ const BudgetPage = () => {
                 Empresa
               </th>
               <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                ID de orden
+                Contacto
               </th>
               <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                 Fecha
@@ -155,10 +156,10 @@ const BudgetPage = () => {
               key={""}
               id={""}
               name={"Nombre de la empresa"}
-              orderId={"ID de orden"}
+              contact={"123456789"}
               date={"14/09/2024"}
               seller={"Vendedor"}
-              editIconSrc={editIcon}
+              downloadIconSrc={downloadIcon}
               deleteIconSrc={deleteIcon}
               onEditClick={() => {
                 openModal();

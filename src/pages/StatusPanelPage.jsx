@@ -8,6 +8,7 @@ import { Checkbox, Select, SelectItem } from "@nextui-org/react";
 import { Input } from "postcss";
 import ReusableModal from "../components/modals/ReusableModal";
 import BudgetRow from "../components/BudgetRow";
+import StatusCard from "../components/cards/StatusCard";
 const StatusPanelPage = () => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -128,78 +129,109 @@ const StatusPanelPage = () => {
             ))}
           </Select>
         </div>
-      </div>
-
-      <ReusableModal
-        isOpen={isModalOpen}
-        onClose={handleCancelClick}
-        title="Editar Órden"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <label className="text-gray-700 block text-sm font-light">
-            Asignar estado:
-          </label>
-          <Select
-            placeholder="Estado"
-            className="mb-4 rounded-lg border"
-            {...register("status")}
-            onSelectionChange={(value) => setValue("status", value)}
-          >
-            {stateOptions.map((option) => (
-              <SelectItem key={option}>{option}</SelectItem>
-            ))}
-          </Select>
-
-          <Input
-            label={"ID de órden"}
-            placeholder={"Escribir..."}
-            {...register("orderId", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <Input
-            label={"Cliente"}
-            placeholder={"Escribir..."}
-            {...register("client", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <Input
-            label={"R.U.T./CI"}
-            placeholder={"Escribir..."}
-            {...register("rut", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <span className="text-sm font-light leading-[1rem] text-black_b">
-            Fecha de venta
-          </span>
-
-          <div className="mt-4">
-            <Input
-              label={"Vendedor"}
-              placeholder={"Escribir..."}
-              {...register("seller", {
-                required: "Este campo es obligatorio",
-              })}
+        <div className="mt-4 grid grid-cols-5 text-center font-semibold">
+          <p>Solicitado (+99)</p>
+          <p>Preparación (2)</p>
+          <p>Para retirar (47)</p>
+          <p>Egreso (2)</p>
+          <p>Entregado (+99)</p>
+        </div>
+        <div className="grid grid-cols-5">
+          {/* Solicitado */}
+          <div className="space-y-6 border-r-2 border-gray px-2">
+            <StatusCard
+              clientName={"Nombre del cliente"}
+              orderId={"ID de la orden"}
+              productsList={"Lista de productos"}
+              date={"24/09/2024"}
+              sellerName={"Nombre vendedor"}
+            />
+            <StatusCard
+              clientName={"Nombre del cliente"}
+              orderId={"ID de la orden"}
+              productsList={"Lista de productos"}
+              date={"24/09/2024"}
+              sellerName={"Nombre vendedor"}
             />
           </div>
-          <div className="mt-9 rounded-lg border p-2">
-            {" "}
-            <Checkbox
-              placeholder="Retiro de extintores"
-              radius="full"
-              className="font-light"
-              size="sm"
-            >
-              Retiro de extintores
-            </Checkbox>
+          {/* Preparación */}
+          <div className="space-y-6 border-r-2 border-gray px-2">
+            <StatusCard
+              bg="bg-red_b"
+              clientName={"Nombre del cliente"}
+              orderId={"ID de la orden"}
+              productsList={"Lista de productos"}
+              date={"24/09/2024"}
+              sellerName={"Nombre vendedor"}
+            />
+            <StatusCard
+              bg="bg-red_b"
+              clientName={"Nombre del cliente"}
+              orderId={"ID de la orden"}
+              productsList={"Lista de productos"}
+              date={"24/09/2024"}
+              sellerName={"Nombre vendedor"}
+            />
           </div>
-        </form>
-      </ReusableModal>
+          {/* Para retirar */}
+          <div className="space-y-6 border-r-2 border-gray px-2">
+            <StatusCard
+              bg="bg-yellow"
+              clientName={"Nombre del cliente"}
+              orderId={"ID de la orden"}
+              productsList={"Lista de productos"}
+              date={"24/09/2024"}
+              sellerName={"Nombre vendedor"}
+            />
+            <StatusCard
+              bg="bg-yellow"
+              clientName={"Nombre del cliente"}
+              orderId={"ID de la orden"}
+              productsList={"Lista de productos"}
+              date={"24/09/2024"}
+              sellerName={"Nombre vendedor"}
+            />
+          </div>
+          {/* Egreso */}
+          <div className="space-y-6 border-r-2 border-gray px-2">
+            <StatusCard
+              bg="bg-blue_b"
+              clientName={"Nombre del cliente"}
+              orderId={"ID de la orden"}
+              productsList={"Lista de productos"}
+              date={"24/09/2024"}
+              sellerName={"Nombre vendedor"}
+            />
+            <StatusCard
+              bg="bg-blue_b"
+              clientName={"Nombre del cliente"}
+              orderId={"ID de la orden"}
+              productsList={"Lista de productos"}
+              date={"24/09/2024"}
+              sellerName={"Nombre vendedor"}
+            />
+          </div>
+          {/* Entregado */}
+          <div className="space-y-6 border-r-2 border-gray px-2">
+            <StatusCard
+              bg="bg-green"
+              clientName={"Nombre del cliente"}
+              orderId={"ID de la orden"}
+              productsList={"Lista de productos"}
+              date={"24/09/2024"}
+              sellerName={"Nombre vendedor"}
+            />
+            <StatusCard
+              bg="bg-green"
+              clientName={"Nombre del cliente"}
+              orderId={"ID de la orden"}
+              productsList={"Lista de productos"}
+              date={"24/09/2024"}
+              sellerName={"Nombre vendedor"}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

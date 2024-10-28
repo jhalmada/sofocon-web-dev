@@ -18,11 +18,11 @@ const translateState = (state) => {
 
 const BudgetRow = ({
   name,
-  orderId,
+  contact,
   date,
   seller,
   id,
-  editIconSrc,
+  downloadIconSrc,
   deleteIconSrc,
   onEditClick,
   onDeleteClick,
@@ -39,7 +39,7 @@ const BudgetRow = ({
   ];
   return (
     <tr className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray">
-      <div className="mt-2 flex">
+      <div className="mt-2 flex w-full">
         <img
           src={watchIcon}
           alt="watch icon"
@@ -56,9 +56,9 @@ const BudgetRow = ({
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         onClick={handleRowClick}
-        title={orderId}
+        title={contact}
       >
-        {orderId}
+        {contact}
       </td>
       <td
         className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
@@ -75,7 +75,7 @@ const BudgetRow = ({
       <td className="p-2">
         <div className="flex justify-center gap-4">
           <img
-            src={editIconSrc}
+            src={downloadIconSrc}
             alt="Edit icon"
             className="h-5 w-5 cursor-pointer"
             onClick={onEditClick}
