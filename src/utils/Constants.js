@@ -6,6 +6,7 @@ export const LOGIN_ROUTE = "login";
 export const RECOVER_ROUTE = "recuperar-contraseña";
 export const NEW_PASSWORD_ROUTE = "nueva-contraseña";
 export const PASSWORD_CHANGED_ROUTE = "cambiar-contraseña";
+export const PASSWORD_CODE_ROUTE = "mensajePassword";
 export const COMPANIES_ROUTE = "empresas";
 export const NOTES_ROUTE = "notas/:id";
 export const USERS_ROUTE = "personal";

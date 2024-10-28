@@ -1,20 +1,31 @@
 import { useForm } from "react-hook-form";
 import Input from "../components/inputs/Input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useRecovery from "../hooks/auth/useRecovery";
+import { LOGIN_ROUTE, PASSWORD_CODE_ROUTE } from "../utils/Constants";
+import ReusableModal from "../components/modals/ReusableModal";
+import { useState } from "react";
 const RecoverPasswordPage = () => {
+  const [modalMensaje, setModalMensaje] = useState(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const { postRecoveryPassword } = useRecovery();
+  const { postRecoveryPassword, loading } = useRecovery();
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { email } = data;
-    const respuesta = postRecoveryPassword({ email });
+    const respuesta = await postRecoveryPassword({ email });
     console.log(respuesta);
+    if (respuesta.response) {
+      setModalMensaje(true);
+    } else {
+      navigate(`/${LOGIN_ROUTE}/${PASSWORD_CODE_ROUTE}`);
+    }
   };
 
   return (
@@ -55,6 +66,16 @@ const RecoverPasswordPage = () => {
           ENVIAR CODIGO
         </button>
       </div>
+      <ReusableModal
+        isOpen={modalMensaje}
+        onClose={() => setModalMensaje(false)}
+        title="Correo inválido"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setModalMensaje(false)}
+      >
+        Este correo no se encuentra en la base de datos.
+      </ReusableModal>
     </form>
   );
 };

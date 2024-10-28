@@ -15,4 +15,11 @@ export class UserService {
 
   static getUsersSellersApi = async (params) =>
     await axios.get(usersRoutes.getUsersSeller, { params });
+
+  static putUserApiPassword = async (userData, token) =>
+    await axios.put(usersRoutes.putUsersPassword, userData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 }

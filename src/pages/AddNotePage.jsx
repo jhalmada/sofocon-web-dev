@@ -21,7 +21,6 @@ const AddNotesPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [noteData, setNoteData] = useState(null);
 
   const [dateSelected, setDateSelected] = useState(false);
   const [reminderSelected, setReminderSelected] = useState(false);
@@ -109,7 +108,7 @@ const AddNotesPage = () => {
         id: idCliente,
       },
       isReminder: reminderSelected,
-      date: formattedDate,
+      date: dateSelected ? formattedDate : null,
     });
   };
 
