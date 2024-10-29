@@ -1,6 +1,5 @@
 import Pagination from "../components/Pagination";
 import { useForm } from "react-hook-form";
-import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import useCompanies from "../hooks/companies/useCompanies";
 import { useState } from "react";

@@ -191,6 +191,9 @@ const RechargePage = () => {
                 disabled
               />
             </div>
+            <label className="block text-sm font-semibold text-black_b">
+              Detalle
+            </label>
             <div className="flex w-1/2 space-x-2">
               <Input
                 bg="bg-gray"

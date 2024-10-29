@@ -233,7 +233,7 @@ const OrdersPage = () => {
             )}
             {activeTab === BUDGET_TAB && (
               <div className="flex gap-[.6rem]">
-                <Link to={"/inicio/ordenes/nueva-venta"}>
+                <Link to={"/inicio/ordenes/nuevo-presupuesto"}>
                   <Button text="Nuevo presupuesto" icon={PlusIcon} />
                 </Link>
               </div>

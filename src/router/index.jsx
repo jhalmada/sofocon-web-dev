@@ -30,6 +30,8 @@ import {
   CATEGORY_ADD,
   PASSWORD_CODE_ROUTE,
   NEW_SALE_ROUTE,
+  NEW_BUDGET_ROUTE,
+  BUDGET_ROUTE,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
 import RecoverPasswordPage from "../pages/RecoverPasswordPage";
@@ -53,26 +55,26 @@ import RoutesPage from "../pages/RoutesPage";
 import ProductsPage from "../pages/ProductsPage";
 import { Login } from "../layouts/Login";
 import RedirectionPage from "../pages/RedirectionPage";
-import OrdersPage from "../pages/OrdersPage";
-import OrdersLayout from "../layouts/Orders";
 import NotesPage from "../pages/NotesPage";
 import RouteMapDetailsPage from "../pages/RouteMapDetailsPage";
+import OrdersPage from "../pages/OrdersPage";
+import OrdersLayout from "../layouts/Orders";
+import NewBudgetPage from "../pages/NewBudgetPage";
 import WorkshopLayout from "../layouts/Workshop";
 import WorkshopPage from "../pages/WorkshopPage";
 import UnitTemplate from "../pages/UnitTemplate";
 import RechargePage from "../pages/RechargePage";
 import RechargeDataPage from "../pages/RechargeDataPage";
-
 import AddProductPage from "../pages/AddProductPage";
 import Products from "../layouts/Products";
 import InventoryPage from "../pages/InventoryPage";
-
 import DepositPage from "../pages/DepositPage";
 import Inventory from "../layouts/Inventory";
 import AddCategoryPage from "../pages/AddCategoryPage";
 import PasswordCodePage from "../pages/PasswordCodePage";
 import ClientsOrdersPage from "../pages/ClientsOrdersPage";
 import NewSalePage from "../pages/NewSalePage";
+import BudgetDataPage from "../pages/BudgetDataPage";
 
 export const router = createBrowserRouter([
   {
@@ -225,8 +227,16 @@ export const router = createBrowserRouter([
             element: <ClientsOrdersPage />,
           },
           {
+            path: BUDGET_ROUTE,
+            element: <BudgetDataPage />,
+          },
+          {
             path: NEW_SALE_ROUTE,
             element: <NewSalePage />,
+          },
+          {
+            path: NEW_BUDGET_ROUTE,
+            element: <NewBudgetPage />,
           },
         ],
       },

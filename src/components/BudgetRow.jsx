@@ -29,7 +29,7 @@ const BudgetRow = ({
 }) => {
   const navigate = useNavigate();
   const handleRowClick = () => {
-    navigate(`/inicio/ordenes/ordenes-clientes`);
+    navigate(`/inicio/ordenes/presupuesto`);
   };
   const options = [
     "Solicitado",
