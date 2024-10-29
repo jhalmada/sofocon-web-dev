@@ -212,7 +212,7 @@ const OrdersPage = () => {
               onClick={() => setActiveTab(BUDGET_TAB)}
               className={`${activeTab === BUDGET_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-52 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Presupuesto
+              Presupuestos
             </h2>
             <h2
               onClick={() => setActiveTab(STATUS_PANEL_TAB)}
