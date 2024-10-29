@@ -133,7 +133,7 @@ const NotesPage = () => {
       title,
       description,
       isReminder: reminderSelected,
-      date: formattedDate,
+      date: dateSelected ? formattedDate : null,
     });
   };
 
@@ -264,7 +264,7 @@ const NotesPage = () => {
             <div>
               <Checkbox
                 defaultSelected={dateSelected}
-                onchange={() => setDateSelected(!dateSelected)}
+                onClick={() => setDateSelected(!dateSelected)}
                 radius="full"
                 className="font-light"
               >
