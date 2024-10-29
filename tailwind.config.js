@@ -22,6 +22,7 @@ export default {
         blue_b: "#4071D1",
         blue_l: "#81ACFF",
         green: "#25B574",
+        yellow: "#F3A826",
       },
       boxShadow: {
         bl: "2px 3px 6px rgba(0, 0, 0, 0.2)",
@@ -34,6 +35,7 @@ export default {
         roboto: ['"Roboto Flex"', "sans-serif"],
       },
       fontSize: {
+        xxs: "10px",
         xs: "12px",
         sm: "14px",
         md: "16px",

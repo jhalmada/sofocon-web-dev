@@ -3,17 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
-import ChevronRightIcon from "../assets/icons/chevron-right.svg";
 import { useState } from "react";
 import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import useRoles from "../hooks/roles/use.roles";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import cameraIcon from "../assets/icons/camera.svg";
-import { DatePicker } from "@nextui-org/react";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import { I18nProvider } from "@react-aria/i18n";
+
 const RechargeDataPage = () => {
   const {
     register,
@@ -35,6 +32,20 @@ const RechargeDataPage = () => {
 
   const stateOptions = ["Habilitado", "Inhabilitado"];
   const productsOptions = ["Polvo", "Arena"];
+  const monthsOptions = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
 
   const handleUserCreation = async (userData) => {
     try {
@@ -180,24 +191,15 @@ const RechargeDataPage = () => {
                     placeholder="MM/AA"
                     onSelectionChange={(values) => setValue("status", values)}
                   >
-                    <SelectItem>Enero 2024</SelectItem>
-                    <SelectItem>Febrero 2024</SelectItem>
-                    <SelectItem>Marzo 2024</SelectItem>
-                    <SelectItem>Abril 2024</SelectItem>
-                    <SelectItem>Mayo 2024</SelectItem>
-                    <SelectItem>Junio 2024</SelectItem>
-                    <SelectItem>Julio 2024</SelectItem>
-                    <SelectItem>Agosto 2024</SelectItem>
-                    <SelectItem>Septiembre 2024</SelectItem>
-                    <SelectItem>Octubre 2024</SelectItem>
-                    <SelectItem>Noviembre 2024</SelectItem>
-                    <SelectItem>Diciembre 2024</SelectItem>
+                    {monthsOptions.map((month) => (
+                      <SelectItem key={month.key}>{month}</SelectItem>
+                    ))}
                   </Select>
                 </div>
               </span>
             </div>
             <div className="flex space-x-2">
-              <div className="flex w-[28.5rem] flex-col">
+              <div className="flex w-1/2 flex-col">
                 <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                   Producto
                 </span>

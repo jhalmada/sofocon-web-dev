@@ -49,6 +49,21 @@ const UnitTemplate = () => {
     formState: { errors },
   } = useForm();
 
+  const monthsOptions = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
   const closeModal = () => {
     setIsExportModalOpen(false);
     setIsModalOpen(false);
@@ -133,31 +148,7 @@ const UnitTemplate = () => {
               Planilla UNIT
             </h2>
           </div>
-          <div className="flex items-center">
-            <h2
-              className={`cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 text-black_m`}
-            >
-              Período
-            </h2>
-            <Select
-              className="w-52"
-              placeholder="OCTUBRE 2024"
-              onSelectionChange={(values) => setValue("status", values)}
-            >
-              <SelectItem>Enero 2024</SelectItem>
-              <SelectItem>Febrero 2024</SelectItem>
-              <SelectItem>Marzo 2024</SelectItem>
-              <SelectItem>Abril 2024</SelectItem>
-              <SelectItem>Mayo 2024</SelectItem>
-              <SelectItem>Junio 2024</SelectItem>
-              <SelectItem>Julio 2024</SelectItem>
-              <SelectItem>Agosto 2024</SelectItem>
-              <SelectItem>Septiembre 2024</SelectItem>
-              <SelectItem>Octubre 2024</SelectItem>
-              <SelectItem>Noviembre 2024</SelectItem>
-              <SelectItem>Diciembre 2024</SelectItem>
-            </Select>
-          </div>
+
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
             <div className="flex space-x-4">
               <Button
@@ -172,7 +163,19 @@ const UnitTemplate = () => {
 
         <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
           <div>
-            <table className="w-full">
+            <div className="flex items-center gap-2">
+              <p className="ml-2 text-black_m">Período</p>
+              <Select
+                className="w-52 rounded-lg border"
+                placeholder="OCTUBRE 2024 "
+                onSelectionChange={(values) => setValue("period", values)}
+              >
+                {monthsOptions.map((option) => (
+                  <SelectItem key={option}>{option}</SelectItem>
+                ))}
+              </Select>
+            </div>
+            <table className="mt-2 w-full">
               <thead>
                 <tr>
                   <th></th>
