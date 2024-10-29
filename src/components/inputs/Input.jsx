@@ -16,6 +16,7 @@ const Input = forwardRef(
       placeholderColor = "placeholder-gray-400",
       bg = "bg-transparent",
       width = "w-full",
+      width2 = "w-full",
       ...props
     },
     ref,
@@ -30,7 +31,7 @@ const Input = forwardRef(
       type === "password" ? (isVisible ? "text" : "password") : type;
 
     return (
-      <div className="w-full">
+      <div className={`${width}`}>
         <label
           htmlFor={name} // Cambiado para usar `name`
           className={`font-roboto font-light ${errorApi || msjError ? "text-red_e" : "text-black"} text-sm`}
@@ -44,7 +45,7 @@ const Input = forwardRef(
             ref={ref}
             type={inputType}
             placeholder={placeholder}
-            className={`${placeholderColor} relative h-10 ${bg} ${width} rounded-md ${border} p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${
+            className={`${placeholderColor} relative h-10 ${bg} w-full rounded-md ${border} p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${
               errorApi || msjError
                 ? "border-red_e placeholder-red_e"
                 : "border-gray-300"

@@ -172,6 +172,7 @@ const ProductsPage = () => {
                     totalProducts={category.totalProducts}
                     onEdit={() => handleEdit(category.id)}
                     onDelete={() => handleDelete(category.id)}
+                    id={category.id}
                   />
                 ))}
               </section>

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import UserRow from "../components/UserRow.jsx";
 import TableRole from "../components/tables/TableRole.jsx";
 import Button from "../components/buttons/Button.jsx";
@@ -24,6 +24,9 @@ import SellersPage from "./SellersPage.jsx";
 import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
 import BackButton from "../components/buttons/BackButton.jsx";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
+import useGetProducts from "../hooks/products/useGetProducts.js";
+import { use } from "framer-motion/client";
+import InventaryRow from "../components/InventaryRow.jsx";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
@@ -31,7 +34,7 @@ const UsersPage = () => {
   const { changedUser } = usePutUsers();
   const [userId, setUserId] = useState(null);
   const {
-    usersResponse,
+    productsResponse,
     setItemsPerPage,
     totalPage,
     total,
@@ -40,7 +43,8 @@ const UsersPage = () => {
     itemsPerPage,
     setModified,
     setSearch,
-  } = useUsers();
+    setCategory,
+  } = useGetProducts();
   const { RolesResponse } = useRoles();
   const { deleteUser } = useDeleteUsers();
   const [activeTab, setActiveTab] = useState(USER_TAB);
@@ -53,10 +57,6 @@ const UsersPage = () => {
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
-  const [roleFilter, setRoleFilter] = useState("");
-  const [stateFilter, setStateFilter] = useState("");
-  const roleOptions = RolesResponse?.map((role) => role.name) || [];
-  const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
     handleSubmit,
@@ -64,18 +64,7 @@ const UsersPage = () => {
     formState: { errors },
   } = useForm();
 
-  const openModal = (id) => {
-    const userToEdit = usersResponse.find((user) => user.id === id);
-    if (userToEdit) {
-      setValue("fullName", userToEdit.userInfo.fullName);
-      setValue("email", userToEdit.email);
-      setValue("ci", userToEdit.userInfo.ci);
-      setValue("phone", userToEdit.userInfo.phone);
-      setValue("role", userToEdit?.role?.id || "");
-    }
-    setIsModalOpen(true);
-    setUserId(id);
-  };
+  const openModal = (id) => {};
   const openExportModal = (id) => {
     setIsExportModalOpen(true);
   };
@@ -120,6 +109,12 @@ const UsersPage = () => {
     setStateFilter(value);
   };
 
+  const { id, name } = useParams();
+
+  useEffect(() => {
+    setCategory(id);
+  }, []);
+
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex flex-grow flex-col px-6 pt-6">
@@ -137,7 +132,7 @@ const UsersPage = () => {
             <h2
               className={`w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Nombre de la categoria
+              {name}
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
@@ -160,58 +155,35 @@ const UsersPage = () => {
               <thead>
                 <tr>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre Completo
+                    Nombre
                   </th>
                   <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Email
+                    Descripción
                   </th>
                   <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
-                      <FilterSelect
-                        options={roleOptions}
-                        placeholder="Rol"
-                        onChange={handleRoleFilterChange}
-                      />
-                    </div>
+                    Stock
                   </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col items-center gap-2">
-                      <FilterSelect
-                        options={stateOptions}
-                        placeholder="Estado"
-                        onChange={handleStateFilterChange}
-                      />
-                    </div>
-                  </th>
+
                   <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Acción
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {usersResponse
-                  .filter((user) => {
-                    return (
-                      (roleFilter === "" || user?.role?.name === roleFilter) &&
-                      (stateFilter === "" ||
-                        (user.isActive ? "Activo" : "Inactivo") === stateFilter)
-                    );
-                  })
-                  .map((user, index) => (
-                    <UserRow
-                      state={user.isActive}
-                      key={index}
-                      fullName={`${user.userInfo.fullName} `}
-                      email={user.email}
-                      role={user?.role?.name}
-                      editIconSrc={editIcon}
-                      deleteIconSrc={deleteIcon}
-                      onEditClick={() => {
-                        openModal(user.id);
-                      }}
-                      onDeleteClick={() => openConfirmDeleteModal(user.id)}
-                    />
-                  ))}
+                {productsResponse.map((user, index) => (
+                  <InventaryRow
+                    name={user.name}
+                    key={index}
+                    description={user.description}
+                    stock={user.stock}
+                    editIconSrc={editIcon}
+                    deleteIconSrc={deleteIcon}
+                    onEditClick={() => {
+                      openModal(user.id);
+                    }}
+                    onDeleteClick={() => openConfirmDeleteModal(user.id)}
+                  />
+                ))}
               </tbody>
             </table>
             <div className="flex justify-center p-6">
