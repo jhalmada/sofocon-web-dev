@@ -40,15 +40,15 @@ const NextAutoComplete = ({
   };
 
   return (
-    <div>
-      <div className="mt-9 flex w-full flex-wrap">
+    <>
+      <div className="flex w-full flex-wrap">
         {selectedItems.length > 0 && (
           <p className="font-roboto text-sm">{label2}</p>
         )}
         {selectedItems.map((item, index) => (
           <span
             key={index}
-            className="mt-2 flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br"
+            className="mt-1 flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br"
           >
             {item.name}
             <img
@@ -60,7 +60,7 @@ const NextAutoComplete = ({
           </span>
         ))}
       </div>
-      <label className="mt-4 block font-roboto text-sm">{label}</label>
+      <label className="mt-1 block font-roboto text-sm">{label}</label>
       <Autocomplete
         disabledKeys={selectedItems.map((item) => item.id)}
         className="w-full rounded-lg border"
@@ -80,7 +80,7 @@ const NextAutoComplete = ({
           </AutocompleteItem>
         ))}
       </Autocomplete>
-    </div>
+    </>
   );
 };
 

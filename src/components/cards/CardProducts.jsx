@@ -52,7 +52,7 @@ const CardProducts = ({
 
           <img
             src={Arrow}
-            className="w-[10%] rotate-180 cursor-pointer"
+            className="w-[10%] rotate-180 cursor-pointer transition-all hover:scale-110"
             onClick={() => handleClick()}
           ></img>
         </div>

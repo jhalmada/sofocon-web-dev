@@ -1,8 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import Input from "../components/inputs/Input";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
-
 import uploadIcon from "../assets/icons/upload.svg";
 import Button from "../components/buttons/Button";
 import arrowRigthIcon from "../assets/icons/arrow-right.svg";
@@ -62,7 +60,9 @@ const AddProductPage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("color", data.color);
-    formData.append("file", file);
+    if (file) {
+      formData.append("file", file);
+    }
     formData.append(
       "list",
       JSON.stringify(
@@ -199,12 +199,12 @@ const AddProductPage = () => {
                     message: "Campo obligatorio",
                   },
                   maxLength: {
-                    value: 50,
-                    message: "el campo no puede exceder los 50 caracteres.",
+                    value: 5,
+                    message: "el campo no puede exceder los 5 caracteres.",
                   },
                   minLength: {
-                    value: 3,
-                    message: "el campo debe contener al menos 3 caracteres.",
+                    value: 1,
+                    message: "el campo debe contener al menos 1 caracteres.",
                   },
                 })}
                 msjError={errors.unit ? errors.unit.message : ""}
@@ -225,13 +225,14 @@ const AddProductPage = () => {
                   message: "el campo no puede exceder los 50 caracteres.",
                 },
                 minLength: {
-                  value: 3,
-                  message: "el campo debe contener al menos 3 caracteres.",
+                  value: 1,
+                  message: "el campo debe contener al menos 1 caracteres.",
                 },
               })}
               msjError={errors.stock ? errors.stock.message : ""}
             />
             <AutoCompleteArray
+              label={"Lista de precios"}
               array={busquedas}
               setValue={setValue}
               name={"list"}
@@ -248,9 +249,7 @@ const AddProductPage = () => {
                 id="file"
                 type="file"
                 accept="image/*"
-                {...register("file", {
-                  required: "Este campo es obligatorio",
-                })}
+                {...register("file")}
                 onChange={handleFileChange}
               />
               <label htmlFor="file" className="flex items-center gap-4">

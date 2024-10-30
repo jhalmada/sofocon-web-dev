@@ -59,7 +59,7 @@ const AutoCompleteArray = ({
           >
             <span
               key={item.id}
-              className="flex w-[78%] items-center justify-between rounded-lg p-2 shadow-br"
+              className="flex w-[68%] items-center justify-between rounded-lg p-2 shadow-br"
             >
               <span className="mr-2">{item.name}</span>
               <img
@@ -71,7 +71,7 @@ const AutoCompleteArray = ({
             </span>
             <Input
               label="Precio"
-              width="w-[20%]"
+              width="w-[30%]"
               placeholder="Ingrese valor"
               value={item.value}
               onChange={(e) => handleInputChange(item.id, e.target.value)}
