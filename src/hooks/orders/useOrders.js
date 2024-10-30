@@ -9,8 +9,10 @@ const useOrders = () => {
   const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
-  const [client, setClient] = useState(null);
-  const [nextVisit, setNextVisit] = useState(null);
+  const [isPreOrder, setIsPreOrder] = useState(false);
+  const [isDirect, setIsDirect] = useState(false);
+  const [status, setStatus] = useState(null);
+
   const getAllOrders = async () => {
     try {
       setLoading(true);
@@ -18,11 +20,14 @@ const useOrders = () => {
         page,
         itemsPerPage,
         search,
-        client,
-        nextVisit,
+        isPreOrder,
+        isDirect,
+        status,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
+      console.log("la data de ordenes es");
+      console.log(data);
       setOrdersResponse(data.result);
     } catch (e) {
       console.log(e);
@@ -33,22 +38,22 @@ const useOrders = () => {
 
   useEffect(() => {
     getAllOrders();
-  }, [page, itemsPerPage, modified, client, nextVisit, search]);
+  }, [page, itemsPerPage, modified, search, isPreOrder, isDirect, status]);
   return {
     ordersResponse,
     loading,
-    setItemsPerPage,
     totalPage,
     total,
-    setPage,
     page,
     itemsPerPage,
-    setModified,
     modified,
+    setPage,
+    setModified,
+    setItemsPerPage,
     setSearch,
-    setNextVisit,
-    client,
-    setClient,
+    setIsDirect,
+    setIsPreOrder,
+    setStatus,
   };
 };
 

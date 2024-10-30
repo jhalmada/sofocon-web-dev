@@ -166,7 +166,7 @@ const UsersPage = () => {
                     Email
                   </th>
                   <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-center gap-2">
                       <FilterSelect
                         options={roleOptions}
                         placeholder="Rol"

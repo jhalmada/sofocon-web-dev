@@ -13,6 +13,7 @@ import { getLocalTimeZone, today } from "@internationalized/date";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import CheckLgIcon from "../assets/icons/check-lg.svg";
+import DownloadIcon from "../assets/icons/download-white.svg";
 
 const BudgetDataPage = () => {
   const {
@@ -297,10 +298,10 @@ const BudgetDataPage = () => {
           </div>
           <div className="mt-5 flex w-full justify-end">
             <Button
-              text={"GUARDAR"}
+              text={"DESCARGAR"}
               color={"save"}
               type={"submit"}
-              icon={CheckLgIcon}
+              icon={DownloadIcon}
             />
           </div>
         </form>

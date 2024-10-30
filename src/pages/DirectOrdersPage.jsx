@@ -1,27 +1,40 @@
 import Pagination from "../components/Pagination";
-import { useForm } from "react-hook-form";
-import editIcon from "../assets/icons/pencil-square.svg";
+
 import deleteIcon from "../assets/icons/trash3.svg";
-import useCompanies from "../hooks/companies/useCompanies";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
-import StorageRow from "../components/StorageRow";
-import { Checkbox, Select, SelectItem } from "@nextui-org/react";
-import { Input } from "postcss";
+import { Select, SelectItem } from "@nextui-org/react";
+
 import ReusableModal from "../components/modals/ReusableModal";
 import DirectOrdersRow from "../components/DirectOrdersRow";
-const DirectOrdersPage = () => {
-  const [companyId, setCompanyId] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
-  const [competence, setCompetence] = useState(false);
-  const [visitFilter, setVisitFilter] = useState("");
-  const [stateFilter, setStateFilter] = useState("");
+import useOrders from "../hooks/orders/useOrders";
+import useDeleteOrders from "../hooks/orders/useDeleteOrders";
 
-  //constantes
-  const visitOptions = ["< 1 mes", "< 2 meses", "> 3 meses"];
-  const stateOptions = ["Activo", "Inactivo"];
+const DirectOrdersPage = () => {
+  const [orderId, setOrderId] = useState(null);
+
+  const { deleteOrder } = useDeleteOrders();
+  const {
+    ordersResponse,
+    setItemsPerPage,
+    totalPage,
+    total,
+    setPage,
+    page,
+    itemsPerPage,
+    setModified,
+    setStatus,
+  } = useOrders();
+
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+
+  const stateOptions = [
+    "Solicitado",
+    "En preparación",
+    "Para retirar",
+    "Egreso",
+  ];
+
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -36,86 +49,42 @@ const DirectOrdersPage = () => {
     "Noviembre",
     "Diciembre",
   ];
-  const {
-    control,
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
-  const {
-    companiesResponse,
-    setItemsPerPage,
-    totalPage,
-    total,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-  } = useCompanies();
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    return `${month}/${day}/${year}`;
-  };
 
-  const onSubmit = (data) => {
-    console.log(data);
-    const {
-      nextVisit,
-      name,
-      department,
-      managerName,
-      phone,
-      status,
-      address,
-      neighborhood,
-    } = data;
-  };
-  const openModal = (id) => {
-    const companyToEdit = companiesResponse.find(
-      (company) => company.id === id,
-    );
-    if (companyToEdit) {
-      setValue("name", companyToEdit?.name || "");
-      setValue("department", companyToEdit?.department || "");
-      setValue("neighborhood", companyToEdit?.neighborhood || "");
-      setValue("address", companyToEdit?.address || "");
-      setValue("managerName", companyToEdit?.managerName || "");
-      setValue("phone", companyToEdit?.phone || "");
-      setValue("rut", companyToEdit?.rut || "");
-      setValue("status", companyToEdit?.status || "");
-      setValue(
-        "nextVisit",
-        parseAbsoluteToLocal(
-          companyToEdit?.nextVisit || "2024-10-02T21:46:00.330Z",
-        ),
-      );
-      companyToEdit.competenceName
-        ? setValue("competenceName", companyToEdit.competenceName)
-        : setValue("competenceName", "");
-      companyToEdit.competenceName ? setCompetence(true) : setCompetence(false);
-    }
-    setIsModalOpen(true);
-    setCompanyId(id);
-    setIsModalOpen(true);
+    return `${day}/${month}/${year}`;
   };
   const openConfirmDeleteModal = (id) => {
-    setCompanyId(id);
+    setOrderId(id);
     setConfirmDeleteModalOpen(true);
   };
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
-  const handleCancelClick = () => {
-    openConfirmCancelModal();
-    setOpenScannerModal(false);
+
+  const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
+
+  const handleConfirmDelete = () => {
+    deleteOrder(orderId, setModified);
+    closeConfirmDeleteModal();
   };
-  const handleVisitFilterChange = (value) => {
-    setVisitFilter(value);
-  };
+
   const handleStateFilterChange = (value) => {
-    setStateFilter(value);
+    switch (value) {
+      case "Solicitado":
+        setStatus("REQUEST");
+        break;
+      case "Preparacion":
+        setStatus("PREPARATION");
+        break;
+      case "Listo para retirar":
+        setStatus("READY");
+        break;
+      default:
+        setStatus("");
+        break;
+    }
   };
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
@@ -125,7 +94,6 @@ const DirectOrdersPage = () => {
           <Select
             className="w-52 rounded-lg border"
             placeholder="OCTUBRE 2024 "
-            onSelectionChange={(values) => setValue("period", values)}
           >
             {monthsOptions.map((option) => (
               <SelectItem key={option}>{option}</SelectItem>
@@ -149,7 +117,7 @@ const DirectOrdersPage = () => {
                 Vendedor
               </th>
               <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col items-center gap-2">
                   <FilterSelect
                     options={stateOptions}
                     placeholder="Estado"
@@ -163,21 +131,25 @@ const DirectOrdersPage = () => {
             </tr>
           </thead>
           <tbody>
-            <DirectOrdersRow
-              key={""}
-              id={""}
-              name={"Nombre de la empresa"}
-              orderId={"ID de orden"}
-              date={"14/09/2024"}
-              seller={"Vendedor"}
-              state={"estado"}
-              editIconSrc={editIcon}
-              deleteIconSrc={deleteIcon}
-              onEditClick={() => {
-                openModal();
-              }}
-              onDeleteClick={() => openConfirmDeleteModal()}
-            />
+            {ordersResponse
+              .filter((order) => order.isDirect)
+              .map((order, index) => (
+                <DirectOrdersRow
+                  key={index}
+                  id={order.id}
+                  name={order.client.name}
+                  orderId={order.id}
+                  date={
+                    order.created_at
+                      ? formatDate(order.created_at)
+                      : "Sin fecha"
+                  }
+                  seller={"Vendedor"}
+                  state={order.status}
+                  deleteIconSrc={deleteIcon}
+                  onDeleteClick={() => openConfirmDeleteModal(order.id)}
+                />
+              ))}
           </tbody>
         </table>
       </div>
@@ -192,74 +164,14 @@ const DirectOrdersPage = () => {
         />
       </div>
       <ReusableModal
-        isOpen={isModalOpen}
-        onClose={handleCancelClick}
-        title="Editar Órden"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
+        isOpen={isConfirmDeleteModalOpen}
+        onClose={closeConfirmDeleteModal}
+        title="Eliminar órden"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={() => handleConfirmDelete(orderId)}
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <label className="text-gray-700 block text-sm font-light">
-            Asignar estado:
-          </label>
-          <Select
-            placeholder="Estado"
-            className="mb-4 rounded-lg border"
-            {...register("status")}
-            onSelectionChange={(value) => setValue("status", value)}
-          >
-            {stateOptions.map((option) => (
-              <SelectItem key={option}>{option}</SelectItem>
-            ))}
-          </Select>
-
-          <Input
-            label={"ID de órden"}
-            placeholder={"Escribir..."}
-            {...register("orderId", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <Input
-            label={"Cliente"}
-            placeholder={"Escribir..."}
-            {...register("client", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <Input
-            label={"R.U.T./CI"}
-            placeholder={"Escribir..."}
-            {...register("rut", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <span className="text-sm font-light leading-[1rem] text-black_b">
-            Fecha de venta
-          </span>
-
-          <div className="mt-4">
-            <Input
-              label={"Vendedor"}
-              placeholder={"Escribir..."}
-              {...register("seller", {
-                required: "Este campo es obligatorio",
-              })}
-            />
-          </div>
-          <div className="mt-9 rounded-lg border p-2">
-            {" "}
-            <Checkbox
-              placeholder="Retiro de extintores"
-              radius="full"
-              className="font-light"
-              size="sm"
-            >
-              Retiro de extintores
-            </Checkbox>
-          </div>
-        </form>
+        Esta órden será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

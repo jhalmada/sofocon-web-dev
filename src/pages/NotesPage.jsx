@@ -279,6 +279,8 @@ const NotesPage = () => {
                     control={control}
                     render={({ field }) => (
                       <DatePicker
+                        value={null}
+                        onChange={(value) => setValue(value)}
                         minValue={today(getLocalTimeZone())}
                         className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
                         {...field}

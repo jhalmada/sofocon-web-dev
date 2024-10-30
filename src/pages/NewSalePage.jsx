@@ -7,7 +7,6 @@ import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
-import DownloadIcon from "../assets/icons/download-white.svg";
 import { I18nProvider } from "@react-aria/i18n";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
@@ -15,6 +14,8 @@ import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import cameraIcon from "../assets/icons/camera.svg";
 import PlusIconFilled from "../assets/icons/plus-fill.svg";
+import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+import useOrders from "../hooks/orders/useOrders.js";
 
 const NewSalePage = () => {
   const {
@@ -24,19 +25,14 @@ const NewSalePage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const navigate = useNavigate();
-
   const { postAddUsers, loading } = AddUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [mnsError, setMnsError] = useState("");
   const [dateSelected, setDateSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const { userSellerResponse, setSearch } = useUsersSellers();
 
-  const stateOptions = ["Entregado", "Solicitado", "Preparación", "Retiro"];
   const pricesList = ["Lista 1", "Lista 2", "Lista 3"];
   const productsOptions = ["Polvo", "Arena"];
   const subProductsOptions = ["Subproducto 1", "Subproducto 2"];
@@ -57,26 +53,60 @@ const NewSalePage = () => {
     "Diciembre",
   ];
 
-  const handleUserCreation = async (userData) => {
-    try {
-      const newUser = await postAddUsers(userData);
+  const { ordersResponse, setStatus } = useOrders();
+  const navigate = useNavigate();
 
-      if (newUser) {
+  const handleOrderCreation = async (orderData) => {
+    try {
+      const newOrder = await postAddUsers(orderData);
+
+      if (newOrder) {
         setSaveConfirmationModalOpen(true);
       } else {
         setIsModalOpen(true);
       }
     } catch (error) {
-      if (error.response.status === 409) {
-        setMnsError("El correo electrónico ya se encuentra registrado");
-        setIsModalOpen(true);
-      } else {
-        setMnsError("Error al crear el usuario");
-      }
+      console.error("Error al crear la órden:", error);
     }
   };
-  const onSubmit = () => {
-    navigate("/inicio/taller/recarga");
+
+  const onSubmit = (data) => {
+    alert("Orden creada exitosamente");
+    const {
+      client,
+      seller,
+      discount,
+      barCode,
+      registration,
+      factoryUnit,
+      actualUnit,
+      capacity,
+      invoiceNumber,
+      value,
+      authorizedClient,
+      dateV,
+    } = data;
+
+    const newdata = new Date(
+      dateV?.year || 1,
+      dateV?.month - 1 || 1,
+      dateV?.day || 1,
+    );
+    const formattedDate = newdata.toISOString();
+    handleOrderCreation({
+      client,
+      seller,
+      discount,
+      barCode,
+      registration,
+      factoryUnit,
+      actualUnit,
+      capacity,
+      invoiceNumber,
+      value,
+      authorizedClient,
+      date: dateSelected ? formattedDate : null,
+    });
   };
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -131,7 +161,9 @@ const NewSalePage = () => {
               <Input
                 label={"Cliente"}
                 placeholder={"..."}
-                placeholderColor="placeholder-black_b"
+                {...register("client", {
+                  required: "Este campo es obligatorio",
+                })}
               />
             </div>
             <div className="-mt-[3.27rem] mb-4">
@@ -184,7 +216,13 @@ const NewSalePage = () => {
                 </I18nProvider>
               </div>
               <div className="w-1/2">
-                <Input label={"Vendedor"} placeholder={"Escribir..."} />
+                <Input
+                  label={"Vendedor"}
+                  placeholder={"Escribir..."}
+                  {...register("seller", {
+                    required: "Este campo es obligatorio",
+                  })}
+                />
               </div>
             </div>
             <div className="mb-4 flex space-x-2">
@@ -257,12 +295,11 @@ const NewSalePage = () => {
                 disabled
               />
               <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
                 label={"Desc."}
-                placeholder={"10%"}
-                disabled
+                placeholder={"%"}
+                {...register("discount", {
+                  required: "Este campo es obligatorio",
+                })}
               />
             </div>
             <div className="flex space-x-2">
@@ -284,14 +321,14 @@ const NewSalePage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                placeholder={"PA"}
+                placeholder={"-"}
                 disabled
               />
               <Input
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                placeholder={"Amarillo"}
+                placeholder={"-"}
                 disabled
               />
               <Input
@@ -302,11 +339,10 @@ const NewSalePage = () => {
                 disabled
               />
               <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"10%"}
-                disabled
+                placeholder={"%"}
+                {...register("discount", {
+                  required: "Este campo es obligatorio",
+                })}
               />
             </div>
             <div className="w-1/5 rounded-lg border p-2">
@@ -326,6 +362,9 @@ const NewSalePage = () => {
                   label={"Código de barras"}
                   placeholder={"..."}
                   bg="bg-white"
+                  {...register("barcode", {
+                    required: "Este campo es obligatorio",
+                  })}
                 />
                 <span className="flex items-center">
                   <Link to={"/inicio"}>
@@ -340,11 +379,17 @@ const NewSalePage = () => {
                   label={"Matrícula"}
                   placeholder={"X234234"}
                   bg="bg-white"
+                  {...register("registration", {
+                    required: "Este campo es obligatorio",
+                  })}
                 />
                 <Input
                   label={"N° UNIT de fábrica"}
                   placeholder={"123455"}
                   bg="bg-white"
+                  {...register("factoryUnit", {
+                    required: "Este campo es obligatorio",
+                  })}
                 />
               </div>
               <div className="flex w-full space-x-2">
@@ -362,12 +407,21 @@ const NewSalePage = () => {
                     ))}
                   </Select>
                 </div>
-
-                <Input label={"Capacidad"} placeholder={"..."} bg="bg-white" />
                 <Input
-                  label={"N° UNIT de fábrica"}
+                  label={"N° UNIT actual"}
                   placeholder={"123455"}
                   bg="bg-white"
+                  {...register("actualUnit", {
+                    required: "Este campo es obligatorio",
+                  })}
+                />
+                <Input
+                  label={"Capacidad"}
+                  placeholder={"..."}
+                  bg="bg-white"
+                  {...register("capacity", {
+                    required: "Este campo es obligatorio",
+                  })}
                 />
               </div>
               <div className="flex w-full space-x-2">
@@ -444,6 +498,9 @@ const NewSalePage = () => {
               <Input
                 label={"Número de la factura"}
                 placeholder={"Escribir..."}
+                {...register("invoiceNumber", {
+                  required: "Este campo es obligatorio",
+                })}
               />
               <div className="flex space-x-2">
                 <div className="w-1/2">
@@ -473,13 +530,22 @@ const NewSalePage = () => {
                     </Select>
                   </div>
                   <div className="mt-[.06rem] w-full">
-                    <Input label={"Valor"} placeholder={"$"} />
+                    <Input
+                      label={"Valor"}
+                      placeholder={"$"}
+                      {...register("value", {
+                        required: "Este campo es obligatorio",
+                      })}
+                    />
                   </div>
                 </div>
               </div>
               <Input
                 label={"Compra autorizada por:"}
                 placeholder={"Nombre del cliente"}
+                {...register("authorizedClient", {
+                  required: "Este campo es obligatorio",
+                })}
               />
               <div>
                 <Checkbox radius="full" className="font-light" size="sm">
@@ -490,10 +556,10 @@ const NewSalePage = () => {
           </div>
           <div className="mt-5 flex w-full justify-end">
             <Button
-              text={"DESCARGAR"}
+              text={"ACEPTAR"}
               color={"save"}
               type={"submit"}
-              icon={DownloadIcon}
+              icon={ArrowRightIcon}
             />
           </div>
         </form>

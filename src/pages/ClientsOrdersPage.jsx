@@ -49,7 +49,7 @@ const ClientsOrdersPage = () => {
     }
   };
   const onSubmit = () => {
-    navigate("/inicio/taller/recarga");
+    navigate("/inicio/ordenes");
   };
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -307,7 +307,7 @@ const ClientsOrdersPage = () => {
           </div>
           <div className="mt-5 flex w-full justify-end">
             <Button
-              text={"Descargar"}
+              text={"DESCARGAR"}
               color={"save"}
               type={"submit"}
               icon={DownloadIcon}

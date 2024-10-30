@@ -162,7 +162,7 @@ const SellersPage = ({
                   Ruta
                 </th>
                 <th className="text-lecenterft p-2 text-md font-semibold leading-[1.125rem]">
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col items-center gap-2">
                     <FilterSelect
                       options={stateOptions}
                       placeholder="Estado"

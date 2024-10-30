@@ -122,7 +122,6 @@ const StatusPanelPage = () => {
           <Select
             className="w-52 rounded-lg border"
             placeholder="OCTUBRE 2024 "
-            onSelectionChange={(values) => setValue("period", values)}
           >
             {monthsOptions.map((option) => (
               <SelectItem key={option}>{option}</SelectItem>

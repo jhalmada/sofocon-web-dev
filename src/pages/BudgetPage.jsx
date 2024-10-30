@@ -8,6 +8,7 @@ import { Input } from "postcss";
 import ReusableModal from "../components/modals/ReusableModal";
 import BudgetRow from "../components/BudgetRow";
 import downloadIcon from "../assets/icons/download.svg";
+import useOrders from "../hooks/orders/useOrders";
 const BudgetPage = () => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +41,7 @@ const BudgetPage = () => {
     formState: { errors },
   } = useForm();
   const {
-    companiesResponse,
+    ordersResponse,
     setItemsPerPage,
     totalPage,
     total,
@@ -48,7 +49,8 @@ const BudgetPage = () => {
     page,
     itemsPerPage,
     setModified,
-  } = useCompanies();
+    setStatus,
+  } = useOrders();
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -121,7 +123,6 @@ const BudgetPage = () => {
           <Select
             className="w-52 rounded-lg border"
             placeholder="OCTUBRE 2024 "
-            onSelectionChange={(values) => setValue("period", values)}
           >
             {monthsOptions.map((option) => (
               <SelectItem key={option}>{option}</SelectItem>
@@ -151,20 +152,28 @@ const BudgetPage = () => {
             </tr>
           </thead>
           <tbody>
-            <BudgetRow
-              key={""}
-              id={""}
-              name={"Nombre de la empresa"}
-              contact={"123456789"}
-              date={"14/09/2024"}
-              seller={"Vendedor"}
-              downloadIconSrc={downloadIcon}
-              deleteIconSrc={deleteIcon}
-              onEditClick={() => {
-                openModal();
-              }}
-              onDeleteClick={() => openConfirmDeleteModal()}
-            />
+            {ordersResponse
+              .filter((order) => order.isPreOrder === false)
+              .map((order, index) => (
+                <BudgetRow
+                  key={index}
+                  id={order.id}
+                  name={order.client.name}
+                  contact={order.client.phone}
+                  date={
+                    order.created_at
+                      ? formatDate(order.created_at)
+                      : "Sin fecha"
+                  }
+                  seller={"Vendedor"}
+                  downloadIconSrc={downloadIcon}
+                  deleteIconSrc={deleteIcon}
+                  onEditClick={() => {
+                    openModal();
+                  }}
+                  onDeleteClick={() => openConfirmDeleteModal()}
+                />
+              ))}
           </tbody>
         </table>
       </div>

@@ -246,7 +246,6 @@ const WorkshopPage = () => {
                 <Select
                   className="w-52 rounded-lg border"
                   placeholder="OCTUBRE 2024 "
-                  onSelectionChange={(values) => setValue("period", values)}
                 >
                   {monthsOptions.map((option) => (
                     <SelectItem key={option}>{option}</SelectItem>
@@ -274,7 +273,7 @@ const WorkshopPage = () => {
                       Vendedor
                     </th>
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      <div className="flex flex-col">
+                      <div className="flex flex-col items-center gap-2">
                         <FilterSelect
                           options={stateOptions}
                           placeholder="Estado"
@@ -407,25 +406,22 @@ const WorkshopPage = () => {
                 required: "Este campo es obligatorio",
               })}
             />
-
-            <label className="block text-sm font-light text-black_b">
-              Detalle
-            </label>
-            <Select
-              placeholder="Elegir lista de precios..."
-              className="rounded-lg border"
-              {...register("status")}
-              onSelectionChange={(value) => setValue("status", value)}
-            >
-              {pricesList.map((option) => (
-                <SelectItem key={option}>{option}</SelectItem>
-              ))}
-            </Select>
-            <div className="-mt-9">
+            <div className="mt-9">
+              <Select
+                placeholder="Elegir lista de precios..."
+                className="rounded-lg border"
+                {...register("priceList")}
+                onSelectionChange={(value) => setValue("priceList", value)}
+              >
+                {pricesList.map((option) => (
+                  <SelectItem key={option}>{option}</SelectItem>
+                ))}
+              </Select>
+            </div>
+            <div className="-mt-3">
               <NextAutoComplete
                 array2={[]}
                 label2={"Vendedores Asignados"}
-                label={"Vendedores"}
                 array={[]}
                 name={"products"}
                 setValue={setValue}
@@ -435,7 +431,7 @@ const WorkshopPage = () => {
               <p>{errors.vendedores && errors.vendedores.message}</p>
             </div>
           </div>
-          <div className="mt-9 rounded-lg border p-2">
+          <div className="mt-10 rounded-lg border p-2">
             {" "}
             <Checkbox
               placeholder="Retiro de extintores"

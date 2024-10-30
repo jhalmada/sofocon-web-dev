@@ -1,21 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
 
-const translateState = (state) => {
-  switch (state) {
-    case "POTENTIAL":
-      return "Potencial";
-    case "UNSUBSCRIBED":
-      return "De baja";
-    case "FRECUENT":
-      return "Frecuente";
-    case "COMPETENCE":
-      return "Competencia";
-    default:
-      return state;
-  }
-};
-
 const BudgetRow = ({
   name,
   contact,
