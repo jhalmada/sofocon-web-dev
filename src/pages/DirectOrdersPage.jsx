@@ -1,30 +1,28 @@
 import Pagination from "../components/Pagination";
-
 import deleteIcon from "../assets/icons/trash3.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import { Select, SelectItem } from "@nextui-org/react";
-
 import ReusableModal from "../components/modals/ReusableModal";
 import DirectOrdersRow from "../components/DirectOrdersRow";
-import useOrders from "../hooks/orders/useOrders";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
+import { set } from "react-hook-form";
 
-const DirectOrdersPage = () => {
+const DirectOrdersPage = ({
+  ordersResponse,
+  setItemsPerPage,
+  totalPage,
+  total,
+  setPage,
+  page,
+  itemsPerPage,
+  setModified,
+  setStatus,
+ 
+}) => {
   const [orderId, setOrderId] = useState(null);
 
   const { deleteOrder } = useDeleteOrders();
-  const {
-    ordersResponse,
-    setItemsPerPage,
-    totalPage,
-    total,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-    setStatus,
-  } = useOrders();
 
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
 
@@ -86,6 +84,7 @@ const DirectOrdersPage = () => {
         break;
     }
   };
+
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div>
@@ -131,25 +130,21 @@ const DirectOrdersPage = () => {
             </tr>
           </thead>
           <tbody>
-            {ordersResponse
-              .filter((order) => order.isDirect)
-              .map((order, index) => (
-                <DirectOrdersRow
-                  key={index}
-                  id={order.id}
-                  name={order.client.name}
-                  orderId={order.id}
-                  date={
-                    order.created_at
-                      ? formatDate(order.created_at)
-                      : "Sin fecha"
-                  }
-                  seller={"Vendedor"}
-                  state={order.status}
-                  deleteIconSrc={deleteIcon}
-                  onDeleteClick={() => openConfirmDeleteModal(order.id)}
-                />
-              ))}
+            {ordersResponse.map((order, index) => (
+              <DirectOrdersRow
+                key={index}
+                id={order.id}
+                name={order.client.name}
+                orderId={order.id}
+                date={
+                  order.created_at ? formatDate(order.created_at) : "Sin fecha"
+                }
+                seller={"Vendedor"}
+                state={order.status}
+                deleteIconSrc={deleteIcon}
+                onDeleteClick={() => openConfirmDeleteModal(order.id)}
+              />
+            ))}
           </tbody>
         </table>
       </div>

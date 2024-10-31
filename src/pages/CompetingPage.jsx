@@ -1,5 +1,5 @@
 import Pagination from "../components/Pagination";
-import { Controller, set, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import CompetingRow from "../components/CompetingRow";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
@@ -34,7 +34,6 @@ const CompetingPage = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [competence, setCompetenceEdit] = useState(false);
-  const [visitFilter, setVisitFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [checkSelected, setCheckSelected] = useState("RUT");

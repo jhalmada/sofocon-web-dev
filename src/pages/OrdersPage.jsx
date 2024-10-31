@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
@@ -35,6 +35,7 @@ const OrdersPage = () => {
     itemsPerPage,
     setModified,
     setStatus,
+    setIsDirect,
   } = useOrders();
   const [activeTab, setActiveTab] = useState(CLIENTS_ORDERS_TAB);
 
@@ -98,6 +99,13 @@ const OrdersPage = () => {
         break;
     }
   };
+  useEffect(() => {
+    if (activeTab === DIRECT_ORDERS_TAB) {
+      setIsDirect(true);
+    } else {
+      setIsDirect(false);
+    }
+  }, [activeTab]);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col px-6 pt-6">
@@ -245,7 +253,17 @@ const OrdersPage = () => {
             </div>
           </div>
         )}
-        {activeTab === DIRECT_ORDERS_TAB && <DirectOrdersPage />}
+        {activeTab === DIRECT_ORDERS_TAB && (
+          <DirectOrdersPage
+            ordersResponse={ordersResponse || []}
+            setItemsPerPage={setItemsPerPage}
+            totalPage={totalPage}
+            total={total}
+            setPage={setPage}
+            page={page}
+            itemsPerPage={itemsPerPage}
+          />
+        )}
         {activeTab === BUDGET_TAB && <BudgetPage />}
         {activeTab === STATUS_PANEL_TAB && <StatusPanelPage />}
       </div>

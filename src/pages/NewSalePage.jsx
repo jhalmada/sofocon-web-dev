@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import { useState } from "react";
-import AddUsers from "../hooks/users/use.addUsers";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
@@ -16,6 +15,7 @@ import cameraIcon from "../assets/icons/camera.svg";
 import PlusIconFilled from "../assets/icons/plus-fill.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import useOrders from "../hooks/orders/useOrders.js";
+import useAddOrders from "../hooks/orders/useAddOrders.js";
 
 const NewSalePage = () => {
   const {
@@ -25,7 +25,7 @@ const NewSalePage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const { postAddUsers, loading } = AddUsers();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
@@ -52,13 +52,13 @@ const NewSalePage = () => {
     "Noviembre",
     "Diciembre",
   ];
-
+  const { postAddOrders } = useAddOrders();
   const { ordersResponse, setStatus } = useOrders();
   const navigate = useNavigate();
 
   const handleOrderCreation = async (orderData) => {
     try {
-      const newOrder = await postAddUsers(orderData);
+      const newOrder = await postAddOrders(orderData);
 
       if (newOrder) {
         setSaveConfirmationModalOpen(true);
@@ -71,7 +71,6 @@ const NewSalePage = () => {
   };
 
   const onSubmit = (data) => {
-    alert("Orden creada exitosamente");
     const {
       client,
       seller,
@@ -108,9 +107,7 @@ const NewSalePage = () => {
       date: dateSelected ? formattedDate : null,
     });
   };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
   };
@@ -164,6 +161,7 @@ const NewSalePage = () => {
                 {...register("client", {
                   required: "Este campo es obligatorio",
                 })}
+                msjError={errors.client ? errors.client.message : ""}
               />
             </div>
             <div className="-mt-[3.27rem] mb-4">
@@ -222,6 +220,7 @@ const NewSalePage = () => {
                   {...register("seller", {
                     required: "Este campo es obligatorio",
                   })}
+                  msjError={errors.seller ? errors.seller.message : ""}
                 />
               </div>
             </div>
@@ -300,51 +299,10 @@ const NewSalePage = () => {
                 {...register("discount", {
                   required: "Este campo es obligatorio",
                 })}
+                msjError={errors.discount ? errors.discount.message : ""}
               />
             </div>
-            <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Recarga"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"$432"}
-                disabled
-              />
-              <Input
-                placeholder={"%"}
-                {...register("discount", {
-                  required: "Este campo es obligatorio",
-                })}
-              />
-            </div>
+
             <div className="w-1/5 rounded-lg border p-2">
               {" "}
               <Checkbox
@@ -365,6 +323,7 @@ const NewSalePage = () => {
                   {...register("barcode", {
                     required: "Este campo es obligatorio",
                   })}
+                  msjError={errors.barcode ? errors.barcode.message : ""}
                 />
                 <span className="flex items-center">
                   <Link to={"/inicio"}>
@@ -382,6 +341,9 @@ const NewSalePage = () => {
                   {...register("registration", {
                     required: "Este campo es obligatorio",
                   })}
+                  msjError={
+                    errors.registration ? errors.registration.message : ""
+                  }
                 />
                 <Input
                   label={"N° UNIT de fábrica"}
@@ -390,6 +352,9 @@ const NewSalePage = () => {
                   {...register("factoryUnit", {
                     required: "Este campo es obligatorio",
                   })}
+                  msjError={
+                    errors.factoryUnit ? errors.factoryUnit.message : ""
+                  }
                 />
               </div>
               <div className="flex w-full space-x-2">
@@ -414,6 +379,7 @@ const NewSalePage = () => {
                   {...register("actualUnit", {
                     required: "Este campo es obligatorio",
                   })}
+                  msjError={errors.actualUnit ? errors.actualUnit.message : ""}
                 />
                 <Input
                   label={"Capacidad"}
@@ -422,6 +388,7 @@ const NewSalePage = () => {
                   {...register("capacity", {
                     required: "Este campo es obligatorio",
                   })}
+                  msjError={errors.capacity ? errors.capacity.message : ""}
                 />
               </div>
               <div className="flex w-full space-x-2">
@@ -501,6 +468,9 @@ const NewSalePage = () => {
                 {...register("invoiceNumber", {
                   required: "Este campo es obligatorio",
                 })}
+                msjError={
+                  errors.invoiceNumber ? errors.invoiceNumber.message : ""
+                }
               />
               <div className="flex space-x-2">
                 <div className="w-1/2">
@@ -536,6 +506,7 @@ const NewSalePage = () => {
                       {...register("value", {
                         required: "Este campo es obligatorio",
                       })}
+                      msjError={errors.value ? errors.value.message : ""}
                     />
                   </div>
                 </div>
@@ -546,6 +517,9 @@ const NewSalePage = () => {
                 {...register("authorizedClient", {
                   required: "Este campo es obligatorio",
                 })}
+                msjError={
+                  errors.authorizedClient ? errors.authorizedClient.message : ""
+                }
               />
               <div>
                 <Checkbox radius="full" className="font-light" size="sm">
