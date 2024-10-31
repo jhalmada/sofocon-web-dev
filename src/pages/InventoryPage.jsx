@@ -4,7 +4,7 @@ import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Pagination from "../components/Pagination.jsx";
 import Input from "../components/inputs/Input.jsx";
-import uploadIcon from "../assets/icons/upload.svg";
+import uploadIcon from "../assets/icons/arrow-blue.svg";
 import SaveImg from "../assets/img/save.png";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
@@ -41,6 +41,7 @@ const UsersPage = () => {
   const [fileName, setFileName] = useState("");
   const [listCategory, setListCategory] = useState([]);
   const [confirmModal, setConfirmModal] = useState(false);
+  const [FileAccept, setFileAccept] = useState(false);
 
   //Hooks
 
@@ -102,6 +103,12 @@ const UsersPage = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validTypes = ["image/png", "image/jpg", "image/jpeg"];
+      if (!validTypes.includes(file.type)) {
+        setFileAccept(true);
+        e.target.value = "";
+        return;
+      }
       setFile(file);
       setFileName(file.name);
       setError("file", { message: "" });
@@ -391,9 +398,9 @@ const UsersPage = () => {
               name={"list"}
             />
 
-            <div className="mt-1">
+            <div className="mt-3 min-w-40 max-w-60">
               <p
-                className={`font-roboto font-light ${errors?.file?.message ? "text-red_e" : "text-black"} text-sm`}
+                className={`font-roboto font-light ${errors?.file?.message ? "text-red_e" : "text-black"} mb-1 text-sm`}
               >
                 Agregar imagen
               </p>
@@ -401,23 +408,23 @@ const UsersPage = () => {
                 className="hidden"
                 id="file"
                 type="file"
-                accept="image/*"
+                accept=".png, .jpg, .jpeg"
                 {...register("file")}
                 onChange={handleFileChange}
               />
               <label htmlFor="file" className="flex items-center gap-4">
                 <div
-                  className="flex cursor-pointer gap-2"
+                  className="flex h-11 cursor-pointer items-center gap-2 rounded-lg border border-blue-400 p-1"
                   onClick={() => setFileName("")}
                 >
                   {" "}
-                  <img src={uploadIcon} alt="iconUploads" />
-                  Cargar imagen
+                  <img src={uploadIcon} alt="iconUploads" className="h-5 w-5" />
+                  <p className="text-blue-400">Cargar imagen</p>
                 </div>
                 <p
                   className={`font-roboto text-xs ${errors?.file?.message ? "text-red_e" : "text-black"}`}
                 >
-                  {fileName || "Selecciona un archivo"}
+                  {fileName.length > 0 && fileName}
                 </p>
               </label>
               {errors.file && (
@@ -457,6 +464,17 @@ const UsersPage = () => {
               Los cambios fueron guardados correctamente.
             </p>
           </div>
+        </ReusableModal>
+        {/*modal para los archivos */}
+        <ReusableModal
+          isOpen={FileAccept}
+          onClose={() => setFileAccept(false)}
+          title="Formato de archivo incorrecto"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setFileAccept(false)}
+        >
+          Solo se aceptan archivos PNG o JPG.
         </ReusableModal>
       </div>
     </div>

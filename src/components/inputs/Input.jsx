@@ -17,6 +17,7 @@ const Input = forwardRef(
       bg = "bg-transparent",
       width = "w-full",
       width2 = "w-full",
+      mb = "mb-3",
       ...props
     },
     ref,
@@ -38,7 +39,7 @@ const Input = forwardRef(
         >
           {label}
         </label>
-        <div className="relative mb-3 h-11 w-full">
+        <div className={`relative ${mb} h-10 w-full`}>
           <input
             name={name} // Cambiado para usar `name`
             {...props}

@@ -50,16 +50,23 @@ const AutoCompleteArray = ({
       {/* Opciones seleccionadas con inputs */}
       <div className="flex w-full flex-wrap">
         {selectedItems.length > 0 && (
-          <p className="font-roboto text-sm">{label2}</p>
+          <div className="flex w-full items-center justify-between">
+            <div className="w-[68%]">
+              <p className="font-roboto text-sm">{label2}</p>
+            </div>
+            <div className="w-[30%]">
+              <p className="font-roboto text-sm">Precio</p>
+            </div>
+          </div>
         )}
         {selectedItems.map((item) => (
           <div
             key={item.id}
-            className="flex h-[4.5rem] w-full items-center justify-between"
+            className="flex h-[3rem] w-full items-center justify-between"
           >
             <span
               key={item.id}
-              className="flex w-[68%] items-center justify-between rounded-lg p-2 shadow-br"
+              className="flex h-10 w-[68%] items-center justify-between rounded-lg p-2 shadow-br"
             >
               <span className="mr-2">{item.name}</span>
               <img
@@ -70,7 +77,7 @@ const AutoCompleteArray = ({
               />
             </span>
             <Input
-              label="Precio"
+              mb="mb-0"
               width="w-[30%]"
               placeholder="Ingrese valor"
               value={item.value}
@@ -81,7 +88,7 @@ const AutoCompleteArray = ({
       </div>
 
       {/* Autocomplete */}
-      <label className="mt-4 block font-roboto text-sm">{label}</label>
+      <label className="mt-2 block font-roboto text-sm">{label}</label>
       <Autocomplete
         disabledKeys={selectedItems.map((item) => item.id)}
         className="w-full rounded-lg border"

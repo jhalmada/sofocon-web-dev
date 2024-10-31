@@ -32,4 +32,5 @@ export const SOFOCON_PERMISSIONS = "SOFOCON_PERMISSIONS";
 export const PRODUCTS_INVENTORY = "inventario/:id/:name";
 export const PRODUCTS_ADD = "agregar-producto";
 export const CATEGORY_ADD = "agregar-categoria";
+export const LIST_PRICE_ADD = "nueva-lista";
 export const IMAGE_BASE = "https://nyc3.digitaloceanspaces.com/tribe-s3/";
