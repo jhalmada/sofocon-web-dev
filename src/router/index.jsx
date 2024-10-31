@@ -32,6 +32,7 @@ import {
   NEW_SALE_ROUTE,
   NEW_BUDGET_ROUTE,
   BUDGET_ROUTE,
+  LIST_PRICE_ADD,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
 import RecoverPasswordPage from "../pages/RecoverPasswordPage";
@@ -75,6 +76,7 @@ import PasswordCodePage from "../pages/PasswordCodePage";
 import ClientsOrdersPage from "../pages/ClientsOrdersPage";
 import NewSalePage from "../pages/NewSalePage";
 import BudgetDataPage from "../pages/BudgetDataPage";
+import AddPriceListPage from "../pages/AddPriceListPage";
 
 export const router = createBrowserRouter([
   {
@@ -211,6 +213,10 @@ export const router = createBrowserRouter([
           {
             path: CATEGORY_ADD,
             element: <AddCategoryPage />,
+          },
+          {
+            path: LIST_PRICE_ADD,
+            element: <AddPriceListPage />,
           },
         ],
       },

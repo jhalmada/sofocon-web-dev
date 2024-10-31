@@ -28,13 +28,13 @@ export const WORKSHOP_ROUTE = "taller";
 export const UNIT_TEMPLATE_ROUTE = "plantilla-unit";
 export const RECHARGE_ROUTE = "recarga";
 export const RECHARGE_DATA_ROUTE = "datos-recarga";
-
 export const DEPOSIT_ROUTE = "deposito";
 export const REDIRECTION_ROUTE = "/";
 export const SOFOCON_JWT_TOKEN = "SOFOCON_JWT_TOKEN";
 export const SOFOCON_JWT_REFRESH_TOKEN = "SOFOCON_JWT_REFRESH_TOKEN";
 export const SOFOCON_PERMISSIONS = "SOFOCON_PERMISSIONS";
-export const PRODUCTS_INVENTORY = "inventario";
+export const PRODUCTS_INVENTORY = "inventario/:id/:name";
 export const PRODUCTS_ADD = "agregar-producto";
 export const CATEGORY_ADD = "agregar-categoria";
+export const LIST_PRICE_ADD = "nueva-lista";
 export const IMAGE_BASE = "https://nyc3.digitaloceanspaces.com/tribe-s3/";

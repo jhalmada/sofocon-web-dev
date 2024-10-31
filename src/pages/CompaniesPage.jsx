@@ -259,15 +259,19 @@ const CompaniesPage = () => {
     switch (value) {
       case "< 1 mes":
         setNextVisit(1);
+        setPage(0);
         break;
       case "< 2 meses":
         setNextVisit(2);
+        setPage(0);
         break;
       case "> 2 meses":
         setNextVisit(3);
+        setPage(0);
         break;
       default:
         setNextVisit(null);
+        setPage(0);
         "selecciona una opción válida";
     }
   };
@@ -275,15 +279,19 @@ const CompaniesPage = () => {
     switch (value) {
       case "Frecuente":
         setStatus("FRECUENT");
+        setPage(0);
         break;
       case "Potencial":
         setStatus("POTENTIAL");
+        setPage(0);
         break;
       case "De baja":
         setStatus("UNSUBSCRIBED");
+        setPage(0);
         break;
       default:
         setStatus("");
+        setPage(0);
         break;
     }
   };

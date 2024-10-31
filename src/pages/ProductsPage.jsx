@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Pagination from "../components/Pagination";
 import { useState } from "react";
 import Button from "../components/buttons/Button";
-import uploadIcon from "../assets/icons/upload.svg";
+import uploadIcon from "../assets/icons/arrow-blue.svg";
 import plusIcon from "../assets/icons/plus.svg";
 import SearchInput from "../components/inputs/SearchInput";
 import useCategory from "../hooks/category/useCategory";
@@ -15,6 +15,8 @@ import useDeleteCategory from "../hooks/category/useDeleteCategory";
 import usePutCategory from "../hooks/category/usePutCategory";
 import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
+import PriceListPage from "./PriceListPage";
+import useGetPriceList from "../hooks/priceList/useGetPriceList";
 
 const INVENTORY_TAB = "inventory";
 const PRICES_TAB = "prices";
@@ -31,6 +33,7 @@ const ProductsPage = () => {
   const [idCategory, setIdCategory] = useState(null);
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
+  const [FileAccept, setFileAccept] = useState(false);
 
   //hooks
   const {
@@ -44,7 +47,18 @@ const ProductsPage = () => {
     setSearch,
     setModified,
   } = useCategory();
-  console.log(categoryResponse);
+
+  const {
+    priceListResponse,
+    itemsPerPage: itemsPerPagePriceList,
+    page: pagePriceList,
+    setItemsPerPage: setItemsPerPagePriceList,
+    total: totalPriceList,
+    totalPage: totalPagePriceList,
+    setPage: setPagePriceList,
+    setSearch: setSearchPriceList,
+    setModified: setModifiedPriceList,
+  } = useGetPriceList();
 
   const { deleteCategory } = useDeleteCategory();
 
@@ -63,15 +77,23 @@ const ProductsPage = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validTypes = ["image/png", "image/jpg", "image/jpeg"];
+      if (!validTypes.includes(file.type)) {
+        setFileAccept(true);
+        e.target.value = "";
+        return;
+      }
       setFile(file);
       setFileName(file.name);
       setError("file", { message: "" });
     }
   };
+
   const handleDelete = (id) => {
     setIdCategory(id);
     setDeleteModal(true);
   };
+
   const acceptDelete = () => {
     deleteCategory(idCategory, setModified);
     setConfirmDelete(true);
@@ -151,9 +173,14 @@ const ProductsPage = () => {
           )}
           {activeTab === PRICES_TAB && (
             <div className="mb-12 flex flex-col items-end justify-start">
-              <SearchInput placeholder="Buscar..." />
+              <SearchInput
+                placeholder="Buscar..."
+                onChange={setSearchPriceList}
+              />
               <div className="flex gap-[0.625rem] p-2">
-                <Button text="Nueva Lista" icon={plusIcon} />
+                <Link to="nueva-lista">
+                  <Button text="Nueva Lista" icon={plusIcon} />
+                </Link>
               </div>
             </div>
           )}
@@ -172,6 +199,7 @@ const ProductsPage = () => {
                     totalProducts={category.totalProducts}
                     onEdit={() => handleEdit(category.id)}
                     onDelete={() => handleDelete(category.id)}
+                    id={category.id}
                   />
                 ))}
               </section>
@@ -184,6 +212,17 @@ const ProductsPage = () => {
                 total={total}
               />
             </>
+          )}
+          {activeTab === PRICES_TAB && (
+            <PriceListPage
+              priceListResponse={priceListResponse}
+              itemsPerPage={itemsPerPagePriceList}
+              page={pagePriceList}
+              setItemsPerPage={setItemsPerPagePriceList}
+              setPage={setPagePriceList}
+              total={totalPriceList}
+              totalPage={totalPagePriceList}
+            />
           )}
         </div>
         {/*modal para editar*/}
@@ -230,9 +269,9 @@ const ProductsPage = () => {
               errorApi={errors.description}
               msjError={errors.description ? errors.description.message : ""}
             />
-            <div className="mt-1">
+            <div className="mt-1 min-w-40 max-w-60">
               <p
-                className={`font-roboto font-light ${errors?.file?.message ? "text-red_e" : "text-black"} text-sm`}
+                className={`font-roboto font-light ${errors?.file?.message ? "text-red_e" : "text-black"} mb-1 text-sm`}
               >
                 Agregar imagen
               </p>
@@ -240,25 +279,30 @@ const ProductsPage = () => {
                 className="hidden"
                 id="file"
                 type="file"
-                accept="image/*"
+                accept=".png, .jpg, .jpeg"
                 {...register("file")}
                 onChange={handleFileChange}
               />
               <label htmlFor="file" className="flex items-center gap-4">
                 <div
-                  className="flex cursor-pointer gap-2"
+                  className="flex h-11 cursor-pointer items-center gap-2 rounded-lg border border-blue-400 p-1"
                   onClick={() => setFileName("")}
                 >
                   {" "}
-                  <img src={uploadIcon} alt="iconUploads" />
-                  Cargar imagen
+                  <img src={uploadIcon} alt="iconUploads" className="h-5 w-5" />
+                  <p className="text-blue-400">Cargar imagen</p>
                 </div>
                 <p
                   className={`font-roboto text-xs ${errors?.file?.message ? "text-red_e" : "text-black"}`}
                 >
-                  {fileName || "Selecciona un archivo"}
+                  {fileName.length > 0 && fileName}
                 </p>
               </label>
+              {errors.file && (
+                <p className="font-roboto text-xs text-red_e">
+                  {errors?.file?.message}
+                </p>
+              )}
             </div>
           </form>
         </ReusableModal>
@@ -318,6 +362,17 @@ const ProductsPage = () => {
               El elemento fue eliminado correctamente.
             </p>
           </div>
+        </ReusableModal>
+        {/*modal para los archivos */}
+        <ReusableModal
+          isOpen={FileAccept}
+          onClose={() => setFileAccept(false)}
+          title="Formato de archivo incorrecto"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setFileAccept(false)}
+        >
+          Solo se aceptan archivos PNG o JPG.
         </ReusableModal>
       </div>
     </div>
