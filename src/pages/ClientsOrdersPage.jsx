@@ -148,100 +148,44 @@ const ClientsOrdersPage = () => {
                 disabled
               />
             </div>
+            <div className="flex space-x-2">
+              <div className="flex w-1/2 space-x-2">
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Producto"}
+                  placeholder={"Producto 1"}
+                  disabled
+                />
+              </div>
+              <div className="flex w-1/2 space-x-2">
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Cant."}
+                  placeholder={"1"}
+                  disabled
+                />
 
-            <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Producto"}
-                placeholder={"Producto 1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Cant."}
-                placeholder={"1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Subproducto"}
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Color"}
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Precio"}
-                placeholder={"$345"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Desc."}
-                placeholder={"10%"}
-                disabled
-              />
-            </div>
-            <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Recarga"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"PA"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Amarillo"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"$432"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"10%"}
-                disabled
-              />
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Precio"}
+                  placeholder={"$345"}
+                  disabled
+                />
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Desc."}
+                  placeholder={"10%"}
+                  disabled
+                />
+              </div>
             </div>
 
             <div className="flex space-x-2">
@@ -269,23 +213,16 @@ const ClientsOrdersPage = () => {
                 placeholder={"-$350"}
                 disabled
               />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"TOTAL"}
-                placeholder={"$100000"}
-                disabled
-              />
             </div>
             <Input
               bg="bg-gray"
-              border="none"
-              label={"Número de la factura"}
-              placeholder={"1234567890"}
               placeholderColor="placeholder-black_b"
+              border="none"
+              label={"TOTAL"}
+              placeholder={"$100000"}
               disabled
             />
+
             <div className="flex space-x-2">
               <Input
                 bg="bg-gray"

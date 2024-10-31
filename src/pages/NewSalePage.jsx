@@ -12,10 +12,11 @@ import { getLocalTimeZone, today } from "@internationalized/date";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import cameraIcon from "../assets/icons/camera.svg";
-import PlusIconFilled from "../assets/icons/plus-fill.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import useOrders from "../hooks/orders/useOrders.js";
 import useAddOrders from "../hooks/orders/useAddOrders.js";
+import useCompanies from "../hooks/companies/useCompanies.js";
+import CompleteSearchInput from "../components/Searchs/CompleteSearchInput.jsx";
 
 const NewSalePage = () => {
   const {
@@ -31,7 +32,7 @@ const NewSalePage = () => {
     useState(false);
   const [dateSelected, setDateSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const { userSellerResponse, setSearch } = useUsersSellers();
+  const [rutValue, setRutValue] = useState("");
 
   const pricesList = ["Lista 1", "Lista 2", "Lista 3"];
   const productsOptions = ["Polvo", "Arena"];
@@ -52,8 +53,11 @@ const NewSalePage = () => {
     "Noviembre",
     "Diciembre",
   ];
+  const quantityOptions = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   const { postAddOrders } = useAddOrders();
+  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
   const { ordersResponse, setStatus } = useOrders();
+  const { userSellerResponse, setSearch } = useUsersSellers();
   const navigate = useNavigate();
 
   const handleOrderCreation = async (orderData) => {
@@ -72,7 +76,7 @@ const NewSalePage = () => {
 
   const onSubmit = (data) => {
     const {
-      client,
+      company,
       seller,
       discount,
       barCode,
@@ -82,7 +86,7 @@ const NewSalePage = () => {
       capacity,
       invoiceNumber,
       value,
-      authorizedClient,
+      authorizedCompany,
       dateV,
     } = data;
 
@@ -93,7 +97,7 @@ const NewSalePage = () => {
     );
     const formattedDate = newdata.toISOString();
     handleOrderCreation({
-      client,
+      company,
       seller,
       discount,
       barCode,
@@ -103,7 +107,7 @@ const NewSalePage = () => {
       capacity,
       invoiceNumber,
       value,
-      authorizedClient,
+      authorizedCompany,
       date: dateSelected ? formattedDate : null,
     });
   };
@@ -115,6 +119,14 @@ const NewSalePage = () => {
     closeSaveConfirmationModal();
     navigate("/inicio/personal");
   };
+  const handleSelectCompany = (selectedCompany) => {
+    if (selectedCompany) {
+      setRutValue(selectedCompany);
+    } else {
+      setRutValue("");
+    }
+  };
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col px-6 pt-6">
@@ -155,27 +167,41 @@ const NewSalePage = () => {
                 placeholderColor="placeholder-black_b"
                 disabled
               />
+              {ordersResponse.isDirect ? (
+                <Input
+                  label={"Empresa"}
+                  placeholder={"..."}
+                  {...register("company", {
+                    required: "Este campo es obligatorio",
+                  })}
+                  msjError={errors.company ? errors.company.message : ""}
+                />
+              ) : (
+                <div className="-mt-1 mb-4 w-full">
+                  <CompleteSearchInput
+                    label={"Empresa"}
+                    array={companiesResponse}
+                    name={"empresa"}
+                    setValue={setValue}
+                    onChange={setSearchCompanies}
+                    placeholder="Buscar empresa"
+                    onSelect={handleSelectCompany}
+                  />
+                  <p>{errors.empresa && errors.empresa.message}</p>
+                </div>
+              )}
+            </div>
+            {ordersResponse.isDirect ? null : (
               <Input
-                label={"Cliente"}
-                placeholder={"..."}
-                {...register("client", {
-                  required: "Este campo es obligatorio",
-                })}
-                msjError={errors.client ? errors.client.message : ""}
-              />
-            </div>
-            <div className="-mt-[3.27rem] mb-4">
-              <NextAutoComplete
-                array2={[]}
                 label={"R.U.T./CI"}
-                array={[]}
-                name={"products"}
-                setValue={setValue}
-                onChange={setSearch}
-                placeholder="Buscar RUT o CI..."
+                placeholder={rutValue}
+                bg="bg-gray"
+                border="none"
+                placeholderColor="placeholder-black_b"
+                disabled
               />
-              <p>{errors.vendedores && errors.vendedores.message}</p>
-            </div>
+            )}
+
             <div className="flex space-x-2">
               <div className="w-1/2">
                 <span className="text-sm font-light leading-[1rem] text-black_b">
@@ -213,19 +239,21 @@ const NewSalePage = () => {
                   </p>
                 </I18nProvider>
               </div>
-              <div className="w-1/2">
-                <Input
+              <div className="-mt-[.08rem] w-1/2">
+                <NextAutoComplete
                   label={"Vendedor"}
-                  placeholder={"Escribir..."}
-                  {...register("seller", {
-                    required: "Este campo es obligatorio",
-                  })}
-                  msjError={errors.seller ? errors.seller.message : ""}
+                  array2={[]}
+                  array={[]}
+                  name={"products"}
+                  setValue={setValue}
+                  onChange={setSearch}
+                  placeholder="Buscar vendedor"
                 />
+                <p>{errors.vendedores && errors.vendedores.message}</p>
               </div>
             </div>
             <div className="mb-4 flex space-x-2">
-              <div className="w-1/2">
+              <div className="mt-4 w-1/2">
                 <label className="block text-sm font-semibold text-black_b">
                   Detalle
                 </label>
@@ -240,81 +268,75 @@ const NewSalePage = () => {
                   ))}
                 </Select>
               </div>
-              <div className="-mt-[2rem] w-1/2">
+              <div className="mt-3 w-1/2">
                 <NextAutoComplete
+                  label={"Producto"}
                   array2={[]}
                   array={[]}
                   name={"products"}
                   setValue={setValue}
                   onChange={setSearch}
-                  placeholder="Producto 1"
+                  placeholder="Buscar producto"
                 />
                 <p>{errors.vendedores && errors.vendedores.message}</p>
               </div>
             </div>
             <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Producto"}
-                placeholder={"Producto 1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Cant."}
-                placeholder={"1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Subproducto"}
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Color"}
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Precio"}
-                placeholder={"$345"}
-                disabled
-              />
-              <Input
-                label={"Desc."}
-                placeholder={"%"}
-                {...register("discount", {
-                  required: "Este campo es obligatorio",
-                })}
-                msjError={errors.discount ? errors.discount.message : ""}
-              />
+              <div className="w-1/2">
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Producto"}
+                  placeholder={"Producto 1"}
+                  disabled
+                />
+              </div>
+              <div className="flex w-1/2 space-x-2">
+                <div className="mt-[.1rem] w-full">
+                  <label className="block text-sm font-light">Cantidad</label>
+                  <Select
+                    className="rounded-lg border"
+                    placeholder="Cant."
+                    onSelectionChange={(values) => setValue("quantity", values)}
+                  >
+                    {quantityOptions.map((month) => (
+                      <SelectItem key={month.key}>{month}</SelectItem>
+                    ))}
+                  </Select>
+                </div>
+
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Precio"}
+                  placeholder={"$345"}
+                  disabled
+                />
+                <Input
+                  label={"Desc."}
+                  placeholder={"%"}
+                  {...register("discount", {
+                    required: "Este campo es obligatorio",
+                  })}
+                  msjError={errors.discount ? errors.discount.message : ""}
+                />
+                <div className="w-full">
+                  <label className="block text-sm font-light">Recarga</label>
+                  <Select
+                    className="rounded-lg border"
+                    placeholder="Si/No"
+                    onSelectionChange={(values) => setValue("quantity", values)}
+                  >
+                    <SelectItem key={"si"}>Si</SelectItem>
+                    <SelectItem key={"no"}>No</SelectItem>
+                  </Select>
+                </div>
+              </div>
             </div>
 
-            <div className="w-1/5 rounded-lg border p-2">
-              {" "}
-              <Checkbox
-                placeholder="Retiro de extintores"
-                radius="full"
-                className="font-light"
-                size="sm"
-              >
-                Retiro de extintores
-              </Checkbox>
-            </div>
-            <div className="mt-4 rounded-lg bg-gray p-4">
+            <div className="rounded-lg bg-gray p-4">
               <div className="flex space-x-2">
                 <Input
                   label={"Código de barras"}
@@ -381,57 +403,6 @@ const NewSalePage = () => {
                   })}
                   msjError={errors.actualUnit ? errors.actualUnit.message : ""}
                 />
-                <Input
-                  label={"Capacidad"}
-                  placeholder={"..."}
-                  bg="bg-white"
-                  {...register("capacity", {
-                    required: "Este campo es obligatorio",
-                  })}
-                  msjError={errors.capacity ? errors.capacity.message : ""}
-                />
-              </div>
-              <div className="flex w-full space-x-2">
-                <div className="w-full">
-                  <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
-                    Producto
-                  </span>
-                  <Select
-                    placeholder="Polvo"
-                    className="max-w rounded-lg border font-roboto font-medium"
-                  >
-                    {productsOptions.map((product) => (
-                      <SelectItem key={product.key}>{product}</SelectItem>
-                    ))}
-                  </Select>
-                </div>
-
-                <div className="w-full">
-                  <Select
-                    placeholder="Subproducto"
-                    className="max-w mt-6 rounded-lg border font-roboto font-medium"
-                  >
-                    {subProductsOptions.map((product) => (
-                      <SelectItem key={product.key}>{product}</SelectItem>
-                    ))}
-                  </Select>
-                </div>
-                <div className="w-full">
-                  <Select
-                    placeholder="Color"
-                    className="max-w mt-6 rounded-lg border font-roboto font-medium"
-                  >
-                    {colorsOptions.map((product) => (
-                      <SelectItem key={product.key}>{product}</SelectItem>
-                    ))}
-                  </Select>
-                </div>
-              </div>
-              <div className="mt-3 flex w-[12rem] cursor-pointer items-center">
-                <img src={PlusIconFilled} alt="geo Icon" />
-                <span className="text-xs font-semibold leading-[.88rem] underline">
-                  Agregar extintor para recarga
-                </span>
               </div>
             </div>
             <div className="mt-2 flex space-x-2">
@@ -451,27 +422,17 @@ const NewSalePage = () => {
                 placeholder={"$1000"}
                 disabled
               />
-
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"TOTAL"}
-                placeholder={"$100000"}
-                disabled
-              />
+              <Input label={"Desc."} placeholder={"%"} />
             </div>
+            <Input
+              bg="bg-gray"
+              placeholderColor="placeholder-black_b"
+              border="none"
+              label={"TOTAL"}
+              placeholder={"$100000"}
+              disabled
+            />
             <div className="space-y-3">
-              <Input
-                label={"Número de la factura"}
-                placeholder={"Escribir..."}
-                {...register("invoiceNumber", {
-                  required: "Este campo es obligatorio",
-                })}
-                msjError={
-                  errors.invoiceNumber ? errors.invoiceNumber.message : ""
-                }
-              />
               <div className="flex space-x-2">
                 <div className="w-1/2">
                   <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
@@ -495,8 +456,9 @@ const NewSalePage = () => {
                       placeholder="1"
                       className="rounded-lg border font-roboto font-medium"
                     >
-                      <SelectItem key={1}>1</SelectItem>
-                      <SelectItem key={2}>2</SelectItem>
+                      {quantityOptions.map((product) => (
+                        <SelectItem key={product.key}>{product}</SelectItem>
+                      ))}
                     </Select>
                   </div>
                   <div className="mt-[.06rem] w-full">
@@ -513,12 +475,14 @@ const NewSalePage = () => {
               </div>
               <Input
                 label={"Compra autorizada por:"}
-                placeholder={"Nombre del cliente"}
-                {...register("authorizedClient", {
+                placeholder={"Nombre de la empresa"}
+                {...register("authorizedCompany", {
                   required: "Este campo es obligatorio",
                 })}
                 msjError={
-                  errors.authorizedClient ? errors.authorizedClient.message : ""
+                  errors.authorizedCompany
+                    ? errors.authorizedCompany.message
+                    : ""
                 }
               />
               <div>
