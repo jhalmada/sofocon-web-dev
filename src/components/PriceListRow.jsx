@@ -1,9 +1,7 @@
-const SellerRow = ({
-  fullName,
-  email,
-  route,
-  state,
-  info,
+const PriceListRow = ({
+  name,
+  totalClients,
+  totalProducts,
   editIconSrc,
   deleteIconSrc,
   onEditClick,
@@ -13,27 +11,22 @@ const SellerRow = ({
     <tr className="border-b border-gray text-center">
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
-        title={fullName}
+        title={name}
       >
-        {fullName || "Nombre no disponible"}
+        {name}
       </td>
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
-        title={email}
+        title={totalClients}
       >
-        {email}
+        {totalClients} {totalClients === 1 ? "Empresa" : "Empresas"}
       </td>
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
-        title={route}
+        title={totalProducts}
       >
-        {route}
+        {totalProducts} {totalProducts === 1 ? "Producto" : "Productos"}
       </td>
-
-      <td className="p-2 text-center text-md leading-[1.16rem]">
-        {state ? "Activo" : "Inactivo"}
-      </td>
-      <td className="cursor-pointer p-2 text-center underline">{info}</td>
       <td className="p-2">
         <div className="flex justify-center gap-4">
           <img
@@ -54,4 +47,4 @@ const SellerRow = ({
   );
 };
 
-export default SellerRow;
+export default PriceListRow;

@@ -87,12 +87,12 @@ const SellersPage = ({
       (user) => user.id === id,
     );
     if (userToEdit) {
-      setValue("phone", userToEdit.userInfo.phone);
-      setValue("ci", userToEdit.userInfo.ci);
-      setValue("fullName", userToEdit.userInfo.fullName);
-      setValue("email", userToEdit.email);
+      setValue("phone", userToEdit.userInfo?.phone || "");
+      setValue("ci", userToEdit.userInfo?.ci || "");
+      setValue("fullName", userToEdit.userInfo?.fullName || "");
+      setValue("email", userToEdit?.email || "");
       setValue("role", userToEdit?.role?.id || "");
-      setValue("state", userToEdit.isActive ? "Activo" : "Inactivo");
+      setValue("state", userToEdit?.isActive ? "Activo" : "Inactivo");
     }
     setIsModalOpen(true);
     setUserId(id);
@@ -182,7 +182,7 @@ const SellersPage = ({
               {userSellerResponse?.result?.map((user, index) => (
                 <SellerRow
                   key={index}
-                  fullName={`${user.userInfo.fullName} `}
+                  fullName={user.userInfo?.fullName || "Nombre no disponible"}
                   email={user.email}
                   route={"Ruta"}
                   info={"Ver más"}

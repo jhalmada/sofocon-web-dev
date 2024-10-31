@@ -18,6 +18,7 @@ const NextAutoComplete = ({
   label2,
   array2,
   placeholder = "Buscar...",
+  isDisabled = false,
 }) => {
   //estados
   const [selectedItems, setSelectedItems] = useState(array2 || []);
@@ -40,28 +41,31 @@ const NextAutoComplete = ({
   };
 
   return (
-    <div>
-      <div className="mt-9 flex w-full flex-wrap">
-        {selectedItems.length > 0 && (
-          <p className="font-roboto text-sm">{label2}</p>
-        )}
-        {selectedItems.map((item, index) => (
-          <span
-            key={index}
-            className="mt-2 flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br"
-          >
-            {item.name}
-            <img
-              src={x}
-              alt="delete"
-              className="mr-1 cursor-pointer"
-              onClick={() => handleDeleteSelection(item)}
-            />
-          </span>
-        ))}
-      </div>
-      <label className="mt-4 block font-roboto text-sm">{label}</label>
+    <>
+      {!isDisabled && (
+        <div className="flex w-full flex-wrap">
+          {selectedItems.length > 0 && (
+            <p className="font-roboto text-sm">{label2}</p>
+          )}
+          {selectedItems.map((item, index) => (
+            <span
+              key={index}
+              className="mt-1 flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br"
+            >
+              {item.name}
+              <img
+                src={x}
+                alt="delete"
+                className="mr-1 cursor-pointer"
+                onClick={() => handleDeleteSelection(item)}
+              />
+            </span>
+          ))}
+        </div>
+      )}
+      <label className="mt-1 block font-roboto text-sm">{label}</label>
       <Autocomplete
+        isDisabled={isDisabled}
         disabledKeys={selectedItems.map((item) => item.id)}
         className="w-full rounded-lg border"
         selectedKey={""}
@@ -80,7 +84,7 @@ const NextAutoComplete = ({
           </AutocompleteItem>
         ))}
       </Autocomplete>
-    </div>
+    </>
   );
 };
 

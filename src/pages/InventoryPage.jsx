@@ -1,37 +1,54 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import UserRow from "../components/UserRow.jsx";
-import TableRole from "../components/tables/TableRole.jsx";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Pagination from "../components/Pagination.jsx";
 import Input from "../components/inputs/Input.jsx";
-import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox } from "@nextui-org/react";
+import uploadIcon from "../assets/icons/arrow-blue.svg";
+import SaveImg from "../assets/img/save.png";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
 import DownloadIcon from "../assets/icons/download.svg";
-import useUsers from "../hooks/users/use.users.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import usePutUsers from "../hooks/users/usePutUsers.js";
 import { useForm } from "react-hook-form";
-import useRoles from "../hooks/roles/use.roles.js";
-import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
-import { permisos } from "../utils/permisons";
-import { BASE_URL } from "../utils/Constants.js";
-import SellersPage from "./SellersPage.jsx";
-import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
 import BackButton from "../components/buttons/BackButton.jsx";
-import FilterSelect from "../components/filters/FilterSelect.jsx";
-const USER_TAB = "users";
-const SELLERS_TAB = "sellers";
-const ROLES_TAB = "roles";
+import useGetProducts from "../hooks/products/useGetProducts.js";
+import InventaryRow from "../components/InventaryRow.jsx";
+import useDeleteProduct from "../hooks/products/useDeleteProducts.js";
+import deleteImg from "../assets/img/deleted.png";
+import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray.jsx";
+import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
+import useCategory from "../hooks/category/useCategory.js";
+import usePutProduct from "../hooks/products/usePutProducts.js";
+
+const busquedas = [
+  { name: "Busqueda 1", id: 1 },
+  { name: "Busqueda 2", id: 2 },
+  { name: "Busqueda 3", id: 3 },
+  { name: "Busqueda 4", id: 4 },
+];
+
 const UsersPage = () => {
-  const { changedUser } = usePutUsers();
-  const [userId, setUserId] = useState(null);
+  //estados
+  const [productId, setProductId] = useState(null);
+  const [deletemodal, setDeleteModal] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [isConfirmCancelModalOpen, setIsConfirmCancelModalOpen] =
+    useState(false);
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [listCategory, setListCategory] = useState([]);
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [FileAccept, setFileAccept] = useState(false);
+
+  //Hooks
+
+  const { id, name } = useParams();
+
   const {
-    usersResponse,
+    productsResponse,
     setItemsPerPage,
     totalPage,
     total,
@@ -40,85 +57,86 @@ const UsersPage = () => {
     itemsPerPage,
     setModified,
     setSearch,
-  } = useUsers();
-  const { RolesResponse } = useRoles();
-  const { deleteUser } = useDeleteUsers();
-  const [activeTab, setActiveTab] = useState(USER_TAB);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  const [isExportSellersModalOpen, setIsExportSellersModalOpen] =
-    useState(false);
-  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
-  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [roleFilter, setRoleFilter] = useState("");
-  const [stateFilter, setStateFilter] = useState("");
-  const roleOptions = RolesResponse?.map((role) => role.name) || [];
-  const stateOptions = ["Activo", "Inactivo"];
+    setCategory,
+  } = useGetProducts();
+
+  const { categoryResponse, setSearch: setSearchCategory } = useCategory();
+
+  const { deleteProduct } = useDeleteProduct();
+
+  const { changedProduct } = usePutProduct();
+
   const {
     register,
     handleSubmit,
     setValue,
+    setError,
     formState: { errors },
   } = useForm();
 
-  const openModal = (id) => {
-    const userToEdit = usersResponse.find((user) => user.id === id);
-    if (userToEdit) {
-      setValue("fullName", userToEdit.userInfo.fullName);
-      setValue("email", userToEdit.email);
-      setValue("ci", userToEdit.userInfo.ci);
-      setValue("phone", userToEdit.userInfo.phone);
-      setValue("role", userToEdit?.role?.id || "");
+  //funciones
+  const handleDelete = (id) => {
+    setProductId(id);
+    setDeleteModal(true);
+  };
+  const acceptDelete = () => {
+    deleteProduct(productId, setModified);
+    setDeleteModal(false);
+    setConfirmDelete(true);
+  };
+
+  const handleEdit = async (id, category) => {
+    setProductId(id);
+    const product = await productsResponse.find((product) => product.id === id);
+    if (product) {
+      setValue("name", product.name);
+      setValue("description", product.description);
+      setValue("stock", product.stock);
+      setValue("subProduct", product.subProduct);
+      setValue("color", product.color);
+      setValue("unit", product.unit);
+      setListCategory(category);
+      setEditModal(true);
     }
-    setIsModalOpen(true);
-    setUserId(id);
   };
-  const openExportModal = (id) => {
-    setIsExportModalOpen(true);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const validTypes = ["image/png", "image/jpg", "image/jpeg"];
+      if (!validTypes.includes(file.type)) {
+        setFileAccept(true);
+        e.target.value = "";
+        return;
+      }
+      setFile(file);
+      setFileName(file.name);
+      setError("file", { message: "" });
+    }
   };
-  const openExportSellersModal = (id) => {
-    setIsExportSellersModalOpen(true);
+
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    formData.append("subProduct", data.subProduct);
+    formData.append("unit", data.unit);
+    formData.append("stock", data.stock);
+    formData.append("name", data.name);
+    formData.append("description", data.description);
+    formData.append("color", data.color);
+    if (file) {
+      formData.append("file", file);
+    }
+
+    const response = await changedProduct(formData, productId, setModified);
+    if (response) {
+      setEditModal(false);
+      setConfirmModal(true);
+    }
   };
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setIsExportModalOpen(false);
-    setIsExportSellersModalOpen(false);
-    setConfirmCancelModalOpen(false);
-    setSaveConfirmationModalOpen(false);
-    setConfirmDeleteModalOpen(false);
-  };
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
-  const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
-  const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
-    closeModal();
-  };
-  const openConfirmDeleteModal = (id) => {
-    setUserId(id);
-    setConfirmDeleteModalOpen(true);
-  };
-  const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
-  const handleConfirmDelete = () => {
-    deleteUser(userId, setModified);
-    closeConfirmDeleteModal();
-  };
-  const handleCancelClick = () => openConfirmCancelModal();
-  const handleConfirmCancel = () => {
-    closeConfirmCancelModal();
-    closeModal();
-  };
-  const handleUserCreation = async (userData) => {};
-  const onSubmit = (data) => {};
-  const handleRoleFilterChange = (value) => {
-    setRoleFilter(value);
-  };
-  const handleStateFilterChange = (value) => {
-    console.log(value);
-    setStateFilter(value);
-  };
+
+  useEffect(() => {
+    setCategory(id);
+  }, []);
 
   return (
     <div className="flex h-full flex-col justify-between">
@@ -137,7 +155,7 @@ const UsersPage = () => {
             <h2
               className={`w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Nombre de la categoria
+              {name}
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
@@ -146,7 +164,7 @@ const UsersPage = () => {
                 text="Exportar lista"
                 icon={DownloadIcon}
                 color={"cancel"}
-                onClick={() => openExportModal()}
+                //onClick={() => openExportModal()}
               />
               <Link to={"agregar-producto"}>
                 <Button text="Nuevo Producto" icon={PlusIcon} />
@@ -154,313 +172,311 @@ const UsersPage = () => {
             </div>
           </div>
         </div>
-        {activeTab === USER_TAB && (
-          <div className="flex-grow overflow-auto rounded-tr-lg bg-white p-5">
-            <table className="mt-2 w-full">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Nombre Completo
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Email
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col items-center gap-2">
-                      <FilterSelect
-                        options={roleOptions}
-                        placeholder="Rol"
-                        onChange={handleRoleFilterChange}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    <div className="flex flex-col items-center gap-2">
-                      <FilterSelect
-                        options={stateOptions}
-                        placeholder="Estado"
-                        onChange={handleStateFilterChange}
-                      />
-                    </div>
-                  </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Acción
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {usersResponse
-                  .filter((user) => {
-                    return (
-                      (roleFilter === "" || user?.role?.name === roleFilter) &&
-                      (stateFilter === "" ||
-                        (user.isActive ? "Activo" : "Inactivo") === stateFilter)
-                    );
-                  })
-                  .map((user, index) => (
-                    <UserRow
-                      state={user.isActive}
-                      key={index}
-                      fullName={`${user.userInfo.fullName} `}
-                      email={user.email}
-                      role={user?.role?.name}
-                      editIconSrc={editIcon}
-                      deleteIconSrc={deleteIcon}
-                      onEditClick={() => {
-                        openModal(user.id);
-                      }}
-                      onDeleteClick={() => openConfirmDeleteModal(user.id)}
-                    />
-                  ))}
-              </tbody>
-            </table>
-            <div className="flex justify-center p-6">
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemPerPage={itemsPerPage}
-                total={total}
+        <div className="flex-grow overflow-auto rounded-tr-lg bg-white p-5">
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  Nombre
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Descripción
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Stock
+                </th>
+
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Acción
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {productsResponse.map((product, index) => (
+                <InventaryRow
+                  name={product.name}
+                  key={index}
+                  description={product.description}
+                  stock={product.stock}
+                  editIconSrc={editIcon}
+                  deleteIconSrc={deleteIcon}
+                  onEditClick={() => {
+                    handleEdit(product.id, product.category);
+                  }}
+                  onDeleteClick={() => handleDelete(product.id)}
+                />
+              ))}
+            </tbody>
+          </table>
+          <div className="flex justify-center p-6">
+            <Pagination
+              pageIndex={setItemsPerPage}
+              currentPage={page}
+              totalPages={totalPage}
+              onPageChange={setPage}
+              itemPerPage={itemsPerPage}
+              total={total}
+            />
+          </div>
+        </div>
+        {/*modal para eliminar*/}
+        <ReusableModal
+          isOpen={deletemodal}
+          onClose={() => setDeleteModal(false)}
+          title="Eliminar Producto"
+          variant="confirmation"
+          buttons={["back", "accept"]}
+          onAccept={() => acceptDelete()}
+        >
+          Este producto será eliminado de forma permanente. ¿Desea continuar?
+        </ReusableModal>
+        {/*modal para elementos eliminados*/}
+        <ReusableModal
+          isOpen={confirmDelete}
+          onClose={() => setConfirmDelete(false)}
+          title="Item eliminado"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setConfirmDelete(false)}
+        >
+          <div className="flex flex-col items-center justify-center">
+            <img src={deleteImg} alt="delete" />
+            <p className="font-roboto text-sm font-light text-black">
+              El elemento fue eliminado correctamente.
+            </p>
+          </div>
+        </ReusableModal>
+        {/*modal para editar*/}
+        <ReusableModal
+          isOpen={editModal}
+          onClose={() => setIsConfirmCancelModalOpen(true)}
+          title="Editar Producto"
+          onSubmit={handleSubmit(onSubmit)}
+          buttons={["cancel", "save"]}
+          handleCancelClick={() => setIsConfirmCancelModalOpen(true)}
+        >
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Input
+              placeholder={"Escribir..."}
+              label={"Nombre"}
+              {...register("name", {
+                required: {
+                  value: true,
+                  message: "Campo obligatorio",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El nombre no puede exceder los 50 caracteres.",
+                },
+                minLength: {
+                  value: 3,
+                  message: "El nombre debe contener al menos 3 caracteres.",
+                },
+              })}
+              msjError={errors.name ? errors.name.message : ""}
+            />
+            <Input
+              placeholder="Escribir..."
+              label="Descripcion"
+              {...register("description", {
+                required: {
+                  value: true,
+                  message: "Campo obligatorio",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "la descripcion no puede exceder los 50 caracteres.",
+                },
+                minLength: {
+                  value: 3,
+                  message:
+                    "la descripcion debe contener al menos 3 caracteres.",
+                },
+              })}
+              msjError={errors.description ? errors.description.message : ""}
+            />
+            <div className="flex gap-3">
+              <Input
+                placeholder="Escribir..."
+                label="Subproducto"
+                {...register("subProduct", {
+                  required: {
+                    value: true,
+                    message: "Campo obligatorio",
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: "el campo no puede exceder los 50 caracteres.",
+                  },
+                  minLength: {
+                    value: 3,
+                    message: "el campo debe contener al menos 3 caracteres.",
+                  },
+                })}
+                msjError={errors.subProduct ? errors.subProduct.message : ""}
+              />
+              <Input
+                placeholder="Escribir..."
+                label="Color"
+                {...register("color", {
+                  required: {
+                    value: true,
+                    message: "Campo obligatorio",
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: "el campo no puede exceder los 50 caracteres.",
+                  },
+                  minLength: {
+                    value: 3,
+                    message: "el campo debe contener al menos 3 caracteres.",
+                  },
+                })}
+                msjError={errors.color ? errors.color.message : ""}
               />
             </div>
-          </div>
-        )}
-        {activeTab === SELLERS_TAB && (
-          <SellersPage openConfirmDeleteModal={openConfirmDeleteModal} />
-        )}
-        {activeTab === ROLES_TAB && <TableRole />}
-      </div>
-      <ReusableModal
-        isOpen={isModalOpen}
-        onClose={handleCancelClick}
-        title="Editar Usuario"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            label={"Nombre Completo"}
-            placeholder={"Escribe el nombre completo del usuario..."}
-            {...register("fullName", {
-              required: "Este campo es obligatorio",
-            })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
-          />
-          <Input
-            label={"CI"}
-            placeholder={"123456789"}
-            {...register("ci", {
-              required: "Este campo es obligatorio",
-            })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
-          />
-          <Input
-            label={"Teléfono de contacto"}
-            placeholder={"123456789"}
-            {...register("phone", {
-              required: "Este campo es obligatorio",
-            })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
-          />
-          <Input
-            placeholder={"Escribe tu correo"}
-            label={"Dirección de correo"}
-            {...register("email", {
-              required: {
-                value: true,
-                message: "Campo obligatorio",
-              },
-              pattern: {
-                value:
-                  /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
-                message: "Formato de email incorrecto",
-              },
-            })}
-            errorApi={errors.email}
-            msjError={errors.email ? errors.email.message : ""}
-          />
-          <div className="space-y-4">
-            <Checkbox
-              defaultSelected={checkSelected === "existente"}
-              isSelected={checkSelected === "existente"}
-              onClick={() => setCheckSelected("existente")}
-              radius="full"
-              className="font-light"
-              size="sm"
-            >
-              Asignar rol existente
-            </Checkbox>
-            <Select
-              className="rounded-lg border"
-              isDisabled={checkSelected === "nuevo"}
-              {...register("role", {
-                required:
-                  checkSelected === "existente"
-                    ? "Debes seleccionar un rol"
-                    : false,
-              })}
-              onSelectionChange={(value) => setValue("role", value)}
-            >
-              {RolesResponse &&
-                RolesResponse.map((rol) => (
-                  <SelectItem key={rol.id}>{rol.name}</SelectItem>
-                ))}
-            </Select>
-            <Checkbox
-              radius="full"
-              isSelected={checkSelected === "nuevo"}
-              onClick={() => setCheckSelected("nuevo")}
-              className="font-light"
-              size="sm"
-            >
-              Asignar nuevo rol
-            </Checkbox>
             <Input
-              disabled={checkSelected === "existente"}
-              placeholder={"Escribe el nombre del rol..."}
-              {...register("nameRole", {
-                required:
-                  checkSelected === "nuevo"
-                    ? "Debes ingresar el nombre del rol"
-                    : false,
+              placeholder="Kg"
+              label="Unidad de Medida"
+              {...register("unit", {
+                required: {
+                  value: true,
+                  message: "Campo obligatorio",
+                },
+                maxLength: {
+                  value: 5,
+                  message: "el campo no puede exceder los 5 caracteres.",
+                },
+                minLength: {
+                  value: 1,
+                  message: "el campo debe contener al menos 1 caracteres.",
+                },
               })}
-              errorApi={errors.nameRole}
-              msjError={errors.nameRole ? errors.nameRole.message : ""}
+              msjError={errors.unit ? errors.unit.message : ""}
             />
-            <Select
-              isDisabled={checkSelected === "existente"}
-              placeholder="Permisos"
-              selectionMode="multiple"
-              className="max-w rounded-lg border font-roboto font-medium"
-              {...register("permissions", {
-                required:
-                  checkSelected === "nuevo" ? "Debes asignar permisos" : false,
+
+            <Input
+              placeholder="1234"
+              label="Stock"
+              type="number"
+              {...register("stock", {
+                required: {
+                  value: true,
+                  message: "Campo obligatorio",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "el campo no puede exceder los 50 caracteres.",
+                },
+                minLength: {
+                  value: 1,
+                  message: "el campo debe contener al menos 1 caracteres.",
+                },
               })}
-              onSelectionChange={(values) => setValue("permissions", values)}
-            >
-              {permisos.map((permiso) => (
-                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-              ))}
-            </Select>
-            {errors.permissions && errors.permissions.message ? (
-              <span className="font-roboto text-xs text-red_e">
-                {errors.permissions.message}
-              </span>
-            ) : (
-              " "
-            )}
+              msjError={errors.stock ? errors.stock.message : ""}
+            />
+            <NextAutoComplete
+              label={"Categoria"}
+              label2={"Categorias Seleccionadas"}
+              name={"category"}
+              setValue={setValue}
+              onChange={setSearchCategory}
+              array={categoryResponse.map((category) => ({
+                name: category.name,
+                id: category.id,
+              }))}
+              // array2={listCategory.map((category) => ({
+              //   id: category.id,
+              //   name: category.name,
+              // }))}
+            />
+            {console.log(listCategory)}
+            <AutoCompleteArray
+              label={"Lista de precios"}
+              array={busquedas}
+              setValue={setValue}
+              name={"list"}
+            />
+
+            <div className="mt-3 min-w-40 max-w-60">
+              <p
+                className={`font-roboto font-light ${errors?.file?.message ? "text-red_e" : "text-black"} mb-1 text-sm`}
+              >
+                Agregar imagen
+              </p>
+              <input
+                className="hidden"
+                id="file"
+                type="file"
+                accept=".png, .jpg, .jpeg"
+                {...register("file")}
+                onChange={handleFileChange}
+              />
+              <label htmlFor="file" className="flex items-center gap-4">
+                <div
+                  className="flex h-11 cursor-pointer items-center gap-2 rounded-lg border border-blue-400 p-1"
+                  onClick={() => setFileName("")}
+                >
+                  {" "}
+                  <img src={uploadIcon} alt="iconUploads" className="h-5 w-5" />
+                  <p className="text-blue-400">Cargar imagen</p>
+                </div>
+                <p
+                  className={`font-roboto text-xs ${errors?.file?.message ? "text-red_e" : "text-black"}`}
+                >
+                  {fileName.length > 0 && fileName}
+                </p>
+              </label>
+              {errors.file && (
+                <p className="font-roboto text-xs text-red_e">
+                  {errors?.file?.message}
+                </p>
+              )}
+            </div>
+          </form>
+        </ReusableModal>
+        {/*modal para confirmar cancel o cambios no guardados*/}
+        <ReusableModal
+          isOpen={isConfirmCancelModalOpen}
+          onClose={() => setIsConfirmCancelModalOpen(false)}
+          title="Cambios sin guardar"
+          variant="confirmation"
+          buttons={["back", "accept"]}
+          onAccept={() => {
+            setIsConfirmCancelModalOpen(false);
+            setEditModal(false);
+          }}
+        >
+          Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
+        </ReusableModal>
+        {/*modal para cambios guardados*/}
+        <ReusableModal
+          isOpen={confirmModal}
+          onClose={() => setConfirmModal(false)}
+          title="Cambios guardados"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setConfirmModal(false)}
+        >
+          <div className="flex flex-col items-center justify-center">
+            <img src={SaveImg} alt="save" />
+            <p className="font-roboto text-sm font-light text-black">
+              Los cambios fueron guardados correctamente.
+            </p>
           </div>
-        </form>
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isExportModalOpen}
-        onClose={closeModal}
-        title="Exportar lista"
-        variant="confirmation"
-        buttons={["back", "accept"]}
-        onAccept={handleConfirmCancel}
-      >
-        Elige el formato en el que desea descargar el contenido de la lista:
-        <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getUsersExcel}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
-
-          <a href={`${BASE_URL}/${getUsersPdf}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
-        </div>
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isExportSellersModalOpen}
-        onClose={closeModal}
-        title="Exportar lista"
-        variant="confirmation"
-        buttons={["back", "accept"]}
-        onAccept={handleConfirmCancel}
-      >
-        Elige el formato en el que desea descargar el contenido de la lista:
-        <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getUsersExcel}?isSeller=true`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
-
-          <a
-            href={`${BASE_URL}/${getUsersPdf}?isSeller=true`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
-        </div>
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isConfirmCancelModalOpen}
-        onClose={closeConfirmCancelModal}
-        title="Cambios sin guardar"
-        variant="confirmation"
-        buttons={["back", "accept"]}
-        onAccept={handleConfirmCancel}
-      >
-        Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isSaveConfirmationModalOpen}
-        onClose={closeSaveConfirmationModal}
-        title="Cambios guardados"
-        variant="confirmation"
-        buttons={["accept"]}
-        onAccept={closeSaveConfirmationModal}
-      >
-        Los cambios fueron guardados exitosamente.
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isConfirmDeleteModalOpen}
-        onClose={closeConfirmDeleteModal}
-        title="Eliminar usuario"
-        variant="confirmation"
-        buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete(userId)}
-      >
-        Este usuario será eliminado de forma permanente. ¿Desea continuar?
-      </ReusableModal>
+        </ReusableModal>
+        {/*modal para los archivos */}
+        <ReusableModal
+          isOpen={FileAccept}
+          onClose={() => setFileAccept(false)}
+          title="Formato de archivo incorrecto"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setFileAccept(false)}
+        >
+          Solo se aceptan archivos PNG o JPG.
+        </ReusableModal>
+      </div>
     </div>
   );
 };
