@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Input from "../components/inputs/Input";
-import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import useNotes from "../hooks/notes/useNotes.js";
 import { Controller, useForm } from "react-hook-form";
 import { Checkbox, DatePicker } from "@nextui-org/react";

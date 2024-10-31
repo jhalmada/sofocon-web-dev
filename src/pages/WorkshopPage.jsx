@@ -69,6 +69,20 @@ const WorkshopPage = () => {
     "Egreso",
   ];
   const pricesList = ["Lista 1", "Lista 2", "Lista 3"];
+  const monthsOptions = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
   const {
     control,
     clearErrors,
@@ -232,23 +246,14 @@ const WorkshopPage = () => {
                 <Select
                   className="w-52 rounded-lg border"
                   placeholder="OCTUBRE 2024 "
-                  onSelectionChange={(values) => setValue("status", values)}
+                  onSelectionChange={(values) => setValue("period", values)}
                 >
-                  <SelectItem>Enero 2024</SelectItem>
-                  <SelectItem>Febrero 2024</SelectItem>
-                  <SelectItem>Marzo 2024</SelectItem>
-                  <SelectItem>Abril 2024</SelectItem>
-                  <SelectItem>Mayo 2024</SelectItem>
-                  <SelectItem>Junio 2024</SelectItem>
-                  <SelectItem>Julio 2024</SelectItem>
-                  <SelectItem>Agosto 2024</SelectItem>
-                  <SelectItem>Septiembre 2024</SelectItem>
-                  <SelectItem>Octubre 2024</SelectItem>
-                  <SelectItem>Noviembre 2024</SelectItem>
-                  <SelectItem>Diciembre 2024</SelectItem>
+                  {monthsOptions.map((option) => (
+                    <SelectItem key={option}>{option}</SelectItem>
+                  ))}
                 </Select>
               </div>
-              <table className="w-full">
+              <table className="mt-2 w-full">
                 <thead>
                   <tr>
                     <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">

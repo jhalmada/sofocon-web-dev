@@ -101,7 +101,7 @@ const AddCompanyRoutePage = ({
 
   return (
     <div className="min-h-[calc(100vh-4.375rem)] overflow-auto rounded-tr-lg bg-white p-5">
-      <table className="w-full">
+      <table className="mt-2 w-full">
         <thead>
           <tr>
             <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
@@ -141,7 +141,7 @@ const AddCompanyRoutePage = ({
               direction={companie.address}
               nextVisits={formatDate(companie.nextVisit)}
               state={companie.status}
-              notes={"ver notas"}
+              notes={"Ver notas"}
               deleteIconSrc={deleteIcon}
               onDeleteClick={() => openConfirmDeleteModal(companie.id)}
             />

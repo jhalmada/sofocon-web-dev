@@ -19,6 +19,7 @@ import {
   ADD_ROUTE_ROUTE,
   PRODUCTS_ROUTE,
   ORDERS_ROUTE,
+  CLIENTS_ORDERS_ROUTE,
   WORKSHOP_ROUTE,
   UNIT_TEMPLATE_ROUTE,
   RECHARGE_ROUTE,
@@ -28,6 +29,9 @@ import {
   PRODUCTS_ADD,
   CATEGORY_ADD,
   PASSWORD_CODE_ROUTE,
+  NEW_SALE_ROUTE,
+  NEW_BUDGET_ROUTE,
+  BUDGET_ROUTE,
   LIST_PRICE_ADD,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
@@ -52,23 +56,26 @@ import RoutesPage from "../pages/RoutesPage";
 import ProductsPage from "../pages/ProductsPage";
 import { Login } from "../layouts/Login";
 import RedirectionPage from "../pages/RedirectionPage";
-import OrdersPage from "../pages/OrdersPage";
 import NotesPage from "../pages/NotesPage";
 import RouteMapDetailsPage from "../pages/RouteMapDetailsPage";
+import OrdersPage from "../pages/OrdersPage";
+import OrdersLayout from "../layouts/Orders";
+import NewBudgetPage from "../pages/NewBudgetPage";
 import WorkshopLayout from "../layouts/Workshop";
 import WorkshopPage from "../pages/WorkshopPage";
 import UnitTemplate from "../pages/UnitTemplate";
 import RechargePage from "../pages/RechargePage";
 import RechargeDataPage from "../pages/RechargeDataPage";
-
 import AddProductPage from "../pages/AddProductPage";
 import Products from "../layouts/Products";
 import InventoryPage from "../pages/InventoryPage";
-import StoragePage from "../pages/StoragePage";
 import DepositPage from "../pages/DepositPage";
 import Inventory from "../layouts/Inventory";
 import AddCategoryPage from "../pages/AddCategoryPage";
 import PasswordCodePage from "../pages/PasswordCodePage";
+import ClientsOrdersPage from "../pages/ClientsOrdersPage";
+import NewSalePage from "../pages/NewSalePage";
+import BudgetDataPage from "../pages/BudgetDataPage";
 import AddPriceListPage from "../pages/AddPriceListPage";
 
 export const router = createBrowserRouter([
@@ -215,7 +222,29 @@ export const router = createBrowserRouter([
       },
       {
         path: ORDERS_ROUTE,
-        element: <OrdersPage />,
+        element: <OrdersLayout />,
+        children: [
+          {
+            index: true,
+            element: <OrdersPage />,
+          },
+          {
+            path: CLIENTS_ORDERS_ROUTE,
+            element: <ClientsOrdersPage />,
+          },
+          {
+            path: BUDGET_ROUTE,
+            element: <BudgetDataPage />,
+          },
+          {
+            path: NEW_SALE_ROUTE,
+            element: <NewSalePage />,
+          },
+          {
+            path: NEW_BUDGET_ROUTE,
+            element: <NewBudgetPage />,
+          },
+        ],
       },
       {
         path: WORKSHOP_ROUTE,

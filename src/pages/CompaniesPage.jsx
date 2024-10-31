@@ -404,7 +404,7 @@ const CompaniesPage = () => {
                   </td>
                 </tr>
               ) : (
-                <table className="w-full">
+                <table className="mt-2 w-full">
                   <thead>
                     <tr>
                       <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
@@ -476,11 +476,11 @@ const CompaniesPage = () => {
             </div>
 
             <div
-            // className={
-            //   companiesResponse.length === 0
-            //     ? "hidden"
-            //     : `flex justify-center p-6`
-            // }
+              className={
+                companiesResponse.length === 0
+                  ? "hidden"
+                  : `flex justify-center p-6`
+              }
             >
               <Pagination
                 pageIndex={setItemsPerPage}

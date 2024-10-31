@@ -20,7 +20,6 @@ import {
   parseAbsoluteToLocal,
   today,
 } from "@internationalized/date";
-import FilterSelect from "../components/filters/FilterSelect.jsx";
 
 const NOTES_TAB = "notes";
 const NotesPage = () => {
@@ -37,6 +36,7 @@ const NotesPage = () => {
   const [reminderSelected, setReminderSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [visitFilter, setVisitFilter] = useState("");
+
   const { id } = useParams();
 
   const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
@@ -133,7 +133,7 @@ const NotesPage = () => {
       title,
       description,
       isReminder: reminderSelected,
-      date: formattedDate,
+      date: dateSelected ? formattedDate : null,
     });
   };
 
@@ -150,23 +150,6 @@ const NotesPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const handleVisitFilterChange = (value) => {
-    console.log(value);
-    switch (value) {
-      case "< 1 mes":
-        setNextVisit(1);
-        break;
-      case "< 2 meses":
-        setNextVisit(2);
-        break;
-      case "> 2 meses":
-        setNextVisit(3);
-        break;
-      default:
-        setNextVisit(null);
-        "selecciona una opción válida";
-    }
-  };
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
       <div className="flex flex-grow flex-col px-6 pt-6">
@@ -209,7 +192,7 @@ const NotesPage = () => {
         </div>
         {activeTab === NOTES_TAB && (
           <div className="flex-grow overflow-auto rounded-tr-lg bg-white p-5">
-            <table className="w-full">
+            <table className="mt-2 w-full">
               <thead>
                 <tr>
                   <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
