@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import x from "../../assets/icons/x.svg";
 import search from "../../assets/icons/search.svg";
 
 const ProductsAutocomplete = ({
@@ -13,20 +12,17 @@ const ProductsAutocomplete = ({
   placeholder = "Buscar...",
   isDisabled = false,
   setAutocompleteResults,
+  selectedItems,
 }) => {
-  const [selectedItems, setSelectedItems] = useState(array2 || []);
-
   const handleSelect = (item) => {
     if (!selectedItems.some((selectedItem) => selectedItem.id === item.id)) {
       const updatedSelectedItems = [...selectedItems, item];
-      setSelectedItems(updatedSelectedItems);
       setValue(name, updatedSelectedItems);
       setAutocompleteResults(updatedSelectedItems);
     } else {
       const updatedSelectedItems = selectedItems.filter(
         (selectedItem) => selectedItem.id !== item.id,
       );
-      setSelectedItems(updatedSelectedItems);
       setValue(name, updatedSelectedItems);
       setAutocompleteResults(updatedSelectedItems);
     }

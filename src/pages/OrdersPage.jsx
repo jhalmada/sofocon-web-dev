@@ -225,7 +225,7 @@ const OrdersPage = () => {
                     <ClientsOrdersRow
                       key={index}
                       id={order.id}
-                      name={order.client.name}
+                      name={order?.client?.name || "Sin nombre"}
                       orderId={order.id}
                       date={
                         order.created_at

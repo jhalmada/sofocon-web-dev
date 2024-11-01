@@ -158,8 +158,8 @@ const BudgetPage = () => {
                 <BudgetRow
                   key={index}
                   id={order.id}
-                  name={order.client.name}
-                  contact={order.client.phone}
+                  name={order?.client?.name || "Sin nombre"}
+                  contact={order?.client?.phone || "Sin contacto"}
                   date={
                     order.created_at
                       ? formatDate(order.created_at)

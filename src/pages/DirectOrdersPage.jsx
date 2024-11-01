@@ -18,7 +18,6 @@ const DirectOrdersPage = ({
   itemsPerPage,
   setModified,
   setStatus,
- 
 }) => {
   const [orderId, setOrderId] = useState(null);
 
@@ -134,7 +133,7 @@ const DirectOrdersPage = ({
               <DirectOrdersRow
                 key={index}
                 id={order.id}
-                name={order.client.name}
+                name={order?.client?.name || "Sin nombre"}
                 orderId={order.id}
                 date={
                   order.created_at ? formatDate(order.created_at) : "Sin fecha"
