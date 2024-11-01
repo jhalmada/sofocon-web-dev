@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import x from "../../assets/icons/x.svg";
 import search from "../../assets/icons/search.svg";
+
 //array es el array de objetos que se va a mostrar en el autocomplete
 //array2 es el array de los objetos ya seleccionados.
 //label es el texto que se muestra arriba del autocomplete
@@ -32,7 +33,17 @@ const CompleteSearchInput = ({
     } else {
       setSelectedItem(null);
       setValue(name, null);
+      onSelect(null);
     }
+  };
+
+  const handleInputChange = (e) => {
+    if (!e) {
+      setSelectedItem(null);
+      setValue(name, null);
+      onSelect(null);
+    }
+    onChange(e);
   };
 
   return (
@@ -43,9 +54,12 @@ const CompleteSearchInput = ({
         className="w-full rounded-lg border"
         selectedKey={selectedItem ? selectedItem.id : ""}
         placeholder={placeholder}
-        startContent={<img src={search}></img>}
-        onInputChange={(e) => onChange(e)}
-        onSelect={onSelect}
+        startContent={<img src={search} alt="search icon" />}
+        onInputChange={handleInputChange}
+        onSelect={(key) => {
+          const selected = array.find((item) => item.id === key);
+          handleSelect(selected || null);
+        }}
       >
         {array.map((item) => (
           <AutocompleteItem

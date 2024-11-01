@@ -22,6 +22,8 @@ const useGetProducts = () => {
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
+      console.log("la data de productos es");
+      console.log(data.result);
       setProductsResponse(data.result);
     } catch (e) {
       console.log(e);

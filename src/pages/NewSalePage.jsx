@@ -10,13 +10,17 @@ import { I18nProvider } from "@react-aria/i18n";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import cameraIcon from "../assets/icons/camera.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import useOrders from "../hooks/orders/useOrders.js";
 import useAddOrders from "../hooks/orders/useAddOrders.js";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput.jsx";
+import useGetProducts from "../hooks/products/useGetProducts.js";
+import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
+import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
+import x from "../assets/icons/x.svg";
+import { div } from "framer-motion/client";
 
 const NewSalePage = () => {
   const {
@@ -33,6 +37,9 @@ const NewSalePage = () => {
   const [dateSelected, setDateSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [rutValue, setRutValue] = useState("");
+  const [autocompleteResults, setAutocompleteResults] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [name, setName] = useState("productos");
 
   const pricesList = ["Lista 1", "Lista 2", "Lista 3"];
   const productsOptions = ["Polvo", "Arena"];
@@ -57,7 +64,10 @@ const NewSalePage = () => {
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
   const { ordersResponse, setStatus } = useOrders();
-  const { userSellerResponse, setSearch } = useUsersSellers();
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+  const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
+  const { priceListResponse } = useGetPriceList();
+
   const navigate = useNavigate();
 
   const handleOrderCreation = async (orderData) => {
@@ -125,6 +135,22 @@ const NewSalePage = () => {
     } else {
       setRutValue("");
     }
+  };
+
+  const transformData = (array) => {
+    return array.map((item) => ({
+      id: item.id,
+      name: item.userInfo.fullName,
+    }));
+  };
+  const handleDeleteSelection = (item) => {
+    const updatedSelectedItems = selectedItems.filter(
+      (selection) => selection.id !== item.id,
+    );
+
+    setSelectedItems(updatedSelectedItems);
+    setValue(name, updatedSelectedItems);
+    setAutocompleteResults(updatedSelectedItems);
   };
 
   return (
@@ -240,14 +266,13 @@ const NewSalePage = () => {
                 </I18nProvider>
               </div>
               <div className="-mt-[.08rem] w-1/2">
-                <NextAutoComplete
-                  label={"Vendedor"}
-                  array2={[]}
-                  array={[]}
-                  name={"products"}
+                <CompleteSearchInput
+                  label={"Vendedores"}
+                  array={transformData(userSellerResponse?.result || []) || []}
+                  name={"vendedores"}
                   setValue={setValue}
-                  onChange={setSearch}
-                  placeholder="Buscar vendedor"
+                  onChange={setSearchSellers}
+                  placeholder="Buscar vendedores"
                 />
                 <p>{errors.vendedores && errors.vendedores.message}</p>
               </div>
@@ -260,80 +285,100 @@ const NewSalePage = () => {
                 <Select
                   placeholder="Elegir lista de precios..."
                   className="rounded-lg border"
-                  {...register("status")}
-                  onSelectionChange={(value) => setValue("status", value)}
+                  {...register("priceList")}
+                  onSelectionChange={(value) => setValue("priceList", value)}
                 >
-                  {pricesList.map((option) => (
-                    <SelectItem key={option}>{option}</SelectItem>
+                  {priceListResponse.map((option) => (
+                    <SelectItem key={option.id}>{option.name}</SelectItem>
                   ))}
                 </Select>
               </div>
               <div className="mt-3 w-1/2">
-                <NextAutoComplete
-                  label={"Producto"}
-                  array2={[]}
-                  array={[]}
-                  name={"products"}
+                <ProductsAutocomplete
+                  label={"Productos"}
+                  array={productsResponse || []}
+                  name={"productos"}
                   setValue={setValue}
-                  onChange={setSearch}
-                  placeholder="Buscar producto"
+                  onChange={setSearchSellers}
+                  placeholder="Buscar productos"
+                  setAutocompleteResults={setAutocompleteResults}
                 />
-                <p>{errors.vendedores && errors.vendedores.message}</p>
+                <p>{errors.productos && errors.productos.message}</p>
               </div>
             </div>
-            <div className="flex space-x-2">
-              <div className="w-1/2">
-                <Input
-                  bg="bg-gray"
-                  placeholderColor="placeholder-black_b"
-                  border="none"
-                  label={"Producto"}
-                  placeholder={"Producto 1"}
-                  disabled
-                />
-              </div>
-              <div className="flex w-1/2 space-x-2">
-                <div className="mt-[.1rem] w-full">
-                  <label className="block text-sm font-light">Cantidad</label>
-                  <Select
-                    className="rounded-lg border"
-                    placeholder="Cant."
-                    onSelectionChange={(values) => setValue("quantity", values)}
-                  >
-                    {quantityOptions.map((month) => (
-                      <SelectItem key={month.key}>{month}</SelectItem>
-                    ))}
-                  </Select>
-                </div>
 
-                <Input
-                  bg="bg-gray"
-                  placeholderColor="placeholder-black_b"
-                  border="none"
-                  label={"Precio"}
-                  placeholder={"$345"}
-                  disabled
-                />
-                <Input
-                  label={"Desc."}
-                  placeholder={"%"}
-                  {...register("discount", {
-                    required: "Este campo es obligatorio",
-                  })}
-                  msjError={errors.discount ? errors.discount.message : ""}
-                />
-                <div className="w-full">
-                  <label className="block text-sm font-light">Recarga</label>
-                  <Select
-                    className="rounded-lg border"
-                    placeholder="Si/No"
-                    onSelectionChange={(values) => setValue("quantity", values)}
-                  >
-                    <SelectItem key={"si"}>Si</SelectItem>
-                    <SelectItem key={"no"}>No</SelectItem>
-                  </Select>
+            <div>
+              {autocompleteResults.length > 0 && (
+                <div>
+                  {autocompleteResults.map((item) => (
+                    <div className="flex w-full space-x-2" key={item.id}>
+                      <div className="w-1/2">
+                        <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br">
+                          {item.name}
+                          <img
+                            src={x}
+                            alt="delete"
+                            className="mr-1 cursor-pointer"
+                            onClick={() => handleDeleteSelection(item.id)}
+                          />
+                        </span>
+                      </div>
+                      <div className="flex w-1/2 space-x-2">
+                        <div className="mt-[.1rem] w-full">
+                          <label className="block text-sm font-light">
+                            Cantidad
+                          </label>
+                          <Select
+                            className="rounded-lg border"
+                            placeholder="Cant."
+                            onSelectionChange={(values) =>
+                              setValue("quantity", values)
+                            }
+                          >
+                            {quantityOptions.map((item, index) => (
+                              <SelectItem key={index}>{item}</SelectItem>
+                            ))}
+                          </Select>
+                        </div>
+
+                        <Input
+                          bg="bg-gray"
+                          placeholderColor="placeholder-black_b"
+                          border="none"
+                          label={"Precio"}
+                          placeholder={"$234"}
+                          disabled
+                        />
+                        <Input
+                          label={"Desc."}
+                          placeholder={"%"}
+                          {...register("discount", {
+                            required: "Este campo es obligatorio",
+                          })}
+                          msjError={
+                            errors.discount ? errors.discount.message : ""
+                          }
+                        />
+                        <div className="w-full">
+                          <label className="block text-sm font-light">
+                            Recarga
+                          </label>
+                          <Select
+                            className="rounded-lg border"
+                            placeholder="Si/No"
+                            onSelectionChange={(values) =>
+                              setValue("recarga", values)
+                            }
+                          >
+                            <SelectItem key={"si"}>Si</SelectItem>
+                            <SelectItem key={"no"}>No</SelectItem>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="rounded-lg bg-gray p-4">
