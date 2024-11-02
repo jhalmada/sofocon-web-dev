@@ -21,6 +21,9 @@ import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray.jsx"
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import useCategory from "../hooks/category/useCategory.js";
 import usePutProduct from "../hooks/products/usePutProducts.js";
+import { Select, SelectItem } from "@nextui-org/select";
+import { MEDIDA, TYPE_PRODUCTS } from "../utils/Constants.js";
+import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 
 const busquedas = [
   { name: "Busqueda 1", id: 1 },
@@ -61,6 +64,7 @@ const UsersPage = () => {
   } = useGetProducts();
 
   const { categoryResponse, setSearch: setSearchCategory } = useCategory();
+  const { priceListResponse } = useGetPriceList();
 
   const { deleteProduct } = useDeleteProduct();
 
@@ -72,6 +76,7 @@ const UsersPage = () => {
     setValue,
     setError,
     formState: { errors },
+    clearErrors,
   } = useForm();
 
   //funciones
@@ -92,16 +97,17 @@ const UsersPage = () => {
       setValue("name", product.name);
       setValue("description", product.description);
       setValue("stock", product.stock);
-      setValue("subProduct", product.subProduct);
-      setValue("color", product.color);
+      setValue("type", product.type);
+      setValue("amount", product.amount);
       setValue("unit", product.unit);
-      setListCategory(category);
+      setListCategory([category]);
       setEditModal(true);
     }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    console.log(file);
     if (file) {
       const validTypes = ["image/png", "image/jpg", "image/jpeg"];
       if (!validTypes.includes(file.type)) {
@@ -115,14 +121,24 @@ const UsersPage = () => {
     }
   };
 
+  const deleteFile = () => {
+    setFile(null);
+    setFileName("");
+    setValue("file", null);
+  };
+
   const onSubmit = async (data) => {
     const formData = new FormData();
-    formData.append("subProduct", data.subProduct);
+    formData.append("type", data.type);
     formData.append("unit", data.unit);
     formData.append("stock", data.stock);
     formData.append("name", data.name);
     formData.append("description", data.description);
-    formData.append("color", data.color);
+    formData.append("amount", data.amount);
+    // formData.append(
+    //   "category",
+    //   listCategory.map((category) => ({ id: category.id })),
+    // );
     if (file) {
       formData.append("file", file);
     }
@@ -137,6 +153,11 @@ const UsersPage = () => {
   useEffect(() => {
     setCategory(id);
   }, []);
+
+  const handleSelectionChange = (e, name) => {
+    setValue(name, e);
+    clearErrors(name);
+  };
 
   return (
     <div className="flex h-full flex-col justify-between">
@@ -201,7 +222,7 @@ const UsersPage = () => {
                   editIconSrc={editIcon}
                   deleteIconSrc={deleteIcon}
                   onEditClick={() => {
-                    handleEdit(product.id, product.category);
+                    handleEdit(product.id, product.list);
                   }}
                   onDeleteClick={() => handleDelete(product.id)}
                 />
@@ -296,64 +317,72 @@ const UsersPage = () => {
               msjError={errors.description ? errors.description.message : ""}
             />
             <div className="flex gap-3">
-              <Input
-                placeholder="Escribir..."
-                label="Subproducto"
-                {...register("subProduct", {
-                  required: {
-                    value: true,
-                    message: "Campo obligatorio",
-                  },
-                  maxLength: {
-                    value: 50,
-                    message: "el campo no puede exceder los 50 caracteres.",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "el campo debe contener al menos 3 caracteres.",
-                  },
-                })}
-                msjError={errors.subProduct ? errors.subProduct.message : ""}
-              />
-              <Input
-                placeholder="Escribir..."
-                label="Color"
-                {...register("color", {
-                  required: {
-                    value: true,
-                    message: "Campo obligatorio",
-                  },
-                  maxLength: {
-                    value: 50,
-                    message: "el campo no puede exceder los 50 caracteres.",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "el campo debe contener al menos 3 caracteres.",
-                  },
-                })}
-                msjError={errors.color ? errors.color.message : ""}
-              />
+              <div className="w-[50%]">
+                <label
+                  className={`${errors.status ? "text-red_e" : "text-gray-700"} mt-[0.15rem] block text-sm font-medium`}
+                >
+                  Tipo:
+                </label>
+                <Select
+                  size="small"
+                  placeholder="Seleccionar tipo"
+                  className={`rounded-lg border ${errors.type ? "border-red_e text-red_e" : ""} `}
+                  {...register("type")}
+                  onChange={(e) =>
+                    handleSelectionChange(e.target.value, "type")
+                  }
+                >
+                  {TYPE_PRODUCTS.map((tipo) => (
+                    <SelectItem key={tipo}>{tipo}</SelectItem>
+                  ))}
+                </Select>
+                <p className="mt-1 font-roboto text-xs text-red_e">
+                  {errors.type ? errors.type.message : ""}
+                </p>
+              </div>
+              <div className="w-[50%]">
+                <Input
+                  type="number"
+                  placeholder="Escribir..."
+                  label="Capacidad"
+                  {...register("amount", {
+                    required: {
+                      value: true,
+                      message: "Campo obligatorio",
+                    },
+                    maxLength: {
+                      value: 10,
+                      message: "el campo no puede exceder los 10 caracteres.",
+                    },
+                    minLength: {
+                      value: 1,
+                      message: "el campo debe contener al menos 1 caracteres.",
+                    },
+                  })}
+                  msjError={errors.amount ? errors.amount.message : ""}
+                />
+              </div>
             </div>
-            <Input
-              placeholder="Kg"
-              label="Unidad de Medida"
-              {...register("unit", {
-                required: {
-                  value: true,
-                  message: "Campo obligatorio",
-                },
-                maxLength: {
-                  value: 5,
-                  message: "el campo no puede exceder los 5 caracteres.",
-                },
-                minLength: {
-                  value: 1,
-                  message: "el campo debe contener al menos 1 caracteres.",
-                },
-              })}
-              msjError={errors.unit ? errors.unit.message : ""}
-            />
+            <div className="w-[100%]">
+              <label
+                className={`${errors.unit ? "text-red_e" : "text-gray-700"} mt-[0.15rem] block text-sm`}
+              >
+                Unidad de medida:
+              </label>
+              <Select
+                placeholder="Seleccionar tipo"
+                className={`rounded-lg border ${errors.unit ? "border-red_e text-red_e" : ""} `}
+                {...register("unit", { required: "Campo obligatorio" })}
+                onChange={(e) => handleSelectionChange(e.target.value, "unit")}
+              >
+                {MEDIDA.map((tipo) => (
+                  <SelectItem key={tipo}>{tipo}</SelectItem>
+                ))}
+              </Select>
+              <p className="mt-1 font-roboto text-xs text-red_e">
+                {errors.unit ? errors.unit.message : ""}
+              </p>
+            </div>
 
             <Input
               placeholder="1234"
@@ -375,7 +404,7 @@ const UsersPage = () => {
               })}
               msjError={errors.stock ? errors.stock.message : ""}
             />
-            <NextAutoComplete
+            {/* <NextAutoComplete
               label={"Categoria"}
               label2={"Categorias Seleccionadas"}
               name={"category"}
@@ -385,20 +414,27 @@ const UsersPage = () => {
                 name: category.name,
                 id: category.id,
               }))}
-              // array2={listCategory.map((category) => ({
-              //   id: category.id,
-              //   name: category.name,
-              // }))}
-            />
-            {console.log(listCategory)}
-            <AutoCompleteArray
+              array2={listCategory.map((category) => ({
+                id: category.id,
+                name: category.name,
+              }))}
+            /> */}
+
+            {/* <AutoCompleteArray
               label={"Lista de precios"}
-              array={busquedas}
+              array={priceListResponse.map((price) => ({
+                id: price.id,
+                name: price.name,
+              }))}
               setValue={setValue}
               name={"list"}
-            />
+              array2={listCategory[0].map((category) => ({
+                id: category?.list.id,
+                name: category?.list.name,
+              }))}
+            /> */}
 
-            <div className="mt-3 min-w-40 max-w-60">
+            <div className="mt-4 min-w-40 max-w-60">
               <p
                 className={`font-roboto font-light ${errors?.file?.message ? "text-red_e" : "text-black"} mb-1 text-sm`}
               >
@@ -411,22 +447,33 @@ const UsersPage = () => {
                 accept=".png, .jpg, .jpeg"
                 {...register("file")}
                 onChange={handleFileChange}
+                disabled={fileName.length > 0}
               />
               <label htmlFor="file" className="flex items-center gap-4">
                 <div
-                  className="flex h-11 cursor-pointer items-center gap-2 rounded-lg border border-blue-400 p-1"
-                  onClick={() => setFileName("")}
+                  className={`flex h-11 ${fileName.length === 0 && "cursor-pointer"} items-center gap-2 rounded-lg border border-blue-400 p-1`}
                 >
                   {" "}
                   <img src={uploadIcon} alt="iconUploads" className="h-5 w-5" />
-                  <p className="text-blue-400">Cargar imagen</p>
+                  <p className="text-blue-400">{`${fileName.length > 0 ? "Imagen cargada" : "Cargar imagen"} `}</p>
                 </div>
-                <p
-                  className={`font-roboto text-xs ${errors?.file?.message ? "text-red_e" : "text-black"}`}
-                >
-                  {fileName.length > 0 && fileName}
-                </p>
               </label>
+              <p
+                className={`font-roboto text-sm ${errors?.file?.message ? "text-red_e" : "text-black"} mt-1`}
+              >
+                {fileName.length > 0 && (
+                  <>
+                    {fileName}
+                    {"  "}
+                    <label
+                      className="cursor-pointer"
+                      onClick={() => deleteFile()}
+                    >
+                      X
+                    </label>
+                  </>
+                )}
+              </p>
               {errors.file && (
                 <p className="font-roboto text-xs text-red_e">
                   {errors?.file?.message}

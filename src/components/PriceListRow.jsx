@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 const PriceListRow = ({
   name,
   totalClients,
@@ -6,12 +8,15 @@ const PriceListRow = ({
   deleteIconSrc,
   onEditClick,
   onDeleteClick,
+  id,
 }) => {
+  const navigate = useNavigate();
   return (
     <tr className="border-b border-gray text-center">
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
         title={name}
+        onClick={() => navigate(`/inicio/productos/lista/${id}/${name}`)}
       >
         {name}
       </td>
@@ -19,7 +24,9 @@ const PriceListRow = ({
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
         title={totalClients}
       >
-        {totalClients} {totalClients === 1 ? "Empresa" : "Empresas"}
+        {totalClients === 0 ? "Asignado a todas las " : totalClients}
+        {"  "}
+        {totalClients === 1 ? "Empresa" : "Empresas"}
       </td>
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2"

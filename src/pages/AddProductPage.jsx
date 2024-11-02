@@ -4,11 +4,14 @@ import Input from "../components/inputs/Input";
 import uploadIcon from "../assets/icons/arrow-blue.svg";
 import Button from "../components/buttons/Button";
 import arrowRigthIcon from "../assets/icons/arrow-right.svg";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useState } from "react";
 import useAddProducts from "../hooks/products/useAddProducts";
 import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray";
 import ReusableModal from "../components/modals/ReusableModal";
+import { Select, SelectItem } from "@nextui-org/select";
+import { MEDIDA, TYPE_PRODUCTS } from "../utils/Constants";
+import useGetPriceList from "../hooks/priceList/useGetPriceList";
 
 const busquedas = [
   { name: "Busqueda 1", id: 1 },
@@ -24,6 +27,7 @@ const AddProductPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [FileAccept, setFileAccept] = useState(false);
+  const [typeProduct, setTypeProduct] = useState("");
 
   //Hooks
   const navigate = useNavigate();
@@ -33,10 +37,12 @@ const AddProductPage = () => {
     handleSubmit,
     setError,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm();
 
   const { postAddProducts } = useAddProducts();
+  const { priceListResponse } = useGetPriceList();
 
   const { id } = useParams();
 
@@ -44,6 +50,7 @@ const AddProductPage = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    console.log(file);
     if (file) {
       const validTypes = ["image/png", "image/jpg", "image/jpeg"];
       if (!validTypes.includes(file.type)) {
@@ -57,16 +64,22 @@ const AddProductPage = () => {
     }
   };
 
+  const deleteFile = () => {
+    setFile(null);
+    setFileName("");
+    setValue("file", null);
+  };
+
   const onSubmit = async (data) => {
     const { list } = data;
     const formData = new FormData();
     formData.append("category", id);
-    formData.append("subProduct", data.subProduct);
+    formData.append("type", data.type);
     formData.append("unit", data.unit);
     formData.append("stock", data.stock);
     formData.append("name", data.name);
     formData.append("description", data.description);
-    formData.append("color", data.color);
+    formData.append("amount", data.amount);
     if (file) {
       formData.append("file", file);
     }
@@ -80,6 +93,7 @@ const AddProductPage = () => {
     if (response) {
       setSaveConfirmationModalOpen(true);
     }
+    console.log(file);
   };
 
   const handleAccept = () => {
@@ -87,11 +101,16 @@ const AddProductPage = () => {
     navigate("..");
   };
 
+  const handleSelectionChange = (e, name) => {
+    setValue(name, e);
+    clearErrors(name);
+  };
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col px-6 pt-6">
         <div className="w-[4rem]">
-          <Link to="/inicio/personal" className="text-sm font-medium leading-4">
+          <Link to=".." className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
               <img
                 src={ChevronLeftIcon}
@@ -141,6 +160,7 @@ const AddProductPage = () => {
             <Input
               placeholder="Escribir..."
               label="Descripcion"
+              type="text"
               {...register("description", {
                 required: {
                   value: true,
@@ -158,64 +178,74 @@ const AddProductPage = () => {
               })}
               msjError={errors.description ? errors.description.message : ""}
             />
-            <div className="flex gap-3">
-              <Input
-                placeholder="Escribir..."
-                label="Subproducto"
-                {...register("subProduct", {
-                  required: {
-                    value: true,
-                    message: "Campo obligatorio",
-                  },
-                  maxLength: {
-                    value: 50,
-                    message: "el campo no puede exceder los 50 caracteres.",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "el campo debe contener al menos 3 caracteres.",
-                  },
-                })}
-                msjError={errors.subProduct ? errors.subProduct.message : ""}
-              />
-              <Input
-                placeholder="Escribir..."
-                label="Color"
-                {...register("color", {
-                  required: {
-                    value: true,
-                    message: "Campo obligatorio",
-                  },
-                  maxLength: {
-                    value: 50,
-                    message: "el campo no puede exceder los 50 caracteres.",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "el campo debe contener al menos 3 caracteres.",
-                  },
-                })}
-                msjError={errors.color ? errors.color.message : ""}
-              />
-              <Input
-                placeholder="Kg"
-                label="Unidad de Medida"
-                {...register("unit", {
-                  required: {
-                    value: true,
-                    message: "Campo obligatorio",
-                  },
-                  maxLength: {
-                    value: 5,
-                    message: "el campo no puede exceder los 5 caracteres.",
-                  },
-                  minLength: {
-                    value: 1,
-                    message: "el campo debe contener al menos 1 caracteres.",
-                  },
-                })}
-                msjError={errors.unit ? errors.unit.message : ""}
-              />
+            <div className="flex w-full flex-wrap justify-between gap-2">
+              <div className="w-[32%] min-w-[17.6875rem]">
+                <label
+                  className={`${errors.status ? "text-red_e" : "text-gray-700"} mt-[0.15rem] block text-sm font-medium`}
+                >
+                  Tipo:
+                </label>
+                <Select
+                  placeholder="Seleccionar tipo"
+                  className={`rounded-lg border ${errors.type ? "border-red_e text-red_e" : ""} `}
+                  {...register("type")}
+                  onChange={(e) =>
+                    handleSelectionChange(e.target.value, "type")
+                  }
+                >
+                  {TYPE_PRODUCTS.map((tipo) => (
+                    <SelectItem key={tipo}>{tipo}</SelectItem>
+                  ))}
+                </Select>
+                <p className="mt-1 font-roboto text-xs text-red_e">
+                  {errors.type ? errors.type.message : ""}
+                </p>
+              </div>
+              <div className="w-[32%] min-w-[17.6875rem]">
+                <Input
+                  type="number"
+                  placeholder="Escribir..."
+                  label="Capacidad"
+                  {...register("amount", {
+                    required: {
+                      value: true,
+                      message: "Campo obligatorio",
+                    },
+                    maxLength: {
+                      value: 10,
+                      message: "el campo no puede exceder los 10 caracteres.",
+                    },
+                    minLength: {
+                      value: 1,
+                      message: "el campo debe contener al menos 1 caracteres.",
+                    },
+                  })}
+                  msjError={errors.amount ? errors.amount.message : ""}
+                />
+              </div>
+
+              <div className="w-[32%] min-w-[17.6875rem]">
+                <label
+                  className={`${errors.unit ? "text-red_e" : "text-gray-700"} mt-[0.15rem] block text-sm`}
+                >
+                  Unidad de medida:
+                </label>
+                <Select
+                  placeholder="Seleccionar tipo"
+                  className={`rounded-lg border ${errors.unit ? "border-red_e text-red_e" : ""} `}
+                  {...register("unit", { required: "Campo obligatorio" })}
+                  onChange={(e) =>
+                    handleSelectionChange(e.target.value, "unit")
+                  }
+                >
+                  {MEDIDA.map((tipo) => (
+                    <SelectItem key={tipo}>{tipo}</SelectItem>
+                  ))}
+                </Select>
+                <p className="mt-1 font-roboto text-xs text-red_e">
+                  {errors.unit ? errors.unit.message : ""}
+                </p>
+              </div>
             </div>
 
             <Input
@@ -240,12 +270,15 @@ const AddProductPage = () => {
             />
             <AutoCompleteArray
               label={"Lista de precios"}
-              array={busquedas}
+              array={priceListResponse.map((list) => ({
+                id: list.id,
+                name: list.name,
+              }))}
               setValue={setValue}
               name={"list"}
             />
 
-            <div className="mt-1 min-w-40 max-w-60">
+            <div className="mt-4 min-w-40 max-w-60">
               <p
                 className={`font-roboto font-light ${errors?.file?.message ? "text-red_e" : "text-black"} mb-1 text-sm`}
               >
@@ -256,32 +289,42 @@ const AddProductPage = () => {
                 id="file"
                 type="file"
                 accept=".png, .jpg, .jpeg"
-                {...register("file", {
-                  required: "Este campo es obligatorio",
-                })}
+                {...register("file")}
                 onChange={handleFileChange}
+                disabled={fileName.length > 0}
               />
               <label htmlFor="file" className="flex items-center gap-4">
                 <div
-                  className="flex h-11 cursor-pointer items-center gap-2 rounded-lg border border-blue-400 p-1"
-                  onClick={() => setFileName("")}
+                  className={`flex h-11 ${fileName.length === 0 && "cursor-pointer"} items-center gap-2 rounded-lg border border-blue-400 p-1`}
                 >
                   {" "}
                   <img src={uploadIcon} alt="iconUploads" className="h-5 w-5" />
-                  <p className="text-blue-400">Cargar imagen</p>
+                  <p className="text-blue-400">{`${fileName.length > 0 ? "Imagen cargada" : "Cargar imagen"} `}</p>
                 </div>
-                <p
-                  className={`font-roboto text-xs ${errors?.file?.message ? "text-red_e" : "text-black"}`}
-                >
-                  {fileName.length > 0 && fileName}
-                </p>
               </label>
+              <p
+                className={`font-roboto text-sm ${errors?.file?.message ? "text-red_e" : "text-black"} mt-1`}
+              >
+                {fileName.length > 0 && (
+                  <>
+                    {fileName}
+                    {"  "}
+                    <label
+                      className="cursor-pointer"
+                      onClick={() => deleteFile()}
+                    >
+                      X
+                    </label>
+                  </>
+                )}
+              </p>
               {errors.file && (
                 <p className="font-roboto text-xs text-red_e">
                   {errors?.file?.message}
                 </p>
               )}
             </div>
+
             <div className="left-0">
               <Button
                 type="submit"
