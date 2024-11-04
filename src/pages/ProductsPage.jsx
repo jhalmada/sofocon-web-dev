@@ -290,7 +290,7 @@ const ProductsPage = () => {
                 >
                   {" "}
                   <img src={uploadIcon} alt="iconUploads" className="h-5 w-5" />
-                  <p className="text-blue-400">Cargar imagen</p>
+                  <p className="text-blue-400">Cambiar imagen</p>
                 </div>
                 <p
                   className={`font-roboto text-xs ${errors?.file?.message ? "text-red_e" : "text-black"}`}

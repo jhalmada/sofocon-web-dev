@@ -53,9 +53,12 @@ const AddPriceListPage = () => {
     const PriceData = {
       name,
       product: product.map((product) => ({
-        uuid: product.id,
+        product: product.id,
         price: product.value,
       })),
+      client: isAllCompanies
+        ? null
+        : company.map((compan) => ({ id: compan.id })),
       isDirect,
     };
     const response = await postAddPriceList(PriceData);

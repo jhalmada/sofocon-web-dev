@@ -28,31 +28,47 @@ const Input = forwardRef(
       setIsVisible(!isVisible);
     };
 
+    const handleChange = (e) => {
+      const value = e.target.value;
+      // Solo permite números si el tipo es "number"
+      if (type === "number") {
+        const numericValue = value.replace(/\D/g, ""); // Elimina cualquier caracter que no sea dígito
+        e.target.value = numericValue; // Establece el valor modificado
+      }
+      if (onChange) {
+        onChange(e); // Llama a onChange con el valor actualizado
+      }
+    };
+
     const inputType =
       type === "password" ? (isVisible ? "text" : "password") : type;
 
     return (
       <div className={`${width}`}>
         <label
-          htmlFor={name} // Cambiado para usar `name`
-          className={`font-roboto font-light ${errorApi || msjError ? "text-red_e" : "text-black"} text-sm`}
+          htmlFor={name}
+          className={`font-roboto font-light ${
+            errorApi || msjError ? "text-red_e" : "text-black"
+          } text-sm`}
         >
           {label}
         </label>
         <div className={`relative ${mb} h-10 w-full`}>
           <input
-            name={name} // Cambiado para usar `name`
+            name={name}
             {...props}
             ref={ref}
-            type={inputType}
+            type={inputType === "number" ? "text" : inputType}
             title={placeholder}
             placeholder={placeholder}
+            inputMode={type === "number" ? "numeric" : undefined} // Ayuda a dispositivos móviles a solo permitir números
+            pattern={type === "number" ? "[0-9]*" : undefined} // Permite solo números en dispositivos compatibles
             className={`${placeholderColor} relative h-10 ${bg} w-full rounded-md ${border} p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${
               errorApi || msjError
                 ? "border-red_e placeholder-red_e"
                 : "border-gray-300"
             }`}
-            onChange={onChange}
+            onChange={handleChange} // Usar la función handleChange
           />
           {type === "password" && (
             <span
