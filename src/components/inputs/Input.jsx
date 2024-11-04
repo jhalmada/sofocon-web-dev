@@ -18,6 +18,7 @@ const Input = forwardRef(
       width = "w-full",
       width2 = "w-full",
       mb = "mb-3",
+      fontWeight = "font-normal",
       ...props
     },
     ref,
@@ -47,7 +48,7 @@ const Input = forwardRef(
             type={inputType}
             title={placeholder}
             placeholder={placeholder}
-            className={`${placeholderColor} relative h-10 ${bg} w-full rounded-md ${border} p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${
+            className={`${placeholderColor} ${fontWeight} relative h-10 ${bg} w-full rounded-md ${border} p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${
               errorApi || msjError
                 ? "border-red_e placeholder-red_e"
                 : "border-gray-300"

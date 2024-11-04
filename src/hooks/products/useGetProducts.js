@@ -10,6 +10,7 @@ const useGetProducts = () => {
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [list, setList] = useState(null);
 
   const getAllCompanies = async () => {
     try {
@@ -19,6 +20,7 @@ const useGetProducts = () => {
         itemsPerPage,
         search,
         category,
+        list,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
@@ -33,7 +35,7 @@ const useGetProducts = () => {
   };
   useEffect(() => {
     getAllCompanies();
-  }, [page, itemsPerPage, modified, search, category]);
+  }, [page, itemsPerPage, modified, search, category, list]);
   return {
     productsResponse,
     loading,
@@ -47,6 +49,7 @@ const useGetProducts = () => {
     modified,
     setSearch,
     setCategory,
+    setList,
   };
 };
 

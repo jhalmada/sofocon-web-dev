@@ -2,10 +2,10 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import { I18nProvider } from "@react-aria/i18n";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
@@ -40,8 +40,12 @@ const NewSalePage = () => {
   const [name, setName] = useState("productos");
   const [rechargued, setRechargued] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState("Efectivo");
+  const [isPriceListSelected, setIsPriceListSelected] = useState(true);
+  const [quantity, setQuantity] = useState({});
+  const [subtotal, setSubtotal] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const total = subtotal ? subtotal + subtotal * 0.22 - discount : 0;
 
-  const paymentsOptions = ["Efectivo", "Cheque"];
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -56,12 +60,16 @@ const NewSalePage = () => {
     "Noviembre",
     "Diciembre",
   ];
-  const quantityOptions = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
   const { ordersResponse, setStatus } = useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
-  const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
+  const {
+    productsResponse,
+    setSearch: setSearchProducts,
+    list,
+    setList,
+  } = useGetProducts();
   const { priceListResponse } = useGetPriceList();
 
   const navigate = useNavigate();
@@ -82,21 +90,26 @@ const NewSalePage = () => {
 
   const onSubmit = (data) => {
     const {
+      empresa,
       company,
-      vendedores,
       dateV,
+      vendedores,
       priceList,
       productos,
       quantity,
+
       discount,
+      rechargue,
       barCode,
       registration,
       factoryUnit,
       status,
       actualUnit,
+      discount2,
       paymentType,
-      authorizedCompany,
+      quantity2,
       value,
+      authorizedCompany,
     } = data;
 
     const newdata = new Date(
@@ -106,20 +119,25 @@ const NewSalePage = () => {
     );
     const formattedDate = newdata.toISOString();
     handleOrderCreation({
+      empresa,
       company,
       vendedores,
       priceList,
       productos,
       quantity,
       discount,
+      rechargue,
       barCode,
       registration,
       factoryUnit,
       status,
       actualUnit,
+      discount2,
       paymentType,
-      authorizedCompany,
+      quantity2,
       value,
+      authorizedCompany,
+
       date: dateSelected ? formattedDate : null,
     });
   };
@@ -164,6 +182,28 @@ const NewSalePage = () => {
     setSelectedPayment(selectedValue);
     setValue("paymentType", value);
   };
+  const handleSelectionListChange = (value) => {
+    const selectedValue = value.anchorKey;
+    setList(selectedValue);
+    setValue("priceList", value);
+    setIsPriceListSelected(false);
+  };
+  const handleQuantityChange = (itemId, value) => {
+    setQuantity((prev) => ({
+      ...prev,
+      [itemId]: value,
+    }));
+  };
+
+  useEffect(() => {
+    const total = autocompleteResults.reduce((acc, item) => {
+      const itemQuantity = quantity[item.id] || 1;
+      const itemPrice = item.list[0].price;
+      return acc + itemPrice * itemQuantity;
+    }, 0);
+
+    setSubtotal(total);
+  }, [autocompleteResults, quantity]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -219,13 +259,13 @@ const NewSalePage = () => {
                   <CompleteSearchInput
                     label={"Empresa"}
                     array={companiesResponse}
-                    name={"empresa"}
+                    name={"company"}
                     setValue={setValue}
                     onChange={setSearchCompanies}
                     placeholder="Buscar empresa"
                     onSelect={handleSelectCompany}
                   />
-                  <p>{errors.empresa && errors.empresa.message}</p>
+                  <p>{errors.company && errors.company.message}</p>
                 </div>
               )}
             </div>
@@ -298,7 +338,7 @@ const NewSalePage = () => {
                   placeholder="Elegir lista de precios..."
                   className="rounded-lg border"
                   {...register("priceList")}
-                  onSelectionChange={(value) => setValue("priceList", value)}
+                  onSelectionChange={handleSelectionListChange}
                 >
                   {priceListResponse.map((option) => (
                     <SelectItem key={option.id}>{option.name}</SelectItem>
@@ -315,6 +355,7 @@ const NewSalePage = () => {
                   placeholder="Buscar productos"
                   setAutocompleteResults={setAutocompleteResults}
                   selectedItems={autocompleteResults}
+                  isDisabled={isPriceListSelected}
                 />
                 <p>{errors.productos && errors.productos.message}</p>
               </div>
@@ -337,35 +378,32 @@ const NewSalePage = () => {
                         </span>
                       </div>
                       <div className="flex w-1/2 space-x-2">
-                        <div className="mt-[.1rem] w-full">
-                          <label className="block text-sm font-light">
-                            Cantidad
-                          </label>
-                          <Select
-                            className="rounded-lg border"
-                            placeholder="Cant."
-                            {...register("quantity")}
-                            onSelectionChange={(values) =>
-                              setValue("quantity", values)
-                            }
-                          >
-                            {quantityOptions.map((item, index) => (
-                              <SelectItem key={index}>{item}</SelectItem>
-                            ))}
-                          </Select>
-                        </div>
+                        <Input
+                          type="number"
+                          label={"Cantidad"}
+                          placeholder={"Cant."}
+                          onInput={(e) => {
+                            handleQuantityChange(item.id, e.target.value);
+                          }}
+                          {...register("quantity", {})}
+                          msjError={
+                            errors.quantity ? errors.quantity.message : ""
+                          }
+                        />
 
                         <Input
                           bg="bg-gray"
                           placeholderColor="placeholder-black_b"
                           border="none"
                           label={"Precio"}
-                          placeholder={priceListResponse.list}
+                          value={item.list[0].price * (quantity[item.id] || 1)}
                           disabled
                         />
+
                         <Input
                           label={"Desc."}
-                          placeholder={"%"}
+                          placeholder={"%..."}
+                          onChange={(e) => setDiscount(e.target.value)}
                           {...register("discount", {})}
                           msjError={
                             errors.discount ? errors.discount.message : ""
@@ -378,6 +416,7 @@ const NewSalePage = () => {
                           <Select
                             className="rounded-lg border"
                             placeholder="Si/No"
+                            {...register("rechargue")}
                             onSelectionChange={handleSelectionChange}
                           >
                             <SelectItem key={true}>Si</SelectItem>
@@ -472,7 +511,7 @@ const NewSalePage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Subtotal"}
-                placeholder={"$10000"}
+                value={`$${subtotal}`}
                 disabled
               />
               <Input
@@ -480,17 +519,25 @@ const NewSalePage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"IVA 22%"}
-                placeholder={"$1000"}
+                value={subtotal * 0.22}
                 disabled
               />
-              <Input label={"Desc."} placeholder={"%"} />
+              <Input
+                label={"Desc."}
+                placeholder={"%---"}
+                onChange={(e) => setDiscount(e.target.value)}
+                {...register("discount2", {
+                  required: "Este campo es obligatorio",
+                })}
+              />
             </div>
             <Input
               bg="bg-gray"
               placeholderColor="placeholder-black_b"
+              fontWeight="font-bold"
               border="none"
               label={"TOTAL"}
-              placeholder={"$100000"}
+              value={`$${total}`}
               disabled
             />
             <div className="space-y-3">
@@ -517,6 +564,7 @@ const NewSalePage = () => {
                   <div className="flex w-full space-x-2">
                     <div className="mt-[0.05rem] w-[7rem]">
                       <Input
+                        type="number"
                         label={"Cant."}
                         placeholder={"Cant."}
                         bg="bg-white"
