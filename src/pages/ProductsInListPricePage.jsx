@@ -8,8 +8,10 @@ import { useForm } from "react-hook-form";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
+import { a } from "framer-motion/client";
+import ProductsinListRow from "../components/ProductsinListRow";
 
-const AddSellerRoutePage = ({
+const ProductsInListPricePage = ({
   arraySeller,
   setItemsPerPage,
   page,
@@ -23,14 +25,11 @@ const AddSellerRoutePage = ({
   setModified,
   idCompany,
   nameCompany,
-  setIsActive,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [sellerId, setSellerId] = useState(null);
   const [stateFilter, setStateFilter] = useState("");
-
-  const stateOptions = ["Activo", "Inactivo"];
   //Hooks
   const { userSellerResponse, setSearch } = useUsersSellers();
   const { changedSellerRoute } = usePutSellerRoute();
@@ -57,36 +56,23 @@ const AddSellerRoutePage = ({
     setConfirmDeleteModalOpen(true);
   };
   const handleConfirmDelete = () => {
-    const newSellersArray = transformData(arraySeller).filter(
-      (element) => element.id !== sellerId,
-    );
-    const newArray = newSellersArray.map((seller) => ({ id: seller.id }));
-    const newData = {
-      user: [...newArray],
-    };
-    changedSellerRoute(newData, idCompany, setModified);
-    setConfirmDeleteModalOpen(false);
+    // const newSellersArray = transformData(arraySeller).filter(
+    //   (element) => element.id !== sellerId,
+    // );
+    // const newArray = newSellersArray.map((seller) => ({ id: seller.id }));
+    // const newData = {
+    //   user: [...newArray],
+    // };
+    // changedSellerRoute(newData, idCompany, setModified);
+    // setConfirmDeleteModalOpen(false);
   };
 
-  //funcion para transformar los Arrays
+  //   //funcion para transformar los Arrays
   const transformData = (array) => {
-    return array.map((item) => ({
-      id: item.id,
-      name: item.userInfo.fullName,
-    }));
-  };
-  const handleStateFilterChange = (value) => {
-    switch (value) {
-      case "Activo":
-        setIsActive(true);
-        break;
-      case "Inactivo":
-        setIsActive(false);
-        break;
-      default:
-        setIsActive(null);
-        break;
-    }
+    //   return array.map((item) => ({
+    //     id: item.id,
+    //     name: item.userInfo.fullName,
+    //   }));
   };
   return (
     <div>
@@ -95,19 +81,13 @@ const AddSellerRoutePage = ({
           <thead>
             <tr>
               <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                Nombre completo
+                Producto
               </th>
               <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Contacto
+                Precio
               </th>
               <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                <div className="flex flex-col items-center gap-2">
-                  <FilterSelect
-                    options={stateOptions}
-                    placeholder="Estado"
-                    onChange={handleStateFilterChange}
-                  />
-                </div>
+                Categoria
               </th>
               <th className="p-2 text-md font-semibold leading-[1.125rem]">
                 Acción
@@ -116,11 +96,11 @@ const AddSellerRoutePage = ({
           </thead>
           <tbody>
             {arraySeller.map((seller) => (
-              <RouteSellerDetailsRow
+              <ProductsinListRow
                 key={seller.id}
-                name={seller.userInfo.fullName}
-                contact={seller.email}
-                state={seller.isActive ? "Activo" : "Inactivo"}
+                name={seller.name}
+                price={seller?.list[0]?.price || 0}
+                category={seller.category.name}
                 deleteIconSrc={deleteIcon}
                 onDeleteClick={() => openConfirmDeleteModal(seller.id)}
               />
@@ -175,4 +155,4 @@ const AddSellerRoutePage = ({
   );
 };
 
-export default AddSellerRoutePage;
+export default ProductsInListPricePage;

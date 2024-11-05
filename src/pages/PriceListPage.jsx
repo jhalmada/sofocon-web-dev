@@ -52,6 +52,7 @@ const PriceListPage = ({
                 totalProducts={price.totalProducts}
                 editIconSrc={editIcon}
                 deleteIconSrc={deleteIcon}
+                id={price.id}
                 // onEditClick={() => {
                 //   openModal(price.id);
                 // }}

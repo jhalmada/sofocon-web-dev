@@ -13,6 +13,7 @@ const useCompanies = () => {
   const [nextVisit, setNextVisit] = useState(null);
   const [status, setStatus] = useState(null);
   const [competence, setCompetence] = useState(false);
+  const [list, setList] = useState();
 
   //la funcion principal
   const getAllCompanies = async () => {
@@ -26,6 +27,7 @@ const useCompanies = () => {
         search,
         nextVisit,
         status,
+        list,
         competence,
       });
       //aqui haces con el resultado lo que necesites
@@ -54,6 +56,7 @@ const useCompanies = () => {
     nextVisit,
     status,
     competence,
+    list,
   ]);
   return {
     companiesResponse,
@@ -71,6 +74,7 @@ const useCompanies = () => {
     setNextVisit,
     setStatus,
     setCompetence,
+    setList,
   };
 };
 

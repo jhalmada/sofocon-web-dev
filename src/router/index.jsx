@@ -34,6 +34,7 @@ import {
   NEW_BUDGET_ROUTE,
   BUDGET_ROUTE,
   LIST_PRICE_ADD,
+  LIST_PRICE_ID,
 } from "../utils/Constants";
 import LoginPage from "../pages/LoginPage";
 import RecoverPasswordPage from "../pages/RecoverPasswordPage";
@@ -78,6 +79,8 @@ import ClientsOrdersPage from "../pages/ClientsOrdersPage";
 import NewSalePage from "../pages/NewSalePage";
 import BudgetDataPage from "../pages/BudgetDataPage";
 import AddPriceListPage from "../pages/AddPriceListPage";
+import { path } from "framer-motion/client";
+import ListPriceDetailsPage from "../pages/ListPriceDetailsPage";
 
 export const router = createBrowserRouter([
   {
@@ -218,6 +221,10 @@ export const router = createBrowserRouter([
           {
             path: LIST_PRICE_ADD,
             element: <AddPriceListPage />,
+          },
+          {
+            path: LIST_PRICE_ID,
+            element: <ListPriceDetailsPage />,
           },
         ],
       },
