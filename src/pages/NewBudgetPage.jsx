@@ -5,9 +5,9 @@ import Button from "../components/buttons/Button";
 import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { I18nProvider } from "@react-aria/i18n";
-import { Checkbox, DatePicker } from "@nextui-org/react";
+import { DatePicker } from "@nextui-org/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import cameraIcon from "../assets/icons/camera.svg";
@@ -24,7 +24,6 @@ import x from "../assets/icons/x.svg";
 const NewSalePage = () => {
   const {
     register,
-    watch,
     handleSubmit,
     control,
     setValue,
@@ -66,7 +65,7 @@ const NewSalePage = () => {
   ];
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
-  const { ordersResponse, setStatus } = useOrders();
+  const { ordersResponse } = useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const {
     productsResponse,
@@ -150,7 +149,7 @@ const NewSalePage = () => {
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
-    navigate("/inicio/personal");
+    navigate("/inicio/ordenes");
   };
   const handleSelectCompany = (selectedCompany) => {
     if (selectedCompany) {
@@ -229,7 +228,7 @@ const NewSalePage = () => {
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio/ordenes" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -243,7 +242,7 @@ const NewSalePage = () => {
           </Link>
         </div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Nueva venta
+          Nuevo presupuesto
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
@@ -284,14 +283,7 @@ const NewSalePage = () => {
               )}
             </div>
             {ordersResponse.isDirect ? null : (
-              <Input
-                label={"R.U.T./CI"}
-                placeholder={rutValue}
-                bg="bg-gray"
-                border="none"
-                placeholderColor="placeholder-black_b"
-                disabled
-              />
+              <Input label={"R.U.T./CI"} placeholder="Escribir..." />
             )}
 
             <div className="flex space-x-2">

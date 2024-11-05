@@ -1,7 +1,7 @@
 import Pagination from "../components/Pagination";
 import { useForm } from "react-hook-form";
 import deleteIcon from "../assets/icons/trash3.svg";
-import useCompanies from "../hooks/companies/useCompanies";
+
 import { useState } from "react";
 import { Checkbox, Select, SelectItem } from "@nextui-org/react";
 import { Input } from "postcss";

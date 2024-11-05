@@ -229,7 +229,7 @@ const NewSalePage = () => {
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio/ordenes" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
