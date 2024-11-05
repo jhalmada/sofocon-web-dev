@@ -1,35 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
-import Input from "../components/inputs/Input";
 import SearchInput from "../components/inputs/SearchInput";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import DownloadIcon from "../assets/icons/download.svg";
 import ClientsOrdersRow from "../components/ClientsOrdersRow.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
-import { Controller, useForm } from "react-hook-form";
-import useCompanies from "../hooks/companies/useCompanies.js";
-import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
-import { BASE_URL } from "../utils/Constants.js";
-import {
-  getClientsExcel,
-  getClientsPdf,
-} from "../services/companies/companies.routes.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
-import StoragePage from "./StoragePage.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
-import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import { Checkbox, DatePicker } from "@nextui-org/react";
-import { I18nProvider } from "@react-aria/i18n";
-import useUsersSellers from "../hooks/users/useUsersSellers.js";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import DirectOrdersPage from "./DirectOrdersPage.jsx";
 import BudgetPage from "./BudgetPage.jsx";
 import StatusPanelPage from "./StatusPanelPage.jsx";
+import useOrders from "../hooks/orders/useOrders.js";
+import useDeleteOrders from "../hooks/orders/useDeleteOrders.js";
 
 const CLIENTS_ORDERS_TAB = "ordenes-clientes";
 const DIRECT_ORDERS_TAB = "ordenes-directas";
@@ -37,11 +22,11 @@ const BUDGET_TAB = "presupuesto";
 const STATUS_PANEL_TAB = "panel-de-estado";
 
 const OrdersPage = () => {
-  const [companyId, setCompanyId] = useState(null);
-  const { deleteCompany } = useDeleteCompanies();
-  const { userSellerResponse, setSearch } = useUsersSellers();
+  const [orderId, setOrderId] = useState(null);
+
+  const { deleteOrder } = useDeleteOrders();
   const {
-    companiesResponse,
+    ordersResponse,
     setItemsPerPage,
     totalPage,
     total,
@@ -49,22 +34,12 @@ const OrdersPage = () => {
     page,
     itemsPerPage,
     setModified,
-    setNexVisit,
-  } = useCompanies();
+    setStatus,
+    setIsDirect,
+  } = useOrders();
   const [activeTab, setActiveTab] = useState(CLIENTS_ORDERS_TAB);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  const [isExportCompetingModalOpen, setIsExportCompetingModalOpen] =
-    useState(false);
-  const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
-  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
+
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [stateFilter, setStateFilter] = useState("");
-  const [openScannerModal, setOpenScannerModal] = useState(false);
-  const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const [dateSelected, setDateSelected] = useState(false);
 
   const stateOptions = [
     "Solicitado",
@@ -72,7 +47,7 @@ const OrdersPage = () => {
     "Para retirar",
     "Egreso",
   ];
-  const pricesList = ["Lista 1", "Lista 2", "Lista 3"];
+
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -87,92 +62,53 @@ const OrdersPage = () => {
     "Noviembre",
     "Diciembre",
   ];
-  const {
-    control,
-    clearErrors,
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${day}/${month}/${year}`;
   };
-  const openConfirmDeleteModal = () => {
+  const openConfirmDeleteModal = (id) => {
+    setOrderId(id);
     setConfirmDeleteModalOpen(true);
   };
 
-  const openExportModal = () => {
-    setIsExportModalOpen(true);
-  };
-
-  const openExportCompetingModal = () => {
-    setIsExportCompetingModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setIsExportModalOpen(false);
-    setOpenScannerModal(false);
-    setIsExportCompetingModalOpen(false);
-    setIsSellersModalOpen(false);
-  };
-
-  const closeConfirmCancelModal = () => {
-    setConfirmCancelModalOpen(false);
-  };
-  const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
-    closeModal();
-  };
-
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
 
   const handleConfirmDelete = () => {
-    deleteCompany(companyId, setModified);
+    deleteOrder(orderId, setModified);
     closeConfirmDeleteModal();
   };
 
-  const handleCancelClick = () => {
-    openConfirmCancelModal();
-    setOpenScannerModal(false);
-  };
-  const handleConfirmCancel = () => {
-    closeConfirmCancelModal();
-    closeModal();
-  };
-
-  const onSubmit = (data) => {
-    console.log(data);
-    const {
-      nextVisit,
-      name,
-      department,
-      managerName,
-      phone,
-      status,
-      address,
-      neighborhood,
-    } = data;
-    const newdata = new Date(
-      nextVisit.year,
-      nextVisit.month - 1,
-      nextVisit.day,
-    );
-
-    //formate la fecha para que sea aceptada por el back
-    const formattedDate = newdata.toISOString();
-  };
-
   const handleStateFilterChange = (value) => {
-    setStateFilter(value);
+    switch (value) {
+      case "Solicitado":
+        setStatus("REQUEST");
+        break;
+      case "Preparacion":
+        setStatus("PREPARATION");
+        break;
+      case "Listo para retirar":
+        setStatus("READY");
+        break;
+      default:
+        setStatus("");
+        break;
+    }
   };
-
+  useEffect(() => {
+    if (activeTab === DIRECT_ORDERS_TAB) {
+      setIsDirect(true);
+    } else {
+      setIsDirect(false);
+    }
+  }, [activeTab]);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -198,25 +134,25 @@ const OrdersPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(CLIENTS_ORDERS_TAB)}
-              className={`w-52 cursor-pointer rounded-t-lg ${activeTab === CLIENTS_ORDERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`w-48 cursor-pointer rounded-t-lg ${activeTab === CLIENTS_ORDERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Órdenes de clientes
             </h2>
             <h2
               onClick={() => setActiveTab(DIRECT_ORDERS_TAB)}
-              className={`${activeTab === DIRECT_ORDERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-52 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === DIRECT_ORDERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-48 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Órdenes directas
             </h2>
             <h2
               onClick={() => setActiveTab(BUDGET_TAB)}
-              className={`${activeTab === BUDGET_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-52 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === BUDGET_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-48 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Presupuestos
             </h2>
             <h2
               onClick={() => setActiveTab(STATUS_PANEL_TAB)}
-              className={`${activeTab === STATUS_PANEL_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-52 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === STATUS_PANEL_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-48 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Panel de estados
             </h2>
@@ -248,7 +184,6 @@ const OrdersPage = () => {
                 <Select
                   className="w-52 rounded-lg border"
                   placeholder="OCTUBRE 2024 "
-                  onSelectionChange={(values) => setValue("period", values)}
                 >
                   {monthsOptions.map((option) => (
                     <SelectItem key={option}>{option}</SelectItem>
@@ -272,7 +207,7 @@ const OrdersPage = () => {
                       Vendedor
                     </th>
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      <div className="flex flex-col">
+                      <div className="flex flex-col items-center gap-2">
                         <FilterSelect
                           options={stateOptions}
                           placeholder="Estado"
@@ -286,21 +221,23 @@ const OrdersPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <ClientsOrdersRow
-                    key={""}
-                    id={""}
-                    name={"Nombre de la empresa"}
-                    orderId={"ID de orden"}
-                    date={"14/09/2024"}
-                    seller={"Vendedor"}
-                    state={"estado"}
-                    editIconSrc={editIcon}
-                    deleteIconSrc={deleteIcon}
-                    onEditClick={() => {
-                      openModal();
-                    }}
-                    onDeleteClick={() => openConfirmDeleteModal()}
-                  />
+                  {ordersResponse.map((order, index) => (
+                    <ClientsOrdersRow
+                      key={index}
+                      id={order.id}
+                      name={order?.client?.name || "Sin nombre"}
+                      orderId={order.id}
+                      date={
+                        order.created_at
+                          ? formatDate(order.created_at)
+                          : "Sin fecha"
+                      }
+                      seller={"Vendedor"}
+                      state={order.status}
+                      deleteIconSrc={deleteIcon}
+                      onDeleteClick={() => openConfirmDeleteModal(order.id)}
+                    />
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -316,264 +253,29 @@ const OrdersPage = () => {
             </div>
           </div>
         )}
-        {activeTab === DIRECT_ORDERS_TAB && <DirectOrdersPage />}
+        {activeTab === DIRECT_ORDERS_TAB && (
+          <DirectOrdersPage
+            ordersResponse={ordersResponse || []}
+            setItemsPerPage={setItemsPerPage}
+            totalPage={totalPage}
+            total={total}
+            setPage={setPage}
+            page={page}
+            itemsPerPage={itemsPerPage}
+          />
+        )}
         {activeTab === BUDGET_TAB && <BudgetPage />}
         {activeTab === STATUS_PANEL_TAB && <StatusPanelPage />}
       </div>
-      <ReusableModal
-        isOpen={isModalOpen}
-        onClose={handleCancelClick}
-        title="Editar Órden"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <label className="text-gray-700 block text-sm font-light">
-            Asignar estado:
-          </label>
-          <Select
-            placeholder="Estado"
-            className="mb-4 rounded-lg border"
-            {...register("status")}
-            onSelectionChange={(value) => setValue("status", value)}
-          >
-            {stateOptions.map((option) => (
-              <SelectItem key={option}>{option}</SelectItem>
-            ))}
-          </Select>
-
-          <Input
-            label={"ID de órden"}
-            placeholder={"Escribir..."}
-            {...register("orderId", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <Input
-            label={"Cliente"}
-            placeholder={"Escribir..."}
-            {...register("client", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <Input
-            label={"R.U.T./CI"}
-            placeholder={"Escribir..."}
-            {...register("rut", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <span className="text-sm font-light leading-[1rem] text-black_b">
-            Fecha de venta
-          </span>
-          <I18nProvider locale="es-ES">
-            <Controller
-              name={"dateV"}
-              control={control}
-              render={({ field }) => (
-                <DatePicker
-                  minValue={today(getLocalTimeZone())}
-                  className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
-                  {...field}
-                  label={""}
-                  placeholder="Seleccione una fecha"
-                  granularity="day"
-                  errorMessage={(value) => {
-                    if (value.isInvalid) {
-                      setErrorDataPicker(true);
-                      return "";
-                    } else {
-                      setErrorDataPicker(false);
-                      return "";
-                    }
-                  }}
-                />
-              )}
-              rules={{
-                required: dateSelected && "La fecha es obligatoria",
-              }}
-            />
-            <p className="font-roboto text-xs text-red_e">
-              {errors.dateV ? errors.dateV.message : ""}
-            </p>
-          </I18nProvider>
-          <div className="mt-4">
-            <Input
-              label={"Vendedor"}
-              placeholder={"Escribir..."}
-              {...register("seller", {
-                required: "Este campo es obligatorio",
-              })}
-            />
-
-            <label className="block text-sm font-light text-black_b">
-              Detalle
-            </label>
-            <Select
-              placeholder="Elegir lista de precios..."
-              className="rounded-lg border"
-              {...register("status")}
-              onSelectionChange={(value) => setValue("status", value)}
-            >
-              {pricesList.map((option) => (
-                <SelectItem key={option}>{option}</SelectItem>
-              ))}
-            </Select>
-            <div className="-mt-9">
-              <NextAutoComplete
-                array2={[]}
-                label2={"Vendedores Asignados"}
-                label={"Vendedores"}
-                array={[]}
-                name={"products"}
-                setValue={setValue}
-                onChange={setSearch}
-                placeholder="Producto 1"
-              />
-              <p>{errors.vendedores && errors.vendedores.message}</p>
-            </div>
-          </div>
-          <div className="mt-9 rounded-lg border p-2">
-            {" "}
-            <Checkbox
-              placeholder="Retiro de extintores"
-              radius="full"
-              className="font-light"
-              size="sm"
-            >
-              Retiro de extintores
-            </Checkbox>
-          </div>
-        </form>
-      </ReusableModal>
-      <ReusableModal
-        isOpen={openScannerModal}
-        onClose={handleCancelClick}
-        title="Código de barras"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "scan"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <p className="text-sm leading-[1rem] text-black_m">
-          Escanea el código de barras del producto para localizar la órden de
-          compra donde se encuentra, o ingresa el código de manera manual.
-        </p>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="px-8">
-            <Input
-              placeholder={"Ingrese el código..."}
-              {...register("name", {
-                required: "Este campo es requerido",
-              })}
-            />
-          </div>
-        </form>
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isExportModalOpen}
-        onClose={closeModal}
-        title="Exportar lista"
-        variant="confirmation"
-        buttons={["accept"]}
-        onAccept={handleConfirmCancel}
-      >
-        Elige el formato en el que desea descargar el contenido de la lista:
-        <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
-
-          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
-        </div>
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isExportCompetingModalOpen}
-        onClose={closeModal}
-        title="Exportar lista"
-        variant="confirmation"
-        buttons={["accept"]}
-        onAccept={handleConfirmCancel}
-      >
-        Elige el formato en el que desea descargar el contenido de la lista:
-        <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getClientsExcel}?competence=false`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
-
-          <a
-            href={`${BASE_URL}/${getClientsPdf}?competence=false`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
-        </div>
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isConfirmCancelModalOpen}
-        onClose={closeConfirmCancelModal}
-        title="Cambios sin guardar"
-        variant="confirmation"
-        buttons={["back", "accept"]}
-        onAccept={handleConfirmCancel}
-      >
-        Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isSaveConfirmationModalOpen}
-        onClose={closeSaveConfirmationModal}
-        title="Cambios guardados"
-        variant="confirmation"
-        buttons={["accept"]}
-        onAccept={closeSaveConfirmationModal}
-      >
-        Los cambios fueron guardados exitosamente.
-      </ReusableModal>
-
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
         title="Eliminar órden"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete(companyId)}
+        onAccept={() => handleConfirmDelete(orderId)}
       >
-        Esta orden será eliminada de forma permanente. ¿Desea continuar?
+        Esta órden será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

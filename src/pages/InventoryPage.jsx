@@ -17,8 +17,6 @@ import useGetProducts from "../hooks/products/useGetProducts.js";
 import InventaryRow from "../components/InventaryRow.jsx";
 import useDeleteProduct from "../hooks/products/useDeleteProducts.js";
 import deleteImg from "../assets/img/deleted.png";
-import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray.jsx";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import useCategory from "../hooks/category/useCategory.js";
 import usePutProduct from "../hooks/products/usePutProducts.js";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -161,7 +159,7 @@ const UsersPage = () => {
 
   return (
     <div className="flex h-full flex-col justify-between">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <BackButton />
         </div>

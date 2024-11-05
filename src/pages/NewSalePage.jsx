@@ -2,46 +2,54 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
-import { useState } from "react";
-import AddUsers from "../hooks/users/use.addUsers";
+import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Controller, useForm } from "react-hook-form";
-import DownloadIcon from "../assets/icons/download-white.svg";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { I18nProvider } from "@react-aria/i18n";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
 import cameraIcon from "../assets/icons/camera.svg";
-import PlusIconFilled from "../assets/icons/plus-fill.svg";
+import ArrowRightIcon from "../assets/icons/arrow-right.svg";
+import useOrders from "../hooks/orders/useOrders.js";
+import useAddOrders from "../hooks/orders/useAddOrders.js";
+import useCompanies from "../hooks/companies/useCompanies.js";
+import CompleteSearchInput from "../components/Searchs/CompleteSearchInput.jsx";
+import useGetProducts from "../hooks/products/useGetProducts.js";
+import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
+import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
+import x from "../assets/icons/x.svg";
 
 const NewSalePage = () => {
   const {
     register,
+    watch,
     handleSubmit,
     control,
     setValue,
     formState: { errors },
   } = useForm();
-  const navigate = useNavigate();
 
-  const { postAddUsers, loading } = AddUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [mnsError, setMnsError] = useState("");
   const [dateSelected, setDateSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const { userSellerResponse, setSearch } = useUsersSellers();
+  const [rutValue, setRutValue] = useState("");
+  const [autocompleteResults, setAutocompleteResults] = useState([]);
+  const [name, setName] = useState("productos");
+  const [rechargued, setRechargued] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState("Efectivo");
+  const [isPriceListSelected, setIsPriceListSelected] = useState(true);
+  const [quantity, setQuantity] = useState({});
+  const [subtotal, setSubtotal] = useState(0);
+  const [discount, setDiscount] = useState([]);
+  const [discount2, setDiscount2] = useState("");
+  const total = subtotal
+    ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
+    : 0;
 
-  const stateOptions = ["Entregado", "Solicitado", "Preparación", "Retiro"];
-  const pricesList = ["Lista 1", "Lista 2", "Lista 3"];
-  const productsOptions = ["Polvo", "Arena"];
-  const subProductsOptions = ["Subproducto 1", "Subproducto 2"];
-  const colorsOptions = ["Color 1", "Color 2", "Color 3"];
-  const paymentsOptions = ["Efectivo", "Tarjeta"];
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -56,31 +64,87 @@ const NewSalePage = () => {
     "Noviembre",
     "Diciembre",
   ];
+  const { postAddOrders } = useAddOrders();
+  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
+  const { ordersResponse, setStatus } = useOrders();
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+  const {
+    productsResponse,
+    setSearch: setSearchProducts,
+    setList,
+  } = useGetProducts();
+  const { priceListResponse } = useGetPriceList();
+  const navigate = useNavigate();
 
-  const handleUserCreation = async (userData) => {
+  const handleOrderCreation = async (orderData) => {
     try {
-      const newUser = await postAddUsers(userData);
+      const newOrder = await postAddOrders(orderData);
 
-      if (newUser) {
+      if (newOrder) {
         setSaveConfirmationModalOpen(true);
       } else {
         setIsModalOpen(true);
       }
     } catch (error) {
-      if (error.response.status === 409) {
-        setMnsError("El correo electrónico ya se encuentra registrado");
-        setIsModalOpen(true);
-      } else {
-        setMnsError("Error al crear el usuario");
-      }
+      console.error("Error al crear la órden:", error);
     }
   };
-  const onSubmit = () => {
-    navigate("/inicio/taller/recarga");
+
+  const onSubmit = (data) => {
+    const {
+      empresa,
+      company,
+      dateV,
+      vendedores,
+      priceList,
+      productos,
+      quantity,
+      discount,
+      rechargue,
+      barCode,
+      registration,
+      factoryUnit,
+      status,
+      actualUnit,
+      discount2,
+      paymentType,
+      value,
+      authorizedCompany,
+      checkNumber,
+      checkQuantity,
+    } = data;
+
+    const newdata = new Date(
+      dateV?.year || 1,
+      dateV?.month - 1 || 1,
+      dateV?.day || 1,
+    );
+    const formattedDate = newdata.toISOString();
+    handleOrderCreation({
+      empresa,
+      company,
+      vendedores,
+      priceList,
+      productos,
+      quantity,
+      discount,
+      rechargue,
+      barCode,
+      registration,
+      factoryUnit,
+      status,
+      actualUnit,
+      discount2,
+      paymentType,
+      value,
+      authorizedCompany,
+      checkNumber,
+      checkQuantity,
+
+      date: dateSelected ? formattedDate : null,
+    });
   };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
   };
@@ -88,9 +152,84 @@ const NewSalePage = () => {
     closeSaveConfirmationModal();
     navigate("/inicio/personal");
   };
+  const handleSelectCompany = (selectedCompany) => {
+    if (selectedCompany) {
+      setRutValue(selectedCompany);
+    } else {
+      setRutValue("");
+    }
+  };
+
+  const transformData = (array) => {
+    return array.map((item) => ({
+      id: item.id,
+      name: item.userInfo.fullName,
+    }));
+  };
+  const handleDeleteSelection = (id) => {
+    const updatedSelectedItems = autocompleteResults.filter(
+      (selection) => selection.id !== id,
+    );
+
+    setValue(name, updatedSelectedItems);
+    setAutocompleteResults(updatedSelectedItems);
+  };
+
+  const handleSelectionChange = (value) => {
+    const selectedValue = value.anchorKey === "true" ? true : false;
+    setRechargued(selectedValue);
+  };
+  const handleSelectionPaymentChange = (value) => {
+    const selectedValue =
+      value.anchorKey === "Efectivo" ? "Efectivo" : "Cheque";
+    setSelectedPayment(selectedValue);
+    setValue("paymentType", value);
+  };
+  const handleSelectionListChange = (value) => {
+    const selectedValue = value.anchorKey;
+    setList(selectedValue);
+    setValue("priceList", value);
+    setIsPriceListSelected(false);
+  };
+  const handleQuantityChange = (itemId, value) => {
+    setQuantity((prev) => ({
+      ...prev,
+      [itemId]: value,
+    }));
+  };
+
+  const handleProductDiscountInput = (e, index) => {
+    const value = e.target.value.slice(0, 2);
+    setDiscount((prevDiscount) => {
+      const newDiscount = [...prevDiscount];
+      newDiscount[index] = value;
+      return newDiscount;
+    });
+  };
+
+  const handleDiscount2Input = (e) => {
+    const value = e.target.value.slice(0, 2);
+    setDiscount2(value);
+  };
+  const truncateToTwoDecimals = (num) => {
+    return Math.floor(num * 100) / 100;
+  };
+  useEffect(() => {
+    const total = autocompleteResults.reduce((acc, item, index) => {
+      const itemQuantity = quantity[item.id] || 1;
+      const itemPrice = item.list[0].price;
+      const discountPercentage = discount[index] ? discount[index] / 100 : 0;
+      const discountedPrice = itemPrice * (1 - discountPercentage);
+
+      return acc + discountedPrice * itemQuantity;
+    }, 0);
+
+    setSubtotal(total);
+  }, [autocompleteResults, quantity, discount]);
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio/ordenes" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -120,32 +259,41 @@ const NewSalePage = () => {
         >
           <div>
             <div className="flex space-x-2">
+              {ordersResponse.isDirect ? (
+                <Input
+                  label={"Empresa"}
+                  placeholder={"..."}
+                  {...register("empresa", {
+                    required: "Este campo es obligatorio",
+                  })}
+                  msjError={errors.empresa ? errors.empresa.message : ""}
+                />
+              ) : (
+                <div className="-mt-1 mb-4 w-full">
+                  <CompleteSearchInput
+                    label={"Empresa"}
+                    array={companiesResponse}
+                    name={"company"}
+                    setValue={setValue}
+                    onChange={setSearchCompanies}
+                    placeholder="Buscar empresa"
+                    onSelect={handleSelectCompany}
+                  />
+                  <p>{errors.company && errors.company.message}</p>
+                </div>
+              )}
+            </div>
+            {ordersResponse.isDirect ? null : (
               <Input
+                label={"R.U.T./CI"}
+                placeholder={rutValue}
                 bg="bg-gray"
                 border="none"
-                label={"ID de órden"}
-                placeholder={"1234566"}
                 placeholderColor="placeholder-black_b"
                 disabled
               />
-              <Input
-                label={"Cliente"}
-                placeholder={"..."}
-                placeholderColor="placeholder-black_b"
-              />
-            </div>
-            <div className="-mt-[3.27rem] mb-4">
-              <NextAutoComplete
-                array2={[]}
-                label={"R.U.T./CI"}
-                array={[]}
-                name={"products"}
-                setValue={setValue}
-                onChange={setSearch}
-                placeholder="Buscar RUT o CI..."
-              />
-              <p>{errors.vendedores && errors.vendedores.message}</p>
-            </div>
+            )}
+
             <div className="flex space-x-2">
               <div className="w-1/2">
                 <span className="text-sm font-light leading-[1rem] text-black_b">
@@ -183,243 +331,213 @@ const NewSalePage = () => {
                   </p>
                 </I18nProvider>
               </div>
-              <div className="w-1/2">
-                <Input label={"Vendedor"} placeholder={"Escribir..."} />
-              </div>
-            </div>
-            <div className="mb-4 flex space-x-2">
-              <div className="w-1/2">
-                <label className="block text-sm font-semibold text-black_b">
-                  Detalle
-                </label>
-                <Select
-                  placeholder="Elegir lista de precios..."
-                  className="rounded-lg border"
-                  {...register("status")}
-                  onSelectionChange={(value) => setValue("status", value)}
-                >
-                  {pricesList.map((option) => (
-                    <SelectItem key={option}>{option}</SelectItem>
-                  ))}
-                </Select>
-              </div>
-              <div className="-mt-[2rem] w-1/2">
-                <NextAutoComplete
-                  array2={[]}
-                  array={[]}
-                  name={"products"}
+              <div className="-mt-[.08rem] w-1/2">
+                <CompleteSearchInput
+                  label={"Vendedores"}
+                  array={transformData(userSellerResponse?.result || []) || []}
+                  name={"vendedores"}
                   setValue={setValue}
-                  onChange={setSearch}
-                  placeholder="Producto 1"
+                  onChange={setSearchSellers}
+                  placeholder="Buscar vendedores"
                 />
                 <p>{errors.vendedores && errors.vendedores.message}</p>
               </div>
             </div>
-            <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Producto"}
-                placeholder={"Producto 1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Cant."}
-                placeholder={"1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Subproducto"}
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Color"}
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Precio"}
-                placeholder={"$345"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Desc."}
-                placeholder={"10%"}
-                disabled
-              />
-            </div>
-            <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Recarga"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"PA"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Amarillo"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"$432"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"10%"}
-                disabled
-              />
-            </div>
-            <div className="w-1/5 rounded-lg border p-2">
-              {" "}
-              <Checkbox
-                placeholder="Retiro de extintores"
-                radius="full"
-                className="font-light"
-                size="sm"
-              >
-                Retiro de extintores
-              </Checkbox>
-            </div>
-            <div className="mt-4 rounded-lg bg-gray p-4">
-              <div className="flex space-x-2">
-                <Input
-                  label={"Código de barras"}
-                  placeholder={"..."}
-                  bg="bg-white"
+            <div className="mb-4 flex space-x-2">
+              <div className="mt-4 w-1/2">
+                <label className="block text-sm font-light">
+                  Lista de precios
+                </label>
+                <Select
+                  placeholder="Elegir lista de precios..."
+                  className="rounded-lg border"
+                  {...register("priceList")}
+                  onSelectionChange={handleSelectionListChange}
+                >
+                  {priceListResponse.map((option) => (
+                    <SelectItem key={option.id}>{option.name}</SelectItem>
+                  ))}
+                </Select>
+              </div>
+              <div className="mt-3 w-1/2">
+                <ProductsAutocomplete
+                  label={"Productos"}
+                  array={productsResponse || []}
+                  name={"productos"}
+                  setValue={setValue}
+                  onChange={setSearchProducts}
+                  placeholder="Buscar productos"
+                  setAutocompleteResults={setAutocompleteResults}
+                  selectedItems={autocompleteResults}
+                  isDisabled={isPriceListSelected}
                 />
-                <span className="flex items-center">
-                  <Link to={"/inicio"}>
-                    <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
-                      <img src={cameraIcon} alt="" className="h-5 w-5" />
+                <p>{errors.productos && errors.productos.message}</p>
+              </div>
+            </div>
+
+            <div>
+              {autocompleteResults.length > 0 && (
+                <div>
+                  {autocompleteResults.map((item, index) => (
+                    <div className="flex w-full space-x-2" key={item.id}>
+                      <div className="w-1/2">
+                        <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br">
+                          {item.name}
+                          <img
+                            src={x}
+                            alt="delete"
+                            className="mr-1 cursor-pointer"
+                            onClick={() => handleDeleteSelection(item.id)}
+                          />
+                        </span>
+                      </div>
+                      <div className="flex w-1/2 space-x-2">
+                        <Input
+                          type="number"
+                          label={"Cantidad"}
+                          defaultValue={1}
+                          minValue={1}
+                          placeholder={"Cant."}
+                          onInput={(e) => {
+                            handleQuantityChange(item.id, e.target.value);
+                          }}
+                          {...register(`quantity${index}`, {})}
+                          msjError={
+                            errors[`quantity${index}`]
+                              ? errors[`quantity${index}`].message
+                              : ""
+                          }
+                        />
+                        <Input
+                          bg="bg-gray"
+                          placeholderColor="placeholder-black_b"
+                          border="none"
+                          label={"Precio"}
+                          value={
+                            item.list[0].price *
+                            (quantity[item.id] || 1) *
+                            (1 - (discount[index] ? discount[index] / 100 : 0))
+                          }
+                          disabled
+                        />
+
+                        <Input
+                          type="number"
+                          label={"Desc."}
+                          placeholder={"%"}
+                          value={discount[index] || ""}
+                          onInput={(e) => handleProductDiscountInput(e, index)}
+                          {...register(`discount${index}`, {})}
+                          msjError={
+                            errors[`discount${index}`]
+                              ? errors[`discount${index}`].message
+                              : ""
+                          }
+                        />
+
+                        <div className="w-full">
+                          <label className="block text-sm font-light">
+                            Recarga
+                          </label>
+                          <Select
+                            className="rounded-lg border"
+                            placeholder="Si/No"
+                            {...register("rechargue")}
+                            onSelectionChange={handleSelectionChange}
+                          >
+                            <SelectItem key={true}>Si</SelectItem>
+                            <SelectItem key={false}>No</SelectItem>
+                          </Select>
+                        </div>
+                      </div>
                     </div>
-                  </Link>
-                </span>
-              </div>
-              <div className="flex space-x-2">
-                <Input
-                  label={"Matrícula"}
-                  placeholder={"X234234"}
-                  bg="bg-white"
-                />
-                <Input
-                  label={"N° UNIT de fábrica"}
-                  placeholder={"123455"}
-                  bg="bg-white"
-                />
-              </div>
-              <div className="flex w-full space-x-2">
-                <div className="w-full">
-                  <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
-                    Fecha última carga
-                  </span>
-                  <Select
-                    className="rounded-lg border"
-                    placeholder="MM/AA"
-                    onSelectionChange={(values) => setValue("status", values)}
-                  >
-                    {monthsOptions.map((month) => (
-                      <SelectItem key={month.key}>{month}</SelectItem>
-                    ))}
-                  </Select>
+                  ))}
                 </div>
-
-                <Input label={"Capacidad"} placeholder={"..."} bg="bg-white" />
-                <Input
-                  label={"N° UNIT de fábrica"}
-                  placeholder={"123455"}
-                  bg="bg-white"
-                />
-              </div>
-              <div className="flex w-full space-x-2">
-                <div className="w-full">
-                  <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
-                    Producto
-                  </span>
-                  <Select
-                    placeholder="Polvo"
-                    className="max-w rounded-lg border font-roboto font-medium"
-                  >
-                    {productsOptions.map((product) => (
-                      <SelectItem key={product.key}>{product}</SelectItem>
-                    ))}
-                  </Select>
-                </div>
-
-                <div className="w-full">
-                  <Select
-                    placeholder="Subproducto"
-                    className="max-w mt-6 rounded-lg border font-roboto font-medium"
-                  >
-                    {subProductsOptions.map((product) => (
-                      <SelectItem key={product.key}>{product}</SelectItem>
-                    ))}
-                  </Select>
-                </div>
-                <div className="w-full">
-                  <Select
-                    placeholder="Color"
-                    className="max-w mt-6 rounded-lg border font-roboto font-medium"
-                  >
-                    {colorsOptions.map((product) => (
-                      <SelectItem key={product.key}>{product}</SelectItem>
-                    ))}
-                  </Select>
-                </div>
-              </div>
-              <div className="mt-3 flex w-[12rem] cursor-pointer items-center">
-                <img src={PlusIconFilled} alt="geo Icon" />
-                <span className="text-xs font-semibold leading-[.88rem] underline">
-                  Agregar extintor para recarga
-                </span>
-              </div>
+              )}
             </div>
+
+            {rechargued ? (
+              <div className="rounded-lg bg-gray p-4">
+                <div className="flex space-x-2">
+                  <Input
+                    label={"Código de barras"}
+                    placeholder={"..."}
+                    bg="bg-white"
+                    {...register("barcode", {
+                      required: "Este campo es obligatorio",
+                    })}
+                    msjError={errors.barcode ? errors.barcode.message : ""}
+                  />
+                  <span className="flex items-center">
+                    <Link to={"/inicio"}>
+                      <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
+                        <img src={cameraIcon} alt="" className="h-5 w-5" />
+                      </div>
+                    </Link>
+                  </span>
+                </div>
+                <div className="flex space-x-2">
+                  <Input
+                    label={"Matrícula"}
+                    placeholder={"X234234"}
+                    bg="bg-white"
+                    {...register("registration", {
+                      required: "Este campo es obligatorio",
+                    })}
+                    msjError={
+                      errors.registration ? errors.registration.message : ""
+                    }
+                  />
+                  <Input
+                    label={"N° UNIT de fábrica"}
+                    placeholder={"123455"}
+                    bg="bg-white"
+                    {...register("factoryUnit", {
+                      required: "Este campo es obligatorio",
+                    })}
+                    msjError={
+                      errors.factoryUnit ? errors.factoryUnit.message : ""
+                    }
+                  />
+                </div>
+                <div className="flex w-full space-x-2">
+                  <div className="w-full">
+                    <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
+                      Fecha última carga
+                    </span>
+                    <Select
+                      className="rounded-lg border"
+                      placeholder="MM/AA"
+                      {...register("status")}
+                      onSelectionChange={(values) => setValue("status", values)}
+                    >
+                      {monthsOptions.map((month) => (
+                        <SelectItem key={month.key}>{month}</SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                  <Input
+                    label={"N° UNIT actual"}
+                    placeholder={"123455"}
+                    bg="bg-white"
+                    {...register("actualUnit", {
+                      required: "Este campo es obligatorio",
+                    })}
+                    msjError={
+                      errors.actualUnit ? errors.actualUnit.message : ""
+                    }
+                  />
+                </div>
+              </div>
+            ) : null}
+
             <div className="mt-2 flex space-x-2">
               <Input
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Subtotal"}
-                placeholder={"$10000"}
+                value={`$${truncateToTwoDecimals(subtotal)}`}
                 disabled
               />
               <Input
@@ -427,24 +545,30 @@ const NewSalePage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"IVA 22%"}
-                placeholder={"$1000"}
+                value={truncateToTwoDecimals(subtotal * 0.22)}
                 disabled
               />
-
               <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"TOTAL"}
-                placeholder={"$100000"}
-                disabled
+                type="number"
+                label={"Desc."}
+                placeholder={"%"}
+                value={discount2}
+                onInput={handleDiscount2Input}
+                {...register("discount2", {
+                  required: "Este campo es obligatorio",
+                })}
               />
             </div>
+            <Input
+              bg="bg-gray"
+              placeholderColor="placeholder-black_b"
+              fontWeight="font-bold"
+              border="none"
+              label={"TOTAL"}
+              value={`$${truncateToTwoDecimals(total)}`}
+              disabled
+            />
             <div className="space-y-3">
-              <Input
-                label={"Número de la factura"}
-                placeholder={"Escribir..."}
-              />
               <div className="flex space-x-2">
                 <div className="w-1/2">
                   <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
@@ -453,33 +577,73 @@ const NewSalePage = () => {
                   <Select
                     placeholder="Seleccionar forma de pago"
                     className="rounded-lg border font-roboto font-medium"
+                    {...register("paymentType")}
+                    onSelectionChange={handleSelectionPaymentChange}
                   >
-                    {paymentsOptions.map((product) => (
-                      <SelectItem key={product.key}>{product}</SelectItem>
-                    ))}
+                    <SelectItem key={"Efectivo"} value={"Efectivo"}>
+                      Efectivo
+                    </SelectItem>
+                    <SelectItem key={"Cheque"} value={"Cheque"}>
+                      Cheque
+                    </SelectItem>
                   </Select>
                 </div>
-                <div className="flex w-full space-x-2">
-                  <div className="w-[4rem]">
-                    <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
-                      Cant.
-                    </span>
-                    <Select
-                      placeholder="1"
-                      className="rounded-lg border font-roboto font-medium"
-                    >
-                      <SelectItem key={1}>1</SelectItem>
-                      <SelectItem key={2}>2</SelectItem>
-                    </Select>
+                {selectedPayment === "Efectivo" ? null : (
+                  <div className="flex w-full space-x-2">
+                    <div className="mt-[.06rem] w-full">
+                      <Input
+                        label={"Nro de cheque"}
+                        placeholder={"$"}
+                        {...register("checkNumber", {
+                          required: "Este campo es obligatorio",
+                        })}
+                        msjError={
+                          errors.checkNumber ? errors.checkNumber.message : ""
+                        }
+                      />
+                    </div>
+                    <div className="mt-[0.05rem]">
+                      <Input
+                        type="number"
+                        label={"Cant."}
+                        placeholder={"Cant."}
+                        bg="bg-white"
+                        {...register("checkQuantity", {
+                          required: "Este campo es obligatorio",
+                        })}
+                        msjError={
+                          errors.checkQuantity
+                            ? errors.checkQuantity.message
+                            : ""
+                        }
+                      />
+                    </div>
+
+                    <div className="mt-[.06rem] w-full">
+                      <Input
+                        type="number"
+                        label={"Valor"}
+                        placeholder={"$"}
+                        {...register("value", {
+                          required: "Este campo es obligatorio",
+                        })}
+                        msjError={errors.value ? errors.value.message : ""}
+                      />
+                    </div>
                   </div>
-                  <div className="mt-[.06rem] w-full">
-                    <Input label={"Valor"} placeholder={"$"} />
-                  </div>
-                </div>
+                )}
               </div>
               <Input
                 label={"Compra autorizada por:"}
-                placeholder={"Nombre del cliente"}
+                placeholder={"Nombre de la empresa"}
+                {...register("authorizedCompany", {
+                  required: "Este campo es obligatorio",
+                })}
+                msjError={
+                  errors.authorizedCompany
+                    ? errors.authorizedCompany.message
+                    : ""
+                }
               />
               <div>
                 <Checkbox radius="full" className="font-light" size="sm">
@@ -490,22 +654,22 @@ const NewSalePage = () => {
           </div>
           <div className="mt-5 flex w-full justify-end">
             <Button
-              text={"DESCARGAR"}
+              text={"ACEPTAR"}
               color={"save"}
               type={"submit"}
-              icon={DownloadIcon}
+              icon={ArrowRightIcon}
             />
           </div>
         </form>
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
-          title="Cambios guardados"
+          title="Órden creada"
           variant="confirmation"
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          Los cambios fueron guardados exitosamente.
+          La órden fue creada exitosamente.
         </ReusableModal>
       </div>
     </div>

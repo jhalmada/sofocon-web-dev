@@ -23,6 +23,7 @@ const useUsers = () => {
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
+
       setUsersResponse(data.result);
     } catch (e) {
       console.log(e);

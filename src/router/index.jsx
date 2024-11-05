@@ -20,6 +20,7 @@ import {
   PRODUCTS_ROUTE,
   ORDERS_ROUTE,
   CLIENTS_ORDERS_ROUTE,
+  DIRECT_ORDERS_ROUTE,
   WORKSHOP_ROUTE,
   UNIT_TEMPLATE_ROUTE,
   RECHARGE_ROUTE,
@@ -237,6 +238,10 @@ export const router = createBrowserRouter([
           },
           {
             path: CLIENTS_ORDERS_ROUTE,
+            element: <ClientsOrdersPage />,
+          },
+          {
+            path: DIRECT_ORDERS_ROUTE,
             element: <ClientsOrdersPage />,
           },
           {

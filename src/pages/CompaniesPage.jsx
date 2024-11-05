@@ -15,8 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
 import notesIcon from "../assets/icons/sticky-fill.svg";
-import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
-import PlusFillIcon from "../assets/icons/plus-fill.svg";
+import { Checkbox, DatePicker } from "@nextui-org/react";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 import { parseAbsoluteToLocal } from "@internationalized/date";
@@ -307,7 +306,7 @@ const CompaniesPage = () => {
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">

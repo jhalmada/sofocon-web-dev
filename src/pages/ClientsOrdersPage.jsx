@@ -8,6 +8,12 @@ import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
+import useGetPriceList from "../hooks/priceList/useGetPriceList";
+import useUsersSellers from "../hooks/users/useUsersSellers";
+import useCompanies from "../hooks/companies/useCompanies";
+import useAddOrders from "../hooks/orders/useAddOrders";
+import useOrders from "../hooks/orders/useOrders";
+import useGetProducts from "../hooks/products/useGetProducts";
 
 const ClientsOrdersPage = () => {
   const {
@@ -27,6 +33,16 @@ const ClientsOrdersPage = () => {
   const [mnsError, setMnsError] = useState("");
   const [dateSelected, setDateSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
+  const { postAddOrders } = useAddOrders();
+  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
+  const { ordersResponse, setStatus } = useOrders();
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+  const {
+    productsResponse,
+    setSearch: setSearchProducts,
+    setList,
+  } = useGetProducts();
+  const { priceListResponse } = useGetPriceList();
 
   const stateOptions = ["Entregado", "Solicitado", "Preparación", "Retiro"];
 
@@ -49,7 +65,7 @@ const ClientsOrdersPage = () => {
     }
   };
   const onSubmit = () => {
-    navigate("/inicio/taller/recarga");
+    navigate("/inicio/ordenes");
   };
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -63,7 +79,7 @@ const ClientsOrdersPage = () => {
   };
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio/ordenes" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -97,6 +113,8 @@ const ClientsOrdersPage = () => {
               label="Estado del extintor"
               labelPlacement="outside"
               placeholder="Estado"
+              {...register("status")}
+              onSelectionChange={(values) => setValue("status", values)}
             >
               {stateOptions.map((option) => (
                 <SelectItem key={option} value={option}>
@@ -109,14 +127,14 @@ const ClientsOrdersPage = () => {
                 bg="bg-gray"
                 border="none"
                 label={"ID de órden"}
-                placeholder={"1234566"}
+                placeholder={ordersResponse.id}
                 placeholderColor="placeholder-black_b"
                 disabled
               />
               <Input
                 bg="bg-gray"
                 border="none"
-                label={"Cliente"}
+                label={"Empresa"}
                 placeholder={"..."}
                 placeholderColor="placeholder-black_b"
                 disabled
@@ -150,98 +168,51 @@ const ClientsOrdersPage = () => {
             </div>
 
             <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Producto"}
-                placeholder={"Producto 1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Cant."}
-                placeholder={"1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Subproducto"}
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Color"}
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Precio"}
-                placeholder={"$345"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Desc."}
-                placeholder={"10%"}
-                disabled
-              />
-            </div>
-            <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Recarga"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"PA"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Amarillo"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"$432"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"10%"}
-                disabled
-              />
+              <div className="flex w-1/2 space-x-2">
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Producto"}
+                  placeholder={"Producto 1"}
+                  disabled
+                />
+              </div>
+              <div className="flex w-1/2 space-x-2">
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Precio"}
+                  placeholder={"$345"}
+                  disabled
+                />
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Cant."}
+                  placeholder={"1"}
+                  disabled
+                />
+
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Desc."}
+                  placeholder={"10%"}
+                  disabled
+                />
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Recarga"}
+                  placeholder={"Si"}
+                  disabled
+                />
+              </div>
             </div>
 
             <div className="flex space-x-2">
@@ -269,24 +240,17 @@ const ClientsOrdersPage = () => {
                 placeholder={"-$350"}
                 disabled
               />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"TOTAL"}
-                placeholder={"$100000"}
-                disabled
-              />
             </div>
             <Input
               bg="bg-gray"
-              border="none"
-              label={"Número de la factura"}
-              placeholder={"1234567890"}
               placeholderColor="placeholder-black_b"
+              border="none"
+              label={"TOTAL"}
+              placeholder={"$100000"}
               disabled
             />
-            <div className="flex space-x-2">
+
+            <div className="w-1/2">
               <Input
                 bg="bg-gray"
                 border="none"
@@ -307,7 +271,7 @@ const ClientsOrdersPage = () => {
           </div>
           <div className="mt-5 flex w-full justify-end">
             <Button
-              text={"Descargar"}
+              text={"DESCARGAR"}
               color={"save"}
               type={"submit"}
               icon={DownloadIcon}

@@ -1,16 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
-import { Select, SelectItem } from "@nextui-org/select";
+
 const translateState = (state) => {
   switch (state) {
-    case "POTENTIAL":
-      return "Potencial";
-    case "UNSUBSCRIBED":
-      return "De baja";
-    case "FRECUENT":
-      return "Frecuente";
-    case "COMPETENCE":
-      return "Competencia";
+    case "REQUEST":
+      return "Solicitado";
+    case "PREPARATION":
+      return "En preparación";
+    case "READY":
+      return "Listo para retirar";
+    case "EXIT":
+      return "Egreso";
     default:
       return state;
   }
@@ -23,7 +23,6 @@ const DirectOrdersRow = ({
   seller,
   state,
   id,
-  editIconSrc,
   deleteIconSrc,
   onEditClick,
   onDeleteClick,
@@ -77,20 +76,10 @@ const DirectOrdersRow = ({
         className="p-2 text-md font-semibold leading-[1.16rem]"
         onClick={handleRowClick}
       >
-        <Select placeholder="Estado" className="rounded-lg border">
-          {options.map((option) => (
-            <SelectItem key={option}>{option}</SelectItem>
-          ))}
-        </Select>
+        {translateState(state)}
       </td>
       <td className="p-2">
-        <div className="flex justify-center gap-4">
-          <img
-            src={editIconSrc}
-            alt="Edit icon"
-            className="h-5 w-5 cursor-pointer"
-            onClick={onEditClick}
-          />
+        <div className="flex justify-center">
           <img
             src={deleteIconSrc}
             alt="Delete icon"

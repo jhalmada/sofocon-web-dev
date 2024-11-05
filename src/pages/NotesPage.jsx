@@ -152,7 +152,7 @@ const NotesPage = () => {
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio/empresas" className="text-sm font-medium leading-4">
             <div className="mb-4 flex w-[4rem] items-center">
@@ -279,6 +279,8 @@ const NotesPage = () => {
                     control={control}
                     render={({ field }) => (
                       <DatePicker
+                        value={null}
+                        onChange={(value) => setValue(value)}
                         minValue={today(getLocalTimeZone())}
                         className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
                         {...field}

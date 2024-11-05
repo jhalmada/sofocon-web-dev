@@ -205,7 +205,7 @@ const UsersPage = () => {
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <BackButton route="/inicio" />
         </div>
@@ -306,7 +306,7 @@ const UsersPage = () => {
                         Email
                       </th>
                       <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col items-center gap-2">
                           <FilterSelect
                             options={roleOptions}
                             placeholder="Rol"
