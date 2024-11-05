@@ -9,18 +9,20 @@ const ProductsinListRow = ({
     <tr className="border-b border-gray text-center">
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
-        title={name}
+        title={name || "Sin nombre"}
       >
-        {name}
+        {name || "Sin nombre"}
       </td>
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
-        title={price}
+        title={price || 0}
       >
-        {price}
+        {price || 0}
       </td>
 
-      <td className="p-2 text-md leading-[1.16rem]">{category}</td>
+      <td className="p-2 text-md leading-[1.16rem]">
+        {category || "Sin categoria"}
+      </td>
       <td className="p-2">
         <div className="flex justify-center gap-4">
           <img
