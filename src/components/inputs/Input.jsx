@@ -19,6 +19,7 @@ const Input = forwardRef(
       width2 = "w-full",
       mb = "mb-3",
       fontWeight = "font-normal",
+
       ...props
     },
     ref,

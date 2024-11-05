@@ -97,7 +97,6 @@ const NewSalePage = () => {
       priceList,
       productos,
       quantity,
-
       discount,
       rechargue,
       barCode,
@@ -402,13 +401,16 @@ const NewSalePage = () => {
 
                         <Input
                           label={"Desc."}
-                          placeholder={"%..."}
-                          onChange={(e) => setDiscount(e.target.value)}
+                          placeholder={"%"}
+                          onInput={(e) => {
+                            setDiscount(e.target.value);
+                          }}
                           {...register("discount", {})}
                           msjError={
                             errors.discount ? errors.discount.message : ""
                           }
                         />
+
                         <div className="w-full">
                           <label className="block text-sm font-light">
                             Recarga
@@ -524,12 +526,18 @@ const NewSalePage = () => {
               />
               <Input
                 label={"Desc."}
-                placeholder={"%---"}
-                onChange={(e) => setDiscount(e.target.value)}
+                placeholder={"%"}
+                onInput={(e) => {
+                  setDiscount(e.target.value);
+                }}
                 {...register("discount2", {
                   required: "Este campo es obligatorio",
                 })}
               />
+              <div className="flex space-x-2">
+                <p>DESCUENTO:</p>
+                <p> {discount}</p>
+              </div>
             </div>
             <Input
               bg="bg-gray"
