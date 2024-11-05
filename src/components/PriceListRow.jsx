@@ -12,9 +12,9 @@ const PriceListRow = ({
 }) => {
   const navigate = useNavigate();
   return (
-    <tr className="border-b border-gray text-center">
+    <tr className="border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
+        className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
         title={name}
         onClick={() => navigate(`/inicio/productos/lista/${id}/${name}`)}
       >

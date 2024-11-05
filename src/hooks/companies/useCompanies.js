@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CompaniesService } from "../../services/companies/companies.service.js";
-const useCompanies = () => {
+const useCompanies = (id = null) => {
   const [companiesResponse, setCompaniesResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -13,7 +13,7 @@ const useCompanies = () => {
   const [nextVisit, setNextVisit] = useState(null);
   const [status, setStatus] = useState(null);
   const [competence, setCompetence] = useState(false);
-  const [list, setList] = useState();
+  const [list, setList] = useState(id);
 
   //la funcion principal
   const getAllCompanies = async () => {

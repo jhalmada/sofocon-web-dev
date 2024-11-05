@@ -13,6 +13,7 @@ const AutoCompleteArray = ({
   label2,
   array2,
   placeholder = "Buscar...",
+  hidden = false,
 }) => {
   // Estado para las opciones seleccionadas y sus valores
   const [selectedItems, setSelectedItems] = useState(array2 || []);
@@ -48,44 +49,47 @@ const AutoCompleteArray = ({
   return (
     <div>
       {/* Opciones seleccionadas con inputs */}
-      <div className="flex w-full flex-wrap">
-        {selectedItems.length > 0 && (
-          <div className="flex w-full items-center justify-between">
-            <div className="w-[68%]">
-              <p className="font-roboto text-sm">{label2}</p>
+      {!hidden && (
+        <div className="flex w-full flex-wrap">
+          {selectedItems.length > 0 && (
+            <div className="flex w-full items-center justify-between">
+              <div className="w-[68%]">
+                <p className="font-roboto text-sm">{label2}</p>
+              </div>
+              <div className="w-[30%]">
+                <p className="font-roboto text-sm">Precio</p>
+              </div>
             </div>
-            <div className="w-[30%]">
-              <p className="font-roboto text-sm">Precio</p>
-            </div>
-          </div>
-        )}
-        {selectedItems.map((item) => (
-          <div
-            key={item.id}
-            className="flex h-[3rem] w-full items-center justify-between"
-          >
-            <span
+          )}
+          {selectedItems.map((item) => (
+            <div
               key={item.id}
-              className="flex h-10 w-[68%] items-center justify-between rounded-lg p-2 shadow-br"
+              className="flex h-[3rem] w-full items-center justify-between"
             >
-              <span className="mr-2">{item.name}</span>
-              <img
-                src={x}
-                alt="Eliminar"
-                className="cursor-pointer"
-                onClick={() => handleDeleteSelection(item)}
+              <span
+                key={item.id}
+                className="flex h-10 w-[68%] items-center justify-between rounded-lg p-2 shadow-br"
+              >
+                <span className="mr-2">{item.name}</span>
+                <img
+                  src={x}
+                  alt="Eliminar"
+                  className="cursor-pointer"
+                  onClick={() => handleDeleteSelection(item)}
+                />
+              </span>
+              <Input
+                type="number"
+                mb="mb-0"
+                width="w-[30%]"
+                placeholder="Ingrese valor"
+                value={item.value}
+                onChange={(e) => handleInputChange(item.id, e.target.value)}
               />
-            </span>
-            <Input
-              mb="mb-0"
-              width="w-[30%]"
-              placeholder="Ingrese valor"
-              value={item.value}
-              onChange={(e) => handleInputChange(item.id, e.target.value)}
-            />
-          </div>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Autocomplete */}
       <label className="mt-2 block font-roboto text-sm">{label}</label>
