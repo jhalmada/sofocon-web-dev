@@ -10,6 +10,10 @@ import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import { a } from "framer-motion/client";
 import ProductsinListRow from "../components/ProductsinListRow";
+import useGetProducts from "../hooks/products/useGetProducts";
+import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray";
+import usePutPriceList from "../hooks/priceList/usePutPriceList";
+import { useParams } from "react-router-dom";
 
 const ProductsInListPricePage = ({
   arraySeller,
@@ -28,11 +32,12 @@ const ProductsInListPricePage = ({
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [sellerId, setSellerId] = useState(null);
-  const [stateFilter, setStateFilter] = useState("");
+  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+    useState(false);
+  const [productId, setProductId] = useState(null);
   //Hooks
-  const { userSellerResponse, setSearch } = useUsersSellers();
-  const { changedSellerRoute } = usePutSellerRoute();
+  const { productsResponse, setSearch } = useGetProducts();
+  const { changedPriceList } = usePutPriceList();
   const {
     register,
     handleSubmit,
@@ -41,38 +46,52 @@ const ProductsInListPricePage = ({
     formState: { errors },
   } = useForm();
 
+  const { id } = useParams();
+
   //funciones
-  const onSubmit = (data) => {
-    const sellers = data.vendedores.map((seller) => ({ id: seller.id }));
-    const newData = {
-      user: [...sellers],
+  const onSubmit = async (data) => {
+    const { products } = data;
+    const PriceData = {
+      product: products.map((product) => ({
+        product: product.id,
+        price: product.value,
+      })),
     };
-    changedSellerRoute(newData, idCompany, setModified);
-    closeModal();
+    try {
+      changedPriceList(PriceData, id, setModified);
+      closeModal();
+      setSaveConfirmationModalOpen(true);
+    } catch (error) {
+      console.error("Error al modificar la lista: ", error);
+    }
   };
 
   const openConfirmDeleteModal = (id) => {
-    setSellerId(id);
+    setProductId(id);
     setConfirmDeleteModalOpen(true);
   };
+
   const handleConfirmDelete = () => {
-    // const newSellersArray = transformData(arraySeller).filter(
-    //   (element) => element.id !== sellerId,
-    // );
-    // const newArray = newSellersArray.map((seller) => ({ id: seller.id }));
-    // const newData = {
-    //   user: [...newArray],
-    // };
-    // changedSellerRoute(newData, idCompany, setModified);
-    // setConfirmDeleteModalOpen(false);
+    const newProducts = transformData(arraySeller).filter(
+      (element) => element.id !== productId,
+    );
+    console.log(newProducts);
+    const PriceData = {
+      product: newProducts.map((product) => ({
+        product: product.id,
+        price: product.price,
+      })),
+    };
+    changedPriceList(PriceData, id, setModified);
+    setConfirmDeleteModalOpen(false);
   };
 
-  //   //funcion para transformar los Arrays
   const transformData = (array) => {
-    //   return array.map((item) => ({
-    //     id: item.id,
-    //     name: item.userInfo.fullName,
-    //   }));
+    return array.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: item.list[0].price,
+    }));
   };
   return (
     <div>
@@ -95,16 +114,17 @@ const ProductsInListPricePage = ({
             </tr>
           </thead>
           <tbody>
-            {arraySeller.map((seller) => (
-              <ProductsinListRow
-                key={seller.id}
-                name={seller.name}
-                price={seller?.list[0]?.price || 0}
-                category={seller.category.name}
-                deleteIconSrc={deleteIcon}
-                onDeleteClick={() => openConfirmDeleteModal(seller.id)}
-              />
-            ))}
+            {arraySeller.length > 0 &&
+              arraySeller?.map((seller) => (
+                <ProductsinListRow
+                  key={seller?.id || 0}
+                  name={seller?.name || "Sin nombre"}
+                  price={seller?.list[0]?.price || 0}
+                  category={seller?.category?.name || "Sin categoria"}
+                  deleteIconSrc={deleteIcon}
+                  onDeleteClick={() => openConfirmDeleteModal(seller.id)}
+                />
+              ))}
           </tbody>
         </table>
         <div className="flex justify-center p-6">
@@ -122,22 +142,28 @@ const ProductsInListPricePage = ({
         onSubmit={handleSubmit(onSubmit)}
         isOpen={isSellersModalOpen}
         onClose={handleCancelClick}
-        title={`${nameCompany}`}
+        title={"Agregar Productos"}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
       >
         <div className="space-y-2">
           <form onSubmit={handleSubmit(onSubmit)}>
-            <NextAutoComplete
-              array2={transformData(arraySeller) || []}
-              label2={"Vendedores Asignados"}
-              array={transformData(userSellerResponse?.result || []) || []}
-              name={"vendedores"}
-              label={"Agregar Vendedores"}
+            <AutoCompleteArray
+              array2={arraySeller.map((seller) => ({
+                id: seller.id,
+                name: seller.name,
+              }))}
+              label={"Agregar Productos"}
+              array={productsResponse.map((product) => ({
+                name: product.name,
+                id: product.id,
+              }))}
               setValue={setValue}
+              name={"products"}
+              label2={"Productos"}
               onChange={setSearch}
+              hidden={true}
             />
-            <p>{errors.vendedores && errors.vendedores.message}</p>
           </form>
         </div>
       </ReusableModal>
@@ -149,7 +175,17 @@ const ProductsInListPricePage = ({
         buttons={["back", "accept"]}
         onAccept={() => handleConfirmDelete()}
       >
-        Este vendedor será eliminado de forma permanente. ¿Desea continuar?
+        Este producto será eliminado de forma permanente. ¿Desea continuar?
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isSaveConfirmationModalOpen}
+        onClose={() => setSaveConfirmationModalOpen(false)}
+        title="Producto Agregado"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setSaveConfirmationModalOpen(false)}
+      >
+        El producto fue agregado Exitosamente.
       </ReusableModal>
     </div>
   );

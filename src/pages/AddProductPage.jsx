@@ -162,18 +162,14 @@ const AddProductPage = () => {
               label="Descripcion"
               type="text"
               {...register("description", {
-                required: {
-                  value: true,
-                  message: "Campo obligatorio",
-                },
                 maxLength: {
                   value: 50,
                   message: "la descripcion no puede exceder los 50 caracteres.",
                 },
                 minLength: {
-                  value: 3,
+                  value: 2,
                   message:
-                    "la descripcion debe contener al menos 3 caracteres.",
+                    "la descripcion debe contener al menos 2 caracteres.",
                 },
               })}
               msjError={errors.description ? errors.description.message : ""}

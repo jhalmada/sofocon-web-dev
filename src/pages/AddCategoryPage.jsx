@@ -81,6 +81,12 @@ const AddCategoryPage = () => {
     }
   };
 
+  const deleteFile = () => {
+    setFile(null);
+    setFileName("");
+    setValue("file", null);
+  };
+
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-grow p-6">
@@ -141,7 +147,7 @@ const AddCategoryPage = () => {
               errorApi={errors.description}
               msjError={errors.description ? errors.description.message : ""}
             />
-            <div className="mt-1 min-w-40 max-w-60">
+            <div className="mt-2 min-w-40 max-w-60">
               <p
                 className={`font-roboto font-light ${errors?.file?.message ? "text-red_e" : "text-black"} mb-1 text-sm`}
               >
@@ -152,26 +158,35 @@ const AddCategoryPage = () => {
                 id="file"
                 type="file"
                 accept=".png, .jpg, .jpeg"
-                {...register("file", {
-                  required: "Este campo es obligatorio",
-                })}
+                {...register("file")}
                 onChange={handleFileChange}
+                disabled={fileName.length > 0}
               />
               <label htmlFor="file" className="flex items-center gap-4">
                 <div
-                  className="flex h-11 cursor-pointer items-center gap-2 rounded-lg border border-blue-400 p-1"
-                  onClick={() => setFileName("")}
+                  className={`flex h-11 ${fileName.length === 0 && "cursor-pointer"} items-center gap-2 rounded-lg border border-blue-400 p-1`}
                 >
                   {" "}
                   <img src={uploadIcon} alt="iconUploads" className="h-5 w-5" />
-                  <p className="text-blue-400">Cargar imagen</p>
+                  <p className="text-blue-400">{`${fileName.length > 0 ? "Imagen cargada" : "Cargar imagen"} `}</p>
                 </div>
-                <p
-                  className={`font-roboto text-xs ${errors?.file?.message ? "text-red_e" : "text-black"}`}
-                >
-                  {fileName.length > 0 && fileName}
-                </p>
               </label>
+              <p
+                className={`font-roboto text-sm ${errors?.file?.message ? "text-red_e" : "text-black"} mt-1`}
+              >
+                {fileName.length > 0 && (
+                  <>
+                    {fileName}
+                    {"  "}
+                    <label
+                      className="cursor-pointer"
+                      onClick={() => deleteFile()}
+                    >
+                      X
+                    </label>
+                  </>
+                )}
+              </p>
               {errors.file && (
                 <p className="font-roboto text-xs text-red_e">
                   {errors?.file?.message}

@@ -8,6 +8,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
+import usePutPriceList from "../hooks/priceList/usePutPriceList";
 
 const CompanyInListPricePage = ({
   setItemsPerPage,
@@ -30,7 +31,7 @@ const CompanyInListPricePage = ({
   const [companyId, setCompanyId] = useState(null);
   //hooks
   const { companiesResponse, setSearch } = useCompanies();
-  const { changedSellerRoute } = usePutSellerRoute();
+  const { changedPriceList } = usePutPriceList();
   const {
     register,
     handleSubmit,
@@ -38,14 +39,13 @@ const CompanyInListPricePage = ({
     setValue,
     formState: { errors },
   } = useForm();
-  console.log(companiesResponse);
   //funciones
   const onSubmit = (data) => {
-    const companies = data.empresas.map((company) => ({ client: company.id }));
+    const companies = data.empresas.map((company) => ({ id: company.id }));
     const newData = {
-      clientInRoute: [...companies],
+      client: [...companies],
     };
-    changedSellerRoute(newData, idCompany, setModified);
+    changedPriceList(newData, idCompany, setModified);
     closeModal();
   };
   const openConfirmDeleteModal = (id) => {
@@ -56,11 +56,13 @@ const CompanyInListPricePage = ({
     const newCompanyArray = transformData(arrayCompanies).filter(
       (element) => element.id !== companyId,
     );
-    const newArray = newCompanyArray.map((company) => ({ client: company.id }));
+    const newArray = newCompanyArray.map((company) => ({
+      id: company.id,
+    }));
     const newData = {
-      clientInRoute: [...newArray],
+      client: [...newArray],
     };
-    changedSellerRoute(newData, idCompany, setModified);
+    changedPriceList(newData, idCompany, setModified);
     setConfirmDeleteModalOpen(false);
   };
 
@@ -107,7 +109,7 @@ const CompanyInListPricePage = ({
                       src={deleteIcon}
                       alt="Delete icon"
                       className="h-5 w-5 cursor-pointer"
-                      onClick={() => console.log("presionado")}
+                      onClick={() => openConfirmDeleteModal(companie.id)}
                     />
                   </div>
                 </td>
@@ -130,7 +132,7 @@ const CompanyInListPricePage = ({
       <ReusableModal
         isOpen={isModalOpen}
         onClose={handleCancelClick}
-        title={`${nameCompany}`}
+        title={"Agregar Empresas"}
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}

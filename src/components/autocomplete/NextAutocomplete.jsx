@@ -19,6 +19,7 @@ const NextAutoComplete = ({
   array2,
   placeholder = "Buscar...",
   isDisabled = false,
+  hidden = false,
 }) => {
   //estados
   const [selectedItems, setSelectedItems] = useState(array2 || []);
@@ -42,7 +43,7 @@ const NextAutoComplete = ({
 
   return (
     <>
-      {!isDisabled && (
+      {!hidden && !isDisabled && (
         <div className="flex w-full flex-wrap">
           {selectedItems.length > 0 && (
             <p className="font-roboto text-sm">{label2}</p>

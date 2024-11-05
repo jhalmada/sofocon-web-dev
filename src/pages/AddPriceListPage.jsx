@@ -15,13 +15,6 @@ import useGetProducts from "../hooks/products/useGetProducts";
 import useCompanies from "../hooks/companies/useCompanies";
 import useAddPriceList from "../hooks/priceList/useAddPriceList";
 
-const busquedas = [
-  { name: "Busqueda 1", id: 1 },
-  { name: "Busqueda 2", id: 2 },
-  { name: "Busqueda 3", id: 3 },
-  { name: "Busqueda 4", id: 4 },
-];
-
 const AddPriceListPage = () => {
   //estados
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -171,12 +164,12 @@ const AddPriceListPage = () => {
           <ReusableModal
             isOpen={isSaveConfirmationModalOpen}
             onClose={() => setSaveConfirmationModalOpen(false)}
-            title="Producto Agregado"
+            title="Lista Agregada"
             variant="confirmation"
             buttons={["accept"]}
             onAccept={() => handleAccept()}
           >
-            El producto fue agregado Exitosamente.
+            La lista fue agregada correctamente.
           </ReusableModal>
         </div>
       </div>
