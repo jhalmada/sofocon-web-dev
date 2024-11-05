@@ -5,7 +5,7 @@ import Button from "../components/buttons/Button";
 import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Controller, set, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { I18nProvider } from "@react-aria/i18n";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
@@ -24,6 +24,7 @@ import x from "../assets/icons/x.svg";
 const NewSalePage = () => {
   const {
     register,
+    watch,
     handleSubmit,
     control,
     setValue,
@@ -43,8 +44,11 @@ const NewSalePage = () => {
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
   const [quantity, setQuantity] = useState({});
   const [subtotal, setSubtotal] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const total = subtotal ? subtotal + subtotal * 0.22 - discount : 0;
+  const [discount, setDiscount] = useState([]);
+  const [discount2, setDiscount2] = useState("");
+  const total = subtotal
+    ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
+    : 0;
 
   const monthsOptions = [
     "Enero",
@@ -67,11 +71,9 @@ const NewSalePage = () => {
   const {
     productsResponse,
     setSearch: setSearchProducts,
-    list,
     setList,
   } = useGetProducts();
   const { priceListResponse } = useGetPriceList();
-
   const navigate = useNavigate();
 
   const handleOrderCreation = async (orderData) => {
@@ -106,9 +108,10 @@ const NewSalePage = () => {
       actualUnit,
       discount2,
       paymentType,
-      quantity2,
       value,
       authorizedCompany,
+      checkNumber,
+      checkQuantity,
     } = data;
 
     const newdata = new Date(
@@ -133,9 +136,10 @@ const NewSalePage = () => {
       actualUnit,
       discount2,
       paymentType,
-      quantity2,
       value,
       authorizedCompany,
+      checkNumber,
+      checkQuantity,
 
       date: dateSelected ? formattedDate : null,
     });
@@ -194,15 +198,34 @@ const NewSalePage = () => {
     }));
   };
 
+  const handleProductDiscountInput = (e, index) => {
+    const value = e.target.value.slice(0, 2);
+    setDiscount((prevDiscount) => {
+      const newDiscount = [...prevDiscount];
+      newDiscount[index] = value;
+      return newDiscount;
+    });
+  };
+
+  const handleDiscount2Input = (e) => {
+    const value = e.target.value.slice(0, 2);
+    setDiscount2(value);
+  };
+  const truncateToTwoDecimals = (num) => {
+    return Math.floor(num * 100) / 100;
+  };
   useEffect(() => {
-    const total = autocompleteResults.reduce((acc, item) => {
+    const total = autocompleteResults.reduce((acc, item, index) => {
       const itemQuantity = quantity[item.id] || 1;
       const itemPrice = item.list[0].price;
-      return acc + itemPrice * itemQuantity;
+      const discountPercentage = discount[index] ? discount[index] / 100 : 0;
+      const discountedPrice = itemPrice * (1 - discountPercentage);
+
+      return acc + discountedPrice * itemQuantity;
     }, 0);
 
     setSubtotal(total);
-  }, [autocompleteResults, quantity]);
+  }, [autocompleteResults, quantity, discount]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -236,14 +259,6 @@ const NewSalePage = () => {
         >
           <div>
             <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                border="none"
-                label={"ID de órden"}
-                placeholder={"1234566"}
-                placeholderColor="placeholder-black_b"
-                disabled
-              />
               {ordersResponse.isDirect ? (
                 <Input
                   label={"Empresa"}
@@ -363,7 +378,7 @@ const NewSalePage = () => {
             <div>
               {autocompleteResults.length > 0 && (
                 <div>
-                  {autocompleteResults.map((item) => (
+                  {autocompleteResults.map((item, index) => (
                     <div className="flex w-full space-x-2" key={item.id}>
                       <div className="w-1/2">
                         <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br">
@@ -380,34 +395,43 @@ const NewSalePage = () => {
                         <Input
                           type="number"
                           label={"Cantidad"}
+                          defaultValue={1}
+                          minValue={1}
                           placeholder={"Cant."}
                           onInput={(e) => {
                             handleQuantityChange(item.id, e.target.value);
                           }}
-                          {...register("quantity", {})}
+                          {...register(`quantity${index}`, {})}
                           msjError={
-                            errors.quantity ? errors.quantity.message : ""
+                            errors[`quantity${index}`]
+                              ? errors[`quantity${index}`].message
+                              : ""
                           }
                         />
-
                         <Input
                           bg="bg-gray"
                           placeholderColor="placeholder-black_b"
                           border="none"
                           label={"Precio"}
-                          value={item.list[0].price * (quantity[item.id] || 1)}
+                          value={
+                            item.list[0].price *
+                            (quantity[item.id] || 1) *
+                            (1 - (discount[index] ? discount[index] / 100 : 0))
+                          }
                           disabled
                         />
 
                         <Input
+                          type="number"
                           label={"Desc."}
                           placeholder={"%"}
-                          onInput={(e) => {
-                            setDiscount(e.target.value);
-                          }}
-                          {...register("discount", {})}
+                          value={discount[index] || ""}
+                          onInput={(e) => handleProductDiscountInput(e, index)}
+                          {...register(`discount${index}`, {})}
                           msjError={
-                            errors.discount ? errors.discount.message : ""
+                            errors[`discount${index}`]
+                              ? errors[`discount${index}`].message
+                              : ""
                           }
                         />
 
@@ -513,7 +537,7 @@ const NewSalePage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Subtotal"}
-                value={`$${subtotal}`}
+                value={`$${truncateToTwoDecimals(subtotal)}`}
                 disabled
               />
               <Input
@@ -521,23 +545,19 @@ const NewSalePage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"IVA 22%"}
-                value={subtotal * 0.22}
+                value={truncateToTwoDecimals(subtotal * 0.22)}
                 disabled
               />
               <Input
+                type="number"
                 label={"Desc."}
                 placeholder={"%"}
-                onInput={(e) => {
-                  setDiscount(e.target.value);
-                }}
+                value={discount2}
+                onInput={handleDiscount2Input}
                 {...register("discount2", {
                   required: "Este campo es obligatorio",
                 })}
               />
-              <div className="flex space-x-2">
-                <p>DESCUENTO:</p>
-                <p> {discount}</p>
-              </div>
             </div>
             <Input
               bg="bg-gray"
@@ -545,7 +565,7 @@ const NewSalePage = () => {
               fontWeight="font-bold"
               border="none"
               label={"TOTAL"}
-              value={`$${total}`}
+              value={`$${truncateToTwoDecimals(total)}`}
               disabled
             />
             <div className="space-y-3">
@@ -570,22 +590,38 @@ const NewSalePage = () => {
                 </div>
                 {selectedPayment === "Efectivo" ? null : (
                   <div className="flex w-full space-x-2">
-                    <div className="mt-[0.05rem] w-[7rem]">
+                    <div className="mt-[.06rem] w-full">
+                      <Input
+                        label={"Nro de cheque"}
+                        placeholder={"$"}
+                        {...register("checkNumber", {
+                          required: "Este campo es obligatorio",
+                        })}
+                        msjError={
+                          errors.checkNumber ? errors.checkNumber.message : ""
+                        }
+                      />
+                    </div>
+                    <div className="mt-[0.05rem]">
                       <Input
                         type="number"
                         label={"Cant."}
                         placeholder={"Cant."}
                         bg="bg-white"
-                        {...register("quantity", {
+                        {...register("checkQuantity", {
                           required: "Este campo es obligatorio",
                         })}
                         msjError={
-                          errors.quantity ? errors.quantity.message : ""
+                          errors.checkQuantity
+                            ? errors.checkQuantity.message
+                            : ""
                         }
                       />
                     </div>
+
                     <div className="mt-[.06rem] w-full">
                       <Input
+                        type="number"
                         label={"Valor"}
                         placeholder={"$"}
                         {...register("value", {
@@ -628,12 +664,12 @@ const NewSalePage = () => {
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
-          title="Cambios guardados"
+          title="Órden creada"
           variant="confirmation"
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          Los cambios fueron guardados exitosamente.
+          La órden fue creada exitosamente.
         </ReusableModal>
       </div>
     </div>

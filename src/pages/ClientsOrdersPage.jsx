@@ -8,6 +8,12 @@ import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
+import useGetPriceList from "../hooks/priceList/useGetPriceList";
+import useUsersSellers from "../hooks/users/useUsersSellers";
+import useCompanies from "../hooks/companies/useCompanies";
+import useAddOrders from "../hooks/orders/useAddOrders";
+import useOrders from "../hooks/orders/useOrders";
+import useGetProducts from "../hooks/products/useGetProducts";
 
 const ClientsOrdersPage = () => {
   const {
@@ -27,6 +33,16 @@ const ClientsOrdersPage = () => {
   const [mnsError, setMnsError] = useState("");
   const [dateSelected, setDateSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
+  const { postAddOrders } = useAddOrders();
+  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
+  const { ordersResponse, setStatus } = useOrders();
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+  const {
+    productsResponse,
+    setSearch: setSearchProducts,
+    setList,
+  } = useGetProducts();
+  const { priceListResponse } = useGetPriceList();
 
   const stateOptions = ["Entregado", "Solicitado", "Preparación", "Retiro"];
 
@@ -97,6 +113,8 @@ const ClientsOrdersPage = () => {
               label="Estado del extintor"
               labelPlacement="outside"
               placeholder="Estado"
+              {...register("status")}
+              onSelectionChange={(values) => setValue("status", values)}
             >
               {stateOptions.map((option) => (
                 <SelectItem key={option} value={option}>
@@ -109,14 +127,14 @@ const ClientsOrdersPage = () => {
                 bg="bg-gray"
                 border="none"
                 label={"ID de órden"}
-                placeholder={"1234566"}
+                placeholder={ordersResponse.id}
                 placeholderColor="placeholder-black_b"
                 disabled
               />
               <Input
                 bg="bg-gray"
                 border="none"
-                label={"Cliente"}
+                label={"Empresa"}
                 placeholder={"..."}
                 placeholderColor="placeholder-black_b"
                 disabled
@@ -148,6 +166,7 @@ const ClientsOrdersPage = () => {
                 disabled
               />
             </div>
+
             <div className="flex space-x-2">
               <div className="flex w-1/2 space-x-2">
                 <Input
@@ -164,6 +183,14 @@ const ClientsOrdersPage = () => {
                   bg="bg-gray"
                   placeholderColor="placeholder-black_b"
                   border="none"
+                  label={"Precio"}
+                  placeholder={"$345"}
+                  disabled
+                />
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
                   label={"Cant."}
                   placeholder={"1"}
                   disabled
@@ -173,16 +200,16 @@ const ClientsOrdersPage = () => {
                   bg="bg-gray"
                   placeholderColor="placeholder-black_b"
                   border="none"
-                  label={"Precio"}
-                  placeholder={"$345"}
+                  label={"Desc."}
+                  placeholder={"10%"}
                   disabled
                 />
                 <Input
                   bg="bg-gray"
                   placeholderColor="placeholder-black_b"
                   border="none"
-                  label={"Desc."}
-                  placeholder={"10%"}
+                  label={"Recarga"}
+                  placeholder={"Si"}
                   disabled
                 />
               </div>
@@ -223,7 +250,7 @@ const ClientsOrdersPage = () => {
               disabled
             />
 
-            <div className="flex space-x-2">
+            <div className="w-1/2">
               <Input
                 bg="bg-gray"
                 border="none"
