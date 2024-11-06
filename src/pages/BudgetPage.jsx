@@ -1,24 +1,18 @@
 import Pagination from "../components/Pagination";
-import { useForm } from "react-hook-form";
 import deleteIcon from "../assets/icons/trash3.svg";
-
 import { useState } from "react";
-import { Checkbox, Select, SelectItem } from "@nextui-org/react";
-import { Input } from "postcss";
-import ReusableModal from "../components/modals/ReusableModal";
+import { Select, SelectItem } from "@nextui-org/react";
 import BudgetRow from "../components/BudgetRow";
 import downloadIcon from "../assets/icons/download.svg";
 import useOrders from "../hooks/orders/useOrders";
+import ReusableModal from "../components/modals/ReusableModal";
+import useDeleteOrders from "../hooks/orders/useDeleteOrders";
+
 const BudgetPage = () => {
-  const [companyId, setCompanyId] = useState(null);
+  const [orderId, setOrderId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
-  const [competence, setCompetence] = useState(false);
-  const [visitFilter, setVisitFilter] = useState("");
-  const [stateFilter, setStateFilter] = useState("");
-  const visitOptions = ["< 1 mes", "< 2 meses", "> 3 meses"];
-  const stateOptions = ["Activo", "Inactivo"];
+
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -33,13 +27,7 @@ const BudgetPage = () => {
     "Noviembre",
     "Diciembre",
   ];
-  const {
-    control,
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
+
   const {
     ordersResponse,
     setItemsPerPage,
@@ -51,6 +39,7 @@ const BudgetPage = () => {
     setModified,
     setStatus,
   } = useOrders();
+  const { deleteOrder } = useDeleteOrders();
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -59,62 +48,22 @@ const BudgetPage = () => {
     return `${month}/${day}/${year}`;
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
-    const {
-      nextVisit,
-      name,
-      department,
-      managerName,
-      phone,
-      status,
-      address,
-      neighborhood,
-    } = data;
-  };
   const openModal = (id) => {
-    const companyToEdit = companiesResponse.find(
-      (company) => company.id === id,
-    );
-    if (companyToEdit) {
-      setValue("name", companyToEdit?.name || "");
-      setValue("department", companyToEdit?.department || "");
-      setValue("neighborhood", companyToEdit?.neighborhood || "");
-      setValue("address", companyToEdit?.address || "");
-      setValue("managerName", companyToEdit?.managerName || "");
-      setValue("phone", companyToEdit?.phone || "");
-      setValue("rut", companyToEdit?.rut || "");
-      setValue("status", companyToEdit?.status || "");
-      setValue(
-        "nextVisit",
-        parseAbsoluteToLocal(
-          companyToEdit?.nextVisit || "2024-10-02T21:46:00.330Z",
-        ),
-      );
-      companyToEdit.competenceName
-        ? setValue("competenceName", companyToEdit.competenceName)
-        : setValue("competenceName", "");
-      companyToEdit.competenceName ? setCompetence(true) : setCompetence(false);
-    }
     setIsModalOpen(true);
-    setCompanyId(id);
+    setOrderId(id);
     setIsModalOpen(true);
   };
   const openConfirmDeleteModal = (id) => {
-    setCompanyId(id);
+    setOrderId(id);
     setConfirmDeleteModalOpen(true);
   };
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
-  const handleCancelClick = () => {
-    openConfirmCancelModal();
-    setOpenScannerModal(false);
+  const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
+
+  const handleConfirmDelete = () => {
+    deleteOrder(orderId, setModified);
+    closeConfirmDeleteModal();
   };
-  const handleVisitFilterChange = (value) => {
-    setVisitFilter(value);
-  };
-  const handleStateFilterChange = (value) => {
-    setStateFilter(value);
-  };
+
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div>
@@ -152,28 +101,24 @@ const BudgetPage = () => {
             </tr>
           </thead>
           <tbody>
-            {ordersResponse
-              .filter((order) => order.isPreOrder === false)
-              .map((order, index) => (
-                <BudgetRow
-                  key={index}
-                  id={order.id}
-                  name={order?.client?.name || "Sin nombre"}
-                  contact={order?.client?.phone || "Sin contacto"}
-                  date={
-                    order.created_at
-                      ? formatDate(order.created_at)
-                      : "Sin fecha"
-                  }
-                  seller={"Vendedor"}
-                  downloadIconSrc={downloadIcon}
-                  deleteIconSrc={deleteIcon}
-                  onEditClick={() => {
-                    openModal();
-                  }}
-                  onDeleteClick={() => openConfirmDeleteModal()}
-                />
-              ))}
+            {ordersResponse.map((order, index) => (
+              <BudgetRow
+                key={index}
+                id={order.id}
+                name={order?.client?.name || "Sin nombre"}
+                contact={order?.client?.phone || "Sin contacto"}
+                date={
+                  order.created_at ? formatDate(order.created_at) : "Sin fecha"
+                }
+                seller={"Vendedor"}
+                downloadIconSrc={downloadIcon}
+                deleteIconSrc={deleteIcon}
+                onEditClick={() => {
+                  openModal();
+                }}
+                onDeleteClick={() => openConfirmDeleteModal(order.id)}
+              />
+            ))}
           </tbody>
         </table>
       </div>
@@ -188,74 +133,14 @@ const BudgetPage = () => {
         />
       </div>
       <ReusableModal
-        isOpen={isModalOpen}
-        onClose={handleCancelClick}
-        title="Editar Órden"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
+        isOpen={isConfirmDeleteModalOpen}
+        onClose={closeConfirmDeleteModal}
+        title="Eliminar órden"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={() => handleConfirmDelete(orderId)}
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <label className="text-gray-700 block text-sm font-light">
-            Asignar estado:
-          </label>
-          <Select
-            placeholder="Estado"
-            className="mb-4 rounded-lg border"
-            {...register("status")}
-            onSelectionChange={(value) => setValue("status", value)}
-          >
-            {stateOptions.map((option) => (
-              <SelectItem key={option}>{option}</SelectItem>
-            ))}
-          </Select>
-
-          <Input
-            label={"ID de órden"}
-            placeholder={"Escribir..."}
-            {...register("orderId", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <Input
-            label={"Cliente"}
-            placeholder={"Escribir..."}
-            {...register("client", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <Input
-            label={"R.U.T./CI"}
-            placeholder={"Escribir..."}
-            {...register("rut", {
-              required: "Este campo es obligatorio",
-            })}
-          />
-          <span className="text-sm font-light leading-[1rem] text-black_b">
-            Fecha de venta
-          </span>
-
-          <div className="mt-4">
-            <Input
-              label={"Vendedor"}
-              placeholder={"Escribir..."}
-              {...register("seller", {
-                required: "Este campo es obligatorio",
-              })}
-            />
-          </div>
-          <div className="mt-9 rounded-lg border p-2">
-            {" "}
-            <Checkbox
-              placeholder="Retiro de extintores"
-              radius="full"
-              className="font-light"
-              size="sm"
-            >
-              Retiro de extintores
-            </Checkbox>
-          </div>
-        </form>
+        Esta órden será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

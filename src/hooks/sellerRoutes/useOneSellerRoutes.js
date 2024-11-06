@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { sellerRoutesService } from "../../services/sellerRoutes/sellerRoute.service.js";
 const useOneSellerRoutes = () => {
   const [sellerRoutesResponse, setSellerRouteResponse] = useState([]);

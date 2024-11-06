@@ -1,82 +1,77 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
-import { useState } from "react";
-import AddUsers from "../hooks/users/use.addUsers";
+import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
-import { Select, SelectItem } from "@nextui-org/select";
 import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
-import useGetPriceList from "../hooks/priceList/useGetPriceList";
-import useUsersSellers from "../hooks/users/useUsersSellers";
-import useCompanies from "../hooks/companies/useCompanies";
-import useAddOrders from "../hooks/orders/useAddOrders";
-import useOrders from "../hooks/orders/useOrders";
-import useGetProducts from "../hooks/products/useGetProducts";
+import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 
 const ClientsOrdersPage = () => {
   const {
-    register,
     handleSubmit,
-    control,
-    setValue,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { getOneOrder } = useGetOneOrder(id);
 
-  const { postAddUsers, loading } = AddUsers();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [mnsError, setMnsError] = useState("");
-  const [dateSelected, setDateSelected] = useState(false);
-  const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const { postAddOrders } = useAddOrders();
-  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
-  const { ordersResponse, setStatus } = useOrders();
-  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
-  const {
-    productsResponse,
-    setSearch: setSearchProducts,
-    setList,
-  } = useGetProducts();
-  const { priceListResponse } = useGetPriceList();
 
-  const stateOptions = ["Entregado", "Solicitado", "Preparación", "Retiro"];
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [subTotal, setSubTotal] = useState(0);
+  const [iva, setIva] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [discount, setDiscount] = useState(0);
 
-  const handleUserCreation = async (userData) => {
-    try {
-      const newUser = await postAddUsers(userData);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
-      if (newUser) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        setIsModalOpen(true);
-      }
-    } catch (error) {
-      if (error.response.status === 409) {
-        setMnsError("El correo electrónico ya se encuentra registrado");
-        setIsModalOpen(true);
-      } else {
-        setMnsError("Error al crear el usuario");
-      }
-    }
+    return `${day}/${month}/${year}`;
   };
+  const oneOrder = async (id) => {
+    const newdatos = await getOneOrder(id);
+    setOrderDetails(newdatos);
+  };
+
+  useEffect(() => {
+    oneOrder(id);
+  }, [id]);
+
+  useEffect(() => {
+    let newDiscount = 0;
+    let newSubTotal = 0;
+    let newIva = 0;
+    let newTotal = 0;
+
+    orderDetails?.productInOrder?.forEach((order) => {
+      newDiscount += order.discountPercent;
+      newSubTotal += order.fixedPrice * order.amount - order.discountPercent;
+      newIva += newSubTotal * 1.22;
+      newTotal += newSubTotal + newIva;
+    });
+
+    setDiscount(newDiscount);
+    setSubTotal(newSubTotal);
+    setIva(newIva);
+    setTotal(newTotal);
+  }, [orderDetails]);
   const onSubmit = () => {
     navigate("/inicio/ordenes");
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
   };
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
-    navigate("/inicio/personal");
+    navigate("/inicio/ordenes");
   };
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
@@ -93,7 +88,7 @@ const ClientsOrdersPage = () => {
           </Link>
         </div>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          ID de órden
+          {orderDetails?.id || "sin id"}
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
@@ -113,7 +108,7 @@ const ClientsOrdersPage = () => {
                 bg="bg-gray"
                 border="none"
                 label={"ID de órden"}
-                placeholder={ordersResponse.id}
+                placeholder={orderDetails?.id}
                 placeholderColor="placeholder-black_b"
                 disabled
               />
@@ -121,7 +116,7 @@ const ClientsOrdersPage = () => {
                 bg="bg-gray"
                 border="none"
                 label={"Empresa"}
-                placeholder={"..."}
+                placeholder={orderDetails?.client?.name}
                 placeholderColor="placeholder-black_b"
                 disabled
               />
@@ -130,7 +125,7 @@ const ClientsOrdersPage = () => {
               bg="bg-gray"
               border="none"
               label={"R.U.T./CI"}
-              placeholder={"1234567890"}
+              placeholder={orderDetails?.client?.rut || "sin rut"}
               placeholderColor="placeholder-black_b"
               disabled
             />
@@ -139,8 +134,8 @@ const ClientsOrdersPage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"Fecha de presupuesto"}
-                placeholder={"14/09/2024"}
+                label={"Fecha de venta"}
+                placeholder={formatDate(orderDetails?.created_at)}
                 disabled
               />
               <Input
@@ -148,58 +143,60 @@ const ClientsOrdersPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Vendedor"}
-                placeholder={"Nombre vendedor"}
+                placeholder={orderDetails?.user?.userInfo?.fullName}
                 disabled
               />
             </div>
+            {console.log(orderDetails)}
+            {orderDetails?.productInOrder?.map((order, index) => (
+              <div key={index} className="flex space-x-2">
+                <div className="flex w-1/2 space-x-2">
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Producto"}
+                    placeholder={order?.product?.name}
+                    disabled
+                  />
+                </div>
 
-            <div className="flex space-x-2">
-              <div className="flex w-1/2 space-x-2">
-                <Input
-                  bg="bg-gray"
-                  placeholderColor="placeholder-black_b"
-                  border="none"
-                  label={"Producto"}
-                  placeholder={"Producto 1"}
-                  disabled
-                />
+                <div className="flex w-1/2 space-x-2">
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Precio"}
+                    placeholder={order?.fixedPrice}
+                    disabled
+                  />
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Cant."}
+                    placeholder={order?.amount}
+                    disabled
+                  />
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Desc."}
+                    placeholder={order?.discountPercent + "%"}
+                    disabled
+                  />
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Recarga"}
+                    placeholder={order?.isRechargue ? "Si" : "No"}
+                    disabled
+                  />
+                </div>
               </div>
-              <div className="flex w-1/2 space-x-2">
-                <Input
-                  bg="bg-gray"
-                  placeholderColor="placeholder-black_b"
-                  border="none"
-                  label={"Precio"}
-                  placeholder={"$345"}
-                  disabled
-                />
-                <Input
-                  bg="bg-gray"
-                  placeholderColor="placeholder-black_b"
-                  border="none"
-                  label={"Cant."}
-                  placeholder={"1"}
-                  disabled
-                />
-
-                <Input
-                  bg="bg-gray"
-                  placeholderColor="placeholder-black_b"
-                  border="none"
-                  label={"Desc."}
-                  placeholder={"10%"}
-                  disabled
-                />
-                <Input
-                  bg="bg-gray"
-                  placeholderColor="placeholder-black_b"
-                  border="none"
-                  label={"Recarga"}
-                  placeholder={"Si"}
-                  disabled
-                />
-              </div>
-            </div>
+            ))}
 
             <div className="flex space-x-2">
               <Input
@@ -207,7 +204,7 @@ const ClientsOrdersPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Subtotal"}
-                placeholder={"$10000"}
+                placeholder={subTotal}
                 disabled
               />
               <Input
@@ -215,7 +212,7 @@ const ClientsOrdersPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"IVA 22%"}
-                placeholder={"$1000"}
+                placeholder={iva}
                 disabled
               />
               <Input
@@ -223,7 +220,7 @@ const ClientsOrdersPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Desc."}
-                placeholder={"-$350"}
+                placeholder={orderDetails?.discountPercent + "%"}
                 disabled
               />
             </div>
@@ -232,9 +229,28 @@ const ClientsOrdersPage = () => {
               placeholderColor="placeholder-black_b"
               border="none"
               label={"TOTAL"}
-              placeholder={"$100000"}
+              placeholder={total - total * orderDetails?.discountPercent}
               disabled
             />
+
+            <div className="w-1/2">
+              <Input
+                bg="bg-gray"
+                border="none"
+                label={"Forma de pago"}
+                placeholder={orderDetails?.paymentType}
+                placeholderColor="placeholder-black_b"
+                disabled
+              />
+              <Input
+                bg="bg-gray"
+                border="none"
+                label={"Compra autorizada por:"}
+                placeholder={orderDetails?.user?.userInfo?.fullName}
+                placeholderColor="placeholder-black_b"
+                disabled
+              />
+            </div>
           </div>
           <div className="mt-5 flex w-full justify-end">
             <Button

@@ -27,7 +27,7 @@ const ClientsOrdersRow = ({
 }) => {
   const navigate = useNavigate();
   const handleRowClick = () => {
-    navigate(`/inicio/ordenes/ordenes-clientes`);
+    navigate(`/inicio/ordenes/ordenes-clientes/${id}`);
   };
   const options = [
     "Solicitado",

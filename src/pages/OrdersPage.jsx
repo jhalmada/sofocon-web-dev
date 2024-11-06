@@ -23,7 +23,6 @@ const STATUS_PANEL_TAB = "panel-de-estado";
 
 const OrdersPage = () => {
   const [orderId, setOrderId] = useState(null);
-
   const { deleteOrder } = useDeleteOrders();
   const {
     ordersResponse,
@@ -35,10 +34,11 @@ const OrdersPage = () => {
     itemsPerPage,
     setModified,
     setStatus,
+    setIsPreOrder,
     setIsDirect,
   } = useOrders();
-  const [activeTab, setActiveTab] = useState(CLIENTS_ORDERS_TAB);
 
+  const [activeTab, setActiveTab] = useState(CLIENTS_ORDERS_TAB);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
 
   const stateOptions = [
@@ -47,7 +47,6 @@ const OrdersPage = () => {
     "Para retirar",
     "Egreso",
   ];
-
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -92,8 +91,15 @@ const OrdersPage = () => {
         setStatus("PREPARATION");
         break;
       case "Listo para retirar":
-        setStatus("READY");
+        setStatus("READY_PICKUP");
         break;
+      case "Egreso":
+        setStatus("EGRESS");
+        break;
+      case "Entregado":
+        setStatus("DELIVERED");
+        break;
+
       default:
         setStatus("");
         break;
@@ -104,6 +110,12 @@ const OrdersPage = () => {
       setIsDirect(true);
     } else {
       setIsDirect(false);
+    }
+
+    if (activeTab === BUDGET_TAB) {
+      setIsPreOrder(true);
+    } else {
+      setIsPreOrder(false);
     }
   }, [activeTab]);
   return (
