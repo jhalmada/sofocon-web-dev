@@ -4,8 +4,6 @@ import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
-import FilterRightIcon from "../assets/icons/filter-right.svg";
-import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
@@ -23,7 +21,6 @@ import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import AddSellerRoutePage from "./AddSellerRoutePage.jsx";
 import AddCompanyRoutePage from "./AddCompanyRoutePage.jsx";
 import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
-import disconnectedImg from "../assets/images/disconnected.svg";
 
 const MAP_TAB = "map";
 const SELLERS_TAB = "sellers";

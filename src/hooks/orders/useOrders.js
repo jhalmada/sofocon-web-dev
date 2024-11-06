@@ -26,8 +26,6 @@ const useOrders = () => {
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
-      console.log("la data de ordenes es");
-      console.log(data);
       setOrdersResponse(data.result);
     } catch (e) {
       console.log(e);

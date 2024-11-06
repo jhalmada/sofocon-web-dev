@@ -5,7 +5,7 @@ import Button from "../components/buttons/Button";
 import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { I18nProvider } from "@react-aria/i18n";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
@@ -76,6 +76,7 @@ const NewSalePage = () => {
   const { priceListResponse } = useGetPriceList();
   const navigate = useNavigate();
 
+  const deliveredValue = watch("delivered", false);
   const handleOrderCreation = async (orderData) => {
     try {
       const newOrder = await postAddOrders(orderData);
@@ -112,6 +113,7 @@ const NewSalePage = () => {
       authorizedCompany,
       checkNumber,
       checkQuantity,
+      delivered,
     } = data;
 
     const newdata = new Date(
@@ -140,7 +142,7 @@ const NewSalePage = () => {
       authorizedCompany,
       checkNumber,
       checkQuantity,
-
+      delivered,
       date: dateSelected ? formattedDate : null,
     });
   };
@@ -150,7 +152,7 @@ const NewSalePage = () => {
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
-    navigate("/inicio/personal");
+    navigate("/inicio/ordenes");
   };
   const handleSelectCompany = (selectedCompany) => {
     if (selectedCompany) {
@@ -646,7 +648,14 @@ const NewSalePage = () => {
                 }
               />
               <div>
-                <Checkbox radius="full" className="font-light" size="sm">
+                <Checkbox
+                  radius="full"
+                  className="font-light"
+                  size="sm"
+                  {...register("delivered")}
+                  isSelected={deliveredValue}
+                  onChange={(e) => setValue("delivered", e.target.checked)}
+                >
                   Entregado
                 </Checkbox>
               </div>

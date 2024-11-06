@@ -76,8 +76,15 @@ const DirectOrdersPage = ({
         setStatus("PREPARATION");
         break;
       case "Listo para retirar":
-        setStatus("READY");
+        setStatus("READY_PICKUP");
         break;
+      case "Egreso":
+        setStatus("EGRESS");
+        break;
+      case "Entregado":
+        setStatus("DELIVERED");
+        break;
+
       default:
         setStatus("");
         break;
