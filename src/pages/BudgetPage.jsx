@@ -4,11 +4,19 @@ import { useState } from "react";
 import { Select, SelectItem } from "@nextui-org/react";
 import BudgetRow from "../components/BudgetRow";
 import downloadIcon from "../assets/icons/download.svg";
-import useOrders from "../hooks/orders/useOrders";
 import ReusableModal from "../components/modals/ReusableModal";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
 
-const BudgetPage = () => {
+const BudgetPage = ({
+  ordersResponse,
+  totalPage,
+  total,
+  setPage,
+  page,
+  itemsPerPage,
+  setItemsPerPage,
+  setModified,
+}) => {
   const [orderId, setOrderId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -28,17 +36,6 @@ const BudgetPage = () => {
     "Diciembre",
   ];
 
-  const {
-    ordersResponse,
-    setItemsPerPage,
-    totalPage,
-    total,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-    setStatus,
-  } = useOrders();
   const { deleteOrder } = useDeleteOrders();
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -78,7 +75,7 @@ const BudgetPage = () => {
             ))}
           </Select>
         </div>
-        <table className="mt-2 w-full">
+        <table className="mt-5 w-full">
           <thead>
             <tr>
               <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">

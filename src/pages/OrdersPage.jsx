@@ -34,8 +34,7 @@ const OrdersPage = () => {
     itemsPerPage,
     setModified,
     setStatus,
-    setIsPreOrder,
-    setIsDirect,
+    setOrderType,
   } = useOrders();
 
   const [activeTab, setActiveTab] = useState(CLIENTS_ORDERS_TAB);
@@ -82,6 +81,8 @@ const OrdersPage = () => {
     closeConfirmDeleteModal();
   };
 
+  const changeTab = (tab) => setActiveTab(tab);
+
   const handleStateFilterChange = (value) => {
     switch (value) {
       case "Solicitado":
@@ -106,18 +107,17 @@ const OrdersPage = () => {
     }
   };
   useEffect(() => {
-    if (activeTab === DIRECT_ORDERS_TAB) {
-      setIsDirect(true);
-    } else {
-      setIsDirect(false);
-    }
-
     if (activeTab === BUDGET_TAB) {
-      setIsPreOrder(true);
+      setOrderType({ isPreOrder: true });
+    } else if (activeTab === DIRECT_ORDERS_TAB) {
+      setOrderType({ isDirect: true });
+    } else if (activeTab === CLIENTS_ORDERS_TAB) {
+      setOrderType({ isPreOrder: false, isDirect: false });
     } else {
-      setIsPreOrder(false);
+      setOrderType(null);
     }
   }, [activeTab]);
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
@@ -233,7 +233,7 @@ const OrdersPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {ordersResponse.map((order, index) => (
+                  {ordersResponse?.map((order, index) => (
                     <ClientsOrdersRow
                       key={index}
                       id={order.id}
@@ -276,7 +276,17 @@ const OrdersPage = () => {
             itemsPerPage={itemsPerPage}
           />
         )}
-        {activeTab === BUDGET_TAB && <BudgetPage />}
+        {activeTab === BUDGET_TAB && (
+          <BudgetPage
+            ordersResponse={ordersResponse}
+            totalPage={totalPage}
+            total={total}
+            setPage={setPage}
+            page={page}
+            itemsPerPage={itemsPerPage}
+            setModified={setModified}
+          />
+        )}
         {activeTab === STATUS_PANEL_TAB && <StatusPanelPage />}
       </div>
       <ReusableModal

@@ -137,7 +137,7 @@ const StatusPanelPage = () => {
         </div>
         <div className="grid grid-cols-5">
           {/* Solicitado */}
-          <div className="space-y-6 border-r-2 border-gray px-2">
+          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
             <StatusCard
               clientName={"Nombre del cliente"}
               orderId={"ID de la orden"}
@@ -154,7 +154,7 @@ const StatusPanelPage = () => {
             />
           </div>
           {/* Preparación */}
-          <div className="space-y-6 border-r-2 border-gray px-2">
+          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
             <StatusCard
               bg="bg-red_b"
               clientName={"Nombre del cliente"}
@@ -173,7 +173,7 @@ const StatusPanelPage = () => {
             />
           </div>
           {/* Para retirar */}
-          <div className="space-y-6 border-r-2 border-gray px-2">
+          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
             <StatusCard
               bg="bg-yellow"
               clientName={"Nombre del cliente"}
@@ -192,7 +192,7 @@ const StatusPanelPage = () => {
             />
           </div>
           {/* Egreso */}
-          <div className="space-y-6 border-r-2 border-gray px-2">
+          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
             <StatusCard
               bg="bg-blue_b"
               clientName={"Nombre del cliente"}
@@ -211,7 +211,7 @@ const StatusPanelPage = () => {
             />
           </div>
           {/* Entregado */}
-          <div className="space-y-6 border-r-2 border-gray px-2">
+          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
             <StatusCard
               bg="bg-green"
               clientName={"Nombre del cliente"}

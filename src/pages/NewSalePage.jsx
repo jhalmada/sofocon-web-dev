@@ -77,6 +77,7 @@ const NewSalePage = () => {
   const navigate = useNavigate();
 
   const deliveredValue = watch("delivered", false);
+  const isDirectValue = watch("isDirect", false);
   const handleOrderCreation = async (orderData) => {
     try {
       const newOrder = await postAddOrders(orderData);
@@ -93,17 +94,18 @@ const NewSalePage = () => {
 
   const onSubmit = (data) => {
     const {
-      empresa,
-      company,
+      isDirect,
+      client,
+      directRut,
       dateV,
-      vendedores,
-      priceList,
+      // vendedores,
+      // priceList,
       productos,
-      quantity,
-      discount,
-      rechargue,
+      amount,
+      discountPercent,
+      isRechage,
       barCode,
-      registration,
+      enrollment,
       factoryUnit,
       status,
       actualUnit,
@@ -123,16 +125,18 @@ const NewSalePage = () => {
     );
     const formattedDate = newdata.toISOString();
     handleOrderCreation({
-      empresa,
-      company,
-      vendedores,
-      priceList,
+      isPreOrder: false,
+      isDirect,
+      client,
+      directRut,
+      // vendedores,
+      // priceList,
       productos,
-      quantity,
-      discount,
-      rechargue,
+      amount,
+      discountPercent,
+      isRechage,
       barCode,
-      registration,
+      enrollment,
       factoryUnit,
       status,
       actualUnit,
@@ -260,13 +264,33 @@ const NewSalePage = () => {
           className="flex-grow rounded-tr-lg bg-white px-14 py-10"
         >
           <div>
+            <div>
+              <Checkbox
+                radius="full"
+                className="mb-2"
+                size="sm"
+                {...register("isDirect")}
+                isSelected={isDirectValue}
+                onChange={(e) => setValue("isDirect", e.target.checked)}
+              >
+                Órden de venta directa
+              </Checkbox>
+            </div>
             <div className="flex space-x-2">
-              {ordersResponse.isDirect ? (
+              {isDirectValue ? (
                 <Input
                   label={"Empresa"}
-                  placeholder={"..."}
+                  placeholder={"Escribir..."}
                   {...register("empresa", {
                     required: "Este campo es obligatorio",
+                    minLength: {
+                      value: 2,
+                      message: "El nombre debe contener al menos 2 caracteres.",
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: "El nombre no puede exceder los 50 caracteres.",
+                    },
                   })}
                   msjError={errors.empresa ? errors.empresa.message : ""}
                 />
@@ -275,17 +299,35 @@ const NewSalePage = () => {
                   <CompleteSearchInput
                     label={"Empresa"}
                     array={companiesResponse}
-                    name={"company"}
+                    name={"client"}
                     setValue={setValue}
                     onChange={setSearchCompanies}
                     placeholder="Buscar empresa"
                     onSelect={handleSelectCompany}
                   />
-                  <p>{errors.company && errors.company.message}</p>
+                  <p>{errors.client && errors.client.message}</p>
                 </div>
               )}
             </div>
-            {ordersResponse.isDirect ? null : (
+            {isDirectValue ? (
+              <Input
+                label={"R.U.T./CI"}
+                placeholder={"Escribir..."}
+                {...register("directRut", {
+                  required: "Este campo es obligatorio",
+                  minLength: {
+                    value: 12,
+                    message: "Ingrese los 12 digitos de su RUT.",
+                  },
+                  maxLength: {
+                    value: 12,
+                    message: "Ingrese solo los 12 digitos de su RUT.",
+                  },
+                })}
+                errorApi={errors.directRut}
+                msjError={errors.directRut ? errors.directRut.message : ""}
+              />
+            ) : (
               <Input
                 label={"R.U.T./CI"}
                 placeholder={rutValue}
@@ -403,10 +445,10 @@ const NewSalePage = () => {
                           onInput={(e) => {
                             handleQuantityChange(item.id, e.target.value);
                           }}
-                          {...register(`quantity${index}`, {})}
+                          {...register(`amount${index}`, {})}
                           msjError={
-                            errors[`quantity${index}`]
-                              ? errors[`quantity${index}`].message
+                            errors[`amount${index}`]
+                              ? errors[`amount${index}`].message
                               : ""
                           }
                         />
@@ -429,10 +471,10 @@ const NewSalePage = () => {
                           placeholder={"%"}
                           value={discount[index] || ""}
                           onInput={(e) => handleProductDiscountInput(e, index)}
-                          {...register(`discount${index}`, {})}
+                          {...register(`discountPercent${index}`, {})}
                           msjError={
-                            errors[`discount${index}`]
-                              ? errors[`discount${index}`].message
+                            errors[`discountPercent${index}`]
+                              ? errors[`discountPercent${index}`].message
                               : ""
                           }
                         />
@@ -444,7 +486,7 @@ const NewSalePage = () => {
                           <Select
                             className="rounded-lg border"
                             placeholder="Si/No"
-                            {...register("rechargue")}
+                            {...register("isRechage")}
                             onSelectionChange={handleSelectionChange}
                           >
                             <SelectItem key={true}>Si</SelectItem>
@@ -465,10 +507,10 @@ const NewSalePage = () => {
                     label={"Código de barras"}
                     placeholder={"..."}
                     bg="bg-white"
-                    {...register("barcode", {
+                    {...register("barCode", {
                       required: "Este campo es obligatorio",
                     })}
-                    msjError={errors.barcode ? errors.barcode.message : ""}
+                    msjError={errors.barCode ? errors.barCode.message : ""}
                   />
                   <span className="flex items-center">
                     <Link to={"/inicio"}>
@@ -483,11 +525,11 @@ const NewSalePage = () => {
                     label={"Matrícula"}
                     placeholder={"X234234"}
                     bg="bg-white"
-                    {...register("registration", {
+                    {...register("enrollment", {
                       required: "Este campo es obligatorio",
                     })}
                     msjError={
-                      errors.registration ? errors.registration.message : ""
+                      errors.enrollment ? errors.enrollment.message : ""
                     }
                   />
                   <Input
@@ -556,9 +598,7 @@ const NewSalePage = () => {
                 placeholder={"%"}
                 value={discount2}
                 onInput={handleDiscount2Input}
-                {...register("discount2", {
-                  required: "Este campo es obligatorio",
-                })}
+                {...register("discount2", {})}
               />
             </div>
             <Input
@@ -640,6 +680,14 @@ const NewSalePage = () => {
                 placeholder={"Nombre de la empresa"}
                 {...register("authorizedCompany", {
                   required: "Este campo es obligatorio",
+                  minLength: {
+                    value: 2,
+                    message: "El nombre debe contener al menos 2 caracteres.",
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: "El nombre no puede exceder los 50 caracteres.",
+                  },
                 })}
                 msjError={
                   errors.authorizedCompany

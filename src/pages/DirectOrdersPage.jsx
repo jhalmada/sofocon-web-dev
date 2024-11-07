@@ -1,12 +1,11 @@
 import Pagination from "../components/Pagination";
 import deleteIcon from "../assets/icons/trash3.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import { Select, SelectItem } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
 import DirectOrdersRow from "../components/DirectOrdersRow";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
-import { set } from "react-hook-form";
 
 const DirectOrdersPage = ({
   ordersResponse,

@@ -173,11 +173,10 @@ const StoragePage = () => {
               seller={"Vendedor"}
               state={"estado"}
               editIconSrc={editIcon}
-              deleteIconSrc={deleteIcon}
               onEditClick={() => {
                 openModal();
               }}
-              onDeleteClick={() => openConfirmDeleteModal()}
+          
             />
           </tbody>
         </table>

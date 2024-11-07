@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { OrdersService } from "../../services/orders/orders.service";
+
 const useOrders = () => {
   const [ordersResponse, setOrdersResponse] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -9,24 +10,24 @@ const useOrders = () => {
   const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
-  const [isPreOrder, setIsPreOrder] = useState(false);
-  const [isDirect, setIsDirect] = useState(false);
   const [status, setStatus] = useState(null);
+  const [orderType, setOrderType] = useState({});
 
   const getAllOrders = async () => {
     try {
       setLoading(true);
+      setOrdersResponse([]);
       const { data } = await OrdersService.getAllOrdersApi({
         page,
         itemsPerPage,
         search,
-        isPreOrder,
-        isDirect,
+        ...orderType,
         status,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
       setOrdersResponse(data.result);
+      console.log(data);
     } catch (e) {
       console.log(e);
     } finally {
@@ -36,7 +37,8 @@ const useOrders = () => {
 
   useEffect(() => {
     getAllOrders();
-  }, [page, itemsPerPage, modified, search, isPreOrder, isDirect, status]);
+  }, [page, itemsPerPage, modified, search, orderType, status]);
+
   return {
     ordersResponse,
     loading,
@@ -49,9 +51,8 @@ const useOrders = () => {
     setModified,
     setItemsPerPage,
     setSearch,
-    setIsDirect,
-    setIsPreOrder,
     setStatus,
+    setOrderType,
   };
 };
 
