@@ -96,10 +96,9 @@ const NewSalePage = () => {
     const {
       isDirect,
       client,
-      directRut,
+      rut,
       dateV,
-      // vendedores,
-      // priceList,
+      user,
       productos,
       amount,
       discountPercent,
@@ -128,11 +127,11 @@ const NewSalePage = () => {
       isPreOrder: false,
       isDirect,
       client,
-      directRut,
-      // vendedores,
-      // priceList,
+      rut,
+      user,
       productos,
       amount,
+      // productInOrder: productos.map((product) => ({ id: product.id })),
       discountPercent,
       isRechage,
       barCode,
@@ -281,7 +280,7 @@ const NewSalePage = () => {
                 <Input
                   label={"Empresa"}
                   placeholder={"Escribir..."}
-                  {...register("empresa", {
+                  {...register("client", {
                     required: "Este campo es obligatorio",
                     minLength: {
                       value: 2,
@@ -292,7 +291,7 @@ const NewSalePage = () => {
                       message: "El nombre no puede exceder los 50 caracteres.",
                     },
                   })}
-                  msjError={errors.empresa ? errors.empresa.message : ""}
+                  msjError={errors.client ? errors.client.message : ""}
                 />
               ) : (
                 <div className="-mt-1 mb-4 w-full">
@@ -313,7 +312,7 @@ const NewSalePage = () => {
               <Input
                 label={"R.U.T./CI"}
                 placeholder={"Escribir..."}
-                {...register("directRut", {
+                {...register("rut", {
                   required: "Este campo es obligatorio",
                   minLength: {
                     value: 12,
@@ -324,8 +323,8 @@ const NewSalePage = () => {
                     message: "Ingrese solo los 12 digitos de su RUT.",
                   },
                 })}
-                errorApi={errors.directRut}
-                msjError={errors.directRut ? errors.directRut.message : ""}
+                errorApi={errors.rut}
+                msjError={errors.rut ? errors.rut.message : ""}
               />
             ) : (
               <Input
@@ -379,12 +378,12 @@ const NewSalePage = () => {
                 <CompleteSearchInput
                   label={"Vendedores"}
                   array={transformData(userSellerResponse?.result || []) || []}
-                  name={"vendedores"}
+                  name={"user"}
                   setValue={setValue}
                   onChange={setSearchSellers}
                   placeholder="Buscar vendedores"
                 />
-                <p>{errors.vendedores && errors.vendedores.message}</p>
+                <p>{errors.user && errors.user.message}</p>
               </div>
             </div>
             <div className="mb-4 flex space-x-2">
