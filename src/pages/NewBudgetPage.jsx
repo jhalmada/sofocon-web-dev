@@ -39,7 +39,6 @@ const NewBudgetPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [dateSelected, setDateSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [rutValue, setRutValue] = useState("");
   const [autocompleteResults, setAutocompleteResults] = useState([]);
@@ -104,11 +103,10 @@ const NewBudgetPage = () => {
   const onSubmit = (data) => {
     const {
       isDirect,
-      empresa,
-      company,
+      client,
       directRut,
       dateV,
-      vendedores,
+      user,
       priceList,
       productos,
       quantity,
@@ -131,10 +129,9 @@ const NewBudgetPage = () => {
     handleBudgetCreation({
       isPreOrder: lastPathItem === "nuevo-presupuesto" ? true : false,
       isDirect,
-      empresa,
-      company,
+      client,
       directRut,
-      vendedores,
+      user,
       priceList,
       productos,
       quantity,
@@ -147,7 +144,7 @@ const NewBudgetPage = () => {
       actualUnit,
       discount2,
       paymentType: "",
-      date: dateSelected ? formattedDate : null,
+      payDate: formattedDate,
     });
   };
 
@@ -276,7 +273,7 @@ const NewBudgetPage = () => {
                 <Input
                   label={"Empresa"}
                   placeholder={"Escribir..."}
-                  {...register("empresa", {
+                  {...register("client", {
                     required: "Este campo es obligatorio",
                     minLength: {
                       value: 2,
@@ -287,20 +284,20 @@ const NewBudgetPage = () => {
                       message: "El nombre no puede exceder los 50 caracteres.",
                     },
                   })}
-                  msjError={errors.empresa ? errors.empresa.message : ""}
+                  msjError={errors.client ? errors.client.message : ""}
                 />
               ) : (
                 <div className="-mt-1 mb-4 w-full">
                   <CompleteSearchInput
                     label={"Empresa"}
                     array={companiesResponse}
-                    name={"company"}
+                    name={"client"}
                     setValue={setValue}
                     onChange={setSearchCompanies}
                     placeholder="Buscar empresa"
                     onSelect={handleSelectCompany}
                   />
-                  <p>{errors.company && errors.company.message}</p>
+                  <p>{errors.client && errors.client.message}</p>
                 </div>
               )}
             </div>
@@ -361,9 +358,6 @@ const NewBudgetPage = () => {
                         }}
                       />
                     )}
-                    rules={{
-                      required: dateSelected && "La fecha es obligatoria",
-                    }}
                   />
                   <p className="font-roboto text-xs text-red_e">
                     {errors.dateV ? errors.dateV.message : ""}
@@ -374,12 +368,12 @@ const NewBudgetPage = () => {
                 <CompleteSearchInput
                   label={"Vendedor"}
                   array={transformData(userSellerResponse?.result || []) || []}
-                  name={"vendedor"}
+                  name={"user"}
                   setValue={setValue}
                   onChange={setSearchSellers}
                   placeholder="Buscar vendedor"
                 />
-                <p>{errors.vendedor && errors.vendedor.message}</p>
+                <p>{errors.user && errors.user.message}</p>
               </div>
             </div>
             <div className="mb-4 flex space-x-2">

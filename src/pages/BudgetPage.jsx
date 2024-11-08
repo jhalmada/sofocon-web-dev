@@ -104,10 +104,8 @@ const BudgetPage = ({
                 id={order.id}
                 name={order?.client?.name || "Sin nombre"}
                 contact={order?.client?.phone || "Sin contacto"}
-                date={
-                  order.created_at ? formatDate(order.created_at) : "Sin fecha"
-                }
-                seller={"Vendedor"}
+                date={order.payDate ? formatDate(order.payDate) : "Sin fecha"}
+                seller={order?.user?.userInfo?.name}
                 downloadIconSrc={downloadIcon}
                 deleteIconSrc={deleteIcon}
                 onEditClick={() => {
@@ -132,12 +130,12 @@ const BudgetPage = ({
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
-        title="Eliminar órden"
+        title="Eliminar presupuesto"
         variant="confirmation"
         buttons={["back", "accept"]}
         onAccept={() => handleConfirmDelete(orderId)}
       >
-        Esta órden será eliminada de forma permanente. ¿Desea continuar?
+        Este presupuesto será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

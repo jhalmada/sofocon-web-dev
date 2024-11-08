@@ -34,7 +34,7 @@ const NewSalePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [dateSelected, setDateSelected] = useState(false);
+
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [rutValue, setRutValue] = useState("");
   const [autocompleteResults, setAutocompleteResults] = useState([]);
@@ -146,7 +146,7 @@ const NewSalePage = () => {
       checkNumber,
       checkQuantity,
       delivered,
-      date: dateSelected ? formattedDate : null,
+      payDate: formattedDate,
     });
   };
 
@@ -365,9 +365,6 @@ const NewSalePage = () => {
                         }}
                       />
                     )}
-                    rules={{
-                      required: dateSelected && "La fecha es obligatoria",
-                    }}
                   />
                   <p className="font-roboto text-xs text-red_e">
                     {errors.dateV ? errors.dateV.message : ""}
