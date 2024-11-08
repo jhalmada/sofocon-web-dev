@@ -23,13 +23,7 @@ const DirectOrdersPage = ({
   const { deleteOrder } = useDeleteOrders();
 
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-
-  const stateOptions = [
-    "Solicitado",
-    "En preparación",
-    "Para retirar",
-    "Egreso",
-  ];
+  const [selectedMonth, setSelectedMonth] = useState(null);
 
   const monthsOptions = [
     "Enero",
@@ -44,6 +38,29 @@ const DirectOrdersPage = ({
     "Octubre",
     "Noviembre",
     "Diciembre",
+  ];
+  const filteredOrders = ordersResponse.filter((order) => {
+    if (!order.payDate) {
+      return false;
+    }
+    const orderDate = new Date(order.payDate);
+    if (isNaN(orderDate.getTime())) {
+      return false;
+    }
+    if (!selectedMonth) {
+      return true;
+    }
+    const orderMonthIndex = orderDate.getMonth();
+    const selectedMonthIndex = monthsOptions.indexOf(selectedMonth);
+    return orderMonthIndex === selectedMonthIndex;
+  });
+
+  const stateOptions = [
+    "Solicitado",
+    "En preparación",
+    "Para retirar",
+    "Egreso",
+    "Entregado",
   ];
 
   const formatDate = (dateString) => {
@@ -65,27 +82,36 @@ const DirectOrdersPage = ({
     deleteOrder(orderId, setModified);
     closeConfirmDeleteModal();
   };
+  const handleMonthChange = (e) => {
+    setSelectedMonth(e.target.value);
+  };
 
   const handleStateFilterChange = (value) => {
     switch (value) {
       case "Solicitado":
         setStatus("REQUEST");
+        setPage(0);
         break;
-      case "Preparacion":
+      case "En preparación":
         setStatus("PREPARATION");
+        setPage(0);
         break;
-      case "Listo para retirar":
+      case "Para retirar":
         setStatus("READY_PICKUP");
+        setPage(0);
         break;
       case "Egreso":
         setStatus("EGRESS");
+        setPage(0);
         break;
       case "Entregado":
         setStatus("DELIVERED");
+        setPage(0);
         break;
 
       default:
         setStatus("");
+        setPage(0);
         break;
     }
   };
@@ -97,10 +123,13 @@ const DirectOrdersPage = ({
           <p className="ml-2 text-black_m">Período</p>
           <Select
             className="w-52 rounded-lg border"
-            placeholder="OCTUBRE 2024 "
+            placeholder="Selecciona un mes"
+            onChange={handleMonthChange}
           >
             {monthsOptions.map((option) => (
-              <SelectItem key={option}>{option}</SelectItem>
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
             ))}
           </Select>
         </div>
@@ -135,7 +164,7 @@ const DirectOrdersPage = ({
             </tr>
           </thead>
           <tbody>
-            {ordersResponse.map((order, index) => (
+            {filteredOrders.map((order, index) => (
               <DirectOrdersRow
                 key={index}
                 id={order.id}

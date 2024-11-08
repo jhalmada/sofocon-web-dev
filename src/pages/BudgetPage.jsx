@@ -20,6 +20,7 @@ const BudgetPage = ({
   const [orderId, setOrderId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(null);
 
   const monthsOptions = [
     "Enero",
@@ -35,6 +36,21 @@ const BudgetPage = ({
     "Noviembre",
     "Diciembre",
   ];
+  const filteredOrders = ordersResponse.filter((order) => {
+    if (!order.payDate) {
+      return false;
+    }
+    const orderDate = new Date(order.payDate);
+    if (isNaN(orderDate.getTime())) {
+      return false;
+    }
+    if (!selectedMonth) {
+      return true;
+    }
+    const orderMonthIndex = orderDate.getMonth();
+    const selectedMonthIndex = monthsOptions.indexOf(selectedMonth);
+    return orderMonthIndex === selectedMonthIndex;
+  });
 
   const { deleteOrder } = useDeleteOrders();
   const formatDate = (dateString) => {
@@ -42,7 +58,7 @@ const BudgetPage = ({
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    return `${month}/${day}/${year}`;
+    return `${day}/${month}/${year}`;
   };
 
   const openModal = (id) => {
@@ -60,6 +76,9 @@ const BudgetPage = ({
     deleteOrder(orderId, setModified);
     closeConfirmDeleteModal();
   };
+  const handleMonthChange = (e) => {
+    setSelectedMonth(e.target.value);
+  };
 
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
@@ -68,10 +87,13 @@ const BudgetPage = ({
           <p className="ml-2 text-black_m">Período</p>
           <Select
             className="w-52 rounded-lg border"
-            placeholder="OCTUBRE 2024 "
+            placeholder="Selecciona un mes"
+            onChange={handleMonthChange}
           >
             {monthsOptions.map((option) => (
-              <SelectItem key={option}>{option}</SelectItem>
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
             ))}
           </Select>
         </div>
@@ -98,7 +120,7 @@ const BudgetPage = ({
             </tr>
           </thead>
           <tbody>
-            {ordersResponse.map((order, index) => (
+            {filteredOrders.map((order, index) => (
               <BudgetRow
                 key={index}
                 id={order.id}

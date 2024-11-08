@@ -75,7 +75,7 @@ const NewBudgetPage = () => {
   const { pathname } = useLocation();
   const pathSegments = pathname.split("/").filter(Boolean);
   const lastPathItem = pathSegments[pathSegments.length - 1];
-  console.log(lastPathItem);
+
   const {
     productsResponse,
     setSearch: setSearchProducts,
