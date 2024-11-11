@@ -7,9 +7,12 @@ const Breadcrumbs = () => {
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
   const generateBreadcrumbs = () => {
-    const pathnames = location.pathname
-      .split("/")
-      .filter((x) => x && !uuidRegex.test(x) && x !== "true" && x !== "false");
+    let path = location.pathname;
+
+    path = path.replace(/%[0-9A-Fa-f]{2}/g, "-");
+
+    const pathnames = path.split("/").filter((x) => x && !uuidRegex.test(x));
+
     return [
       ...pathnames.map((name, index) => {
         const path = `/${pathnames.slice(0, index + 1).join("/")}`;

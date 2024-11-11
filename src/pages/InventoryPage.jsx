@@ -17,20 +17,11 @@ import useGetProducts from "../hooks/products/useGetProducts.js";
 import InventaryRow from "../components/InventaryRow.jsx";
 import useDeleteProduct from "../hooks/products/useDeleteProducts.js";
 import deleteImg from "../assets/img/deleted.png";
-import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray.jsx";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
-import useCategory from "../hooks/category/useCategory.js";
 import usePutProduct from "../hooks/products/usePutProducts.js";
 import { Select, SelectItem } from "@nextui-org/select";
-import { MEDIDA, TYPE_PRODUCTS } from "../utils/Constants.js";
-import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
-
-const busquedas = [
-  { name: "Busqueda 1", id: 1 },
-  { name: "Busqueda 2", id: 2 },
-  { name: "Busqueda 3", id: 3 },
-  { name: "Busqueda 4", id: 4 },
-];
+import { BASE_URL, MEDIDA, TYPE_PRODUCTS } from "../utils/Constants.js";
+import notFoundImg from "../assets/images/notFound.svg";
+import { getProductsExcel } from "../services/products/products.routes.js";
 
 const UsersPage = () => {
   //estados
@@ -45,10 +36,12 @@ const UsersPage = () => {
   const [listCategory, setListCategory] = useState([]);
   const [confirmModal, setConfirmModal] = useState(false);
   const [FileAccept, setFileAccept] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   //Hooks
 
   const { id, name } = useParams();
+  const idCat = id;
 
   const {
     productsResponse,
@@ -61,10 +54,7 @@ const UsersPage = () => {
     setModified,
     setSearch,
     setCategory,
-  } = useGetProducts();
-
-  const { categoryResponse, setSearch: setSearchCategory } = useCategory();
-  const { priceListResponse } = useGetPriceList();
+  } = useGetProducts(null, idCat);
 
   const { deleteProduct } = useDeleteProduct();
 
@@ -152,7 +142,7 @@ const UsersPage = () => {
 
   useEffect(() => {
     setCategory(id);
-  }, []);
+  }, [id]);
 
   const handleSelectionChange = (e, name) => {
     setValue(name, e);
@@ -185,7 +175,7 @@ const UsersPage = () => {
                 text="Exportar lista"
                 icon={DownloadIcon}
                 color={"cancel"}
-                //onClick={() => openExportModal()}
+                onClick={() => setIsExportModalOpen(true)}
               />
               <Link to={"agregar-producto"}>
                 <Button text="Nuevo Producto" icon={PlusIcon} />
@@ -194,51 +184,70 @@ const UsersPage = () => {
           </div>
         </div>
         <div className="flex-grow overflow-auto rounded-tr-lg bg-white p-5">
-          <table className="w-full">
-            <thead>
+          {productsResponse.length === 0 ? (
+            <div className="flex justify-center">
               <tr>
-                <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                  Nombre
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Descripción
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Stock
-                </th>
-
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Acción
-                </th>
+                <td colSpan="5" className="p-4 text-center">
+                  <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                    Tu búsqueda no arrojó resultados. !Prueba algo distinto!.{" "}
+                  </p>
+                  <img
+                    src={notFoundImg}
+                    alt="Tabla vacía"
+                    className="mx-auto"
+                  />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {productsResponse.map((product, index) => (
-                <InventaryRow
-                  name={product.name}
-                  key={index}
-                  description={product.description}
-                  stock={product.stock}
-                  editIconSrc={editIcon}
-                  deleteIconSrc={deleteIcon}
-                  onEditClick={() => {
-                    handleEdit(product.id, product.list);
-                  }}
-                  onDeleteClick={() => handleDelete(product.id)}
+            </div>
+          ) : (
+            <>
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Nombre
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Descripción
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Stock
+                    </th>
+
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Acción
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productsResponse.map((product, index) => (
+                    <InventaryRow
+                      name={product.name}
+                      key={index}
+                      description={product.description}
+                      stock={product.stock}
+                      editIconSrc={editIcon}
+                      deleteIconSrc={deleteIcon}
+                      onEditClick={() => {
+                        handleEdit(product.id, product.list);
+                      }}
+                      onDeleteClick={() => handleDelete(product.id)}
+                    />
+                  ))}
+                </tbody>
+              </table>
+              <div className="flex justify-center p-6">
+                <Pagination
+                  pageIndex={setItemsPerPage}
+                  currentPage={page}
+                  totalPages={totalPage}
+                  onPageChange={setPage}
+                  itemPerPage={itemsPerPage}
+                  total={total}
                 />
-              ))}
-            </tbody>
-          </table>
-          <div className="flex justify-center p-6">
-            <Pagination
-              pageIndex={setItemsPerPage}
-              currentPage={page}
-              totalPages={totalPage}
-              onPageChange={setPage}
-              itemPerPage={itemsPerPage}
-              total={total}
-            />
-          </div>
+              </div>
+            </>
+          )}
         </div>
         {/*modal para eliminar*/}
         <ReusableModal
@@ -522,6 +531,33 @@ const UsersPage = () => {
           onAccept={() => setFileAccept(false)}
         >
           Solo se aceptan archivos PNG o JPG.
+        </ReusableModal>
+        {/**modal para exportar */}
+        <ReusableModal
+          isOpen={isExportModalOpen}
+          onClose={() => setIsExportModalOpen(false)}
+          title="Exportar lista"
+          variant="confirmation"
+          buttons={["back", "accept"]}
+          onAccept={() => setIsExportModalOpen(false)}
+        >
+          Elige el formato en el que desea descargar el contenido de la lista:
+          <div className="mt-4 flex flex-col space-y-4">
+            <a
+              href={`${BASE_URL}${getProductsExcel}?category=${id}`}
+              download
+              target="_blank"
+            >
+              <Button
+                width="min-w-[14rem]"
+                text="Descargar archivo Excel"
+                icon={DownloadIcon}
+                color={"cancel"}
+                shadow="shadow-blur"
+                iconPosition={"left"}
+              />
+            </a>
+          </div>
         </ReusableModal>
       </div>
     </div>

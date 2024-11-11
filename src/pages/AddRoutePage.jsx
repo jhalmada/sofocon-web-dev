@@ -12,6 +12,8 @@ import useCompanies from "../hooks/companies/useCompanies";
 import AddSellersRoutes from "../hooks/sellerRoutes/useAddSellerRoutes";
 import SearchInput from "../components/inputs/SearchInput";
 import BackButton from "../components/buttons/BackButton";
+import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
+import useUsersSellers from "../hooks/users/useUsersSellers";
 
 const AddRoutePage = () => {
   const options = ["Activo", "Inactivo"];
@@ -22,10 +24,10 @@ const AddRoutePage = () => {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
-  const { usersResponse } = useUsers();
+  const { userSellerResponse, setSearch } = useUsersSellers();
   const [isMapModal, setIsMapModal] = useState(false);
   const [msjError, setMsjError] = useState("");
-  const { companiesResponse } = useCompanies();
+  const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
   const { postAddSellersRoutes, loading } = AddSellersRoutes();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -47,22 +49,17 @@ const AddRoutePage = () => {
     }
   };
   const onSubmit = (data) => {
-    const { name, status, idVendedor, idEmpresa, zone } = data;
+    const { name, status, vendedores, empresas, zone } = data;
+    const seller = vendedores.map((vendedor) => ({ id: vendedor.id }));
+    const companies = empresas.map((empresa) => ({ client: empresa.id }));
     const newData = {
       name,
       zone,
       isActive: status === "Activo" ? true : false,
-      user: [
-        {
-          id: idVendedor,
-        },
-      ],
-      clientInRoute: [
-        {
-          client: idEmpresa,
-        },
-      ],
+      user: [...seller],
+      clientInRoute: [...companies],
     };
+
     handleSellerCreation(newData);
   };
   const openModal = () => {
@@ -70,9 +67,7 @@ const AddRoutePage = () => {
   };
   const closeModal = () => {
     setIsModalOpen(false);
-    setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
-    setConfirmDeleteModalOpen(false);
   };
 
   const closeSaveConfirmationModal = () => {
@@ -81,6 +76,12 @@ const AddRoutePage = () => {
     closeModal();
   };
   const handleCancelClick = () => closeModal();
+  const transformData = (array) => {
+    return array.map((item) => ({
+      id: item.id,
+      name: item.userInfo.fullName,
+    }));
+  };
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -165,15 +166,14 @@ const AddRoutePage = () => {
               </Select>
             </div>
             <div className="mb-4 space-y-2">
-              <label className="text-gray-700 block text-sm font-light">
-                Asignar vendedores
-              </label>
-              <SearchInput
-                placeholder="Buscar vendedores..."
-                border="border"
-                rounded="rounded-[0.375rem]"
-                visibility="block"
-              ></SearchInput>
+              <NextAutoComplete
+                label2={"Vendedores Asignados"}
+                array={transformData(userSellerResponse?.result || []) || []}
+                name={"vendedores"}
+                label={"Agregar Vendedores"}
+                setValue={setValue}
+                onChange={setSearch}
+              />
             </div>
 
             <div className="mb-2 flex flex-col items-start">
@@ -191,15 +191,14 @@ const AddRoutePage = () => {
               </Link>
             </div>
             <div className="mb-4 space-y-2">
-              <label className="text-gray-700 block text-sm font-light">
-                Asignar empresas
-              </label>
-              <SearchInput
-                placeholder="Buscar empresas..."
-                border="border"
-                rounded="rounded-[0.375rem]"
-                visibility="block"
-              ></SearchInput>
+              <NextAutoComplete
+                label2={"Empresas Asignadas"}
+                array={companiesResponse || []}
+                name={"empresas"}
+                label={"Agregar Empresas"}
+                setValue={setValue}
+                onChange={setSearchCompany}
+              />
             </div>
             <div className="mb-2 flex flex-col items-start">
               <span className="text-gray-700 block text-sm font-light">

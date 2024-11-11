@@ -17,6 +17,9 @@ import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
 import PriceListPage from "./PriceListPage";
 import useGetPriceList from "../hooks/priceList/useGetPriceList";
+import { BASE_URL } from "../utils/Constants";
+import { getProductsExcel } from "../services/products/products.routes";
+import DownloadIcon from "../assets/icons/download.svg";
 
 const INVENTORY_TAB = "inventory";
 const PRICES_TAB = "prices";
@@ -112,292 +115,288 @@ const ProductsPage = () => {
     setEditModal(true);
   };
 
-    const deleteFile = () => {
-      setFile(null);
+  const deleteFile = () => {
+    setFile(null);
+    setFileName("");
+    setValue("file", null);
+  };
+
+  const onSubmit = (data) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("description", data.description);
+    if (file) {
+      formData.append("file", file);
+    }
+    const response = changedCategory(formData, idCategory, setModified);
+    if (response) {
+      setEditModal(false);
+      setConfirmModal(true);
       setFileName("");
-      setValue("file", null);
-    };
-
-    const onSubmit = (data) => {
-      const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("description", data.description);
-      if (file) {
-        formData.append("file", file);
-      }
-      const response = changedCategory(formData, idCategory, setModified);
-      if (response) {
-        setEditModal(false);
-        setConfirmModal(true);
-        setFileName("");
-      }
-    };
-    return (
-      <div className="flex h-full flex-col justify-between bg-gray">
-        <div className="flex-grow p-6">
-          <div className="w-[4rem]">
-            <Link to=".." className="text-sm font-medium leading-4">
-              <div className="mb-4 flex items-center">
-                <img
-                  src={ChevronLeftIcon}
-                  alt="arrow left"
-                  className="-ml-1 h-4 w-4"
-                />
-                Volver
-              </div>
-            </Link>
-          </div>
-
-          <h1 className="pb-6 text-xl font-medium leading-6 text-black_m">
-            Productos
-          </h1>
-          {/*navbar */}
-          <div className="flex max-h-[57px] items-center justify-between">
-            <div className="flex">
-              <h2
-                onClick={() => setActiveTab(INVENTORY_TAB)}
-                className={`w-40 cursor-pointer rounded-t-lg ${activeTab === INVENTORY_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
-              >
-                Inventario
-              </h2>
-              <h2
-                onClick={() => setActiveTab(PRICES_TAB)}
-                className={`w-40 cursor-pointer rounded-t-lg ${activeTab === PRICES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
-              >
-                Listas de precios
-              </h2>
-            </div>
-            {activeTab === INVENTORY_TAB && (
-              <div className="mb-12 flex flex-col items-end justify-start">
-                <SearchInput onChange={setSearch} placeholder="Buscar..." />
-                <div className="flex gap-[0.625rem] p-2">
-                  <Link to="agregar-categoria">
-                    <Button text="Nueva Categoria" icon={plusIcon} />
-                  </Link>
-                </div>
-              </div>
-            )}
-            {activeTab === PRICES_TAB && (
-              <div className="mb-12 flex flex-col items-end justify-start">
-                <SearchInput
-                  placeholder="Buscar..."
-                  onChange={setSearchPriceList}
-                />
-                <div className="flex gap-[0.625rem] p-2">
-                  <Link to="nueva-lista">
-                    <Button text="Nueva Lista" icon={plusIcon} />
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="flex min-h-[70vh] flex-col items-center justify-center rounded-tr-lg bg-white px-7 pb-3 pt-7 shadow-t">
-            {activeTab === INVENTORY_TAB && (
-              <>
-                <section className="mb-4 flex min-h-[60vh] flex-wrap items-center justify-center gap-8 p-[0.625rem]">
-                  {categoryResponse?.map((category) => (
-                    <CardProducts
-                      key={category.id}
-                      name={category.name}
-                      img={category.picture}
-                      description={category.description}
-                      totalProducts={category.totalProducts}
-                      onEdit={() => handleEdit(category.id)}
-                      onDelete={() => handleDelete(category.id)}
-                      id={category.id}
-                    />
-                  ))}
-                </section>
-                <Pagination
-                  pageIndex={setItemsPerPage}
-                  currentPage={page}
-                  totalPages={totalPage}
-                  onPageChange={setPage}
-                  itemPerPage={itemsPerPage}
-                  total={total}
-                />
-              </>
-            )}
-            {activeTab === PRICES_TAB && (
-              <PriceListPage
-                priceListResponse={priceListResponse}
-                itemsPerPage={itemsPerPagePriceList}
-                page={pagePriceList}
-                setItemsPerPage={setItemsPerPagePriceList}
-                setPage={setPagePriceList}
-                total={totalPriceList}
-                totalPage={totalPagePriceList}
-                setModified={setModifiedPriceList}
+    }
+  };
+  return (
+    <div className="flex h-full flex-col justify-between bg-gray">
+      <div className="flex-grow p-6">
+        <div className="w-[4rem]">
+          <Link to=".." className="text-sm font-medium leading-4">
+            <div className="mb-4 flex items-center">
+              <img
+                src={ChevronLeftIcon}
+                alt="arrow left"
+                className="-ml-1 h-4 w-4"
               />
-            )}
-          </div>
-          {/*modal para editar*/}
-          <ReusableModal
-            isOpen={editModal}
-            onClose={() => setIsConfirmCancelModalOpen(true)}
-            title="Editar Categoria"
-            onSubmit={handleSubmit(onSubmit)}
-            buttons={["cancel", "save"]}
-            handleCancelClick={() => setIsConfirmCancelModalOpen(true)}
-          >
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Input
-                label={"Nombre"}
-                placeholder={"Escribir..."}
-                {...register("name", {
-                  required: "Este campo es obligatorio",
-                  maxLength: {
-                    value: 50,
-                    message: "Este campo no debe exceder los 50 caracteres",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "Este campo debe tener al menos 3 caracteres",
-                  },
-                })}
-                errorApi={errors.name}
-                msjError={errors.name ? errors.name.message : ""}
-              />
-              <Input
-                label={"Descripcion"}
-                placeholder={"Escribir..."}
-                {...register("description", {
-                  required: "Este campo es obligatorio",
-                  maxLength: {
-                    value: 50,
-                    message: "Este campo no debe exceder los 50 caracteres",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "Este campo debe tener al menos 3 caracteres",
-                  },
-                })}
-                errorApi={errors.description}
-                msjError={errors.description ? errors.description.message : ""}
-              />
-              <div className="mt-2 min-w-40 max-w-60">
-                <p
-                  className={`font-roboto font-light ${errors?.file?.message ? "text-red_e" : "text-black"} mb-1 text-sm`}
-                >
-                  Editar imagen
-                </p>
-                <input
-                  className="hidden"
-                  id="file"
-                  type="file"
-                  accept=".png, .jpg, .jpeg"
-                  {...register("file")}
-                  onChange={handleFileChange}
-                  disabled={fileName.length > 0}
-                />
-                <label htmlFor="file" className="flex items-center gap-4">
-                  <div
-                    className={`flex h-11 ${fileName.length === 0 && "cursor-pointer"} items-center gap-2 rounded-lg border border-blue-400 p-1`}
-                  >
-                    {" "}
-                    <img
-                      src={uploadIcon}
-                      alt="iconUploads"
-                      className="h-5 w-5"
-                    />
-                    <p className="text-blue-400">{`${fileName.length > 0 ? "Imagen cargada" : "Cargar imagen"} `}</p>
-                  </div>
-                </label>
-                <p
-                  className={`font-roboto text-sm ${errors?.file?.message ? "text-red_e" : "text-black"} mt-1`}
-                >
-                  {fileName.length > 0 && (
-                    <>
-                      {fileName}
-                      {"  "}
-                      <label
-                        className="cursor-pointer"
-                        onClick={() => deleteFile()}
-                      >
-                        X
-                      </label>
-                    </>
-                  )}
-                </p>
-                {errors.file && (
-                  <p className="font-roboto text-xs text-red_e">
-                    {errors?.file?.message}
-                  </p>
-                )}
-              </div>
-            </form>
-          </ReusableModal>
-          {/*modal para eliminar*/}
-          <ReusableModal
-            isOpen={deletemodal}
-            onClose={() => setDeleteModal(false)}
-            title="Eliminar Categoria"
-            variant="confirmation"
-            buttons={["back", "accept"]}
-            onAccept={() => acceptDelete()}
-          >
-            Esta categoria será eliminada de forma permanente. ¿Desea continuar?
-          </ReusableModal>
-          {/*modal para cambios guardados*/}
-          <ReusableModal
-            isOpen={confirmModal}
-            onClose={() => setConfirmModal(false)}
-            title="Cambios guardados"
-            variant="confirmation"
-            buttons={["accept"]}
-            onAccept={() => setConfirmModal(false)}
-          >
-            <div className="flex flex-col items-center justify-center">
-              <img src={SaveImg} alt="save" />
-              <p className="font-roboto text-sm font-light text-black">
-                Los cambios fueron guardados correctamente.
-              </p>
+              Volver
             </div>
-          </ReusableModal>
-          {/*modal para confirmar cancel*/}
-          <ReusableModal
-            isOpen={isConfirmCancelModalOpen}
-            onClose={() => setIsConfirmCancelModalOpen(false)}
-            title="Cambios sin guardar"
-            variant="confirmation"
-            buttons={["back", "accept"]}
-            onAccept={() => {
-              setIsConfirmCancelModalOpen(false);
-              setEditModal(false);
-            }}
-          >
-            Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
-          </ReusableModal>
-          {/*modal para elementos eliminados*/}
-          <ReusableModal
-            isOpen={confirmDelete}
-            onClose={() => setConfirmDelete(false)}
-            title="Item eliminado"
-            variant="confirmation"
-            buttons={["accept"]}
-            onAccept={() => setConfirmDelete(false)}
-          >
-            <div className="flex flex-col items-center justify-center">
-              <img src={deleteImg} alt="delete" />
-              <p className="font-roboto text-sm font-light text-black">
-                El elemento fue eliminado correctamente.
-              </p>
-            </div>
-          </ReusableModal>
-          {/*modal para los archivos */}
-          <ReusableModal
-            isOpen={FileAccept}
-            onClose={() => setFileAccept(false)}
-            title="Formato de archivo incorrecto"
-            variant="confirmation"
-            buttons={["accept"]}
-            onAccept={() => setFileAccept(false)}
-          >
-            Solo se aceptan archivos PNG o JPG.
-          </ReusableModal>
+          </Link>
         </div>
+
+        <h1 className="pb-6 text-xl font-medium leading-6 text-black_m">
+          Productos
+        </h1>
+        {/*navbar */}
+        <div className="flex max-h-[57px] items-center justify-between">
+          <div className="flex">
+            <h2
+              onClick={() => setActiveTab(INVENTORY_TAB)}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === INVENTORY_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+            >
+              Inventario
+            </h2>
+            <h2
+              onClick={() => setActiveTab(PRICES_TAB)}
+              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === PRICES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+            >
+              Listas de precios
+            </h2>
+          </div>
+          {activeTab === INVENTORY_TAB && (
+            <div className="mb-12 flex flex-col items-end justify-start">
+              <SearchInput onChange={setSearch} placeholder="Buscar..." />
+              <div className="flex gap-[0.625rem] p-2">
+                <Link to="agregar-categoria">
+                  <Button text="Nueva Categoria" icon={plusIcon} />
+                </Link>
+              </div>
+            </div>
+          )}
+          {activeTab === PRICES_TAB && (
+            <div className="mb-12 flex flex-col items-end justify-start">
+              <SearchInput
+                placeholder="Buscar..."
+                onChange={setSearchPriceList}
+              />
+              <div className="flex gap-[0.625rem] p-2">
+                <Link to="nueva-lista">
+                  <Button text="Nueva Lista" icon={plusIcon} />
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex min-h-[70vh] flex-col items-center justify-center rounded-tr-lg bg-white px-7 pb-3 pt-7 shadow-t">
+          {activeTab === INVENTORY_TAB && (
+            <>
+              <section className="mb-4 flex min-h-[60vh] flex-wrap items-center justify-center gap-8 p-[0.625rem]">
+                {categoryResponse?.map((category) => (
+                  <CardProducts
+                    key={category.id}
+                    name={category.name}
+                    img={category.picture}
+                    description={category.description}
+                    totalProducts={category.totalProducts}
+                    onEdit={() => handleEdit(category.id)}
+                    onDelete={() => handleDelete(category.id)}
+                    id={category.id}
+                  />
+                ))}
+              </section>
+              <Pagination
+                pageIndex={setItemsPerPage}
+                currentPage={page}
+                totalPages={totalPage}
+                onPageChange={setPage}
+                itemsPerPage={itemsPerPage}
+                total={total}
+              />
+            </>
+          )}
+          {activeTab === PRICES_TAB && (
+            <PriceListPage
+              priceListResponse={priceListResponse}
+              setItemsPerPage={setItemsPerPagePriceList}
+              page={pagePriceList}
+              totalPage={totalPagePriceList}
+              setPage={setPagePriceList}
+              itemsPerPage={itemsPerPagePriceList}
+              total={totalPriceList}
+              setModified={setModifiedPriceList}
+            />
+          )}
+        </div>
+        {/*modal para editar*/}
+        <ReusableModal
+          isOpen={editModal}
+          onClose={() => setIsConfirmCancelModalOpen(true)}
+          title="Editar Categoria"
+          onSubmit={handleSubmit(onSubmit)}
+          buttons={["cancel", "save"]}
+          handleCancelClick={() => setIsConfirmCancelModalOpen(true)}
+        >
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Input
+              label={"Nombre"}
+              placeholder={"Escribir..."}
+              {...register("name", {
+                required: "Este campo es obligatorio",
+                maxLength: {
+                  value: 50,
+                  message: "Este campo no debe exceder los 50 caracteres",
+                },
+                minLength: {
+                  value: 3,
+                  message: "Este campo debe tener al menos 3 caracteres",
+                },
+              })}
+              errorApi={errors.name}
+              msjError={errors.name ? errors.name.message : ""}
+            />
+            <Input
+              label={"Descripcion"}
+              placeholder={"Escribir..."}
+              {...register("description", {
+                required: "Este campo es obligatorio",
+                maxLength: {
+                  value: 50,
+                  message: "Este campo no debe exceder los 50 caracteres",
+                },
+                minLength: {
+                  value: 3,
+                  message: "Este campo debe tener al menos 3 caracteres",
+                },
+              })}
+              errorApi={errors.description}
+              msjError={errors.description ? errors.description.message : ""}
+            />
+            <div className="mt-2 min-w-40 max-w-60">
+              <p
+                className={`font-roboto font-light ${errors?.file?.message ? "text-red_e" : "text-black"} mb-1 text-sm`}
+              >
+                Editar imagen
+              </p>
+              <input
+                className="hidden"
+                id="file"
+                type="file"
+                accept=".png, .jpg, .jpeg"
+                {...register("file")}
+                onChange={handleFileChange}
+                disabled={fileName.length > 0}
+              />
+              <label htmlFor="file" className="flex items-center gap-4">
+                <div
+                  className={`flex h-11 ${fileName.length === 0 && "cursor-pointer"} items-center gap-2 rounded-lg border border-blue-400 p-1`}
+                >
+                  {" "}
+                  <img src={uploadIcon} alt="iconUploads" className="h-5 w-5" />
+                  <p className="text-blue-400">{`${fileName.length > 0 ? "Imagen cargada" : "Cargar imagen"} `}</p>
+                </div>
+              </label>
+              <p
+                className={`font-roboto text-sm ${errors?.file?.message ? "text-red_e" : "text-black"} mt-1`}
+              >
+                {fileName.length > 0 && (
+                  <>
+                    {fileName}
+                    {"  "}
+                    <label
+                      className="cursor-pointer"
+                      onClick={() => deleteFile()}
+                    >
+                      X
+                    </label>
+                  </>
+                )}
+              </p>
+              {errors.file && (
+                <p className="font-roboto text-xs text-red_e">
+                  {errors?.file?.message}
+                </p>
+              )}
+            </div>
+          </form>
+        </ReusableModal>
+        {/*modal para eliminar*/}
+        <ReusableModal
+          isOpen={deletemodal}
+          onClose={() => setDeleteModal(false)}
+          title="Eliminar Categoria"
+          variant="confirmation"
+          buttons={["back", "accept"]}
+          onAccept={() => acceptDelete()}
+        >
+          Esta categoria será eliminada de forma permanente. ¿Desea continuar?
+        </ReusableModal>
+        {/*modal para cambios guardados*/}
+        <ReusableModal
+          isOpen={confirmModal}
+          onClose={() => setConfirmModal(false)}
+          title="Cambios guardados"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setConfirmModal(false)}
+        >
+          <div className="flex flex-col items-center justify-center">
+            <img src={SaveImg} alt="save" />
+            <p className="font-roboto text-sm font-light text-black">
+              Los cambios fueron guardados correctamente.
+            </p>
+          </div>
+        </ReusableModal>
+        {/*modal para confirmar cancel*/}
+        <ReusableModal
+          isOpen={isConfirmCancelModalOpen}
+          onClose={() => setIsConfirmCancelModalOpen(false)}
+          title="Cambios sin guardar"
+          variant="confirmation"
+          buttons={["back", "accept"]}
+          onAccept={() => {
+            setIsConfirmCancelModalOpen(false);
+            setEditModal(false);
+          }}
+        >
+          Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
+        </ReusableModal>
+        {/*modal para elementos eliminados*/}
+        <ReusableModal
+          isOpen={confirmDelete}
+          onClose={() => setConfirmDelete(false)}
+          title="Item eliminado"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setConfirmDelete(false)}
+        >
+          <div className="flex flex-col items-center justify-center">
+            <img src={deleteImg} alt="delete" />
+            <p className="font-roboto text-sm font-light text-black">
+              El elemento fue eliminado correctamente.
+            </p>
+          </div>
+        </ReusableModal>
+        {/*modal para los archivos */}
+        <ReusableModal
+          isOpen={FileAccept}
+          onClose={() => setFileAccept(false)}
+          title="Formato de archivo incorrecto"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setFileAccept(false)}
+        >
+          Solo se aceptan archivos PNG o JPG.
+        </ReusableModal>
       </div>
-    );
+    </div>
+  );
 };
 export default ProductsPage;

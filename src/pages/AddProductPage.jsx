@@ -321,7 +321,7 @@ const AddProductPage = () => {
               )}
             </div>
 
-            <div className="left-0">
+            <div className="flex justify-end">
               <Button
                 type="submit"
                 color="save"
