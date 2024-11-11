@@ -2,13 +2,14 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router/index.jsx";
-import { BASE_URL } from "./utils/Constants.js";
+import { BASE_URL, SOFOCON_JWT_REFRESH_TOKEN } from "./utils/Constants.js";
 import axios from "axios";
 import { SOFOCON_JWT_TOKEN } from "./utils/Constants.js";
 import { NextUIProvider } from "@nextui-org/react";
 import AuthProvider from "./hooks/context/AuthContext.jsx";
 import moment from "moment/moment.js";
 import { AuthService } from "./services/auth/auth.service.js";
+import * as authRoutes from "./services/auth/auth.routes.js";
 
 axios.defaults.baseURL = BASE_URL;
 axios.defaults.headers["origin-login"] = "dashboard";
@@ -35,9 +36,9 @@ axios.interceptors.request.use(
     if (accessToken) {
       const payLoad = parseJwt(accessToken);
       const date = moment(payLoad.exp * 1000);
-      // if (moment().isAfter(date)) {
-      //   await AuthService.refreshTokenAction();
-      // }
+      if (moment().isAfter(date)) {
+        await refreshTokenAction();
+      }
       request.headers["Authorization"] =
         `Bearer ${localStorage.getItem(SOFOCON_JWT_TOKEN)}`;
     }
@@ -48,26 +49,48 @@ axios.interceptors.request.use(
   },
 );
 
-// axios.interceptors.response.use(
-//   (response) => {
-//     return response;
-//   },
-//   (error) => {
-//     const originalRequest = error.config;
-//     if (error.response.status === 401 && !originalRequest._retry) {
-//       originalRequest._retry = true;
-//       try {
-//         return axios(originalRequest);
-//       } catch (_error) {
-//         if (_error.response && _error.response.data) {
-//           return Promise.reject(_error.response.data);
-//         }
-//         return Promise.reject(_error);
-//       }
-//     }
-//     return Promise.reject(error);
-//   },
-// );
+const refreshTokenAction = async () => {
+  try {
+    const instance = axios.create({ baseURL: BASE_URL });
+    const response = await instance.get(authRoutes.refreshToken, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(SOFOCON_JWT_REFRESH_TOKEN)}`,
+      },
+    });
+    localStorage.setItem(SOFOCON_JWT_TOKEN, response.data.access_token);
+    localStorage.setItem(
+      SOFOCON_JWT_REFRESH_TOKEN,
+      response.data.refresh_token,
+    );
+    return response;
+  } catch (error) {
+    localStorage.removeItem(SOFOCON_JWT_TOKEN);
+    localStorage.removeItem(SOFOCON_JWT_REFRESH_TOKEN);
+    window.location.href = "/login";
+    return error;
+  }
+};
+
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        return axios(originalRequest);
+      } catch (_error) {
+        if (_error.response && _error.response.data) {
+          return Promise.reject(_error.response.data);
+        }
+        return Promise.reject(_error);
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 createRoot(document.getElementById("root")).render(
   <NextUIProvider>

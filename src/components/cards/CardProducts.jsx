@@ -22,7 +22,10 @@ const CardProducts = ({
 
   return (
     <div className="flex h-[16.25rem] w-[21.25rem] flex-col justify-between rounded-[0.875rem] p-4 shadow-blur">
-      <div className="h-[6.5rem] w-[100%] rounded-[0.63rem]">
+      <div
+        className="h-[6.5rem] w-[100%] cursor-pointer rounded-[0.63rem]"
+        onClick={() => handleClick()}
+      >
         {img !== null ? (
           <img
             src={`${IMAGE_BASE}${img}`}
@@ -52,7 +55,12 @@ const CardProducts = ({
         />
       </div>
       <div className="h-24">
-        <p className="text-[1.125rem] font-semibold uppercase">{name}</p>
+        <p
+          className="cursor-pointer text-[1.125rem] font-semibold uppercase"
+          onClick={() => handleClick()}
+        >
+          {name}
+        </p>
         <p className="text-xs font-light">{`${totalProducts} items`}</p>
         <div className="flex">
           <p className="Class Properties w-[90%] text-sm font-normal leading-[0.875rem]">

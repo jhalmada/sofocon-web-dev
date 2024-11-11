@@ -135,7 +135,7 @@ const PriceListPage = ({
           currentPage={page}
           totalPages={totalPage}
           onPageChange={setPage}
-          itemPerPage={itemsPerPage}
+          itemsPerPage={itemsPerPage}
           total={total}
         />
       </div>

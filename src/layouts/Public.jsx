@@ -31,7 +31,8 @@ const Public = () => {
 
   const [isOpen, setIsOpen] = useState(true);
 
-  const { logout, userToken } = useAuthContext();
+  const { logout } = useAuthContext();
+  const userToken = localStorage.getItem("SOFOCON_JWT_TOKEN");
 
   useEffect(() => {
     if (userToken === null) {
@@ -95,7 +96,7 @@ const Public = () => {
               <img src={gearIcon} alt="Gear icon" className="h-6 w-6" />
               <img src={bellIcon} alt="Bell icon" className="h-6 w-6" />
               <Dropdown>
-                <DropdownTrigger>
+                <DropdownTrigger className="cursor-pointer">
                   <img src={avatarIcon} alt="Avatar icon" className="h-7 w-7" />
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Static Actions">
