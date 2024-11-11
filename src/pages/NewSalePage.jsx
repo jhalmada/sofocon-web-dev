@@ -73,17 +73,6 @@ const NewSalePage = () => {
     setList,
   } = useGetProducts();
 
-  const productsInOrder = autocompleteResults.map((product) => ({
-    amount: product.amount,
-    isRecharge: product.isRecharge,
-    discountPercent: product.discountPercent,
-  }));
-  const ItemsRemoval = autocompleteResults.map((product) => ({
-    barCode: product.barCode,
-    enrollment: product.enrollment,
-    discountPercent: product.discountPercent,
-  }));
-
   const { priceListResponse } = useGetPriceList();
   const navigate = useNavigate();
 
@@ -112,9 +101,8 @@ const NewSalePage = () => {
       rut,
       dateV,
       user,
-      productsInOrder,
+      productInOrder,
       ItemsRemoval,
-      amount,
       discountPercent,
       isRecharge,
       barCode,
@@ -122,7 +110,6 @@ const NewSalePage = () => {
       factoryUnit,
       status,
       actualUnit,
-      discountPercent2,
       paymentType,
       value,
       authorizedCompany,
@@ -143,23 +130,22 @@ const NewSalePage = () => {
         client,
         rut,
         user,
-        productsInOrder,
+        productInOrder,
         ItemsRemoval,
-        discountPercent,
+        discountPercent: discountPercent ? discountPercent : 0,
         isRecharge,
         barCode,
         enrollment,
         factoryUnit,
         status,
         actualUnit,
-        discountPercent2: discountPercent2,
         paymentType,
         value,
         authorizedCompany,
         checkNumber,
         checkQuantity,
         delivered,
-        payDate: formattedDate,
+        sellDate: formattedDate,
       });
 
       if (newOrder) {
@@ -173,16 +159,15 @@ const NewSalePage = () => {
   };
 
   const onSubmit = (data) => {
+    console.log(data);
     if (data.isDirect) {
       handleOrderCreation({
         ...data,
         client: { rut: data.rut, name: data.client },
-        productsInOrder,
       });
     } else {
       handleOrderCreation({
         ...data,
-        productsInOrder,
       });
     }
   };
@@ -307,7 +292,7 @@ const NewSalePage = () => {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex-grow rounded-tr-lg bg-white px-14 py-10"
+          className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10"
         >
           <div>
             <div>
@@ -342,16 +327,26 @@ const NewSalePage = () => {
                 />
               ) : (
                 <div className="-mt-1 mb-4 w-full">
-                  <CompleteSearchInput
-                    label={"Empresa"}
-                    array={companiesResponse}
-                    name={"client"}
-                    setValue={setValue}
-                    onChange={setSearchCompanies}
-                    placeholder="Buscar empresa"
-                    onSelect={handleSelectCompany}
+                  <Controller
+                    name="client"
+                    control={control}
+                    rules={{ required: "Este campo es obligatorio" }}
+                    render={({ field }) => (
+                      <CompleteSearchInput
+                        label={"Empresa"}
+                        array={companiesResponse}
+                        name={"client"}
+                        setValue={setValue}
+                        onChange={setSearchCompanies}
+                        placeholder="Buscar empresa"
+                        onSelect={handleSelectCompany}
+                        {...field}
+                      />
+                    )}
                   />
-                  <p>{errors.client && errors.client.message}</p>
+                  <p className="text-xs text-red_e">
+                    {errors.client && errors.client.message}
+                  </p>
                 </div>
               )}
             </div>
@@ -401,11 +396,10 @@ const NewSalePage = () => {
                       <DatePicker
                         minValue={today(getLocalTimeZone())}
                         className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                        {...field}
                         label=""
                         placeholder="Seleccione una fecha"
                         granularity="day"
-                        errorMessage={errors.dateV ? errors.dateV.message : ""}
+                        {...field}
                       />
                     )}
                   />
@@ -415,15 +409,27 @@ const NewSalePage = () => {
                 </I18nProvider>
               </div>
               <div className="-mt-[.08rem] w-1/2">
-                <CompleteSearchInput
-                  label={"Vendedores"}
-                  array={transformData(userSellerResponse?.result || []) || []}
-                  name={"user"}
-                  setValue={setValue}
-                  onChange={setSearchSellers}
-                  placeholder="Buscar vendedores"
+                <Controller
+                  name="user"
+                  control={control}
+                  rules={{ required: "Este campo es obligatorio" }}
+                  render={({ field }) => (
+                    <CompleteSearchInput
+                      label={"Vendedores"}
+                      array={
+                        transformData(userSellerResponse?.result || []) || []
+                      }
+                      name={"user"}
+                      setValue={setValue}
+                      onChange={setSearchSellers}
+                      placeholder="Buscar vendedores"
+                      {...field}
+                    />
+                  )}
                 />
-                <p>{errors.user && errors.user.message}</p>
+                {errors.user && (
+                  <p className="text-xs text-red_e">{errors.user.message}</p>
+                )}
               </div>
             </div>
             <div className="mb-4 flex space-x-2">
@@ -476,7 +482,10 @@ const NewSalePage = () => {
                         <Input
                           hidden={true}
                           value={item.id}
-                          {...register(`productInOrder[${index}].product.id`)}
+                          defaultValue={item.id}
+                          {...register(`productInOrder[${index}].product.id`, {
+                            value: item.id,
+                          })}
                           disabled
                         />
                       </div>
@@ -501,17 +510,21 @@ const NewSalePage = () => {
                           placeholderColor="placeholder-black_b"
                           border="none"
                           label={"Precio"}
+                          defaultValue={item.list[0].price}
                           value={
                             item.list[0].price *
                             (quantity[item.id] || 1) *
                             (1 - (discount[index] ? discount[index] / 100 : 0))
                           }
-                          {...register(`productInOrder[${index}].fixedPrice`)}
+                          {...register(`productInOrder[${index}].fixedPrice`, {
+                            value: item.list[0].price,
+                          })}
                           disabled
                         />
                         <Input
                           type="number"
                           label={"Desc."}
+                          defaultValue={0}
                           placeholder={"%"}
                           value={discount[index] || ""}
                           onInput={(e) => handleProductDiscountInput(e, index)}
@@ -527,6 +540,7 @@ const NewSalePage = () => {
                             Recarga
                           </label>
                           <Select
+                            defaultValue={false}
                             className="rounded-lg border"
                             placeholder="Si/No"
                             {...register(`productInOrder[${index}].isRecharge`)}
@@ -553,9 +567,12 @@ const NewSalePage = () => {
                               label={"Código de barras"}
                               placeholder={"..."}
                               bg="bg-white"
-                              {...register(`ItemsRemoval[${index}].barCode`, {
-                                required: "Este campo es obligatorio",
-                              })}
+                              {...register(
+                                `productInOrder[${index}].ItemsRemoval[${index}].barCode`,
+                                {
+                                  required: "Este campo es obligatorio",
+                                },
+                              )}
                               msjError={errors.barCode?.message || ""}
                             />
                             <span className="flex items-center">
@@ -576,7 +593,7 @@ const NewSalePage = () => {
                               placeholder={"X234234"}
                               bg="bg-white"
                               {...register(
-                                `ItemsRemoval[${index}].enrollment`,
+                                `productInOrder[${index}].ItemsRemoval[${index}].enrollment`,
                                 {
                                   required: "Este campo es obligatorio",
                                 },
@@ -587,10 +604,12 @@ const NewSalePage = () => {
                               label={"N° UNIT de fábrica"}
                               placeholder={"123455"}
                               bg="bg-white"
-                              {...register("factoryUnit", {
-                                //revisar
-                                required: "Este campo es obligatorio",
-                              })}
+                              {...register(
+                                `productInOrder[${index}].ItemsRemoval[${index}].factoryUnit`,
+                                {
+                                  required: "Este campo es obligatorio",
+                                },
+                              )}
                               msjError={errors.factoryUnit?.message || ""}
                             />
                           </div>
@@ -603,8 +622,11 @@ const NewSalePage = () => {
                                 className="rounded-lg border"
                                 placeholder="MM/AA"
                                 {...register("lastDate")}
-                                onSelectionChange={
-                                  (values) => setValue("lastDate", values) //revisar
+                                onSelectionChange={(values) =>
+                                  setValue(
+                                    `productInOrder[${index}].ItemsRemoval[${index}].lastDate`,
+                                    values,
+                                  )
                                 }
                               >
                                 {monthsOptions.map((month) => (
@@ -618,10 +640,13 @@ const NewSalePage = () => {
                               label={"N° UNIT actual"}
                               placeholder={"123455"}
                               bg="bg-white"
-                              {...register("actualUnit", {
-                                //revisar
-                                required: "Este campo es obligatorio",
-                              })}
+                              {...register(
+                                `productInOrder[${index}].ItemsRemoval[${index}].actualUnit`,
+                                {
+                                  //revisar
+                                  required: "Este campo es obligatorio",
+                                },
+                              )}
                               msjError={errors.actualUnit?.message || ""}
                             />
                           </div>
@@ -651,11 +676,12 @@ const NewSalePage = () => {
               />
               <Input
                 type="number"
+                defaultValue={0}
                 label={"Desc."}
                 placeholder={"%"}
                 value={discount2}
                 onInput={handleDiscount2Input}
-                {...register("discountPercent2", {})}
+                {...register("discountPercent", {})}
               />
             </div>
             <Input
@@ -676,7 +702,9 @@ const NewSalePage = () => {
                   <Select
                     placeholder="Seleccionar forma de pago"
                     className="rounded-lg border font-roboto font-medium"
-                    {...register("paymentType")}
+                    {...register("paymentType", {
+                      required: "Este campo es obligatorio",
+                    })}
                     onSelectionChange={handleSelectionPaymentChange}
                   >
                     <SelectItem key={"Efectivo"} value={"Efectivo"}>
@@ -686,6 +714,11 @@ const NewSalePage = () => {
                       Cheque
                     </SelectItem>
                   </Select>
+                  {errors.paymentType && (
+                    <span className="text-xs text-red_e">
+                      {errors.paymentType.message}
+                    </span>
+                  )}
                 </div>
                 {selectedPayment === "Efectivo" ? null : (
                   <div className="flex w-full space-x-2">

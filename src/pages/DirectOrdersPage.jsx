@@ -171,7 +171,7 @@ const DirectOrdersPage = ({
                 name={order?.client?.name || "Sin nombre"}
                 orderId={order.id}
                 date={order.payDate ? formatDate(order.payDate) : "Sin fecha"}
-                seller={order?.user?.userInfo?.name}
+                seller={order?.user?.userInfo?.fullName}
                 state={order.status}
                 deleteIconSrc={deleteIcon}
                 onDeleteClick={() => openConfirmDeleteModal(order.id)}

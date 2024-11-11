@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ProductsService } from "../../services/products/products.service.js";
-const useGetProducts = (id = null) => {
+const useGetProducts = (id = null, idCat = null) => {
   const [productsResponse, setProductsResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -9,7 +9,7 @@ const useGetProducts = (id = null) => {
   const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState(null);
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState(idCat);
   const [list, setList] = useState(id);
 
   const getAllCompanies = async () => {

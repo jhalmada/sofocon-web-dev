@@ -39,7 +39,9 @@ const OrdersPage = () => {
     setSearch: setSearchOrders,
   } = useOrders();
 
-  const [activeTab, setActiveTab] = useState(CLIENTS_ORDERS_TAB);
+  const [activeTab, setActiveTab] = useState(
+    localStorage.getItem("activeTab") || CLIENTS_ORDERS_TAB,
+  );
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(null);
 
@@ -58,10 +60,10 @@ const OrdersPage = () => {
     "Diciembre",
   ];
   const filteredOrders = ordersResponse.filter((order) => {
-    if (!order.payDate) {
+    if (!order.sellDate) {
       return false;
     }
-    const orderDate = new Date(order.payDate);
+    const orderDate = new Date(order.sellDate);
     if (isNaN(orderDate.getTime())) {
       return false;
     }
@@ -140,14 +142,18 @@ const OrdersPage = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    if (activeTab === BUDGET_TAB) {
-      setOrderType({ isPreOrder: true });
-    } else if (activeTab === DIRECT_ORDERS_TAB) {
-      setOrderType({ isDirect: true });
-    } else if (activeTab === CLIENTS_ORDERS_TAB) {
-      setOrderType({ isPreOrder: false, isDirect: false });
-    } else {
-      setOrderType(null);
+    switch (activeTab) {
+      case BUDGET_TAB:
+        setOrderType({ isPreOrder: true });
+        break;
+      case DIRECT_ORDERS_TAB:
+        setOrderType({ isDirect: true });
+        break;
+      case CLIENTS_ORDERS_TAB:
+        setOrderType({ isPreOrder: false, isDirect: false });
+        break;
+      default:
+        setOrderType(null);
     }
   }, [activeTab]);
 
@@ -276,9 +282,11 @@ const OrdersPage = () => {
                       name={order?.client?.name || "Sin nombre"}
                       orderId={order.id}
                       date={
-                        order.payDate ? formatDate(order.payDate) : "Sin fecha"
+                        order.sellDate
+                          ? formatDate(order.sellDate)
+                          : "Sin fecha"
                       }
-                      seller={order?.user?.userInfo?.name}
+                      seller={order?.user?.userInfo?.fullName}
                       state={order.status}
                       deleteIconSrc={deleteIcon}
                       onDeleteClick={() => openConfirmDeleteModal(order.id)}
@@ -312,7 +320,7 @@ const OrdersPage = () => {
         )}
         {activeTab === BUDGET_TAB && (
           <BudgetPage
-            ordersResponse={ordersResponse}
+            ordersResponse={ordersResponse || []}
             totalPage={totalPage}
             total={total}
             setPage={setPage}

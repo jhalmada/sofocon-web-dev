@@ -7,10 +7,13 @@ import ReusableModal from "../components/modals/ReusableModal";
 import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
+import { Select, SelectItem } from "@nextui-org/select";
 
-const ClientsOrdersPage = () => {
+const BudgetDataPage = () => {
   const {
+    register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
@@ -25,7 +28,14 @@ const ClientsOrdersPage = () => {
   const [iva, setIva] = useState(0);
   const [total, setTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
+  const discountPercent = orderDetails?.discountPercent || 0;
 
+  const stateOptions = [
+    "Solicitado",
+    "En preparación",
+    "Para retirar",
+    "Egreso",
+  ];
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -44,23 +54,24 @@ const ClientsOrdersPage = () => {
   }, [id]);
 
   useEffect(() => {
-    let newDiscount = 0;
     let newSubTotal = 0;
-    let newIva = 0;
-    let newTotal = 0;
-
     orderDetails?.productInOrder?.forEach((order) => {
-      newDiscount += order.discountPercent;
-      newSubTotal += order.fixedPrice * order.amount - order.discountPercent;
-      newIva += newSubTotal * 1.22;
-      newTotal += newSubTotal + newIva;
-    });
+      const price = order.fixedPrice || 0;
+      const amount = order.amount || 1;
+      const productDiscount = (price * (order.discountPercent || 0)) / 100;
+      const discountedPrice = price - productDiscount;
 
-    setDiscount(newDiscount);
-    setSubTotal(newSubTotal);
-    setIva(newIva);
-    setTotal(newTotal);
-  }, [orderDetails]);
+      newSubTotal += discountedPrice * amount;
+    });
+    const newIva = newSubTotal * 0.22;
+    const discountAmount = (newSubTotal + newIva) * (discountPercent / 100);
+    const newTotal = newSubTotal + newIva - discountAmount;
+    setSubTotal(newSubTotal.toFixed(2));
+    setIva(newIva.toFixed(2));
+    setTotal(newTotal.toFixed(2));
+    setDiscount(discountAmount.toFixed(2));
+  }, [orderDetails, discountPercent]);
+
   const onSubmit = () => {
     navigate("/inicio/ordenes");
   };
@@ -100,7 +111,7 @@ const ClientsOrdersPage = () => {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex-grow rounded-tr-lg bg-white px-14 py-10"
+          className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10"
         >
           <div>
             <div className="flex space-x-2">
@@ -134,8 +145,8 @@ const ClientsOrdersPage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"Fecha de venta"}
-                placeholder={formatDate(orderDetails?.created_at)}
+                label={"Fecha de presupuesto"}
+                placeholder={formatDate(orderDetails?.sellDate)}
                 disabled
               />
               <Input
@@ -147,53 +158,55 @@ const ClientsOrdersPage = () => {
                 disabled
               />
             </div>
-            {console.log(orderDetails)}
-            {orderDetails?.productInOrder?.map((order, index) => (
-              <div key={index} className="flex space-x-2">
-                <div className="flex w-1/2 space-x-2">
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Producto"}
-                    placeholder={order?.product?.name}
-                    disabled
-                  />
+            {orderDetails?.productInOrder?.map((order) => (
+              <div className="flex w-full space-x-2" key={order.id}>
+                <div className="w-1/2">
+                  <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg bg-gray p-2">
+                    {order.product?.name || "nombre del producto"}
+                  </span>
                 </div>
 
                 <div className="flex w-1/2 space-x-2">
                   <Input
+                    type="number"
+                    label="Cantidad"
                     bg="bg-gray"
                     placeholderColor="placeholder-black_b"
                     border="none"
-                    label={"Precio"}
-                    placeholder={order?.fixedPrice}
                     disabled
+                    defaultValue={order.amount || 1}
+                    minValue={1}
+                    placeholder="Cant."
                   />
                   <Input
                     bg="bg-gray"
                     placeholderColor="placeholder-black_b"
                     border="none"
-                    label={"Cant."}
-                    placeholder={order?.amount}
+                    label="Precio"
+                    value={order.fixedPrice || "precio"}
                     disabled
                   />
                   <Input
+                    type="number"
+                    label="Desc."
+                    placeholder="%"
+                    value={order.discountPercent + "%"}
                     bg="bg-gray"
                     placeholderColor="placeholder-black_b"
                     border="none"
-                    label={"Desc."}
-                    placeholder={order?.discountPercent + "%"}
                     disabled
                   />
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Recarga"}
-                    placeholder={order?.isRechargue ? "Si" : "No"}
-                    disabled
-                  />
+                  <div className="w-full">
+                    <Input
+                      type="number"
+                      label="Recarga"
+                      placeholder={order.isRechargue ? "Si" : "No"}
+                      bg="bg-gray"
+                      placeholderColor="placeholder-black_b"
+                      border="none"
+                      disabled
+                    />
+                  </div>
                 </div>
               </div>
             ))}
@@ -230,28 +243,9 @@ const ClientsOrdersPage = () => {
               fontWeight="font-bold"
               border="none"
               label={"TOTAL"}
-              placeholder={total - total * orderDetails?.discountPercent}
+              placeholder={total}
               disabled
             />
-
-            <div className="w-1/2">
-              <Input
-                bg="bg-gray"
-                border="none"
-                label={"Forma de pago"}
-                placeholder={orderDetails?.paymentType}
-                placeholderColor="placeholder-black_b"
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                border="none"
-                label={"Compra autorizada por:"}
-                placeholder={orderDetails?.user?.userInfo?.fullName}
-                placeholderColor="placeholder-black_b"
-                disabled
-              />
-            </div>
           </div>
           <div className="mt-5 flex w-full justify-end">
             <Button
@@ -276,4 +270,4 @@ const ClientsOrdersPage = () => {
     </div>
   );
 };
-export default ClientsOrdersPage;
+export default BudgetDataPage;

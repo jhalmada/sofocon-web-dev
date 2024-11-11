@@ -104,8 +104,9 @@ const Pagination = ({
         <select
           className="w-[7rem] cursor-pointer rounded-lg border bg-white outline-none"
           onChange={(e) => {
-            pageIndex(Number(e.target.value));
+            pageIndex(e.target.value);
             onPageChange(0);
+            console.log(e.target.value);
           }}
           value={itemsPerPage}
         >

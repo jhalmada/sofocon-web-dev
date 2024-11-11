@@ -6,10 +6,12 @@ const translateState = (state) => {
       return "Solicitado";
     case "PREPARATION":
       return "En preparación";
-    case "READY":
-      return "Listo para retirar";
-    case "EXIT":
+    case "READY_PICKUP":
+      return "Para retirar";
+    case "EGRESS":
       return "Egreso";
+    case "DELIVERED":
+      return "Entregado";
     default:
       return state;
   }
@@ -23,7 +25,6 @@ const DirectOrdersRow = ({
   state,
   id,
   deleteIconSrc,
-  onEditClick,
   onDeleteClick,
 }) => {
   const navigate = useNavigate();

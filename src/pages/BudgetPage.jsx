@@ -127,7 +127,7 @@ const BudgetPage = ({
                 name={order?.client?.name || "Sin nombre"}
                 contact={order?.client?.phone || "Sin contacto"}
                 date={order.payDate ? formatDate(order.payDate) : "Sin fecha"}
-                seller={order?.user?.userInfo?.name}
+                seller={order?.user?.userInfo?.fullName}
                 downloadIconSrc={downloadIcon}
                 deleteIconSrc={deleteIcon}
                 onEditClick={() => {
