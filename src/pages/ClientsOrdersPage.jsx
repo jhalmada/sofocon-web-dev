@@ -28,6 +28,7 @@ const ClientsOrdersPage = () => {
   const [iva, setIva] = useState(0);
   const [total, setTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
+  const discountPercent = orderDetails?.discountPercent || 0;
 
   const stateOptions = [
     "Solicitado",
@@ -53,23 +54,40 @@ const ClientsOrdersPage = () => {
   }, [id]);
 
   useEffect(() => {
-    let newDiscount = 0;
     let newSubTotal = 0;
-    let newIva = 0;
-    let newTotal = 0;
 
+    // Calcular el subtotal con descuento aplicado
     orderDetails?.productInOrder?.forEach((order) => {
-      newDiscount += order.discountPercent;
-      newSubTotal += order.fixedPrice * order.amount - order.discountPercent;
-      newIva += newSubTotal * 1.22;
-      newTotal += newSubTotal + newIva;
+      const price = order.fixedPrice || 0;
+      const amount = order.amount || 1;
+      const productDiscount = (price * (order.discountPercent || 0)) / 100;
+      const discountedPrice = price - productDiscount;
+
+      newSubTotal += discountedPrice * amount;
     });
 
-    setDiscount(newDiscount);
-    setSubTotal(newSubTotal);
-    setIva(newIva);
-    setTotal(newTotal);
-  }, [orderDetails]);
+    // Calcular el IVA sobre el subtotal
+    const newIva = newSubTotal * 0.22;
+
+    // Calcular el descuento sobre la suma de subtotal + IVA
+    const discountAmount = (newSubTotal + newIva) * (discountPercent / 100);
+
+    // Calcular el total final
+    const newTotal = newSubTotal + newIva - discountAmount;
+
+    // Guardar los valores
+    setSubTotal(newSubTotal.toFixed(2));
+    setIva(newIva.toFixed(2));
+    setTotal(newTotal.toFixed(2));
+    setDiscount(discountAmount.toFixed(2));
+
+    // Consola para ver valores intermedios
+    console.log("Subtotal:", newSubTotal);
+    console.log("IVA:", newIva);
+    console.log("Discount Amount:", discountAmount);
+    console.log("Total:", newTotal);
+  }, [orderDetails, discountPercent]);
+
   const onSubmit = () => {
     navigate("/inicio/ordenes");
   };
@@ -109,12 +127,12 @@ const ClientsOrdersPage = () => {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex-grow rounded-tr-lg bg-white px-14 py-10"
+          className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10"
         >
           <div>
             <Select
               className="mb-4 w-1/6 rounded-lg border"
-              label="Estado del extintor"
+              label="Estado"
               labelPlacement="outside"
               placeholder="Estado"
               {...register("status")}
@@ -158,7 +176,7 @@ const ClientsOrdersPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Fecha de venta"}
-                placeholder={formatDate(orderDetails?.created_at)}
+                placeholder={formatDate(orderDetails?.sellDate)}
                 disabled
               />
               <Input
@@ -170,53 +188,55 @@ const ClientsOrdersPage = () => {
                 disabled
               />
             </div>
-            {console.log(orderDetails)}
-            {orderDetails?.productInOrder?.map((order, index) => (
-              <div key={index} className="flex space-x-2">
-                <div className="flex w-1/2 space-x-2">
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Producto"}
-                    placeholder={order?.product?.name}
-                    disabled
-                  />
+            {orderDetails?.productInOrder?.map((order) => (
+              <div className="flex w-full space-x-2" key={order.id}>
+                <div className="w-1/2">
+                  <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg bg-gray p-2">
+                    {order.product?.name || "nombre del producto"}
+                  </span>
                 </div>
 
                 <div className="flex w-1/2 space-x-2">
                   <Input
+                    type="number"
+                    label="Cantidad"
                     bg="bg-gray"
                     placeholderColor="placeholder-black_b"
                     border="none"
-                    label={"Precio"}
-                    placeholder={order?.fixedPrice}
                     disabled
+                    defaultValue={order.amount || 1}
+                    minValue={1}
+                    placeholder="Cant."
                   />
                   <Input
                     bg="bg-gray"
                     placeholderColor="placeholder-black_b"
                     border="none"
-                    label={"Cant."}
-                    placeholder={order?.amount}
+                    label="Precio"
+                    value={order.fixedPrice || "precio"}
                     disabled
                   />
                   <Input
+                    type="number"
+                    label="Desc."
+                    placeholder="%"
+                    value={order.discountPercent + "%"}
                     bg="bg-gray"
                     placeholderColor="placeholder-black_b"
                     border="none"
-                    label={"Desc."}
-                    placeholder={order?.discountPercent + "%"}
                     disabled
                   />
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Recarga"}
-                    placeholder={order?.isRechargue ? "Si" : "No"}
-                    disabled
-                  />
+                  <div className="w-full">
+                    <Input
+                      type="number"
+                      label="Recarga"
+                      placeholder={order.isRechargue ? "Si" : "No"}
+                      bg="bg-gray"
+                      placeholderColor="placeholder-black_b"
+                      border="none"
+                      disabled
+                    />
+                  </div>
                 </div>
               </div>
             ))}
@@ -253,7 +273,7 @@ const ClientsOrdersPage = () => {
               fontWeight="font-bold"
               border="none"
               label={"TOTAL"}
-              placeholder={total - total * orderDetails?.discountPercent}
+              placeholder={total}
               disabled
             />
 
