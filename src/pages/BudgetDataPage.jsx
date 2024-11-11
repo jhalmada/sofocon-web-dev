@@ -227,6 +227,7 @@ const ClientsOrdersPage = () => {
             <Input
               bg="bg-gray"
               placeholderColor="placeholder-black_b"
+              fontWeight="font-bold"
               border="none"
               label={"TOTAL"}
               placeholder={total - total * orderDetails?.discountPercent}

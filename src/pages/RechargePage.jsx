@@ -160,7 +160,7 @@ const RechargePage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"Cliente"}
+                label={"Empresa"}
                 placeholder={"..."}
                 disabled
               />
@@ -199,7 +199,7 @@ const RechargePage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"Producto"}
+                label={"Recargas"}
                 placeholder={"Arena"}
                 disabled
               />
@@ -219,7 +219,7 @@ const RechargePage = () => {
                     bg="bg-gray"
                     placeholderColor="placeholder-black_b"
                     border="none"
-                    label={"Recarga"}
+                    label={"Producto"}
                     placeholder={"Arena"}
                     disabled
                   />
@@ -248,7 +248,7 @@ const RechargePage = () => {
                   Habilitado
                 </span>
                 <Link to={"/inicio/taller/datos-recarga"}>
-                  <Button text="Datos Recarga" icon={ChevronRightIcon} />
+                  <Button text="Ensayo" icon={ChevronRightIcon} />
                 </Link>
               </div>
             </div>

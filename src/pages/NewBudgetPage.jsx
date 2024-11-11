@@ -1,5 +1,10 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import { useEffect, useState } from "react";
@@ -7,7 +12,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
 import { I18nProvider } from "@react-aria/i18n";
-import { DatePicker } from "@nextui-org/react";
+import { Checkbox, DatePicker } from "@nextui-org/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import cameraIcon from "../assets/icons/camera.svg";
@@ -21,9 +26,10 @@ import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
 
-const NewSalePage = () => {
+const NewBudgetPage = () => {
   const {
     register,
+    watch,
     handleSubmit,
     control,
     setValue,
@@ -33,7 +39,6 @@ const NewSalePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [dateSelected, setDateSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [rutValue, setRutValue] = useState("");
   const [autocompleteResults, setAutocompleteResults] = useState([]);
@@ -65,8 +70,12 @@ const NewSalePage = () => {
   ];
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
-  const { ordersResponse } = useOrders();
+  const { ordersResponse, setStatus } = useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+  const { pathname } = useLocation();
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const lastPathItem = pathSegments[pathSegments.length - 1];
+
   const {
     productsResponse,
     setSearch: setSearchProducts,
@@ -75,26 +84,29 @@ const NewSalePage = () => {
   const { priceListResponse } = useGetPriceList();
   const navigate = useNavigate();
 
-  const handleOrderCreation = async (orderData) => {
+  const isDirectValue = watch("isDirect", false);
+  const handleBudgetCreation = async (budgetData) => {
     try {
-      const newOrder = await postAddOrders(orderData);
+      const newBudget = await postAddOrders(budgetData);
 
-      if (newOrder) {
+      if (newBudget) {
+        setStatus("PREORDER");
         setSaveConfirmationModalOpen(true);
       } else {
         setIsModalOpen(true);
       }
     } catch (error) {
-      console.error("Error al crear la órden:", error);
+      console.error("Error al crear el presupuesto:", error);
     }
   };
 
   const onSubmit = (data) => {
     const {
-      empresa,
-      company,
+      isDirect,
+      client,
+      directRut,
       dateV,
-      vendedores,
+      user,
       priceList,
       productos,
       quantity,
@@ -106,11 +118,6 @@ const NewSalePage = () => {
       status,
       actualUnit,
       discount2,
-      paymentType,
-      value,
-      authorizedCompany,
-      checkNumber,
-      checkQuantity,
     } = data;
 
     const newdata = new Date(
@@ -119,10 +126,12 @@ const NewSalePage = () => {
       dateV?.day || 1,
     );
     const formattedDate = newdata.toISOString();
-    handleOrderCreation({
-      empresa,
-      company,
-      vendedores,
+    handleBudgetCreation({
+      isPreOrder: lastPathItem === "nuevo-presupuesto" ? true : false,
+      isDirect,
+      client,
+      directRut,
+      user,
       priceList,
       productos,
       quantity,
@@ -134,13 +143,8 @@ const NewSalePage = () => {
       status,
       actualUnit,
       discount2,
-      paymentType,
-      value,
-      authorizedCompany,
-      checkNumber,
-      checkQuantity,
-
-      date: dateSelected ? formattedDate : null,
+      paymentType: "",
+      payDate: formattedDate,
     });
   };
 
@@ -178,12 +182,7 @@ const NewSalePage = () => {
     const selectedValue = value.anchorKey === "true" ? true : false;
     setRechargued(selectedValue);
   };
-  const handleSelectionPaymentChange = (value) => {
-    const selectedValue =
-      value.anchorKey === "Efectivo" ? "Efectivo" : "Cheque";
-    setSelectedPayment(selectedValue);
-    setValue("paymentType", value);
-  };
+
   const handleSelectionListChange = (value) => {
     const selectedValue = value.anchorKey;
     setList(selectedValue);
@@ -257,33 +256,78 @@ const NewSalePage = () => {
           className="flex-grow rounded-tr-lg bg-white px-14 py-10"
         >
           <div>
+            <div>
+              <Checkbox
+                radius="full"
+                className="mb-2"
+                size="sm"
+                {...register("isDirect")}
+                isSelected={isDirectValue}
+                onChange={(e) => setValue("isDirect", e.target.checked)}
+              >
+                Presupuesto de venta directa
+              </Checkbox>
+            </div>
             <div className="flex space-x-2">
-              {ordersResponse.isDirect ? (
+              {isDirectValue ? (
                 <Input
                   label={"Empresa"}
-                  placeholder={"..."}
-                  {...register("empresa", {
+                  placeholder={"Escribir..."}
+                  {...register("client", {
                     required: "Este campo es obligatorio",
+                    minLength: {
+                      value: 2,
+                      message: "El nombre debe contener al menos 2 caracteres.",
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: "El nombre no puede exceder los 50 caracteres.",
+                    },
                   })}
-                  msjError={errors.empresa ? errors.empresa.message : ""}
+                  msjError={errors.client ? errors.client.message : ""}
                 />
               ) : (
                 <div className="-mt-1 mb-4 w-full">
                   <CompleteSearchInput
                     label={"Empresa"}
                     array={companiesResponse}
-                    name={"company"}
+                    name={"client"}
                     setValue={setValue}
                     onChange={setSearchCompanies}
                     placeholder="Buscar empresa"
                     onSelect={handleSelectCompany}
                   />
-                  <p>{errors.company && errors.company.message}</p>
+                  <p>{errors.client && errors.client.message}</p>
                 </div>
               )}
             </div>
-            {ordersResponse.isDirect ? null : (
-              <Input label={"R.U.T./CI"} placeholder="Escribir..." />
+            {isDirectValue ? (
+              <Input
+                label={"R.U.T./CI"}
+                placeholder={"Escribir..."}
+                {...register("directRut", {
+                  required: "Este campo es obligatorio",
+                  minLength: {
+                    value: 12,
+                    message: "Ingrese los 12 digitos de su RUT.",
+                  },
+                  maxLength: {
+                    value: 12,
+                    message: "Ingrese solo los 12 digitos de su RUT.",
+                  },
+                })}
+                errorApi={errors.directRut}
+                msjError={errors.directRut ? errors.directRut.message : ""}
+              />
+            ) : (
+              <Input
+                label={"R.U.T./CI"}
+                placeholder={rutValue}
+                bg="bg-gray"
+                border="none"
+                placeholderColor="placeholder-black_b"
+                disabled
+              />
             )}
 
             <div className="flex space-x-2">
@@ -314,9 +358,6 @@ const NewSalePage = () => {
                         }}
                       />
                     )}
-                    rules={{
-                      required: dateSelected && "La fecha es obligatoria",
-                    }}
                   />
                   <p className="font-roboto text-xs text-red_e">
                     {errors.dateV ? errors.dateV.message : ""}
@@ -327,12 +368,12 @@ const NewSalePage = () => {
                 <CompleteSearchInput
                   label={"Vendedor"}
                   array={transformData(userSellerResponse?.result || []) || []}
-                  name={"vendedor"}
+                  name={"user"}
                   setValue={setValue}
                   onChange={setSearchSellers}
                   placeholder="Buscar vendedor"
                 />
-                <p>{errors.vendedor && errors.vendedor.message}</p>
+                <p>{errors.user && errors.user.message}</p>
               </div>
             </div>
             <div className="mb-4 flex space-x-2">
@@ -546,9 +587,7 @@ const NewSalePage = () => {
                 placeholder={"%"}
                 value={discount2}
                 onInput={handleDiscount2Input}
-                {...register("discount2", {
-                  required: "Este campo es obligatorio",
-                })}
+                {...register("discount2", {})}
               />
             </div>
             <Input
@@ -561,7 +600,7 @@ const NewSalePage = () => {
               disabled
             />
           </div>
-          <div className="mt-5 flex w-full justify-end">
+          <div className="mt-16 flex w-full justify-end">
             <Button
               text={"ACEPTAR"}
               color={"save"}
@@ -573,15 +612,15 @@ const NewSalePage = () => {
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
-          title="Órden creada"
+          title="Presupuesto creado"
           variant="confirmation"
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          La órden fue creada exitosamente.
+          El presupuesto fue creado exitosamente.
         </ReusableModal>
       </div>
     </div>
   );
 };
-export default NewSalePage;
+export default NewBudgetPage;

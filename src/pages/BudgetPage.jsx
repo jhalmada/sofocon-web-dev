@@ -4,14 +4,23 @@ import { useState } from "react";
 import { Select, SelectItem } from "@nextui-org/react";
 import BudgetRow from "../components/BudgetRow";
 import downloadIcon from "../assets/icons/download.svg";
-import useOrders from "../hooks/orders/useOrders";
 import ReusableModal from "../components/modals/ReusableModal";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
 
-const BudgetPage = () => {
+const BudgetPage = ({
+  ordersResponse,
+  totalPage,
+  total,
+  setPage,
+  page,
+  itemsPerPage,
+  setItemsPerPage,
+  setModified,
+}) => {
   const [orderId, setOrderId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(null);
 
   const monthsOptions = [
     "Enero",
@@ -27,25 +36,29 @@ const BudgetPage = () => {
     "Noviembre",
     "Diciembre",
   ];
+  const filteredOrders = ordersResponse.filter((order) => {
+    if (!order.payDate) {
+      return false;
+    }
+    const orderDate = new Date(order.payDate);
+    if (isNaN(orderDate.getTime())) {
+      return false;
+    }
+    if (!selectedMonth) {
+      return true;
+    }
+    const orderMonthIndex = orderDate.getMonth();
+    const selectedMonthIndex = monthsOptions.indexOf(selectedMonth);
+    return orderMonthIndex === selectedMonthIndex;
+  });
 
-  const {
-    ordersResponse,
-    setItemsPerPage,
-    totalPage,
-    total,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-    setStatus,
-  } = useOrders();
   const { deleteOrder } = useDeleteOrders();
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    return `${month}/${day}/${year}`;
+    return `${day}/${month}/${year}`;
   };
 
   const openModal = (id) => {
@@ -63,6 +76,9 @@ const BudgetPage = () => {
     deleteOrder(orderId, setModified);
     closeConfirmDeleteModal();
   };
+  const handleMonthChange = (e) => {
+    setSelectedMonth(e.target.value);
+  };
 
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
@@ -71,14 +87,17 @@ const BudgetPage = () => {
           <p className="ml-2 text-black_m">Período</p>
           <Select
             className="w-52 rounded-lg border"
-            placeholder="OCTUBRE 2024 "
+            placeholder="Selecciona un mes"
+            onChange={handleMonthChange}
           >
             {monthsOptions.map((option) => (
-              <SelectItem key={option}>{option}</SelectItem>
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
             ))}
           </Select>
         </div>
-        <table className="mt-2 w-full">
+        <table className="mt-5 w-full">
           <thead>
             <tr>
               <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
@@ -101,16 +120,14 @@ const BudgetPage = () => {
             </tr>
           </thead>
           <tbody>
-            {ordersResponse.map((order, index) => (
+            {filteredOrders.map((order, index) => (
               <BudgetRow
                 key={index}
                 id={order.id}
                 name={order?.client?.name || "Sin nombre"}
                 contact={order?.client?.phone || "Sin contacto"}
-                date={
-                  order.created_at ? formatDate(order.created_at) : "Sin fecha"
-                }
-                seller={"Vendedor"}
+                date={order.payDate ? formatDate(order.payDate) : "Sin fecha"}
+                seller={order?.user?.userInfo?.name}
                 downloadIconSrc={downloadIcon}
                 deleteIconSrc={deleteIcon}
                 onEditClick={() => {
@@ -135,12 +152,12 @@ const BudgetPage = () => {
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
-        title="Eliminar órden"
+        title="Eliminar presupuesto"
         variant="confirmation"
         buttons={["back", "accept"]}
         onAccept={() => handleConfirmDelete(orderId)}
       >
-        Esta órden será eliminada de forma permanente. ¿Desea continuar?
+        Este presupuesto será eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

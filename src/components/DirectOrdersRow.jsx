@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import watchIcon from "../assets/icons/watch.svg";
 
 const translateState = (state) => {
   switch (state) {
@@ -40,11 +39,6 @@ const DirectOrdersRow = ({
   return (
     <tr className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <div className="mt-2 flex">
-        <img
-          src={watchIcon}
-          alt="watch icon"
-          title="Cliente próximo a vencer"
-        />
         <td
           className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
           onClick={handleRowClick}

@@ -23,6 +23,7 @@ const STATUS_PANEL_TAB = "panel-de-estado";
 
 const OrdersPage = () => {
   const [orderId, setOrderId] = useState(null);
+
   const { deleteOrder } = useDeleteOrders();
   const {
     ordersResponse,
@@ -34,19 +35,14 @@ const OrdersPage = () => {
     itemsPerPage,
     setModified,
     setStatus,
-    setIsPreOrder,
-    setIsDirect,
+    setOrderType,
+    setSearch: setSearchOrders,
   } = useOrders();
 
   const [activeTab, setActiveTab] = useState(CLIENTS_ORDERS_TAB);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(null);
 
-  const stateOptions = [
-    "Solicitado",
-    "En preparación",
-    "Para retirar",
-    "Egreso",
-  ];
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -60,6 +56,29 @@ const OrdersPage = () => {
     "Octubre",
     "Noviembre",
     "Diciembre",
+  ];
+  const filteredOrders = ordersResponse.filter((order) => {
+    if (!order.payDate) {
+      return false;
+    }
+    const orderDate = new Date(order.payDate);
+    if (isNaN(orderDate.getTime())) {
+      return false;
+    }
+    if (!selectedMonth) {
+      return true;
+    }
+    const orderMonthIndex = orderDate.getMonth();
+    const selectedMonthIndex = monthsOptions.indexOf(selectedMonth);
+    return orderMonthIndex === selectedMonthIndex;
+  });
+
+  const stateOptions = [
+    "Solicitado",
+    "En preparación",
+    "Para retirar",
+    "Egreso",
+    "Entregado",
   ];
 
   const formatDate = (dateString) => {
@@ -82,42 +101,56 @@ const OrdersPage = () => {
     closeConfirmDeleteModal();
   };
 
+  const handleMonthChange = (e) => {
+    setSelectedMonth(e.target.value);
+  };
+
   const handleStateFilterChange = (value) => {
     switch (value) {
       case "Solicitado":
         setStatus("REQUEST");
+        setPage(0);
         break;
-      case "Preparacion":
+      case "En preparación":
         setStatus("PREPARATION");
+        setPage(0);
         break;
-      case "Listo para retirar":
+      case "Para retirar":
         setStatus("READY_PICKUP");
+        setPage(0);
         break;
       case "Egreso":
         setStatus("EGRESS");
+        setPage(0);
         break;
       case "Entregado":
         setStatus("DELIVERED");
+        setPage(0);
         break;
 
       default:
         setStatus("");
+        setPage(0);
         break;
     }
   };
-  useEffect(() => {
-    if (activeTab === DIRECT_ORDERS_TAB) {
-      setIsDirect(true);
-    } else {
-      setIsDirect(false);
-    }
 
+  useEffect(() => {
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
     if (activeTab === BUDGET_TAB) {
-      setIsPreOrder(true);
+      setOrderType({ isPreOrder: true });
+    } else if (activeTab === DIRECT_ORDERS_TAB) {
+      setOrderType({ isDirect: true });
+    } else if (activeTab === CLIENTS_ORDERS_TAB) {
+      setOrderType({ isPreOrder: false, isDirect: false });
     } else {
-      setIsPreOrder(false);
+      setOrderType(null);
     }
   }, [activeTab]);
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
@@ -139,7 +172,7 @@ const OrdersPage = () => {
               Órdenes
             </h1>
           </div>
-          <SearchInput placeholder="Buscar..." />
+          <SearchInput placeholder="Buscar..." onChange={setSearchOrders} />
         </div>
 
         <div className="flex items-center">
@@ -195,10 +228,13 @@ const OrdersPage = () => {
                 <p className="ml-2 text-black_m">Período</p>
                 <Select
                   className="w-52 rounded-lg border"
-                  placeholder="OCTUBRE 2024 "
+                  placeholder="Selecciona un mes"
+                  onChange={handleMonthChange}
                 >
                   {monthsOptions.map((option) => (
-                    <SelectItem key={option}>{option}</SelectItem>
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
                   ))}
                 </Select>
               </div>
@@ -233,18 +269,16 @@ const OrdersPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {ordersResponse.map((order, index) => (
+                  {filteredOrders.map((order, index) => (
                     <ClientsOrdersRow
                       key={index}
                       id={order.id}
                       name={order?.client?.name || "Sin nombre"}
                       orderId={order.id}
                       date={
-                        order.created_at
-                          ? formatDate(order.created_at)
-                          : "Sin fecha"
+                        order.payDate ? formatDate(order.payDate) : "Sin fecha"
                       }
-                      seller={"Vendedor"}
+                      seller={order?.user?.userInfo?.name}
                       state={order.status}
                       deleteIconSrc={deleteIcon}
                       onDeleteClick={() => openConfirmDeleteModal(order.id)}
@@ -276,7 +310,17 @@ const OrdersPage = () => {
             itemsPerPage={itemsPerPage}
           />
         )}
-        {activeTab === BUDGET_TAB && <BudgetPage />}
+        {activeTab === BUDGET_TAB && (
+          <BudgetPage
+            ordersResponse={ordersResponse}
+            totalPage={totalPage}
+            total={total}
+            setPage={setPage}
+            page={page}
+            itemsPerPage={itemsPerPage}
+            setModified={setModified}
+          />
+        )}
         {activeTab === STATUS_PANEL_TAB && <StatusPanelPage />}
       </div>
       <ReusableModal

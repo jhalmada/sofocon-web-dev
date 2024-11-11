@@ -36,8 +36,6 @@ const useCompanies = (id = null) => {
       setTotal(data.pagination.total);
 
       setCompaniesResponse(data.result);
-      console.log("la data de empresas es:");
-      console.log(data.result);
     } catch (e) {
       console.log(e);
     } finally {

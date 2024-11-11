@@ -1,12 +1,11 @@
 import Pagination from "../components/Pagination";
 import deleteIcon from "../assets/icons/trash3.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import { Select, SelectItem } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
 import DirectOrdersRow from "../components/DirectOrdersRow";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
-import { set } from "react-hook-form";
 
 const DirectOrdersPage = ({
   ordersResponse,
@@ -24,13 +23,7 @@ const DirectOrdersPage = ({
   const { deleteOrder } = useDeleteOrders();
 
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-
-  const stateOptions = [
-    "Solicitado",
-    "En preparación",
-    "Para retirar",
-    "Egreso",
-  ];
+  const [selectedMonth, setSelectedMonth] = useState(null);
 
   const monthsOptions = [
     "Enero",
@@ -45,6 +38,29 @@ const DirectOrdersPage = ({
     "Octubre",
     "Noviembre",
     "Diciembre",
+  ];
+  const filteredOrders = ordersResponse.filter((order) => {
+    if (!order.payDate) {
+      return false;
+    }
+    const orderDate = new Date(order.payDate);
+    if (isNaN(orderDate.getTime())) {
+      return false;
+    }
+    if (!selectedMonth) {
+      return true;
+    }
+    const orderMonthIndex = orderDate.getMonth();
+    const selectedMonthIndex = monthsOptions.indexOf(selectedMonth);
+    return orderMonthIndex === selectedMonthIndex;
+  });
+
+  const stateOptions = [
+    "Solicitado",
+    "En preparación",
+    "Para retirar",
+    "Egreso",
+    "Entregado",
   ];
 
   const formatDate = (dateString) => {
@@ -66,27 +82,36 @@ const DirectOrdersPage = ({
     deleteOrder(orderId, setModified);
     closeConfirmDeleteModal();
   };
+  const handleMonthChange = (e) => {
+    setSelectedMonth(e.target.value);
+  };
 
   const handleStateFilterChange = (value) => {
     switch (value) {
       case "Solicitado":
         setStatus("REQUEST");
+        setPage(0);
         break;
-      case "Preparacion":
+      case "En preparación":
         setStatus("PREPARATION");
+        setPage(0);
         break;
-      case "Listo para retirar":
+      case "Para retirar":
         setStatus("READY_PICKUP");
+        setPage(0);
         break;
       case "Egreso":
         setStatus("EGRESS");
+        setPage(0);
         break;
       case "Entregado":
         setStatus("DELIVERED");
+        setPage(0);
         break;
 
       default:
         setStatus("");
+        setPage(0);
         break;
     }
   };
@@ -98,10 +123,13 @@ const DirectOrdersPage = ({
           <p className="ml-2 text-black_m">Período</p>
           <Select
             className="w-52 rounded-lg border"
-            placeholder="OCTUBRE 2024 "
+            placeholder="Selecciona un mes"
+            onChange={handleMonthChange}
           >
             {monthsOptions.map((option) => (
-              <SelectItem key={option}>{option}</SelectItem>
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
             ))}
           </Select>
         </div>
@@ -136,16 +164,14 @@ const DirectOrdersPage = ({
             </tr>
           </thead>
           <tbody>
-            {ordersResponse.map((order, index) => (
+            {filteredOrders.map((order, index) => (
               <DirectOrdersRow
                 key={index}
                 id={order.id}
                 name={order?.client?.name || "Sin nombre"}
                 orderId={order.id}
-                date={
-                  order.created_at ? formatDate(order.created_at) : "Sin fecha"
-                }
-                seller={"Vendedor"}
+                date={order.payDate ? formatDate(order.payDate) : "Sin fecha"}
+                seller={order?.user?.userInfo?.name}
                 state={order.status}
                 deleteIconSrc={deleteIcon}
                 onDeleteClick={() => openConfirmDeleteModal(order.id)}

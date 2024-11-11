@@ -25,9 +25,7 @@ const RechargeRow = ({
   state,
   id,
   editIconSrc,
-  deleteIconSrc,
   onEditClick,
-  onDeleteClick,
 }) => {
   const navigate = useNavigate();
   const handleRowClick = () => {
@@ -42,11 +40,6 @@ const RechargeRow = ({
   return (
     <tr className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <div className="mt-2 flex">
-        <img
-          src={watchIcon}
-          alt="watch icon"
-          title="Cliente próximo a vencer"
-        />
         <td
           className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
           onClick={handleRowClick}
@@ -94,12 +87,6 @@ const RechargeRow = ({
             alt="Edit icon"
             className="h-5 w-5 cursor-pointer"
             onClick={onEditClick}
-          />
-          <img
-            src={deleteIconSrc}
-            alt="Delete icon"
-            className="h-5 w-5 cursor-pointer"
-            onClick={onDeleteClick}
           />
         </div>
       </td>

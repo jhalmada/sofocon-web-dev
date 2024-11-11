@@ -297,11 +297,9 @@ const WorkshopPage = () => {
                     seller={"Vendedor"}
                     state={"estado"}
                     editIconSrc={editIcon}
-                    deleteIconSrc={deleteIcon}
                     onEditClick={() => {
                       openModal();
                     }}
-                    onDeleteClick={() => openConfirmDeleteModal()}
                   />
                 </tbody>
               </table>
@@ -351,9 +349,9 @@ const WorkshopPage = () => {
             })}
           />
           <Input
-            label={"Cliente"}
+            label={"Empresa"}
             placeholder={"Escribir..."}
-            {...register("client", {
+            {...register("company", {
               required: "Este campo es obligatorio",
             })}
           />
@@ -418,7 +416,7 @@ const WorkshopPage = () => {
                 ))}
               </Select>
             </div>
-            <div className="-mt-3">
+            <div className="mt-8">
               <NextAutoComplete
                 array2={[]}
                 label2={"Vendedores Asignados"}

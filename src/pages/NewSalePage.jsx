@@ -12,7 +12,6 @@ import { getLocalTimeZone, today } from "@internationalized/date";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import cameraIcon from "../assets/icons/camera.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
-import useOrders from "../hooks/orders/useOrders.js";
 import useAddOrders from "../hooks/orders/useAddOrders.js";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput.jsx";
@@ -20,6 +19,7 @@ import useGetProducts from "../hooks/products/useGetProducts.js";
 import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
+import useAddCompany from "../hooks/companies/useAddCompanies.js";
 
 const NewSalePage = () => {
   const {
@@ -34,12 +34,10 @@ const NewSalePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [dateSelected, setDateSelected] = useState(false);
-  const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [rutValue, setRutValue] = useState("");
   const [autocompleteResults, setAutocompleteResults] = useState([]);
-  const [name, setName] = useState("productos");
-  const [rechargued, setRechargued] = useState(false);
+  const [name, setName] = useState("productInOrder");
+  const [recharged, setRecharged] = useState({});
   const [selectedPayment, setSelectedPayment] = useState("Efectivo");
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
   const [quantity, setQuantity] = useState({});
@@ -66,20 +64,103 @@ const NewSalePage = () => {
   ];
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
-  const { ordersResponse, setStatus } = useOrders();
+  const { postAddCompany } = useAddCompany();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+
   const {
     productsResponse,
     setSearch: setSearchProducts,
     setList,
   } = useGetProducts();
+
+  const productsInOrder = autocompleteResults.map((product) => ({
+    amount: product.amount,
+    isRecharge: product.isRecharge,
+    discountPercent: product.discountPercent,
+  }));
+  const ItemsRemoval = autocompleteResults.map((product) => ({
+    barCode: product.barCode,
+    enrollment: product.enrollment,
+    discountPercent: product.discountPercent,
+  }));
+
   const { priceListResponse } = useGetPriceList();
   const navigate = useNavigate();
 
   const deliveredValue = watch("delivered", false);
-  const handleOrderCreation = async (orderData) => {
+  const isDirectValue = watch("isDirect", false);
+  const handleCompanyCreation = async (data) => {
+    const { client, rut } = data;
+    console.log("RUT de la empresa:", data.rut);
     try {
-      const newOrder = await postAddOrders(orderData);
+      const newCompany = await postAddCompany({ client, rut });
+
+      if (newCompany) {
+        setSaveConfirmationModalOpen(true);
+      } else {
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error al crear la empresa:", error);
+    }
+  };
+
+  const handleOrderCreation = async (orderData) => {
+    const {
+      isDirect,
+      client,
+      rut,
+      dateV,
+      user,
+      productsInOrder,
+      ItemsRemoval,
+      amount,
+      discountPercent,
+      isRecharge,
+      barCode,
+      enrollment,
+      factoryUnit,
+      status,
+      actualUnit,
+      discountPercent2,
+      paymentType,
+      value,
+      authorizedCompany,
+      checkNumber,
+      checkQuantity,
+      delivered,
+    } = orderData;
+    try {
+      const newdata = new Date(
+        dateV?.year || 1,
+        dateV?.month - 1 || 1,
+        dateV?.day || 1,
+      );
+      const formattedDate = newdata.toISOString();
+      const newOrder = await postAddOrders({
+        isPreOrder: false,
+        isDirect,
+        client,
+        rut,
+        user,
+        productsInOrder,
+        ItemsRemoval,
+        discountPercent,
+        isRecharge,
+        barCode,
+        enrollment,
+        factoryUnit,
+        status,
+        actualUnit,
+        discountPercent2: discountPercent2,
+        paymentType,
+        value,
+        authorizedCompany,
+        checkNumber,
+        checkQuantity,
+        delivered,
+        payDate: formattedDate,
+      });
 
       if (newOrder) {
         setSaveConfirmationModalOpen(true);
@@ -92,59 +173,18 @@ const NewSalePage = () => {
   };
 
   const onSubmit = (data) => {
-    const {
-      empresa,
-      company,
-      dateV,
-      vendedores,
-      priceList,
-      productos,
-      quantity,
-      discount,
-      rechargue,
-      barCode,
-      registration,
-      factoryUnit,
-      status,
-      actualUnit,
-      discount2,
-      paymentType,
-      value,
-      authorizedCompany,
-      checkNumber,
-      checkQuantity,
-      delivered,
-    } = data;
-
-    const newdata = new Date(
-      dateV?.year || 1,
-      dateV?.month - 1 || 1,
-      dateV?.day || 1,
-    );
-    const formattedDate = newdata.toISOString();
-    handleOrderCreation({
-      empresa,
-      company,
-      vendedores,
-      priceList,
-      productos,
-      quantity,
-      discount,
-      rechargue,
-      barCode,
-      registration,
-      factoryUnit,
-      status,
-      actualUnit,
-      discount2,
-      paymentType,
-      value,
-      authorizedCompany,
-      checkNumber,
-      checkQuantity,
-      delivered,
-      date: dateSelected ? formattedDate : null,
-    });
+    if (data.isDirect) {
+      handleOrderCreation({
+        ...data,
+        client: { rut: data.rut, name: data.client },
+        productsInOrder,
+      });
+    } else {
+      handleOrderCreation({
+        ...data,
+        productsInOrder,
+      });
+    }
   };
 
   const closeSaveConfirmationModal = () => {
@@ -157,6 +197,13 @@ const NewSalePage = () => {
   const handleSelectCompany = (selectedCompany) => {
     if (selectedCompany) {
       setRutValue(selectedCompany);
+    } else {
+      setRutValue("");
+    }
+  };
+  const handleWriteCompany = (writedCompany) => {
+    if (writedCompany) {
+      setRutValue(writedCompany);
     } else {
       setRutValue("");
     }
@@ -177,9 +224,12 @@ const NewSalePage = () => {
     setAutocompleteResults(updatedSelectedItems);
   };
 
-  const handleSelectionChange = (value) => {
-    const selectedValue = value.anchorKey === "true" ? true : false;
-    setRechargued(selectedValue);
+  const handleSelectionChange = (id, value) => {
+    const selectedValue = value.anchorKey === "true";
+    setRecharged((prev) => ({
+      ...prev,
+      [id]: selectedValue,
+    }));
   };
   const handleSelectionPaymentChange = (value) => {
     const selectedValue =
@@ -260,32 +310,71 @@ const NewSalePage = () => {
           className="flex-grow rounded-tr-lg bg-white px-14 py-10"
         >
           <div>
+            <div>
+              <Checkbox
+                radius="full"
+                className="mb-2"
+                size="sm"
+                {...register("isDirect")}
+                isSelected={isDirectValue}
+                onChange={(e) => setValue("isDirect", e.target.checked)}
+              >
+                Órden de venta directa
+              </Checkbox>
+            </div>
             <div className="flex space-x-2">
-              {ordersResponse.isDirect ? (
+              {isDirectValue ? (
                 <Input
                   label={"Empresa"}
-                  placeholder={"..."}
-                  {...register("empresa", {
+                  placeholder={"Escribir..."}
+                  {...register("client", {
                     required: "Este campo es obligatorio",
+                    minLength: {
+                      value: 2,
+                      message: "El nombre debe contener al menos 2 caracteres.",
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: "El nombre no puede exceder los 50 caracteres.",
+                    },
                   })}
-                  msjError={errors.empresa ? errors.empresa.message : ""}
+                  msjError={errors.client ? errors.client.message : ""}
                 />
               ) : (
                 <div className="-mt-1 mb-4 w-full">
                   <CompleteSearchInput
                     label={"Empresa"}
                     array={companiesResponse}
-                    name={"company"}
+                    name={"client"}
                     setValue={setValue}
                     onChange={setSearchCompanies}
                     placeholder="Buscar empresa"
                     onSelect={handleSelectCompany}
                   />
-                  <p>{errors.company && errors.company.message}</p>
+                  <p>{errors.client && errors.client.message}</p>
                 </div>
               )}
             </div>
-            {ordersResponse.isDirect ? null : (
+            {isDirectValue ? (
+              <Input
+                label={"R.U.T./CI"}
+                placeholder={"Escribir..."}
+                onChange={handleWriteCompany}
+                {...register("rut", {
+                  required: "Este campo es obligatorio",
+                  minLength: {
+                    value: 12,
+                    message: "Ingrese los 12 digitos de su RUT.",
+                  },
+                  maxLength: {
+                    value: 12,
+                    message: "Ingrese solo los 12 digitos de su RUT.",
+                  },
+                })}
+                errorApi={errors.rut}
+                msjError={errors.rut ? errors.rut.message : ""}
+              />
+            ) : (
               <Input
                 label={"R.U.T./CI"}
                 placeholder={rutValue}
@@ -303,30 +392,22 @@ const NewSalePage = () => {
                 </span>
                 <I18nProvider locale="es-ES">
                   <Controller
-                    name={"dateV"}
+                    name="dateV"
                     control={control}
+                    rules={{
+                      required: "La fecha es obligatoria",
+                    }}
                     render={({ field }) => (
                       <DatePicker
                         minValue={today(getLocalTimeZone())}
-                        className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
+                        className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
                         {...field}
-                        label={""}
+                        label=""
                         placeholder="Seleccione una fecha"
                         granularity="day"
-                        errorMessage={(value) => {
-                          if (value.isInvalid) {
-                            setErrorDataPicker(true);
-                            return "";
-                          } else {
-                            setErrorDataPicker(false);
-                            return "";
-                          }
-                        }}
+                        errorMessage={errors.dateV ? errors.dateV.message : ""}
                       />
                     )}
-                    rules={{
-                      required: dateSelected && "La fecha es obligatoria",
-                    }}
                   />
                   <p className="font-roboto text-xs text-red_e">
                     {errors.dateV ? errors.dateV.message : ""}
@@ -337,12 +418,12 @@ const NewSalePage = () => {
                 <CompleteSearchInput
                   label={"Vendedores"}
                   array={transformData(userSellerResponse?.result || []) || []}
-                  name={"vendedores"}
+                  name={"user"}
                   setValue={setValue}
                   onChange={setSearchSellers}
                   placeholder="Buscar vendedores"
                 />
-                <p>{errors.vendedores && errors.vendedores.message}</p>
+                <p>{errors.user && errors.user.message}</p>
               </div>
             </div>
             <div className="mb-4 flex space-x-2">
@@ -365,7 +446,7 @@ const NewSalePage = () => {
                 <ProductsAutocomplete
                   label={"Productos"}
                   array={productsResponse || []}
-                  name={"productos"}
+                  name={"products"}
                   setValue={setValue}
                   onChange={setSearchProducts}
                   placeholder="Buscar productos"
@@ -373,7 +454,7 @@ const NewSalePage = () => {
                   selectedItems={autocompleteResults}
                   isDisabled={isPriceListSelected}
                 />
-                <p>{errors.productos && errors.productos.message}</p>
+                <p>{errors.products && errors.products.message}</p>
               </div>
             </div>
 
@@ -392,6 +473,12 @@ const NewSalePage = () => {
                             onClick={() => handleDeleteSelection(item.id)}
                           />
                         </span>
+                        <Input
+                          hidden={true}
+                          value={item.id}
+                          {...register(`productInOrder[${index}].product.id`)}
+                          disabled
+                        />
                       </div>
                       <div className="flex w-1/2 space-x-2">
                         <Input
@@ -400,14 +487,13 @@ const NewSalePage = () => {
                           defaultValue={1}
                           minValue={1}
                           placeholder={"Cant."}
-                          onInput={(e) => {
-                            handleQuantityChange(item.id, e.target.value);
-                          }}
-                          {...register(`quantity${index}`, {})}
+                          onInput={(e) =>
+                            handleQuantityChange(item.id, e.target.value)
+                          }
+                          {...register(`productInOrder[${index}].amount`)}
                           msjError={
-                            errors[`quantity${index}`]
-                              ? errors[`quantity${index}`].message
-                              : ""
+                            errors[`productInOrder[${index}].amount`]
+                              ?.message || ""
                           }
                         />
                         <Input
@@ -420,23 +506,22 @@ const NewSalePage = () => {
                             (quantity[item.id] || 1) *
                             (1 - (discount[index] ? discount[index] / 100 : 0))
                           }
+                          {...register(`productInOrder[${index}].fixedPrice`)}
                           disabled
                         />
-
                         <Input
                           type="number"
                           label={"Desc."}
                           placeholder={"%"}
                           value={discount[index] || ""}
                           onInput={(e) => handleProductDiscountInput(e, index)}
-                          {...register(`discount${index}`, {})}
+                          {...register(
+                            `productInOrder[${index}].discountPercent`,
+                          )}
                           msjError={
-                            errors[`discount${index}`]
-                              ? errors[`discount${index}`].message
-                              : ""
+                            errors[`discountPercent${index}`]?.message || ""
                           }
                         />
-
                         <div className="w-full">
                           <label className="block text-sm font-light">
                             Recarga
@@ -444,8 +529,10 @@ const NewSalePage = () => {
                           <Select
                             className="rounded-lg border"
                             placeholder="Si/No"
-                            {...register("rechargue")}
-                            onSelectionChange={handleSelectionChange}
+                            {...register(`productInOrder[${index}].isRecharge`)}
+                            onSelectionChange={(value) =>
+                              handleSelectionChange(item.id, value)
+                            }
                           >
                             <SelectItem key={true}>Si</SelectItem>
                             <SelectItem key={false}>No</SelectItem>
@@ -454,84 +541,96 @@ const NewSalePage = () => {
                       </div>
                     </div>
                   ))}
+                  {autocompleteResults.map(
+                    (item, index) =>
+                      recharged[item.id] && (
+                        <div
+                          key={`recharged-${item.id}`}
+                          className="rounded-lg bg-gray p-4"
+                        >
+                          <div className="flex space-x-2">
+                            <Input
+                              label={"Código de barras"}
+                              placeholder={"..."}
+                              bg="bg-white"
+                              {...register(`ItemsRemoval[${index}].barCode`, {
+                                required: "Este campo es obligatorio",
+                              })}
+                              msjError={errors.barCode?.message || ""}
+                            />
+                            <span className="flex items-center">
+                              <Link to={"/inicio"}>
+                                <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
+                                  <img
+                                    src={cameraIcon}
+                                    alt=""
+                                    className="h-5 w-5"
+                                  />
+                                </div>
+                              </Link>
+                            </span>
+                          </div>
+                          <div className="flex space-x-2">
+                            <Input
+                              label={"Matrícula"}
+                              placeholder={"X234234"}
+                              bg="bg-white"
+                              {...register(
+                                `ItemsRemoval[${index}].enrollment`,
+                                {
+                                  required: "Este campo es obligatorio",
+                                },
+                              )}
+                              msjError={errors.enrollment?.message || ""}
+                            />
+                            <Input
+                              label={"N° UNIT de fábrica"}
+                              placeholder={"123455"}
+                              bg="bg-white"
+                              {...register("factoryUnit", {
+                                //revisar
+                                required: "Este campo es obligatorio",
+                              })}
+                              msjError={errors.factoryUnit?.message || ""}
+                            />
+                          </div>
+                          <div className="flex w-full space-x-2">
+                            <div className="w-full">
+                              <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
+                                Fecha última carga
+                              </span>
+                              <Select
+                                className="rounded-lg border"
+                                placeholder="MM/AA"
+                                {...register("lastDate")}
+                                onSelectionChange={
+                                  (values) => setValue("lastDate", values) //revisar
+                                }
+                              >
+                                {monthsOptions.map((month) => (
+                                  <SelectItem key={month.key}>
+                                    {month}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                            </div>
+                            <Input
+                              label={"N° UNIT actual"}
+                              placeholder={"123455"}
+                              bg="bg-white"
+                              {...register("actualUnit", {
+                                //revisar
+                                required: "Este campo es obligatorio",
+                              })}
+                              msjError={errors.actualUnit?.message || ""}
+                            />
+                          </div>
+                        </div>
+                      ),
+                  )}
                 </div>
               )}
             </div>
-
-            {rechargued ? (
-              <div className="rounded-lg bg-gray p-4">
-                <div className="flex space-x-2">
-                  <Input
-                    label={"Código de barras"}
-                    placeholder={"..."}
-                    bg="bg-white"
-                    {...register("barcode", {
-                      required: "Este campo es obligatorio",
-                    })}
-                    msjError={errors.barcode ? errors.barcode.message : ""}
-                  />
-                  <span className="flex items-center">
-                    <Link to={"/inicio"}>
-                      <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
-                        <img src={cameraIcon} alt="" className="h-5 w-5" />
-                      </div>
-                    </Link>
-                  </span>
-                </div>
-                <div className="flex space-x-2">
-                  <Input
-                    label={"Matrícula"}
-                    placeholder={"X234234"}
-                    bg="bg-white"
-                    {...register("registration", {
-                      required: "Este campo es obligatorio",
-                    })}
-                    msjError={
-                      errors.registration ? errors.registration.message : ""
-                    }
-                  />
-                  <Input
-                    label={"N° UNIT de fábrica"}
-                    placeholder={"123455"}
-                    bg="bg-white"
-                    {...register("factoryUnit", {
-                      required: "Este campo es obligatorio",
-                    })}
-                    msjError={
-                      errors.factoryUnit ? errors.factoryUnit.message : ""
-                    }
-                  />
-                </div>
-                <div className="flex w-full space-x-2">
-                  <div className="w-full">
-                    <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
-                      Fecha última carga
-                    </span>
-                    <Select
-                      className="rounded-lg border"
-                      placeholder="MM/AA"
-                      {...register("status")}
-                      onSelectionChange={(values) => setValue("status", values)}
-                    >
-                      {monthsOptions.map((month) => (
-                        <SelectItem key={month.key}>{month}</SelectItem>
-                      ))}
-                    </Select>
-                  </div>
-                  <Input
-                    label={"N° UNIT actual"}
-                    placeholder={"123455"}
-                    bg="bg-white"
-                    {...register("actualUnit", {
-                      required: "Este campo es obligatorio",
-                    })}
-                    msjError={
-                      errors.actualUnit ? errors.actualUnit.message : ""
-                    }
-                  />
-                </div>
-              </div>
-            ) : null}
 
             <div className="mt-2 flex space-x-2">
               <Input
@@ -556,9 +655,7 @@ const NewSalePage = () => {
                 placeholder={"%"}
                 value={discount2}
                 onInput={handleDiscount2Input}
-                {...register("discount2", {
-                  required: "Este campo es obligatorio",
-                })}
+                {...register("discountPercent2", {})}
               />
             </div>
             <Input
@@ -640,6 +737,14 @@ const NewSalePage = () => {
                 placeholder={"Nombre de la empresa"}
                 {...register("authorizedCompany", {
                   required: "Este campo es obligatorio",
+                  minLength: {
+                    value: 2,
+                    message: "El nombre debe contener al menos 2 caracteres.",
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: "El nombre no puede exceder los 50 caracteres.",
+                  },
                 })}
                 msjError={
                   errors.authorizedCompany

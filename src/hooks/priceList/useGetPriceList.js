@@ -22,8 +22,6 @@ const useGetPriceList = () => {
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
-      console.log("la data de LISTA de precios es");
-      console.log(data.result);
       setPriceListResponse(data.result);
     } catch (e) {
       console.log(e);
