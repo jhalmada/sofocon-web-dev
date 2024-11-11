@@ -7,6 +7,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
+import { Select, SelectItem } from "@nextui-org/select";
 
 const BudgetDataPage = () => {
   const {
@@ -144,7 +145,7 @@ const BudgetDataPage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"Fecha de venta"}
+                label={"Fecha de presupuesto"}
                 placeholder={formatDate(orderDetails?.sellDate)}
                 disabled
               />

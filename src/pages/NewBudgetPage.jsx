@@ -39,12 +39,10 @@ const NewBudgetPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [rutValue, setRutValue] = useState("");
   const [autocompleteResults, setAutocompleteResults] = useState([]);
   const [name, setName] = useState("productos");
   const [rechargued, setRechargued] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState("Efectivo");
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
   const [quantity, setQuantity] = useState({});
   const [subtotal, setSubtotal] = useState(0);
@@ -104,20 +102,19 @@ const NewBudgetPage = () => {
     const {
       isDirect,
       client,
-      directRut,
+      rut,
       dateV,
       user,
-      priceList,
-      productos,
-      quantity,
-      discount,
-      rechargue,
+      productInOrder,
+      ItemsRemoval,
+      discountPercent,
+      isRecharge,
       barCode,
-      registration,
+      enrollment,
       factoryUnit,
       status,
       actualUnit,
-      discount2,
+      paymentType,
     } = data;
 
     const newdata = new Date(
@@ -130,21 +127,20 @@ const NewBudgetPage = () => {
       isPreOrder: lastPathItem === "nuevo-presupuesto" ? true : false,
       isDirect,
       client,
-      directRut,
+      rut,
       user,
-      priceList,
-      productos,
-      quantity,
-      discount,
-      rechargue,
+      productInOrder,
+      ItemsRemoval,
+      discountPercent: discountPercent ? discountPercent : 0,
+      isRecharge,
       barCode,
-      registration,
+      enrollment,
       factoryUnit,
       status,
       actualUnit,
-      discount2,
-      paymentType: "",
-      payDate: formattedDate,
+      paymentType: paymentType ? paymentType : "",
+
+      sellDate: formattedDate,
     });
   };
 
@@ -176,6 +172,13 @@ const NewBudgetPage = () => {
 
     setValue(name, updatedSelectedItems);
     setAutocompleteResults(updatedSelectedItems);
+  };
+  const handleWriteCompany = (writedCompany) => {
+    if (writedCompany) {
+      setRutValue(writedCompany);
+    } else {
+      setRutValue("");
+    }
   };
 
   const handleSelectionChange = (value) => {
@@ -288,16 +291,26 @@ const NewBudgetPage = () => {
                 />
               ) : (
                 <div className="-mt-1 mb-4 w-full">
-                  <CompleteSearchInput
-                    label={"Empresa"}
-                    array={companiesResponse}
-                    name={"client"}
-                    setValue={setValue}
-                    onChange={setSearchCompanies}
-                    placeholder="Buscar empresa"
-                    onSelect={handleSelectCompany}
+                  <Controller
+                    name="client"
+                    control={control}
+                    rules={{ required: "Este campo es obligatorio" }}
+                    render={({ field }) => (
+                      <CompleteSearchInput
+                        label={"Empresa"}
+                        array={companiesResponse}
+                        name={"client"}
+                        setValue={setValue}
+                        onChange={setSearchCompanies}
+                        placeholder="Buscar empresa"
+                        onSelect={handleSelectCompany}
+                        {...field}
+                      />
+                    )}
                   />
-                  <p>{errors.client && errors.client.message}</p>
+                  <p className="text-xs text-red_e">
+                    {errors.client && errors.client.message}
+                  </p>
                 </div>
               )}
             </div>
@@ -305,7 +318,8 @@ const NewBudgetPage = () => {
               <Input
                 label={"R.U.T./CI"}
                 placeholder={"Escribir..."}
-                {...register("directRut", {
+                onChange={handleWriteCompany}
+                {...register("rut", {
                   required: "Este campo es obligatorio",
                   minLength: {
                     value: 12,
@@ -316,8 +330,8 @@ const NewBudgetPage = () => {
                     message: "Ingrese solo los 12 digitos de su RUT.",
                   },
                 })}
-                errorApi={errors.directRut}
-                msjError={errors.directRut ? errors.directRut.message : ""}
+                errorApi={errors.rut}
+                msjError={errors.rut ? errors.rut.message : ""}
               />
             ) : (
               <Input
@@ -337,25 +351,19 @@ const NewBudgetPage = () => {
                 </span>
                 <I18nProvider locale="es-ES">
                   <Controller
-                    name={"dateV"}
+                    name="dateV"
                     control={control}
+                    rules={{
+                      required: "La fecha es obligatoria",
+                    }}
                     render={({ field }) => (
                       <DatePicker
                         minValue={today(getLocalTimeZone())}
-                        className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
-                        {...field}
-                        label={""}
+                        className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
+                        label=""
                         placeholder="Seleccione una fecha"
                         granularity="day"
-                        errorMessage={(value) => {
-                          if (value.isInvalid) {
-                            setErrorDataPicker(true);
-                            return "";
-                          } else {
-                            setErrorDataPicker(false);
-                            return "";
-                          }
-                        }}
+                        {...field}
                       />
                     )}
                   />
@@ -365,15 +373,27 @@ const NewBudgetPage = () => {
                 </I18nProvider>
               </div>
               <div className="-mt-[.08rem] w-1/2">
-                <CompleteSearchInput
-                  label={"Vendedor"}
-                  array={transformData(userSellerResponse?.result || []) || []}
-                  name={"user"}
-                  setValue={setValue}
-                  onChange={setSearchSellers}
-                  placeholder="Buscar vendedor"
+                <Controller
+                  name="user"
+                  control={control}
+                  rules={{ required: "Este campo es obligatorio" }}
+                  render={({ field }) => (
+                    <CompleteSearchInput
+                      label={"Vendedores"}
+                      array={
+                        transformData(userSellerResponse?.result || []) || []
+                      }
+                      name={"user"}
+                      setValue={setValue}
+                      onChange={setSearchSellers}
+                      placeholder="Buscar vendedores"
+                      {...field}
+                    />
+                  )}
                 />
-                <p>{errors.user && errors.user.message}</p>
+                {errors.user && (
+                  <p className="text-xs text-red_e">{errors.user.message}</p>
+                )}
               </div>
             </div>
             <div className="mb-4 flex space-x-2">
@@ -396,7 +416,7 @@ const NewBudgetPage = () => {
                 <ProductsAutocomplete
                   label={"Productos"}
                   array={productsResponse || []}
-                  name={"productos"}
+                  name={"products"}
                   setValue={setValue}
                   onChange={setSearchProducts}
                   placeholder="Buscar productos"
@@ -404,7 +424,7 @@ const NewBudgetPage = () => {
                   selectedItems={autocompleteResults}
                   isDisabled={isPriceListSelected}
                 />
-                <p>{errors.productos && errors.productos.message}</p>
+                <p>{errors.products && errors.products.message}</p>
               </div>
             </div>
 
@@ -423,6 +443,15 @@ const NewBudgetPage = () => {
                             onClick={() => handleDeleteSelection(item.id)}
                           />
                         </span>
+                        <Input
+                          hidden={true}
+                          value={item.id}
+                          defaultValue={item.id}
+                          {...register(`productInOrder[${index}].product.id`, {
+                            value: item.id,
+                          })}
+                          disabled
+                        />
                       </div>
                       <div className="flex w-1/2 space-x-2">
                         <Input
@@ -431,14 +460,13 @@ const NewBudgetPage = () => {
                           defaultValue={1}
                           minValue={1}
                           placeholder={"Cant."}
-                          onInput={(e) => {
-                            handleQuantityChange(item.id, e.target.value);
-                          }}
-                          {...register(`quantity${index}`, {})}
+                          onInput={(e) =>
+                            handleQuantityChange(item.id, e.target.value)
+                          }
+                          {...register(`productInOrder[${index}].amount`)}
                           msjError={
-                            errors[`quantity${index}`]
-                              ? errors[`quantity${index}`].message
-                              : ""
+                            errors[`productInOrder[${index}].amount`]
+                              ?.message || ""
                           }
                         />
                         <Input
@@ -446,25 +474,30 @@ const NewBudgetPage = () => {
                           placeholderColor="placeholder-black_b"
                           border="none"
                           label={"Precio"}
+                          defaultValue={item.list[0].price}
                           value={
                             item.list[0].price *
                             (quantity[item.id] || 1) *
                             (1 - (discount[index] ? discount[index] / 100 : 0))
                           }
+                          {...register(`productInOrder[${index}].fixedPrice`, {
+                            value: item.list[0].price,
+                          })}
                           disabled
                         />
 
                         <Input
                           type="number"
                           label={"Desc."}
+                          defaultValue={0}
                           placeholder={"%"}
                           value={discount[index] || ""}
                           onInput={(e) => handleProductDiscountInput(e, index)}
-                          {...register(`discount${index}`, {})}
+                          {...register(
+                            `productInOrder[${index}].discountPercent`,
+                          )}
                           msjError={
-                            errors[`discount${index}`]
-                              ? errors[`discount${index}`].message
-                              : ""
+                            errors[`discountPercent${index}`]?.message || ""
                           }
                         />
 
@@ -473,10 +506,13 @@ const NewBudgetPage = () => {
                             Recarga
                           </label>
                           <Select
+                            defaultValue={false}
                             className="rounded-lg border"
                             placeholder="Si/No"
-                            {...register("rechargue")}
-                            onSelectionChange={handleSelectionChange}
+                            {...register(`productInOrder[${index}].isRecharge`)}
+                            onSelectionChange={(value) =>
+                              handleSelectionChange(item.id, value)
+                            }
                           >
                             <SelectItem key={true}>Si</SelectItem>
                             <SelectItem key={false}>No</SelectItem>
@@ -583,11 +619,12 @@ const NewBudgetPage = () => {
               />
               <Input
                 type="number"
+                defaultValue={0}
                 label={"Desc."}
                 placeholder={"%"}
                 value={discount2}
                 onInput={handleDiscount2Input}
-                {...register("discount2", {})}
+                {...register("discountPercent", {})}
               />
             </div>
             <Input

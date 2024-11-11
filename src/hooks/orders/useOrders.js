@@ -16,7 +16,7 @@ const useOrders = () => {
   const getAllOrders = async () => {
     try {
       setLoading(true);
-
+      setOrdersResponse([]);
       const { data } = await OrdersService.getAllOrdersApi({
         page,
         itemsPerPage,
