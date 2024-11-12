@@ -1,17 +1,18 @@
-import { useNavigate } from "react-router-dom";
-import watchIcon from "../assets/icons/watch.svg";
+import { useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "../utils/Constants";
+import { getOrderPdf } from "../services/orders/orders.routes";
 
 const BudgetRow = ({
   name,
   contact,
   date,
   seller,
-  id,
   downloadIconSrc,
   deleteIconSrc,
   onEditClick,
   onDeleteClick,
 }) => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const handleRowClick = () => {
     navigate(`/inicio/ordenes/presupuesto/${id}`);
@@ -54,12 +55,14 @@ const BudgetRow = ({
 
       <td className="p-2">
         <div className="flex justify-center gap-4">
-          <img
-            src={downloadIconSrc}
-            alt="Edit icon"
-            className="h-5 w-5 cursor-pointer"
-            onClick={onEditClick}
-          />
+          <a href={`${BASE_URL}/${getOrderPdf}/${id}`} download target="_blank">
+            <img
+              src={downloadIconSrc}
+              alt="Edit icon"
+              className="h-5 w-5 cursor-pointer"
+              onClick={onEditClick}
+            />
+          </a>
           <img
             src={deleteIconSrc}
             alt="Delete icon"

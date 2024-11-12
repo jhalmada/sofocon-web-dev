@@ -8,6 +8,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
+import usePutOrders from "../hooks/orders/usePutOrders";
 
 const ClientsOrdersPage = () => {
   const {
@@ -18,12 +19,14 @@ const ClientsOrdersPage = () => {
   } = useForm();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { getOneOrder } = useGetOneOrder(id);
+  const { getOneOrder, setModified } = useGetOneOrder(id);
+  const { changedOrder, isLoading } = usePutOrders();
 
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
 
   const [orderDetails, setOrderDetails] = useState(null);
+  const [selectedState, setSelectedState] = useState(orderDetails?.status);
   const [subTotal, setSubTotal] = useState(0);
   const [iva, setIva] = useState(0);
   const [total, setTotal] = useState(0);
@@ -44,6 +47,21 @@ const ClientsOrdersPage = () => {
 
     return `${day}/${month}/${year}`;
   };
+
+  const translateState = (state) => {
+    switch (state) {
+      case "REQUEST":
+        return "Solicitado";
+      case "PREPARATION":
+        return "En preparación";
+      case "READY":
+        return "Listo para retirar";
+      case "EXIT":
+        return "Egreso";
+      default:
+        return state;
+    }
+  };
   const oneOrder = async (id) => {
     const newdatos = await getOneOrder(id);
     setOrderDetails(newdatos);
@@ -55,8 +73,6 @@ const ClientsOrdersPage = () => {
 
   useEffect(() => {
     let newSubTotal = 0;
-
-    // Calcular el subtotal con descuento aplicado
     orderDetails?.productInOrder?.forEach((order) => {
       const price = order.fixedPrice || 0;
       const amount = order.amount || 1;
@@ -66,26 +82,14 @@ const ClientsOrdersPage = () => {
       newSubTotal += discountedPrice * amount;
     });
 
-    // Calcular el IVA sobre el subtotal
     const newIva = newSubTotal * 0.22;
-
-    // Calcular el descuento sobre la suma de subtotal + IVA
     const discountAmount = (newSubTotal + newIva) * (discountPercent / 100);
-
-    // Calcular el total final
     const newTotal = newSubTotal + newIva - discountAmount;
 
-    // Guardar los valores
     setSubTotal(newSubTotal.toFixed(2));
     setIva(newIva.toFixed(2));
     setTotal(newTotal.toFixed(2));
     setDiscount(discountAmount.toFixed(2));
-
-    // Consola para ver valores intermedios
-    console.log("Subtotal:", newSubTotal);
-    console.log("IVA:", newIva);
-    console.log("Discount Amount:", discountAmount);
-    console.log("Total:", newTotal);
   }, [orderDetails, discountPercent]);
 
   const onSubmit = () => {
@@ -97,6 +101,11 @@ const ClientsOrdersPage = () => {
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
     navigate("/inicio/ordenes");
+  };
+  const handleStateChange = async (e) => {
+    const newStatus = e.target.value;
+    setSelectedState(newStatus);
+    await changedOrder({ status: newStatus }, orderDetails.id, setModified);
   };
 
   return (
@@ -134,9 +143,10 @@ const ClientsOrdersPage = () => {
               className="mb-4 w-1/6 rounded-lg border"
               label="Estado"
               labelPlacement="outside"
-              placeholder="Estado"
-              {...register("status")}
-              onSelectionChange={(values) => setValue("status", values)}
+              placeholder={translateState(orderDetails?.status)}
+              value={selectedState}
+              onChange={handleStateChange}
+              disabled={isLoading}
             >
               {stateOptions.map((option) => (
                 <SelectItem key={option} value={option}>

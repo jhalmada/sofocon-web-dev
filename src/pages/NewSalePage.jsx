@@ -19,7 +19,6 @@ import useGetProducts from "../hooks/products/useGetProducts.js";
 import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
-import useAddCompany from "../hooks/companies/useAddCompanies.js";
 
 const NewSalePage = () => {
   const {
@@ -64,7 +63,7 @@ const NewSalePage = () => {
   ];
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
-  const { postAddCompany } = useAddCompany();
+
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
 
   const {
@@ -78,21 +77,6 @@ const NewSalePage = () => {
 
   const deliveredValue = watch("delivered", false);
   const isDirectValue = watch("isDirect", false);
-  const handleCompanyCreation = async (data) => {
-    const { client, rut } = data;
-    console.log("RUT de la empresa:", data.rut);
-    try {
-      const newCompany = await postAddCompany({ client, rut });
-
-      if (newCompany) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        setIsModalOpen(true);
-      }
-    } catch (error) {
-      console.error("Error al crear la empresa:", error);
-    }
-  };
 
   const handleOrderCreation = async (orderData) => {
     const {
@@ -159,7 +143,6 @@ const NewSalePage = () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     if (data.isDirect) {
       handleOrderCreation({
         ...data,
