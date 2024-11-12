@@ -40,10 +40,10 @@ const DirectOrdersPage = ({
     "Diciembre",
   ];
   const filteredOrders = ordersResponse.filter((order) => {
-    if (!order.payDate) {
+    if (!order.sellDate) {
       return false;
     }
-    const orderDate = new Date(order.payDate);
+    const orderDate = new Date(order.sellDate);
     if (isNaN(orderDate.getTime())) {
       return false;
     }
@@ -170,7 +170,7 @@ const DirectOrdersPage = ({
                 id={order.id}
                 name={order?.client?.name || "Sin nombre"}
                 orderId={order.id}
-                date={order.payDate ? formatDate(order.payDate) : "Sin fecha"}
+                date={order.sellDate ? formatDate(order.sellDate) : "Sin fecha"}
                 seller={order?.user?.userInfo?.fullName}
                 state={order.status}
                 deleteIconSrc={deleteIcon}

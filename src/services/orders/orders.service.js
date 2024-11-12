@@ -6,7 +6,7 @@ export class OrdersService {
     await axios.get(ordersRoutes.getOrders, { params });
 
   static getOneOrderApi = async (routeId) =>
-    await axios.get(`${ordersRoutes.getOrders}/${routeId}`);
+    await axios.get(`${ordersRoutes.getOrders}/one/${routeId}`);
 
   static postAddOrdersApi = async (orderData) =>
     await axios.post(ordersRoutes.postOrders, orderData);

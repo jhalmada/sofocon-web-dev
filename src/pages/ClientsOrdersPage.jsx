@@ -3,11 +3,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import { useEffect, useState } from "react";
-import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
+import usePutOrders from "../hooks/orders/usePutOrders";
+import { BASE_URL } from "../utils/Constants";
+import { getOrderPdf } from "../services/orders/orders.routes";
 
 const ClientsOrdersPage = () => {
   const {
@@ -18,12 +20,14 @@ const ClientsOrdersPage = () => {
   } = useForm();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { getOneOrder } = useGetOneOrder(id);
+  const { getOneOrder, setModified } = useGetOneOrder(id);
+  const { changedOrder, isLoading } = usePutOrders();
 
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
 
   const [orderDetails, setOrderDetails] = useState(null);
+  const [selectedState, setSelectedState] = useState(orderDetails?.status);
   const [subTotal, setSubTotal] = useState(0);
   const [iva, setIva] = useState(0);
   const [total, setTotal] = useState(0);
@@ -33,7 +37,7 @@ const ClientsOrdersPage = () => {
   const stateOptions = [
     "Solicitado",
     "En preparación",
-    "Para retirar",
+    "Listo para retirar",
     "Egreso",
   ];
   const formatDate = (dateString) => {
@@ -43,6 +47,21 @@ const ClientsOrdersPage = () => {
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${day}/${month}/${year}`;
+  };
+
+  const translateState = (state) => {
+    switch (state) {
+      case "REQUEST":
+        return "Solicitado";
+      case "PREPARATION":
+        return "En preparación";
+      case "READY_PICKUP":
+        return "Listo para retirar";
+      case "EGRESS":
+        return "Egreso";
+      default:
+        return state;
+    }
   };
   const oneOrder = async (id) => {
     const newdatos = await getOneOrder(id);
@@ -55,8 +74,6 @@ const ClientsOrdersPage = () => {
 
   useEffect(() => {
     let newSubTotal = 0;
-
-    // Calcular el subtotal con descuento aplicado
     orderDetails?.productInOrder?.forEach((order) => {
       const price = order.fixedPrice || 0;
       const amount = order.amount || 1;
@@ -66,37 +83,34 @@ const ClientsOrdersPage = () => {
       newSubTotal += discountedPrice * amount;
     });
 
-    // Calcular el IVA sobre el subtotal
     const newIva = newSubTotal * 0.22;
-
-    // Calcular el descuento sobre la suma de subtotal + IVA
     const discountAmount = (newSubTotal + newIva) * (discountPercent / 100);
-
-    // Calcular el total final
     const newTotal = newSubTotal + newIva - discountAmount;
 
-    // Guardar los valores
     setSubTotal(newSubTotal.toFixed(2));
     setIva(newIva.toFixed(2));
     setTotal(newTotal.toFixed(2));
     setDiscount(discountAmount.toFixed(2));
-
-    // Consola para ver valores intermedios
-    console.log("Subtotal:", newSubTotal);
-    console.log("IVA:", newIva);
-    console.log("Discount Amount:", discountAmount);
-    console.log("Total:", newTotal);
   }, [orderDetails, discountPercent]);
 
-  const onSubmit = () => {
-    navigate("/inicio/ordenes");
-  };
-  const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
-  };
-  const handleConfirmSaveClick = () => {
-    closeSaveConfirmationModal();
-    navigate("/inicio/ordenes");
+  const handleStateChange = async (e) => {
+    const translateState = (state) => {
+      switch (state) {
+        case "Solicitado":
+          return "REQUEST";
+        case "En preparación":
+          return "PREPARATION";
+        case "Listo para retirar":
+          return "READY_PICKUP";
+        case "Egreso":
+          return "EGRESS";
+        default:
+          return state;
+      }
+    };
+    const newStatus = translateState(e.target.value);
+    setSelectedState(newStatus);
+    await changedOrder({ status: newStatus }, orderDetails.id, setModified);
   };
 
   return (
@@ -125,18 +139,16 @@ const ClientsOrdersPage = () => {
             </span>
           </div>
         </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10"
-        >
+        <form className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10">
           <div>
             <Select
               className="mb-4 w-1/6 rounded-lg border"
               label="Estado"
               labelPlacement="outside"
-              placeholder="Estado"
-              {...register("status")}
-              onSelectionChange={(values) => setValue("status", values)}
+              placeholder={translateState(orderDetails?.status)}
+              value={translateState(stateOptions)}
+              onChange={handleStateChange}
+              disabled={isLoading}
             >
               {stateOptions.map((option) => (
                 <SelectItem key={option} value={option}>
@@ -144,6 +156,7 @@ const ClientsOrdersPage = () => {
                 </SelectItem>
               ))}
             </Select>
+
             <div className="flex space-x-2">
               <Input
                 bg="bg-gray"
@@ -297,24 +310,15 @@ const ClientsOrdersPage = () => {
             </div>
           </div>
           <div className="mt-5 flex w-full justify-end">
-            <Button
-              text={"DESCARGAR"}
-              color={"save"}
-              type={"submit"}
-              icon={DownloadIcon}
-            />
+            <a
+              href={`${BASE_URL}/${getOrderPdf}/${id}`}
+              download
+              target="_blank"
+            >
+              <Button text={"DESCARGAR"} color={"save"} icon={DownloadIcon} />
+            </a>
           </div>
         </form>
-        <ReusableModal
-          isOpen={isSaveConfirmationModalOpen}
-          onClose={closeSaveConfirmationModal}
-          title="Cambios guardados"
-          variant="confirmation"
-          buttons={["accept"]}
-          onAccept={handleConfirmSaveClick}
-        >
-          Los cambios fueron guardados exitosamente.
-        </ReusableModal>
       </div>
     </div>
   );

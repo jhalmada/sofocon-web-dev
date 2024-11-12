@@ -11,12 +11,15 @@ const useOrders = () => {
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState(null);
-  const [orderType, setOrderType] = useState({});
+  const [orderType, setOrderType] = useState({
+    isPreOrder: false,
+    isDirect: false,
+  });
 
   const getAllOrders = async () => {
     try {
       setLoading(true);
-      setOrdersResponse([]);
+
       const { data } = await OrdersService.getAllOrdersApi({
         page,
         itemsPerPage,

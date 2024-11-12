@@ -39,9 +39,9 @@ const OrdersPage = () => {
     setSearch: setSearchOrders,
   } = useOrders();
 
-  const [activeTab, setActiveTab] = useState(
-    localStorage.getItem("activeTab") || CLIENTS_ORDERS_TAB,
-  );
+  const [activeTab, setActiveTab] = useState(() => {
+    return sessionStorage.getItem("activeTab") || CLIENTS_ORDERS_TAB;
+  });
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(null);
 
@@ -138,7 +138,7 @@ const OrdersPage = () => {
   };
 
   useEffect(() => {
-    localStorage.setItem("activeTab", activeTab);
+    sessionStorage.setItem("activeTab", activeTab);
   }, [activeTab]);
 
   useEffect(() => {
@@ -316,6 +316,7 @@ const OrdersPage = () => {
             setPage={setPage}
             page={page}
             itemsPerPage={itemsPerPage}
+            setStatus={setStatus}
           />
         )}
         {activeTab === BUDGET_TAB && (

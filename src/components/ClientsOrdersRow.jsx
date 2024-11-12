@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import watchIcon from "../assets/icons/watch.svg";
 const translateState = (state) => {
   switch (state) {
     case "REQUEST":

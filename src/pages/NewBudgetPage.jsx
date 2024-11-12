@@ -1,10 +1,5 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import { useEffect, useState } from "react";
@@ -40,18 +35,20 @@ const NewBudgetPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [rutValue, setRutValue] = useState("");
+  const [phoneValue, setPhoneValue] = useState("");
   const [autocompleteResults, setAutocompleteResults] = useState([]);
-  const [name, setName] = useState("productos");
-  const [rechargued, setRechargued] = useState(false);
+  const [name, setName] = useState("productInOrder");
+  const [recharged, setRecharged] = useState(false);
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
   const [quantity, setQuantity] = useState({});
   const [subtotal, setSubtotal] = useState(0);
   const [discount, setDiscount] = useState([]);
   const [discount2, setDiscount2] = useState("");
+  const [isDirectValue, setIsDirectValue] = useState(false);
+
   const total = subtotal
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
     : 0;
-
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -68,7 +65,7 @@ const NewBudgetPage = () => {
   ];
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
-  const { ordersResponse, setStatus } = useOrders();
+  const { setStatus } = useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const { pathname } = useLocation();
   const pathSegments = pathname.split("/").filter(Boolean);
@@ -82,10 +79,50 @@ const NewBudgetPage = () => {
   const { priceListResponse } = useGetPriceList();
   const navigate = useNavigate();
 
-  const isDirectValue = watch("isDirect", false);
   const handleBudgetCreation = async (budgetData) => {
+    const {
+      client,
+      rut,
+      phone,
+      dateV,
+      user,
+      productInOrder,
+      ItemsRemoval,
+      discountPercent,
+      isRecharge,
+      barCode,
+      enrollment,
+      factoryUnit,
+      status,
+      actualUnit,
+      paymentType,
+    } = budgetData;
     try {
-      const newBudget = await postAddOrders(budgetData);
+      const newdata = new Date(
+        dateV?.year || 1,
+        dateV?.month - 1 || 1,
+        dateV?.day || 1,
+      );
+      const formattedDate = newdata.toISOString();
+      const newBudget = await postAddOrders({
+        isPreOrder: lastPathItem === "nuevo-presupuesto" ? true : false,
+        client,
+        rut,
+        phone,
+        user,
+        productInOrder,
+        ItemsRemoval,
+        discountPercent: discountPercent ? discountPercent : 0,
+        isRecharge,
+        barCode,
+        enrollment,
+        factoryUnit,
+        status,
+        actualUnit,
+        paymentType: paymentType ? paymentType : "",
+
+        sellDate: formattedDate,
+      });
 
       if (newBudget) {
         setStatus("PREORDER");
@@ -99,49 +136,16 @@ const NewBudgetPage = () => {
   };
 
   const onSubmit = (data) => {
-    const {
-      isDirect,
-      client,
-      rut,
-      dateV,
-      user,
-      productInOrder,
-      ItemsRemoval,
-      discountPercent,
-      isRecharge,
-      barCode,
-      enrollment,
-      factoryUnit,
-      status,
-      actualUnit,
-      paymentType,
-    } = data;
-
-    const newdata = new Date(
-      dateV?.year || 1,
-      dateV?.month - 1 || 1,
-      dateV?.day || 1,
-    );
-    const formattedDate = newdata.toISOString();
-    handleBudgetCreation({
-      isPreOrder: lastPathItem === "nuevo-presupuesto" ? true : false,
-      isDirect,
-      client,
-      rut,
-      user,
-      productInOrder,
-      ItemsRemoval,
-      discountPercent: discountPercent ? discountPercent : 0,
-      isRecharge,
-      barCode,
-      enrollment,
-      factoryUnit,
-      status,
-      actualUnit,
-      paymentType: paymentType ? paymentType : "",
-
-      sellDate: formattedDate,
-    });
+    if (isDirectValue) {
+      handleBudgetCreation({
+        ...data,
+        client: { rut: data.rut, name: data.client, phone: data.phone },
+      });
+    } else {
+      handleBudgetCreation({
+        ...data,
+      });
+    }
   };
 
   const closeSaveConfirmationModal = () => {
@@ -173,17 +177,28 @@ const NewBudgetPage = () => {
     setValue(name, updatedSelectedItems);
     setAutocompleteResults(updatedSelectedItems);
   };
-  const handleWriteCompany = (writedCompany) => {
-    if (writedCompany) {
-      setRutValue(writedCompany);
+  const handleWriteRut = (writedRut) => {
+    if (writedRut) {
+      setRutValue(writedRut);
     } else {
       setRutValue("");
     }
   };
 
-  const handleSelectionChange = (value) => {
+  const handleWritePhone = (writedPhone) => {
+    if (writedPhone) {
+      setPhoneValue(writedPhone);
+    } else {
+      setPhoneValue("");
+    }
+  };
+
+  const handleSelectionChange = (id, value) => {
     const selectedValue = value.anchorKey === "true" ? true : false;
-    setRechargued(selectedValue);
+    setRecharged((prev) => ({
+      ...prev,
+      [id]: selectedValue,
+    }));
   };
 
   const handleSelectionListChange = (value) => {
@@ -192,6 +207,7 @@ const NewBudgetPage = () => {
     setValue("priceList", value);
     setIsPriceListSelected(false);
   };
+
   const handleQuantityChange = (itemId, value) => {
     setQuantity((prev) => ({
       ...prev,
@@ -200,7 +216,12 @@ const NewBudgetPage = () => {
   };
 
   const handleProductDiscountInput = (e, index) => {
-    const value = e.target.value.slice(0, 2);
+    let value = e.target.value.slice(0, 2);
+    if (value === "" || isNaN(value)) {
+      value = 0;
+    } else {
+      value = parseFloat(value);
+    }
     setDiscount((prevDiscount) => {
       const newDiscount = [...prevDiscount];
       newDiscount[index] = value;
@@ -264,9 +285,8 @@ const NewBudgetPage = () => {
                 radius="full"
                 className="mb-2"
                 size="sm"
-                {...register("isDirect")}
                 isSelected={isDirectValue}
-                onChange={(e) => setValue("isDirect", e.target.checked)}
+                onChange={() => setIsDirectValue(!isDirectValue)}
               >
                 Presupuesto de venta directa
               </Checkbox>
@@ -315,24 +335,44 @@ const NewBudgetPage = () => {
               )}
             </div>
             {isDirectValue ? (
-              <Input
-                label={"R.U.T./CI"}
-                placeholder={"Escribir..."}
-                onChange={handleWriteCompany}
-                {...register("rut", {
-                  required: "Este campo es obligatorio",
-                  minLength: {
-                    value: 12,
-                    message: "Ingrese los 12 digitos de su RUT.",
-                  },
-                  maxLength: {
-                    value: 12,
-                    message: "Ingrese solo los 12 digitos de su RUT.",
-                  },
-                })}
-                errorApi={errors.rut}
-                msjError={errors.rut ? errors.rut.message : ""}
-              />
+              <>
+                <Input
+                  label={"R.U.T./CI"}
+                  placeholder={"Escribir..."}
+                  onChange={handleWriteRut}
+                  {...register("rut", {
+                    required: "Este campo es obligatorio",
+                    minLength: {
+                      value: 12,
+                      message: "Ingrese los 12 digitos de su RUT.",
+                    },
+                    maxLength: {
+                      value: 12,
+                      message: "Ingrese solo los 12 digitos de su RUT.",
+                    },
+                  })}
+                  errorApi={errors.rut}
+                  msjError={errors.rut ? errors.rut.message : ""}
+                />
+                <Input
+                  label={"Contacto"}
+                  placeholder={"Escribir..."}
+                  onChange={handleWritePhone}
+                  {...register("phone", {
+                    required: "Este campo es obligatorio",
+                    minLength: {
+                      value: 9,
+                      message: "No se permiten menos de 6 caracteres",
+                    },
+                    maxLength: {
+                      value: 15,
+                      message: "No se permiten más de 15 caracteres",
+                    },
+                  })}
+                  errorApi={errors.phone}
+                  msjError={errors.phone ? errors.phone.message : ""}
+                />
+              </>
             ) : (
               <Input
                 label={"R.U.T./CI"}
@@ -485,22 +525,26 @@ const NewBudgetPage = () => {
                           })}
                           disabled
                         />
-
                         <Input
                           type="number"
                           label={"Desc."}
-                          defaultValue={0}
+                          defaultValue={1}
                           placeholder={"%"}
                           value={discount[index] || ""}
                           onInput={(e) => handleProductDiscountInput(e, index)}
                           {...register(
                             `productInOrder[${index}].discountPercent`,
+                            {
+                              validate: (value) => {
+                                return value === "" || isNaN(value) ? 0 : value;
+                              },
+                            },
                           )}
                           msjError={
-                            errors[`discountPercent${index}`]?.message || ""
+                            errors[`productInOrder[${index}].discountPercent`]
+                              ?.message || ""
                           }
                         />
-
                         <div className="w-full">
                           <label className="block text-sm font-light">
                             Recarga
@@ -508,7 +552,7 @@ const NewBudgetPage = () => {
                           <Select
                             defaultValue={false}
                             className="rounded-lg border"
-                            placeholder="Si/No"
+                            placeholder={recharged[item.id] ? "Si" : "No"}
                             {...register(`productInOrder[${index}].isRecharge`)}
                             onSelectionChange={(value) =>
                               handleSelectionChange(item.id, value)
@@ -525,80 +569,113 @@ const NewBudgetPage = () => {
               )}
             </div>
 
-            {rechargued ? (
-              <div className="rounded-lg bg-gray p-4">
-                <div className="flex space-x-2">
-                  <Input
-                    label={"Código de barras"}
-                    placeholder={"..."}
-                    bg="bg-white"
-                    {...register("barcode", {
-                      required: "Este campo es obligatorio",
-                    })}
-                    msjError={errors.barcode ? errors.barcode.message : ""}
-                  />
-                  <span className="flex items-center">
-                    <Link to={"/inicio"}>
-                      <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
-                        <img src={cameraIcon} alt="" className="h-5 w-5" />
-                      </div>
-                    </Link>
-                  </span>
-                </div>
-                <div className="flex space-x-2">
-                  <Input
-                    label={"Matrícula"}
-                    placeholder={"X234234"}
-                    bg="bg-white"
-                    {...register("registration", {
-                      required: "Este campo es obligatorio",
-                    })}
-                    msjError={
-                      errors.registration ? errors.registration.message : ""
-                    }
-                  />
-                  <Input
-                    label={"N° UNIT de fábrica"}
-                    placeholder={"123455"}
-                    bg="bg-white"
-                    {...register("factoryUnit", {
-                      required: "Este campo es obligatorio",
-                    })}
-                    msjError={
-                      errors.factoryUnit ? errors.factoryUnit.message : ""
-                    }
-                  />
-                </div>
-                <div className="flex w-full space-x-2">
-                  <div className="w-full">
-                    <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
-                      Fecha última carga
-                    </span>
-                    <Select
-                      className="rounded-lg border"
-                      placeholder="MM/AA"
-                      {...register("status")}
-                      onSelectionChange={(values) => setValue("status", values)}
+            {autocompleteResults.map((item) => {
+              return (
+                recharged[item.id] &&
+                Array.from({ length: quantity[item.id] || 1 }).map(
+                  (_, index) => (
+                    <div
+                      key={`recharged-${item.id}-${index}`}
+                      className="mb-8 rounded-lg bg-gray p-4"
                     >
-                      {monthsOptions.map((month) => (
-                        <SelectItem key={month.key}>{month}</SelectItem>
-                      ))}
-                    </Select>
-                  </div>
-                  <Input
-                    label={"N° UNIT actual"}
-                    placeholder={"123455"}
-                    bg="bg-white"
-                    {...register("actualUnit", {
-                      required: "Este campo es obligatorio",
-                    })}
-                    msjError={
-                      errors.actualUnit ? errors.actualUnit.message : ""
-                    }
-                  />
-                </div>
-              </div>
-            ) : null}
+                      <p className="text-center text-md">
+                        Recarga del producto
+                        <span className="ml-1 font-semibold uppercase">
+                          {item.name}
+                        </span>
+                      </p>
+                      <div className="flex space-x-2">
+                        <Input
+                          label={"Código de barras"}
+                          placeholder={"..."}
+                          bg="bg-white"
+                          {...register(
+                            `productInOrder[${index}].ItemsRemoval[${index}].barCode`,
+                            {
+                              required: "Este campo es obligatorio",
+                            },
+                          )}
+                          msjError={errors.barCode?.message || ""}
+                        />
+                        <span className="flex items-center">
+                          <Link to={"/inicio"}>
+                            <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
+                              <img
+                                src={cameraIcon}
+                                alt=""
+                                className="h-5 w-5"
+                              />
+                            </div>
+                          </Link>
+                        </span>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Input
+                          label={"Matrícula"}
+                          placeholder={"X234234"}
+                          bg="bg-white"
+                          {...register(
+                            `productInOrder[${index}].ItemsRemoval[${index}].enrollment`,
+                            {
+                              required: "Este campo es obligatorio",
+                            },
+                          )}
+                          msjError={errors.enrollment?.message || ""}
+                        />
+                        <Input
+                          label={"N° UNIT de fábrica"}
+                          placeholder={"123455"}
+                          bg="bg-white"
+                          {...register(
+                            `productInOrder[${index}].ItemsRemoval[${index}].factoryUnit`,
+                            {
+                              required: "Este campo es obligatorio",
+                            },
+                          )}
+                          msjError={errors.factoryUnit?.message || ""}
+                        />
+                      </div>
+                      <div className="flex w-full space-x-2">
+                        <div className="w-full">
+                          <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
+                            Fecha última carga
+                          </span>
+                          <Select
+                            className="rounded-lg border"
+                            placeholder="MM/AA"
+                            {...register(
+                              `productInOrder[${index}].ItemsRemoval[${index}].lastDate`,
+                            )}
+                            onSelectionChange={(values) =>
+                              setValue(
+                                `productInOrder[${index}].ItemsRemoval[${index}].lastDate`,
+                                values,
+                              )
+                            }
+                          >
+                            {monthsOptions.map((month) => (
+                              <SelectItem key={month}>{month}</SelectItem>
+                            ))}
+                          </Select>
+                        </div>
+                        <Input
+                          label={"N° UNIT actual"}
+                          placeholder={"123455"}
+                          bg="bg-white"
+                          {...register(
+                            `productInOrder[${index}].ItemsRemoval[${index}].actualUnit`,
+                            {
+                              required: "Este campo es obligatorio",
+                            },
+                          )}
+                          msjError={errors.actualUnit?.message || ""}
+                        />
+                      </div>
+                    </div>
+                  ),
+                )
+              );
+            })}
 
             <div className="mt-2 flex space-x-2">
               <Input
