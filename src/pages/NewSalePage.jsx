@@ -63,9 +63,7 @@ const NewSalePage = () => {
   ];
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
-
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
-
   const {
     productsResponse,
     setSearch: setSearchProducts,
@@ -143,7 +141,7 @@ const NewSalePage = () => {
   };
 
   const onSubmit = (data) => {
-    if (data.isDirect) {
+    if (isDirectValue) {
       handleOrderCreation({
         ...data,
         client: { rut: data.rut, name: data.client },
@@ -219,7 +217,12 @@ const NewSalePage = () => {
   };
 
   const handleProductDiscountInput = (e, index) => {
-    const value = e.target.value.slice(0, 2);
+    let value = e.target.value.slice(0, 2);
+    if (value === "" || isNaN(value)) {
+      value = 0;
+    } else {
+      value = parseFloat(value);
+    }
     setDiscount((prevDiscount) => {
       const newDiscount = [...prevDiscount];
       newDiscount[index] = value;
@@ -513,9 +516,15 @@ const NewSalePage = () => {
                           onInput={(e) => handleProductDiscountInput(e, index)}
                           {...register(
                             `productInOrder[${index}].discountPercent`,
+                            {
+                              validate: (value) => {
+                                return value === "" || isNaN(value) ? 0 : value;
+                              },
+                            },
                           )}
                           msjError={
-                            errors[`discountPercent${index}`]?.message || ""
+                            errors[`productInOrder[${index}].discountPercent`]
+                              ?.message || ""
                           }
                         />
                         <div className="w-full">
@@ -525,7 +534,7 @@ const NewSalePage = () => {
                           <Select
                             defaultValue={false}
                             className="rounded-lg border"
-                            placeholder="Si/No"
+                            placeholder={recharged[item.id] ? "Si" : "No"}
                             {...register(`productInOrder[${index}].isRecharge`)}
                             onSelectionChange={(value) =>
                               handleSelectionChange(item.id, value)
@@ -538,104 +547,113 @@ const NewSalePage = () => {
                       </div>
                     </div>
                   ))}
-                  {autocompleteResults.map(
-                    (item, index) =>
-                      recharged[item.id] && (
-                        <div
-                          key={`recharged-${item.id}`}
-                          className="rounded-lg bg-gray p-4"
-                        >
-                          <div className="flex space-x-2">
-                            <Input
-                              label={"Código de barras"}
-                              placeholder={"..."}
-                              bg="bg-white"
-                              {...register(
-                                `productInOrder[${index}].ItemsRemoval[${index}].barCode`,
-                                {
-                                  required: "Este campo es obligatorio",
-                                },
-                              )}
-                              msjError={errors.barCode?.message || ""}
-                            />
-                            <span className="flex items-center">
-                              <Link to={"/inicio"}>
-                                <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
-                                  <img
-                                    src={cameraIcon}
-                                    alt=""
-                                    className="h-5 w-5"
-                                  />
-                                </div>
-                              </Link>
-                            </span>
-                          </div>
-                          <div className="flex space-x-2">
-                            <Input
-                              label={"Matrícula"}
-                              placeholder={"X234234"}
-                              bg="bg-white"
-                              {...register(
-                                `productInOrder[${index}].ItemsRemoval[${index}].enrollment`,
-                                {
-                                  required: "Este campo es obligatorio",
-                                },
-                              )}
-                              msjError={errors.enrollment?.message || ""}
-                            />
-                            <Input
-                              label={"N° UNIT de fábrica"}
-                              placeholder={"123455"}
-                              bg="bg-white"
-                              {...register(
-                                `productInOrder[${index}].ItemsRemoval[${index}].factoryUnit`,
-                                {
-                                  required: "Este campo es obligatorio",
-                                },
-                              )}
-                              msjError={errors.factoryUnit?.message || ""}
-                            />
-                          </div>
-                          <div className="flex w-full space-x-2">
-                            <div className="w-full">
-                              <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
-                                Fecha última carga
+                  {autocompleteResults.map((item) => {
+                    return (
+                      recharged[item.id] &&
+                      Array.from({ length: quantity[item.id] || 1 }).map(
+                        (_, index) => (
+                          <div
+                            key={`recharged-${item.id}-${index}`}
+                            className="mb-8 rounded-lg bg-gray p-4"
+                          >
+                            <p className="text-center text-md">
+                              Recarga del producto
+                              <span className="ml-1 font-semibold uppercase">
+                                {item.name}
                               </span>
-                              <Select
-                                className="rounded-lg border"
-                                placeholder="MM/AA"
-                                {...register("lastDate")}
-                                onSelectionChange={(values) =>
-                                  setValue(
-                                    `productInOrder[${index}].ItemsRemoval[${index}].lastDate`,
-                                    values,
-                                  )
-                                }
-                              >
-                                {monthsOptions.map((month) => (
-                                  <SelectItem key={month.key}>
-                                    {month}
-                                  </SelectItem>
-                                ))}
-                              </Select>
+                            </p>
+                            <div className="flex space-x-2">
+                              <Input
+                                label={"Código de barras"}
+                                placeholder={"..."}
+                                bg="bg-white"
+                                {...register(
+                                  `productInOrder[${index}].ItemsRemoval[${index}].barCode`,
+                                  {
+                                    required: "Este campo es obligatorio",
+                                  },
+                                )}
+                                msjError={errors.barCode?.message || ""}
+                              />
+                              <span className="flex items-center">
+                                <Link to={"/inicio"}>
+                                  <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
+                                    <img
+                                      src={cameraIcon}
+                                      alt=""
+                                      className="h-5 w-5"
+                                    />
+                                  </div>
+                                </Link>
+                              </span>
                             </div>
-                            <Input
-                              label={"N° UNIT actual"}
-                              placeholder={"123455"}
-                              bg="bg-white"
-                              {...register(
-                                `productInOrder[${index}].ItemsRemoval[${index}].actualUnit`,
-                                {
-                                  //revisar
-                                  required: "Este campo es obligatorio",
-                                },
-                              )}
-                              msjError={errors.actualUnit?.message || ""}
-                            />
+                            <div className="flex space-x-2">
+                              <Input
+                                label={"Matrícula"}
+                                placeholder={"X234234"}
+                                bg="bg-white"
+                                {...register(
+                                  `productInOrder[${index}].ItemsRemoval[${index}].enrollment`,
+                                  {
+                                    required: "Este campo es obligatorio",
+                                  },
+                                )}
+                                msjError={errors.enrollment?.message || ""}
+                              />
+                              <Input
+                                label={"N° UNIT de fábrica"}
+                                placeholder={"123455"}
+                                bg="bg-white"
+                                {...register(
+                                  `productInOrder[${index}].ItemsRemoval[${index}].factoryUnit`,
+                                  {
+                                    required: "Este campo es obligatorio",
+                                  },
+                                )}
+                                msjError={errors.factoryUnit?.message || ""}
+                              />
+                            </div>
+                            <div className="flex w-full space-x-2">
+                              <div className="w-full">
+                                <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
+                                  Fecha última carga
+                                </span>
+                                <Select
+                                  className="rounded-lg border"
+                                  placeholder="MM/AA"
+                                  {...register(
+                                    `productInOrder[${index}].ItemsRemoval[${index}].lastDate`,
+                                  )}
+                                  onSelectionChange={(values) =>
+                                    setValue(
+                                      `productInOrder[${index}].ItemsRemoval[${index}].lastDate`,
+                                      values,
+                                    )
+                                  }
+                                >
+                                  {monthsOptions.map((month) => (
+                                    <SelectItem key={month}>{month}</SelectItem>
+                                  ))}
+                                </Select>
+                              </div>
+                              <Input
+                                label={"N° UNIT actual"}
+                                placeholder={"123455"}
+                                bg="bg-white"
+                                {...register(
+                                  `productInOrder[${index}].ItemsRemoval[${index}].actualUnit`,
+                                  {
+                                    required: "Este campo es obligatorio",
+                                  },
+                                )}
+                                msjError={errors.actualUnit?.message || ""}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      ),
-                  )}
+                        ),
+                      )
+                    );
+                  })}
                 </div>
               )}
             </div>

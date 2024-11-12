@@ -3,12 +3,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import { useEffect, useState } from "react";
-import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import usePutOrders from "../hooks/orders/usePutOrders";
+import { BASE_URL } from "../utils/Constants";
+import { getOrderPdf } from "../services/orders/orders.routes";
 
 const ClientsOrdersPage = () => {
   const {
@@ -36,7 +37,7 @@ const ClientsOrdersPage = () => {
   const stateOptions = [
     "Solicitado",
     "En preparación",
-    "Para retirar",
+    "Listo para retirar",
     "Egreso",
   ];
   const formatDate = (dateString) => {
@@ -54,9 +55,9 @@ const ClientsOrdersPage = () => {
         return "Solicitado";
       case "PREPARATION":
         return "En preparación";
-      case "READY":
+      case "READY_PICKUP":
         return "Listo para retirar";
-      case "EXIT":
+      case "EGRESS":
         return "Egreso";
       default:
         return state;
@@ -92,18 +93,22 @@ const ClientsOrdersPage = () => {
     setDiscount(discountAmount.toFixed(2));
   }, [orderDetails, discountPercent]);
 
-  const onSubmit = () => {
-    navigate("/inicio/ordenes");
-  };
-  const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
-  };
-  const handleConfirmSaveClick = () => {
-    closeSaveConfirmationModal();
-    navigate("/inicio/ordenes");
-  };
   const handleStateChange = async (e) => {
-    const newStatus = e.target.value;
+    const translateState = (state) => {
+      switch (state) {
+        case "Solicitado":
+          return "REQUEST";
+        case "En preparación":
+          return "PREPARATION";
+        case "Listo para retirar":
+          return "READY_PICKUP";
+        case "Egreso":
+          return "EGRESS";
+        default:
+          return state;
+      }
+    };
+    const newStatus = translateState(e.target.value);
     setSelectedState(newStatus);
     await changedOrder({ status: newStatus }, orderDetails.id, setModified);
   };
@@ -134,17 +139,14 @@ const ClientsOrdersPage = () => {
             </span>
           </div>
         </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10"
-        >
+        <form className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10">
           <div>
             <Select
               className="mb-4 w-1/6 rounded-lg border"
               label="Estado"
               labelPlacement="outside"
               placeholder={translateState(orderDetails?.status)}
-              value={selectedState}
+              value={translateState(stateOptions)}
               onChange={handleStateChange}
               disabled={isLoading}
             >
@@ -154,6 +156,7 @@ const ClientsOrdersPage = () => {
                 </SelectItem>
               ))}
             </Select>
+
             <div className="flex space-x-2">
               <Input
                 bg="bg-gray"
@@ -307,24 +310,15 @@ const ClientsOrdersPage = () => {
             </div>
           </div>
           <div className="mt-5 flex w-full justify-end">
-            <Button
-              text={"DESCARGAR"}
-              color={"save"}
-              type={"submit"}
-              icon={DownloadIcon}
-            />
+            <a
+              href={`${BASE_URL}/${getOrderPdf}/${id}`}
+              download
+              target="_blank"
+            >
+              <Button text={"DESCARGAR"} color={"save"} icon={DownloadIcon} />
+            </a>
           </div>
         </form>
-        <ReusableModal
-          isOpen={isSaveConfirmationModalOpen}
-          onClose={closeSaveConfirmationModal}
-          title="Cambios guardados"
-          variant="confirmation"
-          buttons={["accept"]}
-          onAccept={handleConfirmSaveClick}
-        >
-          Los cambios fueron guardados exitosamente.
-        </ReusableModal>
       </div>
     </div>
   );

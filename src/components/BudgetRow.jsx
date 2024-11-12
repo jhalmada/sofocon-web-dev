@@ -7,12 +7,12 @@ const BudgetRow = ({
   contact,
   date,
   seller,
+  id,
   downloadIconSrc,
   deleteIconSrc,
   onEditClick,
   onDeleteClick,
 }) => {
-  const { id } = useParams();
   const navigate = useNavigate();
   const handleRowClick = () => {
     navigate(`/inicio/ordenes/presupuesto/${id}`);

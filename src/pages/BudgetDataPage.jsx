@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import { Select, SelectItem } from "@nextui-org/select";
+import { BASE_URL } from "../utils/Constants";
+import { getOrderPdf } from "../services/orders/orders.routes";
 
 const BudgetDataPage = () => {
   const {
@@ -72,17 +74,6 @@ const BudgetDataPage = () => {
     setDiscount(discountAmount.toFixed(2));
   }, [orderDetails, discountPercent]);
 
-  const onSubmit = () => {
-    navigate("/inicio/ordenes");
-  };
-  const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
-  };
-  const handleConfirmSaveClick = () => {
-    closeSaveConfirmationModal();
-    navigate("/inicio/ordenes");
-  };
-
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
@@ -109,10 +100,7 @@ const BudgetDataPage = () => {
             </span>
           </div>
         </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10"
-        >
+        <form className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10">
           <div>
             <div className="flex space-x-2">
               <Input
@@ -200,7 +188,7 @@ const BudgetDataPage = () => {
                     <Input
                       type="number"
                       label="Recarga"
-                      placeholder={order.isRechargue ? "Si" : "No"}
+                      placeholder={order.isRecharge === true ? "Si" : "No"}
                       bg="bg-gray"
                       placeholderColor="placeholder-black_b"
                       border="none"
@@ -248,24 +236,15 @@ const BudgetDataPage = () => {
             />
           </div>
           <div className="mt-5 flex w-full justify-end">
-            <Button
-              text={"DESCARGAR"}
-              color={"save"}
-              type={"submit"}
-              icon={DownloadIcon}
-            />
+            <a
+              href={`${BASE_URL}/${getOrderPdf}/${id}`}
+              download
+              target="_blank"
+            >
+              <Button text={"DESCARGAR"} color={"save"} icon={DownloadIcon} />
+            </a>
           </div>
         </form>
-        <ReusableModal
-          isOpen={isSaveConfirmationModalOpen}
-          onClose={closeSaveConfirmationModal}
-          title="Cambios guardados"
-          variant="confirmation"
-          buttons={["accept"]}
-          onAccept={handleConfirmSaveClick}
-        >
-          Los cambios fueron guardados exitosamente.
-        </ReusableModal>
       </div>
     </div>
   );
