@@ -9,19 +9,21 @@ const AutoCompleteArray = ({
   label,
   name,
   setValue,
-  onChange,
+  clearErrors,
   label2,
   array2,
   placeholder = "Buscar...",
   hidden = false,
+  msjError,
 }) => {
   // Estado para las opciones seleccionadas y sus valores
   const [selectedItems, setSelectedItems] = useState(array2 || []);
 
   // Actualiza las opciones seleccionadas en el formulario
   useEffect(() => {
-    console.log("Selected items:", selectedItems); // Verifica los valores seleccionados
-    setValue(name, selectedItems); // Asegura que los valores se pasen correctamente al formulario
+    if (setValue) {
+      setValue(name, selectedItems); // Asegura que los valores se pasen correctamente al formulario
+    }
   }, [selectedItems, name, setValue]);
 
   // Maneja la selección de una opción del Autocomplete
@@ -29,6 +31,8 @@ const AutoCompleteArray = ({
     if (!selectedItems.find((el) => el.id === item.id)) {
       const newSelection = [...selectedItems, { ...item, value: "" }];
       setSelectedItems(newSelection);
+      // Limpia el error cuando se selecciona un producto
+      clearErrors && clearErrors(name);
     }
   };
 
@@ -48,7 +52,6 @@ const AutoCompleteArray = ({
 
   return (
     <div>
-      {/* Opciones seleccionadas con inputs */}
       {!hidden && (
         <div className="flex w-full flex-wrap">
           {selectedItems.length > 0 && (
@@ -66,10 +69,7 @@ const AutoCompleteArray = ({
               key={item.id}
               className="flex h-[3rem] w-full items-center justify-between"
             >
-              <span
-                key={item.id}
-                className="flex h-10 w-[68%] items-center justify-between rounded-lg p-2 shadow-br"
-              >
+              <span className="flex h-10 w-[68%] items-center justify-between rounded-lg p-2 shadow-br">
                 <span className="mr-2">{item.name}</span>
                 <img
                   src={x}
@@ -99,7 +99,6 @@ const AutoCompleteArray = ({
         selectedKey={""}
         placeholder={placeholder}
         startContent={<img src={search} alt="Buscar" />}
-        onInputChange={(e) => onChange(e)}
       >
         {array.map((item) => (
           <AutocompleteItem
@@ -116,6 +115,7 @@ const AutoCompleteArray = ({
           </AutocompleteItem>
         ))}
       </Autocomplete>
+      {msjError && <p className="font-roboto text-xs text-red_e">{msjError}</p>}
     </div>
   );
 };
