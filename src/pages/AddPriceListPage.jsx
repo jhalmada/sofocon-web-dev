@@ -4,7 +4,7 @@ import Input from "../components/inputs/Input";
 import uploadIcon from "../assets/icons/upload.svg";
 import Button from "../components/buttons/Button";
 import arrowRigthIcon from "../assets/icons/arrow-right.svg";
-import { set, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import { useState } from "react";
 import useAddProducts from "../hooks/products/useAddProducts";
 import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray";
@@ -34,6 +34,8 @@ const AddPriceListPage = () => {
     handleSubmit,
     setError,
     setValue,
+    clearErrors,
+    control,
     formState: { errors },
   } = useForm();
 
@@ -42,10 +44,10 @@ const AddPriceListPage = () => {
   //Funciones
 
   const onSubmit = async (data) => {
-    const { name, product, company } = data;
+    const { name, productos, company } = data;
     const PriceData = {
       name,
-      product: product.map((product) => ({
+      product: productos.map((product) => ({
         product: product.id,
         price: product.value,
       })),
@@ -109,8 +111,8 @@ const AddPriceListPage = () => {
                   message: "Campo obligatorio",
                 },
                 maxLength: {
-                  value: 50,
-                  message: "El nombre no puede exceder los 50 caracteres.",
+                  value: 30,
+                  message: "El nombre no puede exceder los 30 caracteres.",
                 },
                 minLength: {
                   value: 3,
@@ -120,30 +122,46 @@ const AddPriceListPage = () => {
               msjError={errors.name ? errors.name.message : ""}
             />
 
-            <AutoCompleteArray
-              label={"Productos"}
-              array={productsResponse.map((product) => ({
-                name: product.name,
-                id: product.id,
-              }))}
-              setValue={setValue}
-              name={"product"}
-              label2={"Productos"}
-              onChange={setSearch}
+            <Controller
+              name="productos"
+              control={control}
+              rules={{ required: "Debes seleccionar al menos un producto" }}
+              render={({ field }) => (
+                <AutoCompleteArray
+                  array={productsResponse}
+                  label={"Seleccionar Productos"}
+                  label2={"Producto"}
+                  name={field.name}
+                  setValue={setValue}
+                  control={field}
+                  msjError={errors.productos?.message}
+                  clearErrors={clearErrors}
+                />
+              )}
             />
+            <div>
+              <NextAutoComplete
+                array={companiesResponse.map((company) => ({
+                  id: company.id,
+                  name: company.name,
+                }))}
+                label={"Empresas"}
+                isDisabled={isAllCompanies}
+                setValue={setValue}
+                name={"company"}
+                label2={"Empresas"}
+                onChange={setSearchCompany}
+                setErrors={setError}
+                {...register("company", {
+                  required: {
+                    value: !isAllCompanies,
+                    message: "Campo obligatorio",
+                  },
+                })}
+                msjError={!isAllCompanies && errors?.company?.message}
+              />
+            </div>
 
-            <NextAutoComplete
-              array={companiesResponse.map((company) => ({
-                id: company.id,
-                name: company.name,
-              }))}
-              label={"Empresas"}
-              isDisabled={isAllCompanies}
-              setValue={setValue}
-              name={"company"}
-              label2={"Empresas"}
-              onChange={setSearchCompany}
-            />
             <Checkbox onChange={() => setIsAllCompanies(!isAllCompanies)}>
               <p className="text-sm">Asignar a todas las empresas existente</p>
             </Checkbox>
@@ -163,7 +181,7 @@ const AddPriceListPage = () => {
           </form>
           <ReusableModal
             isOpen={isSaveConfirmationModalOpen}
-            onClose={() => setSaveConfirmationModalOpen(false)}
+            onClose={() => handleAccept()}
             title="Lista Agregada"
             variant="confirmation"
             buttons={["accept"]}
