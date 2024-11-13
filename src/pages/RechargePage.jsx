@@ -194,12 +194,52 @@ const RechargePage = () => {
             <label className="block text-sm font-semibold text-black_b">
               Detalle
             </label>
+            <div className="flex">
+              <div className="flex w-1/2 space-x-2">
+                <div className="w-full">
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Recargas"}
+                    placeholder={"Arena"}
+                    disabled
+                  />
+                </div>
+              </div>
+              <div className="flex w-1/2 items-center space-x-2 pl-2">
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Matrícula"}
+                  placeholder={"M404"}
+                  disabled
+                />
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Cód."}
+                  placeholder={"1234567890"}
+                  disabled
+                />
+                <div className="mt-3 flex items-center space-x-2">
+                  <span className="flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg bg-green px-1 text-white">
+                    Habilitado
+                  </span>
+                  <Link to={"/inicio/taller/datos-recarga"}>
+                    <Button text="Ensayo" icon={ChevronRightIcon} />
+                  </Link>
+                </div>
+              </div>
+            </div>
             <div className="flex w-1/2 space-x-2">
               <Input
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"Recargas"}
+                label={"Producto"}
                 placeholder={"Arena"}
                 disabled
               />
@@ -211,46 +251,6 @@ const RechargePage = () => {
                 placeholder={"3kg"}
                 disabled
               />
-            </div>
-            <div className="flex">
-              <div className="flex w-1/2 space-x-2">
-                <div className="w-1/2">
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Producto"}
-                    placeholder={"Arena"}
-                    disabled
-                  />
-                </div>
-                <div className="flex w-1/2 space-x-2">
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Matrícula"}
-                    placeholder={"M404"}
-                    disabled
-                  />
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Cód. de barras"}
-                    placeholder={"1234567890"}
-                    disabled
-                  />
-                </div>
-              </div>
-              <div className="mt-2 flex w-1/2 items-center justify-between pl-2">
-                <span className="flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg bg-green px-1 text-white">
-                  Habilitado
-                </span>
-                <Link to={"/inicio/taller/datos-recarga"}>
-                  <Button text="Ensayo" icon={ChevronRightIcon} />
-                </Link>
-              </div>
             </div>
           </div>
           <div className="mt-5 flex w-full justify-end">

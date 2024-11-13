@@ -105,6 +105,7 @@ const NewBudgetPage = () => {
       );
       const formattedDate = newdata.toISOString();
       const newBudget = await postAddOrders({
+        workShopDateEntry: new Date(),
         isPreOrder: lastPathItem === "nuevo-presupuesto" ? true : false,
         client,
         rut,
@@ -534,11 +535,6 @@ const NewBudgetPage = () => {
                           onInput={(e) => handleProductDiscountInput(e, index)}
                           {...register(
                             `productInOrder[${index}].discountPercent`,
-                            {
-                              validate: (value) => {
-                                return value === "" || isNaN(value) ? 0 : value;
-                              },
-                            },
                           )}
                           msjError={
                             errors[`productInOrder[${index}].discountPercent`]

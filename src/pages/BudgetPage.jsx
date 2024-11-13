@@ -6,6 +6,7 @@ import BudgetRow from "../components/BudgetRow";
 import downloadIcon from "../assets/icons/download.svg";
 import ReusableModal from "../components/modals/ReusableModal";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
+import pageLostImg from "../assets/images/pageLostOrders.svg";
 
 const BudgetPage = ({
   ordersResponse,
@@ -82,64 +83,83 @@ const BudgetPage = ({
 
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-      <div>
-        <div className="flex items-center gap-2">
-          <p className="ml-2 text-black_m">Período</p>
-          <Select
-            className="w-52 rounded-lg border"
-            placeholder="Selecciona un mes"
-            onChange={handleMonthChange}
-          >
-            {monthsOptions.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </Select>
+      {ordersResponse.length === 0 ? (
+        <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
+          <td colSpan="5" className="p-4 text-center">
+            <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+              Ningún elemento coincide con tu búsqueda, inténtalo de nuevo.{" "}
+              <br /> Puedes encontrar a los presupuestos creados aquí.
+            </p>
+            <img src={pageLostImg} alt="Tabla vacía" className="mx-auto" />
+          </td>
+        </tr>
+      ) : (
+        <div>
+          <div className="flex items-center gap-2">
+            <p className="ml-2 text-black_m">Período</p>
+            <Select
+              className="w-52 rounded-lg border"
+              placeholder="Selecciona un mes"
+              onChange={handleMonthChange}
+            >
+              {monthsOptions.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
+
+          <table className="mt-5 w-full">
+            <thead>
+              <tr>
+                <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  Empresa
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Contacto
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Fecha
+                </th>
+
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Vendedor
+                </th>
+
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Acción
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredOrders.map((order, index) => (
+                <BudgetRow
+                  key={index}
+                  id={order.id}
+                  name={order?.client?.name || "Sin nombre"}
+                  contact={order?.client?.phone || "Sin contacto"}
+                  date={
+                    order.sellDate ? formatDate(order.sellDate) : "Sin fecha"
+                  }
+                  seller={order?.user?.userInfo?.fullName}
+                  downloadIconSrc={downloadIcon}
+                  deleteIconSrc={deleteIcon}
+                  onEditClick={() => {
+                    openModal();
+                  }}
+                  onDeleteClick={() => openConfirmDeleteModal(order.id)}
+                />
+              ))}
+            </tbody>
+          </table>
         </div>
-        <table className="mt-5 w-full">
-          <thead>
-            <tr>
-              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                Empresa
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Contacto
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Fecha
-              </th>
-
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Vendedor
-              </th>
-
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Acción
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredOrders.map((order, index) => (
-              <BudgetRow
-                key={index}
-                id={order.id}
-                name={order?.client?.name || "Sin nombre"}
-                contact={order?.client?.phone || "Sin contacto"}
-                date={order.sellDate ? formatDate(order.sellDate) : "Sin fecha"}
-                seller={order?.user?.userInfo?.fullName}
-                downloadIconSrc={downloadIcon}
-                deleteIconSrc={deleteIcon}
-                onEditClick={() => {
-                  openModal();
-                }}
-                onDeleteClick={() => openConfirmDeleteModal(order.id)}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="flex justify-center p-6">
+      )}
+      <div
+        className={
+          ordersResponse.length === 0 ? "hidden" : `flex justify-center p-6`
+        }
+      >
         <Pagination
           pageIndex={setItemsPerPage}
           currentPage={page}

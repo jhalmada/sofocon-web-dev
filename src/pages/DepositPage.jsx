@@ -159,7 +159,7 @@ const DepositPage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"Cliente"}
+                label={"Empresa"}
                 placeholder={"..."}
                 disabled
               />
@@ -193,55 +193,71 @@ const DepositPage = () => {
             <label className="block text-sm font-semibold text-black_b">
               Detalle
             </label>
-            <div className="flex w-[28.5rem] space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Producto"}
-                placeholder={"Arena"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Cantidad"}
-                placeholder={"3kg"}
-                disabled
-              />
+            <div className="flex space-x-2">
+              <div className="w-1/2">
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Producto"}
+                  placeholder={"Arena"}
+                  disabled
+                />
+              </div>
+              <div>
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Cantidad"}
+                  placeholder={"1"}
+                  disabled
+                />
+              </div>
             </div>
-            <div className="flex w-[28.5rem] space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Cartel ABC"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"2 Und"}
-                disabled
-              />
+            <div className="flex space-x-2">
+              <div className="w-1/2">
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Producto"}
+                  placeholder={"Cartel ABC"}
+                  disabled
+                />
+              </div>
+              <div>
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Cantidad"}
+                  placeholder={"2"}
+                  disabled
+                />
+              </div>
             </div>
-            <div className="flex w-[28.5rem] space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Alarmas"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"3 Und"}
-                disabled
-              />
+            <div className="flex space-x-2">
+              <div className="w-1/2">
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Producto"}
+                  placeholder={"Alarmas"}
+                  disabled
+                />
+              </div>
+              <div>
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Cantidad"}
+                  placeholder={"3"}
+                  disabled
+                />
+              </div>
             </div>
           </div>
           <div className="mt-5 flex w-full justify-end">
