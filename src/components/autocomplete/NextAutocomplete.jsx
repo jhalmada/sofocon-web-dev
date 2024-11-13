@@ -20,6 +20,8 @@ const NextAutoComplete = ({
   placeholder = "Buscar...",
   isDisabled = false,
   hidden = false,
+  setErrors = null,
+  msjError = "",
 }) => {
   //estados
   const [selectedItems, setSelectedItems] = useState(array2 || []);
@@ -28,6 +30,7 @@ const NextAutoComplete = ({
     if (!selectedItems.includes(item)) {
       setSelectedItems([...selectedItems, item]);
       setValue(name, [...selectedItems, item]);
+      setErrors && setErrors(name, null);
     } else {
       setSelectedItems(selectedItems.filter((selection) => selection !== item));
     }
@@ -42,7 +45,7 @@ const NextAutoComplete = ({
   };
 
   return (
-    <>
+    <div className="mb-1">
       {!hidden && !isDisabled && (
         <div className="flex w-full flex-wrap">
           {selectedItems.length > 0 && (
@@ -85,7 +88,10 @@ const NextAutoComplete = ({
           </AutocompleteItem>
         ))}
       </Autocomplete>
-    </>
+      {msjError.length > 0 && (
+        <p className="font-roboto text-xs text-red_e">{msjError}</p>
+      )}
+    </div>
   );
 };
 
