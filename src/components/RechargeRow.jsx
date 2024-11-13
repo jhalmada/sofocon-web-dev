@@ -1,16 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import watchIcon from "../assets/icons/watch.svg";
+
 import { Select, SelectItem } from "@nextui-org/select";
+import { useEffect, useState } from "react";
+import usePutOrders from "../hooks/orders/usePutOrders";
+import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 const translateState = (state) => {
   switch (state) {
-    case "POTENTIAL":
-      return "Potencial";
-    case "UNSUBSCRIBED":
-      return "De baja";
-    case "FRECUENT":
-      return "Frecuente";
-    case "COMPETENCE":
-      return "Competencia";
+    case "REQUEST":
+      return "Solicitado";
+    case "PREPARATION":
+      return "En preparación";
+    case "READY_PICKUP":
+      return "Listo para retirar";
+    case "EGRESS":
+      return "Egreso";
     default:
       return state;
   }
@@ -28,15 +31,49 @@ const RechargeRow = ({
   onEditClick,
 }) => {
   const navigate = useNavigate();
+  const { changedOrder, isLoading } = usePutOrders();
+  const { getOneOrder, setModified } = useGetOneOrder(id);
+
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [selectedState, setSelectedState] = useState(orderDetails?.status);
+
   const handleRowClick = () => {
     navigate(`/inicio/taller/recarga`);
   };
-  const options = [
+  const stateOptions = [
     "Solicitado",
     "En preparación",
     "Listo para retirar",
     "Egreso",
   ];
+
+  const handleStateChange = async (e) => {
+    const translateState = (state) => {
+      switch (state) {
+        case "Solicitado":
+          return "REQUEST";
+        case "En preparación":
+          return "PREPARATION";
+        case "Listo para retirar":
+          return "READY_PICKUP";
+        case "Egreso":
+          return "EGRESS";
+        default:
+          return state;
+      }
+    };
+    const newStatus = translateState(e.target.value);
+    setSelectedState(newStatus);
+    await changedOrder({ status: newStatus }, orderDetails.id, setModified);
+  };
+  const oneOrder = async (id) => {
+    const newdatos = await getOneOrder(id);
+    setOrderDetails(newdatos);
+  };
+  useEffect(() => {
+    oneOrder(id);
+  }, [id]);
+
   return (
     <tr className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <div className="mt-2 flex">
@@ -74,9 +111,17 @@ const RechargeRow = ({
         className="p-2 text-md font-semibold leading-[1.16rem]"
         onClick={handleRowClick}
       >
-        <Select placeholder="Estado" className="rounded-lg border">
-          {options.map((option) => (
-            <SelectItem key={option}>{option}</SelectItem>
+        <Select
+          className="mb-4 rounded-lg border"
+          placeholder={translateState(orderDetails?.status)}
+          value={translateState(stateOptions)}
+          onChange={handleStateChange}
+          disabled={isLoading}
+        >
+          {stateOptions.map((option) => (
+            <SelectItem key={option} value={option}>
+              {option}
+            </SelectItem>
           ))}
         </Select>
       </td>

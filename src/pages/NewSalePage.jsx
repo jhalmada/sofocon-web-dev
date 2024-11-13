@@ -107,6 +107,7 @@ const NewSalePage = () => {
       );
       const formattedDate = newdata.toISOString();
       const newOrder = await postAddOrders({
+        workShopDateEntry: new Date(),
         isPreOrder: false,
         isDirect,
         client,
@@ -516,11 +517,6 @@ const NewSalePage = () => {
                           onInput={(e) => handleProductDiscountInput(e, index)}
                           {...register(
                             `productInOrder[${index}].discountPercent`,
-                            {
-                              validate: (value) => {
-                                return value === "" || isNaN(value) ? 0 : value;
-                              },
-                            },
                           )}
                           msjError={
                             errors[`productInOrder[${index}].discountPercent`]

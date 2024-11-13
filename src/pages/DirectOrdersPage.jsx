@@ -6,6 +6,7 @@ import { Select, SelectItem } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
 import DirectOrdersRow from "../components/DirectOrdersRow";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
+import pageLostImg from "../assets/images/pageLostOrders.svg";
 
 const DirectOrdersPage = ({
   ordersResponse,
@@ -118,69 +119,88 @@ const DirectOrdersPage = ({
 
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-      <div>
-        <div className="flex items-center gap-2">
-          <p className="ml-2 text-black_m">Período</p>
-          <Select
-            className="w-52 rounded-lg border"
-            placeholder="Selecciona un mes"
-            onChange={handleMonthChange}
-          >
-            {monthsOptions.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </Select>
-        </div>
-        <table className="mt-2 w-full">
-          <thead>
-            <tr>
-              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                Empresa
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                ID de orden
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Fecha
-              </th>
+      {ordersResponse.length === 0 ? (
+        <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
+          <td colSpan="5" className="p-4 text-center">
+            <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+              Ningún elemento coincide con tu búsqueda, inténtalo de nuevo.{" "}
+              <br /> Puedes encontrar a las órdenes creadas aquí.
+            </p>
+            <img src={pageLostImg} alt="Tabla vacía" className="mx-auto" />
+          </td>
+        </tr>
+      ) : (
+        <div>
+          <div className="flex items-center gap-2">
+            <p className="ml-2 text-black_m">Período</p>
+            <Select
+              className="w-52 rounded-lg border"
+              placeholder="Selecciona un mes"
+              onChange={handleMonthChange}
+            >
+              {monthsOptions.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
 
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Vendedor
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                <div className="flex flex-col items-center gap-2">
-                  <FilterSelect
-                    options={stateOptions}
-                    placeholder="Estado"
-                    onChange={handleStateFilterChange}
-                  />
-                </div>
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Acción
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredOrders.map((order, index) => (
-              <DirectOrdersRow
-                key={index}
-                id={order.id}
-                name={order?.client?.name || "Sin nombre"}
-                orderId={order.id}
-                date={order.sellDate ? formatDate(order.sellDate) : "Sin fecha"}
-                seller={order?.user?.userInfo?.fullName}
-                state={order.status}
-                deleteIconSrc={deleteIcon}
-                onDeleteClick={() => openConfirmDeleteModal(order.id)}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="flex justify-center p-6">
+          <table className="mt-2 w-full">
+            <thead>
+              <tr>
+                <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  Empresa
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  ID de orden
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Fecha
+                </th>
+
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Vendedor
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <div className="flex flex-col items-center gap-2">
+                    <FilterSelect
+                      options={stateOptions}
+                      placeholder="Estado"
+                      onChange={handleStateFilterChange}
+                    />
+                  </div>
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Acción
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredOrders.map((order, index) => (
+                <DirectOrdersRow
+                  key={index}
+                  id={order.id}
+                  name={order?.client?.name || "Sin nombre"}
+                  orderId={order.id}
+                  date={
+                    order.sellDate ? formatDate(order.sellDate) : "Sin fecha"
+                  }
+                  seller={order?.user?.userInfo?.fullName}
+                  state={order.status}
+                  deleteIconSrc={deleteIcon}
+                  onDeleteClick={() => openConfirmDeleteModal(order.id)}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <div
+        className={
+          ordersResponse.length === 0 ? "hidden" : `flex justify-center p-6`
+        }
+      >
         <Pagination
           pageIndex={setItemsPerPage}
           currentPage={page}

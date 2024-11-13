@@ -169,6 +169,8 @@ const RechargeDataPage = () => {
                 placeholder={"12344"}
                 disabled
               />
+            </div>
+            <div className="w-[49.8%] space-x-2">
               <Input
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
@@ -179,9 +181,7 @@ const RechargeDataPage = () => {
               />
             </div>
             <div className="flex space-x-2">
-              <Input label={"N° UNIT actual"} placeholder={"1234566"} />
-              <span className="-mt-3 flex w-full items-center">
-                {" "}
+              <span className="-mt-2 flex w-full items-center">
                 <div className="flex w-full flex-col">
                   <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                     Fecha ensayo
@@ -197,41 +197,39 @@ const RechargeDataPage = () => {
                   </Select>
                 </div>
               </span>
+              <Input label={"N° UNIT actual"} placeholder={"1234566"} />
             </div>
             <div className="flex space-x-2">
               <div className="flex w-1/2 flex-col">
-                <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
-                  Producto
-                </span>
-                <Select
-                  placeholder="Polvo"
-                  className="max-w rounded-lg border font-roboto font-medium"
-                >
-                  {productsOptions.map((product) => (
-                    <SelectItem key={product.key}>{product}</SelectItem>
-                  ))}
-                </Select>
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Tipo"}
+                  placeholder={"Polvo PA"}
+                  disabled
+                />
               </div>
-              <div className="mt-5 flex w-1/2 items-center space-x-2">
-                <div className="flex w-1/2 flex-col">
-                  <Select
-                    placeholder="Subproducto"
-                    className="max-w rounded-lg border font-roboto font-medium"
-                  >
-                    {productsOptions.map((product) => (
-                      <SelectItem key={product.key}>{product}</SelectItem>
-                    ))}
-                  </Select>
-                </div>
-                <div className="flex w-1/2 flex-col">
-                  <Select
-                    placeholder="Color"
-                    className="max-w rounded-lg border font-roboto font-medium"
-                  >
-                    {productsOptions.map((product) => (
-                      <SelectItem key={product.key}>{product}</SelectItem>
-                    ))}
-                  </Select>
+              <div className="flex w-1/2 items-center space-x-2">
+                <div className="flex w-full flex-col">
+                  <Input
+                    label={"Color"}
+                    placeholder={"Escribir..."}
+                    {...register("color", {
+                      required: "Este campo es obligatorio",
+                      minLength: {
+                        value: 2,
+                        message:
+                          "El nombre debe contener al menos 2 caracteres.",
+                      },
+                      maxLength: {
+                        value: 50,
+                        message:
+                          "El nombre no puede exceder los 50 caracteres.",
+                      },
+                    })}
+                    msjError={errors.client ? errors.client.message : ""}
+                  />
                 </div>
               </div>
             </div>

@@ -1,15 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import watchIcon from "../assets/icons/watch.svg";
+
+import { Select, SelectItem } from "@nextui-org/select";
+import { useEffect, useState } from "react";
+import usePutOrders from "../hooks/orders/usePutOrders";
+import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 const translateState = (state) => {
   switch (state) {
-    case "POTENTIAL":
-      return "Potencial";
-    case "UNSUBSCRIBED":
-      return "De baja";
-    case "FRECUENT":
-      return "Frecuente";
-    case "COMPETENCE":
-      return "Competencia";
+    case "REQUEST":
+      return "Solicitado";
+    case "PREPARATION":
+      return "En preparación";
+    case "READY_PICKUP":
+      return "Listo para retirar";
+    case "EGRESS":
+      return "Egreso";
     default:
       return state;
   }
@@ -27,13 +31,52 @@ const StorageRow = ({
   onEditClick,
 }) => {
   const navigate = useNavigate();
+  const { changedOrder, isLoading } = usePutOrders();
+  const { getOneOrder, setModified } = useGetOneOrder(id);
+
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [selectedState, setSelectedState] = useState(orderDetails?.status);
+
   const handleRowClick = () => {
     navigate(`/inicio/taller/deposito`);
   };
+  const stateOptions = [
+    "Solicitado",
+    "En preparación",
+    "Listo para retirar",
+    "Egreso",
+  ];
+
+  const handleStateChange = async (e) => {
+    const translateState = (state) => {
+      switch (state) {
+        case "Solicitado":
+          return "REQUEST";
+        case "En preparación":
+          return "PREPARATION";
+        case "Listo para retirar":
+          return "READY_PICKUP";
+        case "Egreso":
+          return "EGRESS";
+        default:
+          return state;
+      }
+    };
+    const newStatus = translateState(e.target.value);
+    setSelectedState(newStatus);
+    await changedOrder({ status: newStatus }, orderDetails.id, setModified);
+  };
+  const oneOrder = async (id) => {
+    const newdatos = await getOneOrder(id);
+    setOrderDetails(newdatos);
+  };
+  useEffect(() => {
+    oneOrder(id);
+  }, [id]);
+
   return (
     <tr className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray">
-      <div className="flex">
-      
+      <div className="mt-2 flex">
         <td
           className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
           onClick={handleRowClick}
@@ -68,7 +111,19 @@ const StorageRow = ({
         className="p-2 text-md font-semibold leading-[1.16rem]"
         onClick={handleRowClick}
       >
-        {translateState(state)}
+        <Select
+          className="mb-4 rounded-lg border"
+          placeholder={translateState(orderDetails?.status)}
+          value={translateState(stateOptions)}
+          onChange={handleStateChange}
+          disabled={isLoading}
+        >
+          {stateOptions.map((option) => (
+            <SelectItem key={option} value={option}>
+              {option}
+            </SelectItem>
+          ))}
+        </Select>
       </td>
       <td className="p-2">
         <div className="flex justify-center gap-4">

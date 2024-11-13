@@ -185,7 +185,7 @@ const CompetingPage = ({
     <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div className="flex justify-center">
         {companiesResponse.length === 0 ? (
-          <tr>
+          <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
             <td colSpan="5" className="p-4 text-center">
               <p className="text-md font-semibold leading-[1.3rem] text-black_l">
                 Ningún elemento coincide con tu búsqueda, inténtalo de nuevo.{" "}
