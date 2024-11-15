@@ -22,39 +22,39 @@ const RouteRow = ({
       <>
         <td
           onClick={handleRowClick}
-          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap py-6 text-left"
           title={name}
         >
           {name}
         </td>
         <td
           onClick={handleRowClick}
-          className="max-w-[10rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="max-w-[10rem] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap py-6"
           title={zone}
         >
           {zone}
         </td>
         <td
           onClick={handleRowClick}
-          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap py-6"
           title={companies}
         >
           {companies}
         </td>
         <td
           onClick={handleRowClick}
-          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap py-6"
           title={sellers}
         >
           {sellers}
         </td>
 
-        <td className="p-2 text-center text-md leading-[1.16rem]">
+        <td className="py-6 text-center text-md leading-[1.16rem]">
           {state ? "Activo" : "Inactivo"}
         </td>
       </>
 
-      <td className="p-2">
+      <td className="py-6">
         <div className="flex justify-center gap-4">
           <img
             src={editIconSrc}

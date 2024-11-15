@@ -20,7 +20,7 @@ const translateState = (state) => {
 
 const parseDate = (dateString) => {
   const [day, month, year] = dateString.split("/").map(Number);
-  return new Date(year, month - 1, day); // Se asume que 'aa' es del siglo XXI
+  return new Date(year, month - 1, day);
 };
 
 const CompanieRow = ({
@@ -42,63 +42,60 @@ const CompanieRow = ({
   const [msjIcon, setMsjIcon] = useState(null);
 
   useEffect(() => {
-    const today = new Date(); // Fecha actual
-    const visitDate = parseDate(nextVisits); // Fecha convertida
+    const today = new Date();
+    const visitDate = parseDate(nextVisits);
     console.log(visitDate);
 
-    // Cálculo de la diferencia en meses
     const diffInDays = (visitDate, today) => {
-      const msPerDay = 1000 * 60 * 60 * 24; // Milisegundos en un día
-      const diffInMs = visitDate - today; // Diferencia en milisegundos
-      return Math.floor(diffInMs / msPerDay); // Convertir a días y redondear hacia abajo
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const diffInMs = visitDate - today;
+      return Math.floor(diffInMs / msPerDay);
     };
     const result = diffInDays(visitDate, today);
-
-    // Selección de la imagen según la diferencia en meses
     if (result <= 30) {
-      setIcon(watchIcon); // Menos de 1 mes
+      setIcon(watchIcon);
       setMsjIcon("Cliente próximo a vencer");
     } else if (result <= 60) {
-      setIcon(watchIcon2); // 2 meses
+      setIcon(watchIcon2);
       setMsjIcon("Vencimiento en 2 meses");
     } else {
-      setIcon(watchIcon3); // No se muestra ninguna imagen si supera 3 meses
+      setIcon(watchIcon3);
       setMsjIcon("Vencimiento en mas de 2 meses");
     }
-  }, [nextVisits]); // Se ejecuta cada vez que `nextVisit` cambie
+  }, [nextVisits]);
   return (
     <tr className="border-b border-gray text-center">
       <div className="flex">
         {icon && <img src={icon} alt="watch icon" title={msjIcon} />}
         <td
-          className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap py-6"
           title={name}
         >
           {name}
         </td>
       </div>
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={departament}
       >
         {departament}
       </td>
       <td
-        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={direction}
       >
         {direction}
       </td>
-      <td onClick={onClick} className="cursor-pointer p-2 underline">
+      <td onClick={onClick} className="cursor-pointer py-6 underline">
         {sellers}
       </td>
 
-      <td className="p-2">{nextVisits}</td>
+      <td className="py-6">{nextVisits}</td>
 
-      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+      <td className="py-6 text-md font-semibold leading-[1.16rem]">
         {translateState(state)}
       </td>
-      <td className="p-2">
+      <td className="py-6">
         <div className="flex justify-center gap-4">
           <Link to={`notas/${id}`}>
             <img

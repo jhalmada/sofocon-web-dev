@@ -164,7 +164,7 @@ const UsersPage = () => {
         <div className="flex items-center">
           <div className="flex">
             <h2
-              className={`w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               {name}
             </h2>

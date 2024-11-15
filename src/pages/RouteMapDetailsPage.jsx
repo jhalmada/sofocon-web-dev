@@ -277,19 +277,19 @@ const RouteMapDetailsPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(MAP_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === MAP_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === MAP_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Mapa
             </h2>
             <h2
               onClick={() => setActiveTab(SELLERS_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Vendedores
             </h2>
             <h2
               onClick={() => setActiveTab(COMPANIES_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === COMPANIES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === COMPANIES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Empresas
             </h2>

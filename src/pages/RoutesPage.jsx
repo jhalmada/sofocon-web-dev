@@ -153,7 +153,7 @@ const RoutesPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(SELLER_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLER_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === SELLER_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listado
             </h2>

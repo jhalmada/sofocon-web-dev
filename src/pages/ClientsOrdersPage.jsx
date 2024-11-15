@@ -23,9 +23,6 @@ const ClientsOrdersPage = () => {
   const { getOneOrder, setModified } = useGetOneOrder(id);
   const { changedOrder, isLoading } = usePutOrders();
 
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
-
   const [orderDetails, setOrderDetails] = useState(null);
   const [selectedState, setSelectedState] = useState(orderDetails?.status);
   const [subTotal, setSubTotal] = useState(0);
@@ -37,7 +34,7 @@ const ClientsOrdersPage = () => {
   const stateOptions = [
     "Solicitado",
     "En preparación",
-    "Listo para retirar",
+    "Para retirar",
     "Egreso",
   ];
   const formatDate = (dateString) => {
@@ -56,7 +53,7 @@ const ClientsOrdersPage = () => {
       case "PREPARATION":
         return "En preparación";
       case "READY_PICKUP":
-        return "Listo para retirar";
+        return "Para retirar";
       case "EGRESS":
         return "Egreso";
       default:
@@ -100,7 +97,7 @@ const ClientsOrdersPage = () => {
           return "REQUEST";
         case "En preparación":
           return "PREPARATION";
-        case "Listo para retirar":
+        case "Para retirar":
           return "READY_PICKUP";
         case "Egreso":
           return "EGRESS";
@@ -134,7 +131,7 @@ const ClientsOrdersPage = () => {
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
-            <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
+            <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
               Detalle
             </span>
           </div>

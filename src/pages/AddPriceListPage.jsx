@@ -90,7 +90,7 @@ const AddPriceListPage = () => {
         <div className="flex max-h-[57px] items-center justify-between">
           <div className="flex">
             <h2
-              className={`w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Nueva Lista
             </h2>

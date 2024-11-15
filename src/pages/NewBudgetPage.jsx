@@ -92,9 +92,9 @@ const NewBudgetPage = () => {
       isRecharge,
       barCode,
       enrollment,
-      factoryUnit,
+      fabricUNIT,
       status,
-      actualUnit,
+      numberUNIT,
       paymentType,
     } = budgetData;
     try {
@@ -117,9 +117,9 @@ const NewBudgetPage = () => {
         isRecharge,
         barCode,
         enrollment,
-        factoryUnit,
+        fabricUNIT,
         status,
-        actualUnit,
+        numberUNIT,
         paymentType: paymentType ? paymentType : "",
 
         sellDate: formattedDate,
@@ -271,7 +271,7 @@ const NewBudgetPage = () => {
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
-            <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
+            <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
               Detalle
             </span>
           </div>
@@ -623,12 +623,12 @@ const NewBudgetPage = () => {
                           placeholder={"123455"}
                           bg="bg-white"
                           {...register(
-                            `productInOrder[${index}].ItemsRemoval[${index}].factoryUnit`,
+                            `productInOrder[${index}].ItemsRemoval[${index}].fabricUNIT`,
                             {
                               required: "Este campo es obligatorio",
                             },
                           )}
-                          msjError={errors.factoryUnit?.message || ""}
+                          msjError={errors.fabricUNIT?.message || ""}
                         />
                       </div>
                       <div className="flex w-full space-x-2">
@@ -659,12 +659,12 @@ const NewBudgetPage = () => {
                           placeholder={"123455"}
                           bg="bg-white"
                           {...register(
-                            `productInOrder[${index}].ItemsRemoval[${index}].actualUnit`,
+                            `productInOrder[${index}].ItemsRemoval[${index}].numberUNIT`,
                             {
                               required: "Este campo es obligatorio",
                             },
                           )}
-                          msjError={errors.actualUnit?.message || ""}
+                          msjError={errors.numberUNIT?.message || ""}
                         />
                       </div>
                     </div>
