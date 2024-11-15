@@ -95,7 +95,7 @@ const BudgetDataPage = () => {
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
-            <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
+            <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
               Detalle
             </span>
           </div>
@@ -184,17 +184,6 @@ const BudgetDataPage = () => {
                     border="none"
                     disabled
                   />
-                  <div className="w-full">
-                    <Input
-                      type="number"
-                      label="Recarga"
-                      placeholder={order.isRecharge === true ? "Si" : "No"}
-                      bg="bg-gray"
-                      placeholderColor="placeholder-black_b"
-                      border="none"
-                      disabled
-                    />
-                  </div>
                 </div>
               </div>
             ))}

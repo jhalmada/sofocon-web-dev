@@ -22,7 +22,6 @@ const DirectOrdersPage = ({
   const [orderId, setOrderId] = useState(null);
 
   const { deleteOrder } = useDeleteOrders();
-
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(null);
 
@@ -56,13 +55,7 @@ const DirectOrdersPage = ({
     return orderMonthIndex === selectedMonthIndex;
   });
 
-  const stateOptions = [
-    "Solicitado",
-    "En preparación",
-    "Para retirar",
-    "Egreso",
-    "Entregado",
-  ];
+  const stateOptions = ["Egreso", "Entregado"];
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -83,20 +76,13 @@ const DirectOrdersPage = ({
     deleteOrder(orderId, setModified);
     closeConfirmDeleteModal();
   };
+
   const handleMonthChange = (e) => {
     setSelectedMonth(e.target.value);
   };
 
   const handleStateFilterChange = (value) => {
     switch (value) {
-      case "Solicitado":
-        setStatus("REQUEST");
-        setPage(0);
-        break;
-      case "En preparación":
-        setStatus("PREPARATION");
-        setPage(0);
-        break;
       case "Para retirar":
         setStatus("READY_PICKUP");
         setPage(0);
@@ -109,7 +95,6 @@ const DirectOrdersPage = ({
         setStatus("DELIVERED");
         setPage(0);
         break;
-
       default:
         setStatus("");
         setPage(0);

@@ -227,19 +227,19 @@ const UsersPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(USER_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Usuarios
             </h2>
             <h2
               onClick={() => setActiveTab(SELLERS_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Vendedores
             </h2>
             <h2
               onClick={() => setActiveTab(ROLES_TAB)}
-              className={`${activeTab === ROLES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === ROLES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} min-w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Roles
             </h2>

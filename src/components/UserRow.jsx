@@ -12,13 +12,13 @@ const UserRow = ({
 }) => {
   return (
     <tr className="border-b border-gray text-center">
-      <td className="p-2 text-left">{fullName}</td>
-      <td className="p-2">{email}</td>
-      <td className="p-2">{role}</td>
-      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+      <td className="py-6 text-left">{fullName}</td>
+      <td className="py-6">{email}</td>
+      <td className="py-6">{role}</td>
+      <td className="py-6 text-md font-semibold leading-[1.16rem]">
         {state ? "Activo" : "Inactivo"}
       </td>
-      <td className="p-2">
+      <td className="py-6">
         <div className="flex justify-center gap-4">
           <img
             src={editIconSrc}

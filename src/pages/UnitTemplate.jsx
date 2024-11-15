@@ -8,7 +8,6 @@ import { Select, SelectItem } from "@nextui-org/select";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { useForm } from "react-hook-form";
-import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
 import DownloadIcon from "../assets/icons/download.svg";
@@ -18,12 +17,13 @@ import {
   getClientsExcel,
   getClientsPdf,
 } from "../services/companies/companies.routes.js";
+import useOrders from "../hooks/orders/useOrders.js";
 const UnitTemplate = () => {
   const { changedSellerRoute } = usePutSellerRoute();
   const { deleteSellerRoute } = useDeleteSellerRoute();
-  const [routeId, setRouteId] = useState(null);
+
   const {
-    sellerRoutesResponse,
+    ordersResponse,
     setItemsPerPage,
     totalPage,
     total,
@@ -31,9 +31,8 @@ const UnitTemplate = () => {
     page,
     itemsPerPage,
     setModified,
-    setIsActive,
     setSearch,
-  } = useSellerRoutes();
+  } = useOrders();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -41,6 +40,8 @@ const UnitTemplate = () => {
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [routeId, setRouteId] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
   const {
     control,
     register,
@@ -63,6 +64,15 @@ const UnitTemplate = () => {
     "Noviembre",
     "Diciembre",
   ];
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${day}/${month}/${year}`;
+  };
 
   const closeModal = () => {
     setIsExportModalOpen(false);
@@ -88,6 +98,9 @@ const UnitTemplate = () => {
     closeConfirmCancelModal();
     closeModal();
   };
+  const handleMonthChange = (e) => {
+    setSelectedMonth(e.target.value);
+  };
   const openExportModal = () => {
     setIsExportModalOpen(true);
   };
@@ -108,6 +121,21 @@ const UnitTemplate = () => {
       setIsModalOpen(true);
     }
   };
+  const filteredOrders = ordersResponse.filter((order) => {
+    if (!order.sellDate) {
+      return false;
+    }
+    const orderDate = new Date(order.sellDate);
+    if (isNaN(orderDate.getTime())) {
+      return false;
+    }
+    if (!selectedMonth) {
+      return true;
+    }
+    const orderMonthIndex = orderDate.getMonth();
+    const selectedMonthIndex = monthsOptions.indexOf(selectedMonth);
+    return orderMonthIndex === selectedMonthIndex;
+  });
 
   const stringToBoolean = (str) => JSON.parse(str);
   const onSubmit = (data) => {
@@ -119,6 +147,7 @@ const UnitTemplate = () => {
     };
     handleRouteCreation(sellerData);
   };
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
       <div className="flex flex-grow flex-col p-6">
@@ -143,7 +172,7 @@ const UnitTemplate = () => {
         <div className="flex items-center">
           <div className="flex">
             <h2
-              className={`w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Planilla UNIT
             </h2>
@@ -167,11 +196,13 @@ const UnitTemplate = () => {
               <p className="ml-2 text-black_m">Período</p>
               <Select
                 className="w-52 rounded-lg border"
-                placeholder="OCTUBRE 2024 "
-                onSelectionChange={(values) => setValue("period", values)}
+                placeholder="Selecciona un mes"
+                onChange={handleMonthChange}
               >
                 {monthsOptions.map((option) => (
-                  <SelectItem key={option}>{option}</SelectItem>
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
                 ))}
               </Select>
             </div>
@@ -179,7 +210,6 @@ const UnitTemplate = () => {
               <thead>
                 <tr>
                   <th></th>
-
                   <th className="text-center text-md font-semibold leading-[1.125rem]">
                     Empresa
                   </th>
@@ -195,64 +225,84 @@ const UnitTemplate = () => {
                   </th>
                 </tr>
                 <tr>
-                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray p-2 text-left text-md font-semibold leading-[1.125rem]">
                     Fecha ing.
                   </th>
-                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Nombre
                   </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Dirección
                   </th>
-                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Tipo
                   </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Mar./Color
                   </th>
-                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Cap.(kg/l)
                   </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Fabr.
                   </th>
-                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Actual
                   </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Matrícula
                   </th>
-                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Ensayo
                   </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Presión (MPa)
                   </th>
-                  <th className="bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Exp. Rem. (%)
                   </th>
-                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Baja
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <UnitTemplateRow
-                  id={""}
-                  entryDate={"12/07/2024"}
-                  name={"Nombre"}
-                  direction={"Calle 123"}
-                  type={"A"}
-                  color={"AB"}
-                  capacity={"4"}
-                  factory={"Si"}
-                  current={"1234"}
-                  registration={"N12345"}
-                  trial={"12/24"}
-                  pressure={"34"}
-                  exp={"1,3"}
-                  discontinued={"No"}
-                />
+                {filteredOrders.map((order, index) => (
+                  <UnitTemplateRow
+                    key={index}
+                    id={order.id}
+                    entryDate={formatDate(order.workShopDateEntry)}
+                    name={order?.client?.name || "Sin nombre"}
+                    direction={order?.client?.address}
+                    type={order?.productInOrder[index]?.product?.type}
+                    color={order?.productInOrder[index]?.product?.color}
+                    capacity={
+                      order?.productInOrder[index]?.itemsRemoval[index]?.product
+                        ?.capacity
+                    }
+                    factory={"Si"}
+                    current={
+                      order.productInOrder[index]?.itemsRemoval[index]
+                        ?.numberUNIT
+                    }
+                    registration={
+                      order.productInOrder[index]?.itemsRemoval[index]
+                        ?.enrollment
+                    }
+                    trial={
+                      order.productInOrder[index]?.itemsRemoval[index]?.lastDate
+                    }
+                    pressure={
+                      order?.productInOrder[index]?.itemsRemoval[index]?.product
+                        ?.pressure
+                    }
+                    exp={
+                      order?.productInOrder[index]?.itemsRemoval[index]?.product
+                        ?.expansion
+                    }
+                    discontinued={"No"}
+                  />
+                ))}
               </tbody>
             </table>
           </div>

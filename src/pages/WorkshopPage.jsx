@@ -5,7 +5,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
 import SearchInput from "../components/inputs/SearchInput";
-import cameraIcon from "../assets/icons/camera.svg";
+import barCodeIcon from "../assets/icons/barCode.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import x from "../assets/icons/x.svg";
@@ -40,6 +40,7 @@ const WorkshopPage = () => {
     page,
     itemsPerPage,
     setModified,
+    setOrderType,
     setStatus,
     setSearch: setSearchOrders,
   } = useOrders();
@@ -65,13 +66,7 @@ const WorkshopPage = () => {
     useState(false);
   const [openScannerModal, setOpenScannerModal] = useState(false);
 
-  const stateOptions = [
-    "Solicitado",
-    "En preparación",
-    "Para retirar",
-    "Egreso",
-    "Entregado",
-  ];
+  const stateOptions = ["Solicitado", "En preparación", "Para retirar"];
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -261,7 +256,7 @@ const WorkshopPage = () => {
                 <Button
                   text="Escanear producto"
                   color={"save"}
-                  icon={cameraIcon}
+                  icon={barCodeIcon}
                   onClick={() => setOpenScannerModal(true)}
                 />
               </div>
@@ -285,7 +280,7 @@ const WorkshopPage = () => {
                 <td colSpan="5" className="p-4 text-center">
                   <p className="text-md font-semibold leading-[1.3rem] text-black_l">
                     Ningún elemento coincide con tu búsqueda, inténtalo de
-                    nuevo. <br /> Puedes encontrar a las Solicitudes creadas
+                    nuevo. <br /> Puedes encontrar a las solicitudes creadas
                     aquí.
                   </p>
                   <img
@@ -346,6 +341,8 @@ const WorkshopPage = () => {
                       </th>
                     </tr>
                   </thead>
+
+                  {console.log(ordersResponse)}
                   <tbody>
                     {filteredOrders.map((order, index) => (
                       <RechargeRow
@@ -507,7 +504,7 @@ const WorkshopPage = () => {
                                 <Link to={"/inicio"}>
                                   <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
                                     <img
-                                      src={cameraIcon}
+                                      src={barCodeIcon}
                                       alt=""
                                       className="h-5 w-5"
                                     />
@@ -533,12 +530,12 @@ const WorkshopPage = () => {
                                 placeholder={"123455"}
                                 bg="bg-white"
                                 {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].factoryUnit`,
+                                  `productInOrder[${index}].ItemsRemoval[${index}].fabricUNIT`,
                                   {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.factoryUnit?.message || ""}
+                                msjError={errors.fabricUNIT?.message || ""}
                               />
                             </div>
                           </div>

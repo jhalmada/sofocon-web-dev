@@ -37,29 +37,29 @@ const CompetingRow = ({
           title="Cliente próximo a vencer"
         />
         <td
-          className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+          className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
           title={name}
         >
           {name}
         </td>
       </div>
       <td
-        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={direction}
       >
         {direction}
       </td>
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={currentCompany}
       >
         {currentCompany}
       </td>
-      <td className="p-2">{nextVisits}</td>
-      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+      <td className="py-6">{nextVisits}</td>
+      <td className="py-6 text-md font-semibold leading-[1.16rem]">
         {translateState(state)}
       </td>
-      <td className="p-2">
+      <td className="py-6">
         <div className="flex justify-center gap-4">
           <Link to={`notas/${id}`}>
             <img

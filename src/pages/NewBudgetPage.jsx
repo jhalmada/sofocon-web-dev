@@ -89,12 +89,11 @@ const NewBudgetPage = () => {
       productInOrder,
       ItemsRemoval,
       discountPercent,
-      isRecharge,
       barCode,
       enrollment,
-      factoryUnit,
+      fabricUNIT,
       status,
-      actualUnit,
+      numberUNIT,
       paymentType,
     } = budgetData;
     try {
@@ -114,12 +113,11 @@ const NewBudgetPage = () => {
         productInOrder,
         ItemsRemoval,
         discountPercent: discountPercent ? discountPercent : 0,
-        isRecharge,
         barCode,
         enrollment,
-        factoryUnit,
+        fabricUNIT,
         status,
-        actualUnit,
+        numberUNIT,
         paymentType: paymentType ? paymentType : "",
 
         sellDate: formattedDate,
@@ -194,14 +192,6 @@ const NewBudgetPage = () => {
     }
   };
 
-  const handleSelectionChange = (id, value) => {
-    const selectedValue = value.anchorKey === "true" ? true : false;
-    setRecharged((prev) => ({
-      ...prev,
-      [id]: selectedValue,
-    }));
-  };
-
   const handleSelectionListChange = (value) => {
     const selectedValue = value.anchorKey;
     setList(selectedValue);
@@ -271,7 +261,7 @@ const NewBudgetPage = () => {
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
-            <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
+            <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
               Detalle
             </span>
           </div>
@@ -315,7 +305,19 @@ const NewBudgetPage = () => {
                   <Controller
                     name="client"
                     control={control}
-                    rules={{ required: "Este campo es obligatorio" }}
+                    rules={{
+                      required: "Este campo es obligatorio",
+                      minLength: {
+                        value: 2,
+                        message:
+                          "El nombre debe contener al menos 2 caracteres.",
+                      },
+                      maxLength: {
+                        value: 50,
+                        message:
+                          "El nombre no puede exceder los 50 caracteres.",
+                      },
+                    }}
                     render={({ field }) => (
                       <CompleteSearchInput
                         label={"Empresa"}
@@ -356,6 +358,7 @@ const NewBudgetPage = () => {
                   msjError={errors.rut ? errors.rut.message : ""}
                 />
                 <Input
+                  type="number"
                   label={"Contacto"}
                   placeholder={"Escribir..."}
                   onChange={handleWritePhone}
@@ -541,23 +544,6 @@ const NewBudgetPage = () => {
                               ?.message || ""
                           }
                         />
-                        <div className="w-full">
-                          <label className="block text-sm font-light">
-                            Recarga
-                          </label>
-                          <Select
-                            defaultValue={false}
-                            className="rounded-lg border"
-                            placeholder={recharged[item.id] ? "Si" : "No"}
-                            {...register(`productInOrder[${index}].isRecharge`)}
-                            onSelectionChange={(value) =>
-                              handleSelectionChange(item.id, value)
-                            }
-                          >
-                            <SelectItem key={true}>Si</SelectItem>
-                            <SelectItem key={false}>No</SelectItem>
-                          </Select>
-                        </div>
                       </div>
                     </div>
                   ))}
@@ -623,12 +609,12 @@ const NewBudgetPage = () => {
                           placeholder={"123455"}
                           bg="bg-white"
                           {...register(
-                            `productInOrder[${index}].ItemsRemoval[${index}].factoryUnit`,
+                            `productInOrder[${index}].ItemsRemoval[${index}].fabricUNIT`,
                             {
                               required: "Este campo es obligatorio",
                             },
                           )}
-                          msjError={errors.factoryUnit?.message || ""}
+                          msjError={errors.fabricUNIT?.message || ""}
                         />
                       </div>
                       <div className="flex w-full space-x-2">
@@ -659,12 +645,12 @@ const NewBudgetPage = () => {
                           placeholder={"123455"}
                           bg="bg-white"
                           {...register(
-                            `productInOrder[${index}].ItemsRemoval[${index}].actualUnit`,
+                            `productInOrder[${index}].ItemsRemoval[${index}].numberUNIT`,
                             {
                               required: "Este campo es obligatorio",
                             },
                           )}
-                          msjError={errors.actualUnit?.message || ""}
+                          msjError={errors.numberUNIT?.message || ""}
                         />
                       </div>
                     </div>

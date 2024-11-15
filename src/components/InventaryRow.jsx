@@ -11,10 +11,10 @@ const InventaryRow = ({
 }) => {
   return (
     <tr className="border-b border-gray text-center">
-      <td className="p-2 text-left">{name}</td>
-      <td className="p-2">{description}</td>
-      <td className="p-2">{stock}</td>
-      <td className="p-2">
+      <td className="py-6 text-left">{name}</td>
+      <td className="py-6">{description}</td>
+      <td className="py-6">{stock}</td>
+      <td className="py-6">
         <div className="flex justify-center gap-4">
           <img
             src={editIconSrc}

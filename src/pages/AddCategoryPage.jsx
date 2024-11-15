@@ -102,7 +102,7 @@ const AddCategoryPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(NOTES_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white" : "bg-gray"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Nueva categoría
             </h2>

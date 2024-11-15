@@ -26,28 +26,28 @@ const RouteCompanieDetailsRow = ({
   return (
     <tr className="border-b border-gray text-center">
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6 text-left"
         title={name}
       >
         {name}
       </td>
 
       <td
-        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={direction}
       >
         {direction}
       </td>
 
-      <td className="p-2">{nextVisits}</td>
+      <td className="py-6">{nextVisits}</td>
 
-      <td className="p-2 text-md font-semibold leading-[1.16rem]">
+      <td className="py-6 text-md font-semibold leading-[1.16rem]">
         {translateState(state)}
       </td>
       <Link to={`/inicio/empresas/notas/${id}`}>
-        <td className="p-2 underline">{notes}</td>
+        <td className="py-6 underline">{notes}</td>
       </Link>
-      <td className="p-2">
+      <td className="py-6">
         <div className="flex justify-center">
           <img
             src={deleteIconSrc}

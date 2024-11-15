@@ -31,49 +31,43 @@ const DirectOrdersRow = ({
   const handleRowClick = () => {
     navigate(`/inicio/ordenes/ordenes-clientes/${id}`);
   };
-  const options = [
-    "Solicitado",
-    "En preparación",
-    "Listo para retirar",
-    "Egreso",
-  ];
+
   return (
     <tr className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray">
-      <div className="mt-2 flex">
-        <td
-          className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
-          onClick={handleRowClick}
-          title={name}
-        >
-          {name}
-        </td>
-      </div>
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6 text-left"
+        onClick={handleRowClick}
+        title={name}
+      >
+        {name}
+      </td>
+
+      <td
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
         onClick={handleRowClick}
         title={orderId}
       >
         {orderId}
       </td>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap py-6"
         onClick={handleRowClick}
         title={date}
       >
         {date}
       </td>
 
-      <td className="p-2" onClick={handleRowClick}>
+      <td className="py-6" onClick={handleRowClick}>
         {seller}
       </td>
 
       <td
-        className="p-2 text-md font-semibold leading-[1.16rem]"
+        className="py-6 text-md font-semibold leading-[1.16rem]"
         onClick={handleRowClick}
       >
         {translateState(state)}
       </td>
-      <td className="p-2">
+      <td className="py-6">
         <div className="flex justify-center">
           <img
             src={deleteIconSrc}
