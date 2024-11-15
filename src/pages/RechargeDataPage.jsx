@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import barCodeIcon from "../assets/icons/barCode.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import { Checkbox } from "@nextui-org/react";
+import useAddProducts from "../hooks/products/useAddProducts";
 
 const RechargeDataPage = () => {
   const {
@@ -22,6 +23,7 @@ const RechargeDataPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { getOneOrder, setModified } = useGetOneOrder(id);
+  const { postAddProducts } = useAddProducts();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -49,9 +51,42 @@ const RechargeDataPage = () => {
     "Diciembre",
   ];
 
-  const onSubmit = () => {
-    navigate("/inicio/taller/recarga");
+  const handleDetailsCreation = async (ProductData) => {
+    const {
+      productInOrder,
+      itemsRemoval,
+      newUNIT,
+      color,
+      pressure,
+      expansion,
+    } = ProductData;
+    try {
+      const newProductDetails = await postAddProducts({
+        productInOrder,
+        itemsRemoval,
+        newUNIT,
+        color,
+        pressure,
+        expansion,
+      });
+
+      if (newProductDetails) {
+        setSaveConfirmationModalOpen(true);
+      } else {
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error al crear los detalles de la órden", error);
+    }
   };
+
+  const onSubmit = (data) => {
+    handleDetailsCreation({
+      ...data,
+    });
+    navigate(`/inicio/taller/recarga/${id}`);
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -95,6 +130,7 @@ const RechargeDataPage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="flex-grow rounded-tr-lg bg-white px-14 py-10"
         >
+          {console.log(orderDetails?.productInOrder)}
           {orderDetails?.productInOrder?.map((order, index) => (
             <div key={order.id}>
               <Select
@@ -102,6 +138,15 @@ const RechargeDataPage = () => {
                 label="Estado del extintor"
                 labelPlacement="outside"
                 placeholder="Estado"
+                {...register(
+                  `${order[index]}.ItemsRemoval[${index}].removalStatus`,
+                )}
+                onSelectionChange={(values) =>
+                  setValue(
+                    `${order[index]}.ItemsRemoval[${index}].removalStatus`,
+                    values,
+                  )
+                }
               >
                 {stateOptions.map((option) => (
                   <SelectItem key={option} value={option}>
@@ -109,15 +154,6 @@ const RechargeDataPage = () => {
                   </SelectItem>
                 ))}
               </Select>
-              <Checkbox
-                radius="full"
-                className="mb-2"
-                size="sm"
-                isSelected={isEditable}
-                onChange={() => setIsEditable(!isEditable)}
-              >
-                Editar código de barras
-              </Checkbox>
 
               {isEditable ? (
                 <div className="flex space-x-2">
@@ -150,7 +186,15 @@ const RechargeDataPage = () => {
                   disabled
                 />
               )}
-
+              <Checkbox
+                radius="full"
+                className="mb-2"
+                size="sm"
+                isSelected={isEditable}
+                onChange={() => setIsEditable(!isEditable)}
+              >
+                Modificar código de barras
+              </Checkbox>
               <div className="flex space-x-2">
                 <Input
                   bg="bg-gray"
@@ -205,13 +249,13 @@ const RechargeDataPage = () => {
                     </span>
                     <Select
                       className="rounded-lg border"
-                      placeholder="MM/AA"
+                      placeholder="Mes"
                       {...register(
-                        `${order[index]}.ItemsRemoval[${index}].lastDate`,
+                        `${order[index]}.ItemsRemoval[${index}].testDate`,
                       )}
                       onSelectionChange={(values) =>
                         setValue(
-                          `${order[index]}.ItemsRemoval[${index}].lastDate`,
+                          `${order[index]}.ItemsRemoval[${index}].testDate`,
                           values,
                         )
                       }

@@ -76,13 +76,7 @@ const OrdersPage = () => {
     return orderMonthIndex === selectedMonthIndex;
   });
 
-  const stateOptions = [
-    "Solicitado",
-    "En preparación",
-    "Para retirar",
-    "Egreso",
-    "Entregado",
-  ];
+  const stateOptions = ["Egreso", "Entregado"];
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);

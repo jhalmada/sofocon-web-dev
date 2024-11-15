@@ -184,17 +184,6 @@ const BudgetDataPage = () => {
                     border="none"
                     disabled
                   />
-                  <div className="w-full">
-                    <Input
-                      type="number"
-                      label="Recarga"
-                      placeholder={order.isRecharge === true ? "Si" : "No"}
-                      bg="bg-gray"
-                      placeholderColor="placeholder-black_b"
-                      border="none"
-                      disabled
-                    />
-                  </div>
                 </div>
               </div>
             ))}

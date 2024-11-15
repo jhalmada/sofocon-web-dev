@@ -199,10 +199,18 @@ const NewSalePage = () => {
     }));
   };
   const handleSelectionPaymentChange = (value) => {
-    const selectedValue =
-      value.anchorKey === "Efectivo" ? "Efectivo" : "Cheque";
-    setSelectedPayment(selectedValue);
-    setValue("paymentType", value);
+    const selectedValue = value.anchorKey;
+
+    if (
+      selectedValue === "Efectivo" ||
+      selectedValue === "Cheque" ||
+      selectedValue === "Crédito"
+    ) {
+      setSelectedPayment(selectedValue);
+      setValue("paymentType", value);
+    } else {
+      console.error("Tipo de pago no soportado: ", selectedValue);
+    }
   };
   const handleSelectionListChange = (value) => {
     const selectedValue = value.anchorKey;
@@ -317,7 +325,19 @@ const NewSalePage = () => {
                   <Controller
                     name="client"
                     control={control}
-                    rules={{ required: "Este campo es obligatorio" }}
+                    rules={{
+                      required: "Este campo es obligatorio",
+                      minLength: {
+                        value: 2,
+                        message:
+                          "El nombre debe contener al menos 2 caracteres.",
+                      },
+                      maxLength: {
+                        value: 50,
+                        message:
+                          "El nombre no puede exceder los 50 caracteres.",
+                      },
+                    }}
                     render={({ field }) => (
                       <CompleteSearchInput
                         label={"Empresa"}
@@ -699,6 +719,7 @@ const NewSalePage = () => {
                   <Select
                     placeholder="Seleccionar forma de pago"
                     className="rounded-lg border font-roboto font-medium"
+                    defaultSelectedKeys={["Efectivo"]}
                     {...register("paymentType", {
                       required: "Este campo es obligatorio",
                     })}
@@ -710,6 +731,9 @@ const NewSalePage = () => {
                     <SelectItem key={"Cheque"} value={"Cheque"}>
                       Cheque
                     </SelectItem>
+                    <SelectItem key={"Crédito"} value={"Crédito"}>
+                      Crédito
+                    </SelectItem>
                   </Select>
                   {errors.paymentType && (
                     <span className="text-xs text-red_e">
@@ -717,7 +741,8 @@ const NewSalePage = () => {
                     </span>
                   )}
                 </div>
-                {selectedPayment === "Efectivo" ? null : (
+                {selectedPayment === "Efectivo" ||
+                selectedPayment === "Crédito" ? null : (
                   <div className="flex w-full space-x-2">
                     <div className="mt-[.06rem] w-full">
                       <Input

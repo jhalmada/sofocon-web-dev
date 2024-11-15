@@ -34,7 +34,7 @@ const ClientsOrdersRow = ({
   return (
     <tr className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap py-6text-left"
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6 text-left"
         onClick={handleRowClick}
         title={name}
       >

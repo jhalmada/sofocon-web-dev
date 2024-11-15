@@ -89,7 +89,6 @@ const NewBudgetPage = () => {
       productInOrder,
       ItemsRemoval,
       discountPercent,
-      isRecharge,
       barCode,
       enrollment,
       fabricUNIT,
@@ -114,7 +113,6 @@ const NewBudgetPage = () => {
         productInOrder,
         ItemsRemoval,
         discountPercent: discountPercent ? discountPercent : 0,
-        isRecharge,
         barCode,
         enrollment,
         fabricUNIT,
@@ -192,14 +190,6 @@ const NewBudgetPage = () => {
     } else {
       setPhoneValue("");
     }
-  };
-
-  const handleSelectionChange = (id, value) => {
-    const selectedValue = value.anchorKey === "true" ? true : false;
-    setRecharged((prev) => ({
-      ...prev,
-      [id]: selectedValue,
-    }));
   };
 
   const handleSelectionListChange = (value) => {
@@ -315,7 +305,19 @@ const NewBudgetPage = () => {
                   <Controller
                     name="client"
                     control={control}
-                    rules={{ required: "Este campo es obligatorio" }}
+                    rules={{
+                      required: "Este campo es obligatorio",
+                      minLength: {
+                        value: 2,
+                        message:
+                          "El nombre debe contener al menos 2 caracteres.",
+                      },
+                      maxLength: {
+                        value: 50,
+                        message:
+                          "El nombre no puede exceder los 50 caracteres.",
+                      },
+                    }}
                     render={({ field }) => (
                       <CompleteSearchInput
                         label={"Empresa"}
@@ -356,6 +358,7 @@ const NewBudgetPage = () => {
                   msjError={errors.rut ? errors.rut.message : ""}
                 />
                 <Input
+                  type="number"
                   label={"Contacto"}
                   placeholder={"Escribir..."}
                   onChange={handleWritePhone}
@@ -541,23 +544,6 @@ const NewBudgetPage = () => {
                               ?.message || ""
                           }
                         />
-                        <div className="w-full">
-                          <label className="block text-sm font-light">
-                            Recarga
-                          </label>
-                          <Select
-                            defaultValue={false}
-                            className="rounded-lg border"
-                            placeholder={recharged[item.id] ? "Si" : "No"}
-                            {...register(`productInOrder[${index}].isRecharge`)}
-                            onSelectionChange={(value) =>
-                              handleSelectionChange(item.id, value)
-                            }
-                          >
-                            <SelectItem key={true}>Si</SelectItem>
-                            <SelectItem key={false}>No</SelectItem>
-                          </Select>
-                        </div>
                       </div>
                     </div>
                   ))}

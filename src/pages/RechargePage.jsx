@@ -78,6 +78,8 @@ const RechargePage = () => {
           return "READY_PICKUP";
         case "Egreso":
           return "EGRESS";
+        case "Entregado":
+          return "DELIVERED";
         default:
           return state;
       }

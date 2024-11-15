@@ -10,7 +10,8 @@ import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import usePutOrders from "../hooks/orders/usePutOrders";
 import { BASE_URL } from "../utils/Constants";
 import { getOrderPdf } from "../services/orders/orders.routes";
-
+import ReusableModal from "../components/modals/ReusableModal";
+import useOrders from "../hooks/orders/useOrders";
 const ClientsOrdersPage = () => {
   const {
     register,
@@ -20,6 +21,7 @@ const ClientsOrdersPage = () => {
   } = useForm();
   const navigate = useNavigate();
   const { id } = useParams();
+  const { setStatus, setPage } = useOrders();
   const { getOneOrder, setModified } = useGetOneOrder(id);
   const { changedOrder, isLoading } = usePutOrders();
 
@@ -29,14 +31,10 @@ const ClientsOrdersPage = () => {
   const [iva, setIva] = useState(0);
   const [total, setTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
-  const discountPercent = orderDetails?.discountPercent || 0;
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
-  const stateOptions = [
-    "Solicitado",
-    "En preparación",
-    "Para retirar",
-    "Egreso",
-  ];
+  const discountPercent = orderDetails?.discountPercent || 0;
+  const stateOptions = ["Para retirar", "Entregado"];
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -50,12 +48,14 @@ const ClientsOrdersPage = () => {
     switch (state) {
       case "REQUEST":
         return "Solicitado";
-      case "PREPARATION":
-        return "En preparación";
+      case "En preparación":
+        return "PREPARATION";
       case "READY_PICKUP":
         return "Para retirar";
       case "EGRESS":
         return "Egreso";
+      case "DELIVERED":
+        return "Entregado";
       default:
         return state;
     }
@@ -101,6 +101,10 @@ const ClientsOrdersPage = () => {
           return "READY_PICKUP";
         case "Egreso":
           return "EGRESS";
+        case "Entregado":
+          setConfirmationModalOpen(true);
+          return "DELIVERED";
+
         default:
           return state;
       }
@@ -108,6 +112,15 @@ const ClientsOrdersPage = () => {
     const newStatus = translateState(e.target.value);
     setSelectedState(newStatus);
     await changedOrder({ status: newStatus }, orderDetails.id, setModified);
+  };
+  const handleConfirm = () => {
+    setStatus("DELIVERED");
+    setPage(0);
+    setConfirmationModalOpen(false);
+  };
+
+  const handleClose = () => {
+    setConfirmationModalOpen(false);
   };
 
   return (
@@ -153,6 +166,16 @@ const ClientsOrdersPage = () => {
                 </SelectItem>
               ))}
             </Select>
+            <ReusableModal
+              isOpen={confirmationModalOpen}
+              onClose={handleClose}
+              title="Confirmación de órden"
+              onAccept={handleConfirm}
+              variant="confirmation"
+              buttons={["back", "accept"]}
+            >
+              ¿Estás seguro/a que deseas marcar como Entregado?
+            </ReusableModal>
 
             <div className="flex space-x-2">
               <Input

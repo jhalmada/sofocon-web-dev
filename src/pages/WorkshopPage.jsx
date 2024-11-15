@@ -66,13 +66,7 @@ const WorkshopPage = () => {
     useState(false);
   const [openScannerModal, setOpenScannerModal] = useState(false);
 
-  const stateOptions = [
-    "Solicitado",
-    "En preparación",
-    "Para retirar",
-    "Egreso",
-    "Entregado",
-  ];
+  const stateOptions = ["Solicitado", "En preparación", "Para retirar"];
   const monthsOptions = [
     "Enero",
     "Febrero",
