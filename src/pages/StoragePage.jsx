@@ -283,7 +283,7 @@ const StoragePage = () => {
         width="w-[30rem]"
         isOpen={isModalOpen}
         onClose={handleCancelClick}
-        title="Editar Órden"
+        title="Editar Orden"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}

@@ -169,7 +169,7 @@ const ClientsOrdersPage = () => {
             <ReusableModal
               isOpen={confirmationModalOpen}
               onClose={handleClose}
-              title="Confirmación de órden"
+              title="Confirmación de orden"
               onAccept={handleConfirm}
               variant="confirmation"
               buttons={["back", "accept"]}
@@ -181,7 +181,7 @@ const ClientsOrdersPage = () => {
               <Input
                 bg="bg-gray"
                 border="none"
-                label={"ID de órden"}
+                label={"ID de orden"}
                 placeholder={orderDetails?.id}
                 placeholderColor="placeholder-black_b"
                 disabled

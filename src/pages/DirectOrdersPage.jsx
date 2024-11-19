@@ -198,12 +198,12 @@ const DirectOrdersPage = ({
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
-        title="Eliminar órden"
+        title="Eliminar orden"
         variant="confirmation"
         buttons={["back", "accept"]}
         onAccept={() => handleConfirmDelete(orderId)}
       >
-        Esta órden será eliminada de forma permanente. ¿Desea continuar?
+        Esta orden será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

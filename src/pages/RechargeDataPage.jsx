@@ -76,7 +76,7 @@ const RechargeDataPage = () => {
         setIsModalOpen(true);
       }
     } catch (error) {
-      console.error("Error al crear los detalles de la órden", error);
+      console.error("Error al crear los detalles de la orden", error);
     }
   };
 
