@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { useForm } from "react-hook-form";
-import barCodeIcon from "../assets/icons/barCode.svg";
+import barCodeIcon from "../assets/icons/barcode.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import { Checkbox } from "@nextui-org/react";
 import useAddProducts from "../hooks/products/useAddProducts";
