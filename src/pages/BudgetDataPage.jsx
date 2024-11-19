@@ -106,7 +106,7 @@ const BudgetDataPage = () => {
               <Input
                 bg="bg-gray"
                 border="none"
-                label={"ID de órden"}
+                label={"ID de orden"}
                 placeholder={orderDetails?.id}
                 placeholderColor="placeholder-black_b"
                 disabled

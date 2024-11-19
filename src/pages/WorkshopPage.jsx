@@ -391,7 +391,7 @@ const WorkshopPage = () => {
         width="w-[30rem]"
         isOpen={isModalOpen}
         onClose={handleCancelClick}
-        title="Editar Órden"
+        title="Editar Orden"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
@@ -558,7 +558,7 @@ const WorkshopPage = () => {
         handleCancelClick={handleCancelClick}
       >
         <p className="text-sm leading-[1rem] text-black_m">
-          Escanea el código de barras del producto para localizar la órden de
+          Escanea el código de barras del producto para localizar la orden de
           compra donde se encuentra, o ingresa el código de manera manual.
         </p>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

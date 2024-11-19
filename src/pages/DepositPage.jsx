@@ -151,7 +151,7 @@ const DepositPage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"ID de órden"}
+                label={"ID de orden"}
                 placeholder={orderDetails?.id}
                 disabled
               />

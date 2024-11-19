@@ -28,6 +28,7 @@ const NewSalePage = () => {
     control,
     setValue,
     formState: { errors },
+    trigger,
   } = useForm();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,6 +74,10 @@ const NewSalePage = () => {
   const { priceListResponse } = useGetPriceList();
   const navigate = useNavigate();
 
+  //validacion en tiempo real react-hook-form
+  const client = watch("client");
+  const authorizedCompany = watch("authorizedCompany");
+  const paymentType = watch("paymentType");
   const deliveredValue = watch("delivered", false);
   const isDirectValue = watch("isDirect", false);
 
@@ -137,7 +142,7 @@ const NewSalePage = () => {
         setIsModalOpen(true);
       }
     } catch (error) {
-      console.error("Error al crear la órden:", error);
+      console.error("Error al crear la orden:", error);
     }
   };
 
@@ -259,6 +264,12 @@ const NewSalePage = () => {
     setSubtotal(total);
   }, [autocompleteResults, quantity, discount]);
 
+  useEffect(() => {
+    trigger("authorizedCompany");
+    trigger("client");
+    trigger("paymentType");
+  }, [authorizedCompany, client, paymentType, trigger]);
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
@@ -299,7 +310,7 @@ const NewSalePage = () => {
                 isSelected={isDirectValue}
                 onChange={(e) => setValue("isDirect", e.target.checked)}
               >
-                Órden de venta directa
+                Orden de venta directa
               </Checkbox>
             </div>
             <div className="flex space-x-2">
@@ -747,7 +758,7 @@ const NewSalePage = () => {
                     <div className="mt-[.06rem] w-full">
                       <Input
                         label={"Nro de cheque"}
-                        placeholder={"$"}
+                        placeholder={"..."}
                         {...register("checkNumber", {
                           required: "Este campo es obligatorio",
                         })}
@@ -833,12 +844,12 @@ const NewSalePage = () => {
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
-          title="Órden creada"
+          title="Orden creada"
           variant="confirmation"
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          La órden fue creada exitosamente.
+          La orden fue creada exitosamente.
         </ReusableModal>
       </div>
     </div>
