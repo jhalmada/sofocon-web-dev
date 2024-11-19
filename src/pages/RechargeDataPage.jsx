@@ -11,7 +11,7 @@ import barCodeIcon from "../assets/icons/barCode.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import { Checkbox } from "@nextui-org/react";
 import useAddProducts from "../hooks/products/useAddProducts";
-
+import { div } from "framer-motion/client";
 const RechargeDataPage = () => {
   const {
     register,
