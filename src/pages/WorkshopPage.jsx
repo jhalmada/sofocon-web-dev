@@ -5,7 +5,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
 import SearchInput from "../components/inputs/SearchInput";
-import barCodeIcon from "../assets/icons/barCode.svg";
+import barCodeIcon from "../assets/icons/barcode.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import x from "../assets/icons/x.svg";

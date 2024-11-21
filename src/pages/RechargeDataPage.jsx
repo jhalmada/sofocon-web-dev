@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
-import barCodeIcon from "../assets/icons/barCode.svg";
+import barCodeIcon from "../assets/icons/barcode.svg";
 import { Checkbox, DatePicker } from "@nextui-org/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
