@@ -35,8 +35,11 @@ const OrdersPage = () => {
     page,
     itemsPerPage,
     setModified,
+    status,
     setStatus,
+    setEntryDate,
     setOrderType,
+    setInOrders,
     setSearch: setSearchOrders,
   } = useOrders();
 
@@ -44,7 +47,6 @@ const OrdersPage = () => {
     return sessionStorage.getItem("activeTab") || CLIENTS_ORDERS_TAB;
   });
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState(null);
 
   const monthsOptions = [
     "Enero",
@@ -60,21 +62,6 @@ const OrdersPage = () => {
     "Noviembre",
     "Diciembre",
   ];
-  const filteredOrders = ordersResponse.filter((order) => {
-    if (!order.sellDate) {
-      return false;
-    }
-    const orderDate = new Date(order.sellDate);
-    if (isNaN(orderDate.getTime())) {
-      return false;
-    }
-    if (!selectedMonth) {
-      return true;
-    }
-    const orderMonthIndex = orderDate.getMonth();
-    const selectedMonthIndex = monthsOptions.indexOf(selectedMonth);
-    return orderMonthIndex === selectedMonthIndex;
-  });
 
   const stateOptions = ["Egreso", "Entregado"];
 
@@ -99,7 +86,24 @@ const OrdersPage = () => {
   };
 
   const handleMonthChange = (e) => {
-    setSelectedMonth(e.target.value);
+    const monthMap = {
+      Enero: "01",
+      Febrero: "02",
+      Marzo: "03",
+      Abril: "04",
+      Mayo: "05",
+      Junio: "06",
+      Julio: "07",
+      Agosto: "08",
+      Septiembre: "09",
+      Octubre: "10",
+      Noviembre: "11",
+      Diciembre: "12",
+    };
+
+    const selectedMonth = monthMap[e.target.value] || "";
+    setEntryDate(selectedMonth ? `${selectedMonth}` : "");
+    setPage(0);
   };
 
   const handleStateFilterChange = (value) => {
@@ -139,15 +143,22 @@ const OrdersPage = () => {
   useEffect(() => {
     switch (activeTab) {
       case BUDGET_TAB:
-        setOrderType({ isPreOrder: true });
+        setOrderType({ isDirect: false, isPreOrder: true });
+        setInOrders(false);
+
         break;
       case DIRECT_ORDERS_TAB:
-        setOrderType({ isDirect: true });
+        setOrderType({ isDirect: true, isPreOrder: false });
+        setInOrders(true);
+
         break;
       case CLIENTS_ORDERS_TAB:
         setOrderType({ isPreOrder: false, isDirect: false });
+        setInOrders(true);
+
         break;
       default:
+        setInOrders(null);
         setOrderType(null);
     }
   }, [activeTab]);
@@ -223,106 +234,113 @@ const OrdersPage = () => {
           </div>
         </div>
         {activeTab === CLIENTS_ORDERS_TAB && (
-          <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-            {ordersResponse.length === 0 ? (
-              <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
-                <td colSpan="5" className="p-4 text-center">
-                  <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                    Ningún elemento coincide con tu búsqueda, inténtalo de
-                    nuevo. <br /> Puedes encontrar a las órdenes creadas aquí.
-                  </p>
-                  <img
-                    src={pageLostImg}
-                    alt="Tabla vacía"
-                    className="mx-auto"
-                  />
-                </td>
-              </tr>
-            ) : (
-              <div>
-                <div className="flex items-center gap-2">
-                  <p className="ml-2 text-black_m">Período</p>
-                  <Select
-                    className="w-52 rounded-lg border"
-                    placeholder="Selecciona un mes"
-                    onChange={handleMonthChange}
-                  >
-                    {monthsOptions.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
-
-                <table className="mt-2 w-full">
-                  <thead>
-                    <tr>
-                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                        Empresa
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        ID de orden
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Fecha
-                      </th>
-
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Vendedor
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        <div className="flex flex-col items-center gap-2">
-                          <FilterSelect
-                            options={stateOptions}
-                            placeholder="Estado"
-                            onChange={handleStateFilterChange}
-                          />
-                        </div>
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Acción
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredOrders.map((order, index) => (
-                      <ClientsOrdersRow
-                        key={index}
-                        id={order.id}
-                        name={order?.client?.name || "Sin nombre"}
-                        orderId={order.id}
-                        date={
-                          order.sellDate
-                            ? formatDate(order.sellDate)
-                            : "Sin fecha"
-                        }
-                        seller={order?.user?.userInfo?.fullName}
-                        state={order.status}
-                        deleteIconSrc={deleteIcon}
-                        onDeleteClick={() => openConfirmDeleteModal(order.id)}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            <div
-              className={
-                ordersResponse.length === 0
-                  ? "hidden"
-                  : `flex justify-center p-6`
-              }
-            >
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemsPerPage={itemsPerPage}
-                total={total}
-              />
+          <div className="flex h-full flex-grow flex-col overflow-auto rounded-tr-lg bg-white p-5">
+            <div className="flex items-center gap-2">
+              <p className="ml-2 text-black_m">Período</p>
+              <Select
+                className="w-52 rounded-lg border"
+                placeholder="Selecciona un mes"
+                onChange={handleMonthChange}
+              >
+                {monthsOptions.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </Select>
             </div>
+            {ordersResponse.length === 0 ? (
+              <>
+                <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
+                  <td colSpan="5" className="p-4 text-center">
+                    <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                      Ningún elemento coincide con tu búsqueda, inténtalo de
+                      nuevo. <br /> Puedes encontrar a las órdenes creadas aquí.
+                    </p>
+                    <img
+                      src={pageLostImg}
+                      alt="Tabla vacía"
+                      className="mx-auto"
+                    />
+                  </td>
+                </tr>
+              </>
+            ) : (
+              <>
+                <div className="flex flex-grow flex-col justify-between">
+                  <div>
+                    <table className="mt-2 w-full">
+                      <thead>
+                        <tr>
+                          <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                            Empresa
+                          </th>
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            ID de orden
+                          </th>
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            Fecha
+                          </th>
+
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            Vendedor
+                          </th>
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            <div className="flex flex-col items-center gap-2">
+                              <FilterSelect
+                                options={stateOptions}
+                                placeholder="Estado"
+                                onChange={handleStateFilterChange}
+                              />
+                            </div>
+                          </th>
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            Acción
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ordersResponse.map((order, index) => (
+                          <ClientsOrdersRow
+                            key={index}
+                            id={order.id}
+                            name={order?.client?.name || "Sin nombre"}
+                            orderId={order.orderId}
+                            date={
+                              order.sellDate
+                                ? formatDate(order.sellDate)
+                                : "Sin fecha"
+                            }
+                            seller={order?.user?.userInfo?.fullName}
+                            state={order.status}
+                            deleteIconSrc={deleteIcon}
+                            onDeleteClick={() =>
+                              openConfirmDeleteModal(order.id)
+                            }
+                          />
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div
+                    className={
+                      ordersResponse.length === 0
+                        ? "hidden"
+                        : `flex justify-center p-6`
+                    }
+                  >
+                    <Pagination
+                      pageIndex={setItemsPerPage}
+                      currentPage={page}
+                      totalPages={totalPage}
+                      onPageChange={setPage}
+                      itemsPerPage={itemsPerPage}
+                      total={total}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
         {activeTab === DIRECT_ORDERS_TAB && (
@@ -335,17 +353,20 @@ const OrdersPage = () => {
             page={page}
             itemsPerPage={itemsPerPage}
             setStatus={setStatus}
+            setEntryDate={setEntryDate}
           />
         )}
         {activeTab === BUDGET_TAB && (
           <BudgetPage
             ordersResponse={ordersResponse || []}
+            setItemsPerPage={setItemsPerPage}
             totalPage={totalPage}
             total={total}
             setPage={setPage}
             page={page}
             itemsPerPage={itemsPerPage}
             setModified={setModified}
+            setEntryDate={setEntryDate}
           />
         )}
         {activeTab === STATUS_PANEL_TAB && <StatusPanelPage />}

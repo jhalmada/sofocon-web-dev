@@ -8,6 +8,12 @@ export class OrdersService {
   static getOneOrderApi = async (routeId) =>
     await axios.get(`${ordersRoutes.getOrders}/one/${routeId}`);
 
+  static getOneItemApi = async (itemId) =>
+    await axios.get(`${ordersRoutes.getItems}/${itemId}`);
+
+  static patchOneItemApi = async (itemId, data) =>
+    await axios.patch(`${ordersRoutes.patchItems}/${itemId}`, data);
+
   static postAddOrdersApi = async (orderData) =>
     await axios.post(ordersRoutes.postOrders, orderData);
 

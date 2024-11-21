@@ -89,8 +89,9 @@ const BudgetDataPage = () => {
             </div>
           </Link>
         </div>
+        {console.log(orderDetails)}
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          {orderDetails?.id || "sin id"}
+          {orderDetails?.orderId || "sin id"}
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
@@ -107,7 +108,7 @@ const BudgetDataPage = () => {
                 bg="bg-gray"
                 border="none"
                 label={"ID de orden"}
-                placeholder={orderDetails?.id}
+                placeholder={orderDetails?.orderId}
                 placeholderColor="placeholder-black_b"
                 disabled
               />

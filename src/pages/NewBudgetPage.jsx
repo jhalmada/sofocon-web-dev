@@ -327,7 +327,7 @@ const NewBudgetPage = () => {
                       <CompleteSearchInput
                         label={"Empresa"}
                         array={companiesResponse}
-                        name={"client"}
+                        name={"client.name"}
                         setValue={setValue}
                         onChange={setSearchCompanies}
                         placeholder="Buscar empresa"
@@ -432,7 +432,7 @@ const NewBudgetPage = () => {
                       array={
                         transformData(userSellerResponse?.result || []) || []
                       }
-                      name={"user"}
+                      name={"user.name"}
                       setValue={setValue}
                       onChange={setSearchSellers}
                       placeholder="Buscar vendedores"
@@ -515,7 +515,7 @@ const NewBudgetPage = () => {
                           {...register(`productInOrder[${index}].amount`)}
                           msjError={
                             errors[`productInOrder[${index}].amount`]
-                              ?.message || ""
+                              ?.message || 0
                           }
                         />
                         <Input
@@ -525,9 +525,11 @@ const NewBudgetPage = () => {
                           label={"Precio"}
                           defaultValue={item.list[0].price}
                           value={
+                            "$" +
                             item.list[0].price *
-                            (quantity[item.id] || 1) *
-                            (1 - (discount[index] ? discount[index] / 100 : 0))
+                              (quantity[item.id] || 1) *
+                              (1 -
+                                (discount[index] ? discount[index] / 100 : 0))
                           }
                           {...register(`productInOrder[${index}].fixedPrice`, {
                             value: item.list[0].price,
@@ -539,14 +541,14 @@ const NewBudgetPage = () => {
                           label={"Desc."}
                           defaultValue={1}
                           placeholder={"%"}
-                          value={discount[index] || ""}
+                          value={discount[index] || 0}
                           onInput={(e) => handleProductDiscountInput(e, index)}
                           {...register(
                             `productInOrder[${index}].discountPercent`,
                           )}
                           msjError={
                             errors[`productInOrder[${index}].discountPercent`]
-                              ?.message || ""
+                              ?.message || 0
                           }
                         />
                       </div>
@@ -678,7 +680,7 @@ const NewBudgetPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"IVA 22%"}
-                value={truncateToTwoDecimals(subtotal * 0.22)}
+                value={"$" + truncateToTwoDecimals(subtotal * 0.22)}
                 disabled
               />
               <Input

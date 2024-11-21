@@ -24,9 +24,9 @@ import {
 const NOTES_TAB = "notes";
 const NotesPage = () => {
   const [dateSelected, setDateSelected] = useState(false);
-  const { changedNote, isChanged } = usePutNotes();
+  const { changedNote} = usePutNotes();
   const [noteId, setNoteId] = useState(null);
-  const { deleteNote, isDeleted, isLoading } = useDeleteNotes();
+  const { deleteNote} = useDeleteNotes();
   const [activeTab, setActiveTab] = useState(NOTES_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -35,22 +35,12 @@ const NotesPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [reminderSelected, setReminderSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const [visitFilter, setVisitFilter] = useState("");
 
   const { id } = useParams();
-
-  const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
   const {
     notesResponse,
-    setItemsPerPage,
-    totalPage,
-    total,
-    setPage,
-    page,
-    itemsPerPage,
     setModified,
     setClient,
-    setNextVisit,
     setSearch,
   } = useNotes();
 
