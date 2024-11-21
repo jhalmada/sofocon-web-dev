@@ -19,6 +19,8 @@ import useGetProducts from "../hooks/products/useGetProducts.js";
 import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
+import useOrders from "../hooks/orders/useOrders.js";
+import { use } from "framer-motion/client";
 
 const NewSalePage = () => {
   const {
@@ -30,6 +32,16 @@ const NewSalePage = () => {
     formState: { errors },
     trigger,
   } = useForm();
+  const { postAddOrders } = useAddOrders();
+  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+  const {
+    productsResponse,
+    setSearch: setSearchProducts,
+    setList,
+  } = useGetProducts();
+  const { priceListResponse } = useGetPriceList();
+  const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -44,40 +56,17 @@ const NewSalePage = () => {
   const [subtotal, setSubtotal] = useState(0);
   const [discount, setDiscount] = useState([]);
   const [discount2, setDiscount2] = useState("");
+  const [numChecks, setNumChecks] = useState(0);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const total = subtotal
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
     : 0;
 
-  const monthsOptions = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
-  ];
-  const { postAddOrders } = useAddOrders();
-  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
-  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
-  const {
-    productsResponse,
-    setSearch: setSearchProducts,
-    setList,
-  } = useGetProducts();
-
-  const { priceListResponse } = useGetPriceList();
-  const navigate = useNavigate();
-
   //validacion en tiempo real react-hook-form
   const client = watch("client");
-  const authorizedCompany = watch("authorizedCompany");
+  const clientAuthorize = watch("clientAuthorize");
   const paymentType = watch("paymentType");
+  const checkQuantity = watch("checkQuantity");
   const deliveredValue = watch("delivered", false);
   const isDirectValue = watch("isDirect", false);
 
@@ -89,17 +78,15 @@ const NewSalePage = () => {
       dateV,
       user,
       productInOrder,
-      ItemsRemoval,
+      itemsRemoval,
       discountPercent,
-      isRecharge,
       barCode,
       enrollment,
       fabricUNIT,
-      status,
       numberUNIT,
       paymentType,
       value,
-      authorizedCompany,
+      clientAuthorize,
       checkNumber,
       checkQuantity,
       delivered,
@@ -118,22 +105,38 @@ const NewSalePage = () => {
         client,
         rut,
         user,
-        productInOrder,
-        ItemsRemoval,
+        productInOrder: productInOrder.map((product) => {
+          return {
+            ...product,
+            isRecharge: product.isRecharge === "true",
+            itemsRemoval: product.isRecharge
+              ? product.itemsRemoval.map((item) => {
+                  return {
+                    ...item,
+                    lastDate: (item.lastDate = new Date(
+                      item.lastDate.year,
+                      item.lastDate.month - 1,
+                      item.lastDate.day,
+                    ).toISOString()),
+                  };
+                })
+              : [],
+          };
+        }),
+        itemsRemoval,
         discountPercent: discountPercent ? discountPercent : 0,
-        isRecharge,
         barCode,
         enrollment,
         fabricUNIT,
-        status,
+        status: delivered ? "DELIVERED" : "REQUEST",
         numberUNIT,
         paymentType,
         value,
-        authorizedCompany,
+        clientAuthorize,
         checkNumber,
         checkQuantity,
-        delivered,
-        sellDate: formattedDate,
+        isDelivered: delivered,
+        sellDate: formattedDate ? formattedDate : null,
       });
 
       if (newOrder) {
@@ -147,6 +150,9 @@ const NewSalePage = () => {
   };
 
   const onSubmit = (data) => {
+    {
+      console.log(data.isDelivered);
+    }
     if (isDirectValue) {
       handleOrderCreation({
         ...data,
@@ -180,6 +186,13 @@ const NewSalePage = () => {
       setRutValue("");
     }
   };
+  const handleClose = () => {
+    setConfirmationModalOpen(false);
+    setValue("delivered", false);
+  };
+  const handleConfirm = () => {
+    setConfirmationModalOpen(false);
+  };
 
   const transformData = (array) => {
     return array.map((item) => ({
@@ -202,6 +215,7 @@ const NewSalePage = () => {
       ...prev,
       [id]: selectedValue,
     }));
+    console.log(selectedValue);
   };
   const handleSelectionPaymentChange = (value) => {
     const selectedValue = value.anchorKey;
@@ -265,10 +279,16 @@ const NewSalePage = () => {
   }, [autocompleteResults, quantity, discount]);
 
   useEffect(() => {
-    trigger("authorizedCompany");
+    trigger("clientAuthorize");
     trigger("client");
     trigger("paymentType");
-  }, [authorizedCompany, client, paymentType, trigger]);
+  }, [clientAuthorize, client, paymentType, trigger]);
+
+  useEffect(() => {
+    if (checkQuantity) {
+      setNumChecks(parseInt(checkQuantity, 10));
+    }
+  }, [checkQuantity]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -353,7 +373,7 @@ const NewSalePage = () => {
                       <CompleteSearchInput
                         label={"Empresa"}
                         array={companiesResponse}
-                        name={"client"}
+                        name={"client.name"}
                         setValue={setValue}
                         onChange={setSearchCompanies}
                         placeholder="Buscar empresa"
@@ -437,7 +457,7 @@ const NewSalePage = () => {
                       array={
                         transformData(userSellerResponse?.result || []) || []
                       }
-                      name={"user"}
+                      name={"user.name"}
                       setValue={setValue}
                       onChange={setSearchSellers}
                       placeholder="Buscar vendedores"
@@ -520,7 +540,7 @@ const NewSalePage = () => {
                           {...register(`productInOrder[${index}].amount`)}
                           msjError={
                             errors[`productInOrder[${index}].amount`]
-                              ?.message || ""
+                              ?.message || 0
                           }
                         />
                         <Input
@@ -530,9 +550,11 @@ const NewSalePage = () => {
                           label={"Precio"}
                           defaultValue={item.list[0].price}
                           value={
+                            "$" +
                             item.list[0].price *
-                            (quantity[item.id] || 1) *
-                            (1 - (discount[index] ? discount[index] / 100 : 0))
+                              (quantity[item.id] || 1) *
+                              (1 -
+                                (discount[index] ? discount[index] / 100 : 0))
                           }
                           {...register(`productInOrder[${index}].fixedPrice`, {
                             value: item.list[0].price,
@@ -544,20 +566,21 @@ const NewSalePage = () => {
                           label={"Desc."}
                           defaultValue={0}
                           placeholder={"%"}
-                          value={discount[index] || ""}
+                          value={discount[index] || 0}
                           onInput={(e) => handleProductDiscountInput(e, index)}
                           {...register(
                             `productInOrder[${index}].discountPercent`,
                           )}
                           msjError={
                             errors[`productInOrder[${index}].discountPercent`]
-                              ?.message || ""
+                              ?.message || 0
                           }
                         />
                         <div className="w-full">
                           <label className="block text-sm font-light">
                             Recarga
                           </label>
+
                           <Select
                             defaultValue={false}
                             className="rounded-lg border"
@@ -574,13 +597,13 @@ const NewSalePage = () => {
                       </div>
                     </div>
                   ))}
-                  {autocompleteResults.map((item) => {
+                  {autocompleteResults.map((item, index) => {
                     return (
                       recharged[item.id] &&
                       Array.from({ length: quantity[item.id] || 1 }).map(
-                        (_, index) => (
+                        (_, indexRemoval) => (
                           <div
-                            key={`recharged-${item.id}-${index}`}
+                            key={`recharged-${item.id}-${indexRemoval}`}
                             className="mb-8 rounded-lg bg-gray p-4"
                           >
                             <p className="text-center text-md">
@@ -595,7 +618,7 @@ const NewSalePage = () => {
                                 placeholder={"..."}
                                 bg="bg-white"
                                 {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].barCode`,
+                                  `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
                                   {
                                     required: "Este campo es obligatorio",
                                   },
@@ -620,7 +643,7 @@ const NewSalePage = () => {
                                 placeholder={"X234234"}
                                 bg="bg-white"
                                 {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].enrollment`,
+                                  `productInOrder[${index}].itemsRemoval[${indexRemoval}].enrollment`,
                                   {
                                     required: "Este campo es obligatorio",
                                   },
@@ -632,7 +655,7 @@ const NewSalePage = () => {
                                 placeholder={"123455"}
                                 bg="bg-white"
                                 {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].fabricUNIT`,
+                                  `productInOrder[${index}].itemsRemoval[${index}].fabricUNIT`,
                                   {
                                     required: "Este campo es obligatorio",
                                   },
@@ -645,15 +668,42 @@ const NewSalePage = () => {
                                 <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                                   Fecha última carga
                                 </span>
-                                <Select
+                                <I18nProvider locale="es-ES">
+                                  <Controller
+                                    name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
+                                    control={control}
+                                    rules={{
+                                      required: "La fecha es obligatoria",
+                                    }}
+                                    render={({ field }) => (
+                                      <DatePicker
+                                        minValue={today(getLocalTimeZone())}
+                                        className={`${errors.productInOrder?.[index]?.itemsRemoval?.[indexRemoval]?.lastDate ? "border-red_e text-red_e" : ""} rounded-lg border`}
+                                        label=""
+                                        placeholder="Seleccione una fecha"
+                                        granularity="day"
+                                        {...field}
+                                      />
+                                    )}
+                                  />
+                                  <p className="font-roboto text-xs text-red_e">
+                                    {errors.productInOrder?.[index]
+                                      ?.itemsRemoval?.[indexRemoval]?.lastDate
+                                      ? errors.productInOrder?.[index]
+                                          ?.itemsRemoval?.[indexRemoval]
+                                          ?.lastDate.message
+                                      : ""}
+                                  </p>
+                                </I18nProvider>
+                                {/* <Select
                                   className="rounded-lg border"
                                   placeholder="MM/AA"
                                   {...register(
-                                    `productInOrder[${index}].ItemsRemoval[${index}].lastDate`,
+                                    `productInOrder[${index}].itemsRemoval[${index}].lastDate`,
                                   )}
                                   onSelectionChange={(values) =>
                                     setValue(
-                                      `productInOrder[${index}].ItemsRemoval[${index}].lastDate`,
+                                      `productInOrder[${index}].itemsRemoval[${index}].lastDate`,
                                       values,
                                     )
                                   }
@@ -661,14 +711,14 @@ const NewSalePage = () => {
                                   {monthsOptions.map((month) => (
                                     <SelectItem key={month}>{month}</SelectItem>
                                   ))}
-                                </Select>
+                                </Select> */}
                               </div>
                               <Input
                                 label={"N° UNIT actual"}
                                 placeholder={"123455"}
                                 bg="bg-white"
                                 {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].numberUNIT`,
+                                  `productInOrder[${index}].itemsRemoval[${indexRemoval}].numberUNIT`,
                                   {
                                     required: "Este campo es obligatorio",
                                   },
@@ -699,7 +749,7 @@ const NewSalePage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"IVA 22%"}
-                value={truncateToTwoDecimals(subtotal * 0.22)}
+                value={"$" + truncateToTwoDecimals(subtotal * 0.22)}
                 disabled
               />
               <Input
@@ -754,19 +804,7 @@ const NewSalePage = () => {
                 </div>
                 {selectedPayment === "Efectivo" ||
                 selectedPayment === "Crédito" ? null : (
-                  <div className="flex w-full space-x-2">
-                    <div className="mt-[.06rem] w-full">
-                      <Input
-                        label={"Nro de cheque"}
-                        placeholder={"..."}
-                        {...register("checkNumber", {
-                          required: "Este campo es obligatorio",
-                        })}
-                        msjError={
-                          errors.checkNumber ? errors.checkNumber.message : ""
-                        }
-                      />
-                    </div>
+                  <div className="flex w-1/2 flex-col space-y-2">
                     <div className="mt-[0.05rem]">
                       <Input
                         type="number"
@@ -784,24 +822,47 @@ const NewSalePage = () => {
                       />
                     </div>
 
-                    <div className="mt-[.06rem] w-full">
-                      <Input
-                        type="number"
-                        label={"Valor"}
-                        placeholder={"$"}
-                        {...register("value", {
-                          required: "Este campo es obligatorio",
-                        })}
-                        msjError={errors.value ? errors.value.message : ""}
-                      />
-                    </div>
+                    {Array.from({ length: numChecks }, (_, index) => (
+                      <div key={index} className="flex w-full space-x-2">
+                        <div className="mt-[.06rem] w-full">
+                          <Input
+                            label={`Nro de cheque`}
+                            placeholder={"..."}
+                            {...register(`checkNumber${index + 1}`, {
+                              required: "Este campo es obligatorio",
+                            })}
+                            msjError={
+                              errors[`checkNumber${index + 1}`]
+                                ? errors[`checkNumber${index + 1}`].message
+                                : ""
+                            }
+                          />
+                        </div>
+
+                        <div className="mt-[.06rem] w-full">
+                          <Input
+                            type="number"
+                            label={`Valor `}
+                            placeholder={"$"}
+                            {...register(`value${index + 1}`, {
+                              required: "Este campo es obligatorio",
+                            })}
+                            msjError={
+                              errors[`value${index + 1}`]
+                                ? errors[`value${index + 1}`].message
+                                : ""
+                            }
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
               <Input
                 label={"Compra autorizada por:"}
                 placeholder={"Nombre de la empresa"}
-                {...register("authorizedCompany", {
+                {...register("clientAuthorize", {
                   required: "Este campo es obligatorio",
                   minLength: {
                     value: 2,
@@ -813,11 +874,10 @@ const NewSalePage = () => {
                   },
                 })}
                 msjError={
-                  errors.authorizedCompany
-                    ? errors.authorizedCompany.message
-                    : ""
+                  errors.clientAuthorize ? errors.clientAuthorize.message : ""
                 }
               />
+
               <div>
                 <Checkbox
                   radius="full"
@@ -825,7 +885,15 @@ const NewSalePage = () => {
                   size="sm"
                   {...register("delivered")}
                   isSelected={deliveredValue}
-                  onChange={(e) => setValue("delivered", e.target.checked)}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setValue("delivered", checked);
+                    if (checked) {
+                      setConfirmationModalOpen(true);
+                    } else {
+                      setConfirmationModalOpen(false);
+                    }
+                  }}
                 >
                   Entregado
                 </Checkbox>
@@ -841,6 +909,16 @@ const NewSalePage = () => {
             />
           </div>
         </form>
+        <ReusableModal
+          isOpen={confirmationModalOpen}
+          onClose={handleClose}
+          title="Confirmación de orden"
+          onAccept={handleConfirm}
+          variant="confirmation"
+          buttons={["back", "accept"]}
+        >
+          ¿Estás seguro/a que deseas marcar como Entregado?
+        </ReusableModal>
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}

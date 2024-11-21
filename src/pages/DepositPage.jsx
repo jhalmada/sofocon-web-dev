@@ -58,9 +58,8 @@ const DepositPage = () => {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
 
-    return `${day}/${month}/${year}`;
+    return `${month}/${year}`;
   };
   const onSubmit = () => {
     navigate("/inicio/taller");
@@ -122,7 +121,7 @@ const DepositPage = () => {
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
-              {orderDetails?.id}
+              {orderDetails?.orderId}
             </span>
           </div>
         </div>
@@ -152,7 +151,7 @@ const DepositPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"ID de orden"}
-                placeholder={orderDetails?.id}
+                placeholder={orderDetails?.orderId}
                 disabled
               />
               <span className="w-full"></span>

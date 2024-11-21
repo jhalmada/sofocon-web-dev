@@ -71,12 +71,14 @@ const StorageRow = ({
       </td>
       <td className="py-6">
         <div className="flex justify-center gap-4">
-          <img
-            src={editIconSrc}
-            alt="Edit icon"
-            className="h-5 w-5 cursor-pointer"
-            onClick={onEditClick}
-          />
+          {state === "REQUEST" && (
+            <img
+              src={editIconSrc}
+              alt="Edit icon"
+              className="h-5 w-5 cursor-pointer"
+              onClick={onEditClick}
+            />
+          )}
         </div>
       </td>
     </tr>

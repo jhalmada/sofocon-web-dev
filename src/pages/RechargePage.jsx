@@ -54,13 +54,25 @@ const RechargePage = () => {
         return state;
     }
   };
+  const translateProductState = (state) => {
+    switch (state) {
+      case "PENDING":
+        return "Pendiente";
+      case "ENABLED":
+        return "Habilitado";
+      case "DISABLED":
+        return "Inhabilitado";
+
+      default:
+        return state;
+    }
+  };
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
 
-    return `${day}/${month}/${year}`;
+    return `${month}/${year}`;
   };
 
   const onSubmit = () => {
@@ -124,7 +136,7 @@ const RechargePage = () => {
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
-              {orderDetails?.id}
+              {orderDetails?.orderId}
             </span>
           </div>
         </div>
@@ -154,7 +166,7 @@ const RechargePage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"ID de orden"}
-                placeholder={orderDetails?.id}
+                placeholder={orderDetails?.orderId}
                 disabled
               />
               <span className="w-full"></span>
@@ -198,7 +210,8 @@ const RechargePage = () => {
             <label className="block text-sm font-semibold text-black_b">
               Detalle
             </label>
-            <label className="-mb-6 block text-sm">Recargas</label>
+            <label className="-mb-6 block text-sm">Recarga</label>
+
             {orderDetails?.productInOrder?.map((order) => (
               <div className="flex" key={order.id}>
                 <div className="flex w-1/2 space-x-2">
@@ -212,38 +225,57 @@ const RechargePage = () => {
                     />
                   </div>
                 </div>
-                <div className="flex w-1/2 items-center space-x-2 pl-2">
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Matrícula"}
-                    placeholder={order.itemsRemoval?.enrollment}
-                    disabled
-                  />
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Cód."}
-                    placeholder={order.itemsRemoval?.barCode}
-                    disabled
-                  />
-                  <div className="mt-3 flex items-center space-x-2">
-                    <span className="flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg bg-green px-1 text-white">
-                      Habilitado
-                    </span>
-                    <Link to={`/inicio/taller/datos-recarga/${id}`}>
-                      <Button
-                        width="w-[7.5rem] 2xl:w-[12rem]"
-                        text="Ensayo"
-                        icon={ChevronRightIcon}
+                <div className="flex w-1/2 flex-col space-y-4 pl-2">
+                  {order.itemsRemoval?.map((item, index) => (
+                    <div className="flex items-center space-x-2" key={index}>
+                      <Input
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        label={"Matrícula"}
+                        placeholder={item.enrollment}
+                        disabled
                       />
-                    </Link>
-                  </div>
+                      <Input
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        label={"Cód."}
+                        placeholder={item.barCode}
+                        disabled
+                      />
+                      <div className="mt-3 flex items-center space-x-2">
+                        <span
+                          className={`flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg px-1 ${
+                            item.status === ""
+                              ? "bg-gray text-black_b"
+                              : item.status === "Inhabilitado"
+                                ? "bg-red_e text-white"
+                                : item.status === "Habilitado"
+                                  ? "bg-green text-white"
+                                  : "text-white"
+                          }`}
+                        >
+                          {item.status === ""
+                            ? "Pendiente"
+                            : translateProductState(item.status)}
+                        </span>
+                        <Link
+                          to={`/inicio/taller/datos-recarga/${item.id}?orderId=${orderDetails.orderId}&id=${orderDetails.id}`}
+                        >
+                          <Button
+                            width="w-[7.5rem] 2xl:w-[12rem]"
+                            text="Ensayo"
+                            icon={ChevronRightIcon}
+                          />
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
+
             {orderDetails?.productInOrder?.map((order) => (
               <div className="flex w-1/2 space-x-2" key={order.id}>
                 <Input

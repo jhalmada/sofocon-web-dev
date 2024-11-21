@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+
 const translateState = (state) => {
   switch (state) {
     case "REQUEST":
@@ -29,9 +29,6 @@ const RechargeRow = ({
   onEditClick,
 }) => {
   const navigate = useNavigate();
-
-  const [orderDetails, setOrderDetails] = useState(null);
-  const [selectedState, setSelectedState] = useState(orderDetails?.status);
 
   const handleRowClick = () => {
     navigate(`/inicio/taller/recarga/${id}`);
@@ -77,12 +74,14 @@ const RechargeRow = ({
       </td>
       <td className="py-6">
         <div className="flex justify-center gap-4">
-          <img
-            src={editIconSrc}
-            alt="Edit icon"
-            className="h-5 w-5 cursor-pointer"
-            onClick={onEditClick}
-          />
+          {state === "REQUEST" && (
+            <img
+              src={editIconSrc}
+              alt="Edit icon"
+              className="h-5 w-5 cursor-pointer"
+              onClick={onEditClick}
+            />
+          )}
         </div>
       </td>
     </tr>

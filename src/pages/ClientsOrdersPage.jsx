@@ -39,9 +39,8 @@ const ClientsOrdersPage = () => {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
 
-    return `${day}/${month}/${year}`;
+    return `${month}/${year}`;
   };
 
   const translateState = (state) => {
@@ -138,8 +137,9 @@ const ClientsOrdersPage = () => {
             </div>
           </Link>
         </div>
+
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          {orderDetails?.id || "sin id"}
+          {orderDetails?.orderId || "sin id"}
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
@@ -182,7 +182,7 @@ const ClientsOrdersPage = () => {
                 bg="bg-gray"
                 border="none"
                 label={"ID de orden"}
-                placeholder={orderDetails?.id}
+                placeholder={orderDetails?.orderId}
                 placeholderColor="placeholder-black_b"
                 disabled
               />
@@ -246,14 +246,14 @@ const ClientsOrdersPage = () => {
                     placeholderColor="placeholder-black_b"
                     border="none"
                     label="Precio"
-                    value={order.fixedPrice || "precio"}
+                    value={"$" + (order.fixedPrice || "precio")}
                     disabled
                   />
                   <Input
                     type="number"
                     label="Desc."
                     placeholder="%"
-                    value={order.discountPercent + "%"}
+                    value={(order.discountPercent || 0) + "%"}
                     bg="bg-gray"
                     placeholderColor="placeholder-black_b"
                     border="none"
@@ -263,7 +263,7 @@ const ClientsOrdersPage = () => {
                     <Input
                       type="number"
                       label="Recarga"
-                      placeholder={order.isRechargue ? "Si" : "No"}
+                      placeholder={order.isRecharge ? "Si" : "No"}
                       bg="bg-gray"
                       placeholderColor="placeholder-black_b"
                       border="none"
@@ -273,6 +273,65 @@ const ClientsOrdersPage = () => {
                 </div>
               </div>
             ))}
+            {console.log(orderDetails?.productInOrder)}
+            {orderDetails?.productInOrder?.map((order, index) =>
+              order.isRecharge ? (
+                <>
+                  <div className="bg-black_l p-4">
+                    <p className="text-center text-md">
+                      Recarga del producto
+                      <span className="ml-1 font-semibold uppercase">
+                        {order.product.name}
+                      </span>
+                    </p>
+                    <div className="flex space-x-2">
+                      <Input
+                        label="Código de barras"
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        disabled
+                        value={order.itemsRemoval[index].barCode}
+                      />
+                      <Input
+                        label="Matrícula"
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        disabled
+                        value={order.itemsRemoval[index].enrollment}
+                      />
+                    </div>
+                    <div className="flex space-x-2">
+                      <Input
+                        label="N° UNIT de fábrica"
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        disabled
+                        value={order.itemsRemoval[index].fabricUNIT}
+                      />
+                      <Input
+                        label="Fecha última carga"
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        disabled
+                        value={formatDate(order.itemsRemoval[index].lastDate)}
+                      />
+                      <Input
+                        label="N° UNIT de actual"
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        disabled
+                        value={order.itemsRemoval[index].numberUNIT}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : null,
+            )}
 
             <div className="flex space-x-2">
               <Input
@@ -280,7 +339,7 @@ const ClientsOrdersPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Subtotal"}
-                placeholder={subTotal}
+                placeholder={"$" + subTotal}
                 disabled
               />
               <Input
@@ -288,7 +347,7 @@ const ClientsOrdersPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"IVA 22%"}
-                placeholder={iva}
+                placeholder={"$" + iva}
                 disabled
               />
               <Input
@@ -306,7 +365,7 @@ const ClientsOrdersPage = () => {
               fontWeight="font-bold"
               border="none"
               label={"TOTAL"}
-              placeholder={total}
+              placeholder={"$" + total}
               disabled
             />
 
@@ -323,7 +382,7 @@ const ClientsOrdersPage = () => {
                 bg="bg-gray"
                 border="none"
                 label={"Compra autorizada por:"}
-                placeholder={orderDetails?.user?.userInfo?.fullName}
+                placeholder={orderDetails?.clientAuthorize}
                 placeholderColor="placeholder-black_b"
                 disabled
               />

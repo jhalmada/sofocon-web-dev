@@ -11,25 +11,31 @@ const useOrders = () => {
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState(null);
+  const [entryDate, setEntryDate] = useState(null);
   const [orderType, setOrderType] = useState({
     isPreOrder: false,
     isDirect: false,
   });
+  const [recharge, setRecharge] = useState(false);
+  const [inOrders, setInOrders] = useState(null);
 
   const getAllOrders = async () => {
     try {
+      setOrdersResponse([]);
       setLoading(true);
       const { data } = await OrdersService.getAllOrdersApi({
         page,
         itemsPerPage,
         search,
+        recharge,
+        inOrders,
         ...orderType,
         status,
+        entryDate,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
       setOrdersResponse(data.result);
-      console.log(data);
     } catch (e) {
       console.log(e);
     } finally {
@@ -39,7 +45,17 @@ const useOrders = () => {
 
   useEffect(() => {
     getAllOrders();
-  }, [page, itemsPerPage, modified, search, orderType, status]);
+  }, [
+    page,
+    itemsPerPage,
+    modified,
+    search,
+    orderType,
+    status,
+    entryDate,
+    recharge,
+    inOrders,
+  ]);
 
   return {
     ordersResponse,
@@ -55,6 +71,9 @@ const useOrders = () => {
     setSearch,
     setStatus,
     setOrderType,
+    setRecharge,
+    setInOrders,
+    setEntryDate,
   };
 };
 

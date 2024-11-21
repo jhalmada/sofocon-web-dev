@@ -8,17 +8,25 @@ import FilterSelect from "../components/filters/FilterSelect";
 import StorageRow from "../components/StorageRow";
 import { Select, SelectItem } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
-import useOrders from "../hooks/orders/useOrders";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete";
 import useGetProducts from "../hooks/products/useGetProducts";
 import Input from "../components/inputs/Input";
 import { Link } from "react-router-dom";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
-const StoragePage = () => {
+const StoragePage = ({
+  ordersResponse,
+  setEntryDate,
+  setStatus,
+  setItemsPerPage,
+  totalPage,
+  total,
+  setPage,
+  page,
+  itemsPerPage,
+}) => {
   const [autocompleteResults, setAutocompleteResults] = useState([]);
   const [quantity, setQuantity] = useState({});
   const [recharged, setRecharged] = useState({});
-  const [selectedMonth, setSelectedMonth] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isExportCompetingModalOpen, setIsExportCompetingModalOpen] =
@@ -36,19 +44,6 @@ const StoragePage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-
-  const {
-    ordersResponse,
-    setItemsPerPage,
-    totalPage,
-    total,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-    setStatus,
-    setSearch: setSearchOrders,
-  } = useOrders();
 
   const stateOptions = [
     "Solicitado",
@@ -71,21 +66,7 @@ const StoragePage = () => {
     "Noviembre",
     "Diciembre",
   ];
-  const filteredOrders = ordersResponse.filter((order) => {
-    if (!order.sellDate) {
-      return false;
-    }
-    const orderDate = new Date(order.sellDate);
-    if (isNaN(orderDate.getTime())) {
-      return false;
-    }
-    if (!selectedMonth) {
-      return true;
-    }
-    const orderMonthIndex = orderDate.getMonth();
-    const selectedMonthIndex = monthsOptions.indexOf(selectedMonth);
-    return orderMonthIndex === selectedMonthIndex;
-  });
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -178,107 +159,136 @@ const StoragePage = () => {
     setAutocompleteResults(updatedSelectedItems);
   };
   const handleMonthChange = (e) => {
-    setSelectedMonth(e.target.value);
+    const monthMap = {
+      Enero: "01",
+      Febrero: "02",
+      Marzo: "03",
+      Abril: "04",
+      Mayo: "05",
+      Junio: "06",
+      Julio: "07",
+      Agosto: "08",
+      Septiembre: "09",
+      Octubre: "10",
+      Noviembre: "11",
+      Diciembre: "12",
+    };
+
+    const selectedMonth = monthMap[e.target.value] || "";
+    setEntryDate(selectedMonth ? `${selectedMonth}` : "");
+    setPage(0);
   };
+
   return (
-    <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-      {ordersResponse.length === 0 ? (
-        <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
-          <td colSpan="5" className="p-4 text-center">
-            <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-              Ningún elemento coincide con tu búsqueda, inténtalo de nuevo.{" "}
-              <br /> Puedes encontrar a las Solicitudes creadas aquí.
-            </p>
-            <img src={pageLostImg} alt="Tabla vacía" className="mx-auto" />
-          </td>
-        </tr>
-      ) : (
-        <div>
-          <div className="flex items-center gap-2">
-            <p className="ml-2 text-black_m">Período</p>
-            <Select
-              className="w-52 rounded-lg border"
-              placeholder="Selecciona un mes"
-              onChange={handleMonthChange}
-            >
-              {monthsOptions.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
-
-          <table className="mt-2 w-full">
-            <thead>
-              <tr>
-                <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                  Empresa
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  ID de orden
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Fecha de ingreso
-                </th>
-
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Fecha de retiro
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Vendedor
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  <div className="flex flex-col items-center gap-2">
-                    <FilterSelect
-                      options={stateOptions}
-                      placeholder="Estado"
-                      onChange={handleStateFilterChange}
-                    />
-                  </div>
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Acción
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.map((order, index) => (
-                <StorageRow
-                  key={index}
-                  id={order.id}
-                  name={order?.client?.name || "Sin nombre"}
-                  orderId={order.id}
-                  entryData={formatDate(order.workShopDateEntry)}
-                  retirementDate={
-                    "Aún sin retirar" || formatDate(order.workShopDateDeparture)
-                  }
-                  seller={order?.user?.userInfo?.fullName}
-                  state={order.status}
-                  editIconSrc={editIcon}
-                  onEditClick={() => {
-                    openModal();
-                  }}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      <div
-        className={
-          ordersResponse.length === 0 ? "hidden" : `flex justify-center p-6`
-        }
-      >
-        <Pagination
-          pageIndex={setItemsPerPage}
-          currentPage={page}
-          totalPages={totalPage}
-          onPageChange={setPage}
-          itemsPerPage={itemsPerPage}
-          total={total}
-        />
+    <div className="flex flex-grow flex-col overflow-auto rounded-tr-lg bg-white p-5">
+      <div className="flex items-center gap-2">
+        <p className="ml-2 text-black_m">Período</p>
+        <Select
+          className="w-52 rounded-lg border"
+          placeholder="Selecciona un mes"
+          onChange={handleMonthChange}
+        >
+          {monthsOptions.map((option) => (
+            <SelectItem key={option} value={option}>
+              {option}
+            </SelectItem>
+          ))}
+        </Select>
       </div>
+      {ordersResponse.length === 0 ? (
+        <>
+          <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
+            <td colSpan="5" className="p-4 text-center">
+              <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                Ningún elemento coincide con tu búsqueda, inténtalo de nuevo.{" "}
+                <br /> Puedes encontrar a las Solicitudes creadas aquí.
+              </p>
+              <img src={pageLostImg} alt="Tabla vacía" className="mx-auto" />
+            </td>
+          </tr>
+        </>
+      ) : (
+        <>
+          <div className="flex flex-grow flex-col justify-between">
+            <div>
+              <table className="mt-2 w-full">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Empresa
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      ID de orden
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Fecha de ingreso
+                    </th>
+
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Fecha de retiro
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Vendedor
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      <div className="flex flex-col items-center gap-2">
+                        <FilterSelect
+                          options={stateOptions}
+                          placeholder="Estado"
+                          onChange={handleStateFilterChange}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Acción
+                    </th>
+                  </tr>
+                </thead>
+                {console.log("respuesta", ordersResponse)}
+                <tbody>
+                  {ordersResponse.map((order, index) => (
+                    <StorageRow
+                      key={index}
+                      id={order.id}
+                      name={order?.client?.name || "Sin nombre"}
+                      orderId={order.orderId}
+                      entryData={formatDate(order.workShopDateEntry)}
+                      retirementDate={
+                        "Aún sin retirar" ||
+                        formatDate(order.workShopDateDeparture)
+                      }
+                      seller={order?.user?.userInfo?.fullName}
+                      state={order.status}
+                      editIconSrc={editIcon}
+                      onEditClick={() => {
+                        openModal();
+                      }}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              className={
+                ordersResponse.length === 0
+                  ? "hidden"
+                  : `flex justify-center p-6`
+              }
+            >
+              <Pagination
+                pageIndex={setItemsPerPage}
+                currentPage={page}
+                totalPages={totalPage}
+                onPageChange={setPage}
+                itemsPerPage={itemsPerPage}
+                total={total}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
       <ReusableModal
         width="w-[30rem]"
         isOpen={isModalOpen}

@@ -10,7 +10,7 @@ const BudgetRow = ({
   id,
   downloadIconSrc,
   deleteIconSrc,
-  onEditClick,
+  onDownloadClick,
   onDeleteClick,
 }) => {
   const navigate = useNavigate();
@@ -52,9 +52,9 @@ const BudgetRow = ({
           <a href={`${BASE_URL}/${getOrderPdf}/${id}`} download target="_blank">
             <img
               src={downloadIconSrc}
-              alt="Edit icon"
+              alt="Download icon"
               className="h-5 w-5 cursor-pointer"
-              onClick={onEditClick}
+              onClick={onDownloadClick}
             />
           </a>
           <img

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
@@ -13,10 +13,6 @@ import RechargeRow from "../components/RechargeRow.jsx";
 import FileIcon from "../assets/icons/file-earmark-ruled.svg";
 import { useForm } from "react-hook-form";
 import { BASE_URL } from "../utils/Constants.js";
-import {
-  getClientsExcel,
-  getClientsPdf,
-} from "../services/companies/companies.routes.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import StoragePage from "./StoragePage.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -25,6 +21,10 @@ import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplet
 import useGetProducts from "../hooks/products/useGetProducts.js";
 import useOrders from "../hooks/orders/useOrders.js";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
+import {
+  getOrderExcel,
+  getOrderPdf,
+} from "../services/orders/orders.routes.js";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
@@ -39,10 +39,9 @@ const WorkshopPage = () => {
     setPage,
     page,
     itemsPerPage,
-    setModified,
-    setOrderType,
     setStatus,
-    setSearch: setSearchOrders,
+    setRecharge,
+    setEntryDate,
   } = useOrders();
   const {
     register,
@@ -54,7 +53,6 @@ const WorkshopPage = () => {
   const [autocompleteResults, setAutocompleteResults] = useState([]);
   const [quantity, setQuantity] = useState({});
   const [recharged, setRecharged] = useState({});
-  const [selectedMonth, setSelectedMonth] = useState(null);
   const [activeTab, setActiveTab] = useState(RECHARGE_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -65,6 +63,7 @@ const WorkshopPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [openScannerModal, setOpenScannerModal] = useState(false);
+  const inputRef = useRef(null);
 
   const stateOptions = ["Solicitado", "En preparación", "Para retirar"];
   const monthsOptions = [
@@ -81,21 +80,6 @@ const WorkshopPage = () => {
     "Noviembre",
     "Diciembre",
   ];
-  const filteredOrders = ordersResponse.filter((order) => {
-    if (!order.sellDate) {
-      return false;
-    }
-    const orderDate = new Date(order.sellDate);
-    if (isNaN(orderDate.getTime())) {
-      return false;
-    }
-    if (!selectedMonth) {
-      return true;
-    }
-    const orderMonthIndex = orderDate.getMonth();
-    const selectedMonthIndex = monthsOptions.indexOf(selectedMonth);
-    return orderMonthIndex === selectedMonthIndex;
-  });
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -132,6 +116,9 @@ const WorkshopPage = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
+  const handleAccept = () => {
+    setOpenScannerModal(true);
+  };
 
   const handleCancelClick = () => {
     openConfirmCancelModal();
@@ -143,8 +130,15 @@ const WorkshopPage = () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
+    console.log("Código ingresado:", data.barCode);
+    handleCancelClick();
   };
+
+  useEffect(() => {
+    if (openScannerModal) {
+      inputRef.current.focus();
+    }
+  }, [openScannerModal]);
 
   const handleStateFilterChange = (value) => {
     switch (value) {
@@ -198,8 +192,38 @@ const WorkshopPage = () => {
     setAutocompleteResults(updatedSelectedItems);
   };
   const handleMonthChange = (e) => {
-    setSelectedMonth(e.target.value);
+    const monthMap = {
+      Enero: "01",
+      Febrero: "02",
+      Marzo: "03",
+      Abril: "04",
+      Mayo: "05",
+      Junio: "06",
+      Julio: "07",
+      Agosto: "08",
+      Septiembre: "09",
+      Octubre: "10",
+      Noviembre: "11",
+      Diciembre: "12",
+    };
+
+    const selectedMonth = monthMap[e.target.value] || "";
+    setEntryDate(selectedMonth ? `${selectedMonth}` : "");
+    setPage(0);
   };
+
+  useEffect(() => {
+    switch (activeTab) {
+      case RECHARGE_TAB:
+        setRecharge(true);
+        break;
+      case STORAGE_TAB:
+        setRecharge(false);
+        break;
+      default:
+        setRecharge(null);
+    }
+  }, [activeTab]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -274,118 +298,136 @@ const WorkshopPage = () => {
           </div>
         </div>
         {activeTab === RECHARGE_TAB && (
-          <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-            {ordersResponse.length === 0 ? (
-              <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
-                <td colSpan="5" className="p-4 text-center">
-                  <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                    Ningún elemento coincide con tu búsqueda, inténtalo de
-                    nuevo. <br /> Puedes encontrar a las solicitudes creadas
-                    aquí.
-                  </p>
-                  <img
-                    src={pageLostImg}
-                    alt="Tabla vacía"
-                    className="mx-auto"
-                  />
-                </td>
-              </tr>
-            ) : (
-              <div>
-                <div className="flex items-center gap-2">
-                  <p className="ml-2 text-black_m">Período</p>
-                  <Select
-                    className="w-52 rounded-lg border"
-                    placeholder="Selecciona un mes"
-                    onChange={handleMonthChange}
-                  >
-                    {monthsOptions.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
-
-                <table className="mt-2 w-full">
-                  <thead>
-                    <tr>
-                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                        Empresa
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        ID de orden
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Fecha de ingreso
-                      </th>
-
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Fecha de retiro
-                      </th>
-
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Vendedor
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        <div className="flex flex-col items-center gap-2">
-                          <FilterSelect
-                            options={stateOptions}
-                            placeholder="Estado"
-                            onChange={handleStateFilterChange}
-                          />
-                        </div>
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Acción
-                      </th>
-                    </tr>
-                  </thead>
-
-                  {console.log(ordersResponse)}
-                  <tbody>
-                    {filteredOrders.map((order, index) => (
-                      <RechargeRow
-                        key={index}
-                        id={order.id}
-                        name={order?.client?.name || "Sin nombre"}
-                        orderId={order.id}
-                        entryData={formatDate(order.workShopDateEntry)}
-                        retirementDate={
-                          "Aún sin retirar" ||
-                          formatDate(order.workShopDateDeparture)
-                        }
-                        seller={order?.user?.userInfo?.fullName}
-                        state={order.status}
-                        editIconSrc={editIcon}
-                        onEditClick={() => {
-                          openModal();
-                        }}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            <div
-              className={
-                ordersResponse.length === 0
-                  ? "hidden"
-                  : `flex justify-center p-6`
-              }
-            >
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemsPerPage={itemsPerPage}
-                total={total}
-              />
+          <div className="flex h-full flex-grow flex-col overflow-auto rounded-tr-lg bg-white p-5">
+            <div className="flex items-center gap-2">
+              <p className="ml-2 text-black_m">Período</p>
+              <Select
+                className="w-52 rounded-lg border"
+                placeholder="Selecciona un mes"
+                onChange={handleMonthChange}
+              >
+                {monthsOptions.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </Select>
             </div>
+            {ordersResponse.length === 0 ? (
+              <>
+                <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
+                  <td colSpan="5" className="p-4 text-center">
+                    <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                      Ningún elemento coincide con tu búsqueda, inténtalo de
+                      nuevo. <br /> Puedes encontrar a las solicitudes creadas
+                      aquí.
+                    </p>
+                    <img
+                      src={pageLostImg}
+                      alt="Tabla vacía"
+                      className="mx-auto"
+                    />
+                  </td>
+                </tr>
+              </>
+            ) : (
+              <>
+                <div className="flex flex-grow flex-col justify-between">
+                  <div>
+                    <table className="mt-2 w-full">
+                      <thead>
+                        <tr>
+                          <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                            Empresa
+                          </th>
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            ID de orden
+                          </th>
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            Fecha de ingreso
+                          </th>
+
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            Fecha de retiro
+                          </th>
+
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            Vendedor
+                          </th>
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            <div className="flex flex-col items-center gap-2">
+                              <FilterSelect
+                                options={stateOptions}
+                                placeholder="Estado"
+                                onChange={handleStateFilterChange}
+                              />
+                            </div>
+                          </th>
+                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                            Acción
+                          </th>
+                        </tr>
+                      </thead>
+
+                      {console.log(ordersResponse)}
+                      <tbody>
+                        {ordersResponse.map((order, index) => (
+                          <RechargeRow
+                            key={index}
+                            id={order.id}
+                            name={order?.client?.name || "Sin nombre"}
+                            orderId={order.orderId}
+                            entryData={formatDate(order.workShopDateEntry)}
+                            retirementDate={
+                              "Aún sin retirar" ||
+                              formatDate(order.workShopDateDeparture)
+                            }
+                            seller={order?.user?.userInfo?.fullName}
+                            state={order.status}
+                            editIconSrc={editIcon}
+                            onEditClick={() => {
+                              openModal();
+                            }}
+                          />
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div
+                    className={
+                      ordersResponse.length === 0
+                        ? "hidden"
+                        : `flex justify-center p-6`
+                    }
+                  >
+                    <Pagination
+                      pageIndex={setItemsPerPage}
+                      currentPage={page}
+                      totalPages={totalPage}
+                      onPageChange={setPage}
+                      itemsPerPage={itemsPerPage}
+                      total={total}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
-        {activeTab === STORAGE_TAB && <StoragePage />}
+
+        {activeTab === STORAGE_TAB && (
+          <StoragePage
+            ordersResponse={ordersResponse || []}
+            setEntryDate={setEntryDate}
+            setStatus={setStatus}
+            pageIndex={setItemsPerPage}
+            currentPage={page}
+            totalPages={totalPage}
+            onPageChange={setPage}
+            itemsPerPage={itemsPerPage}
+            total={total}
+          />
+        )}
       </div>
       <ReusableModal
         width="w-[30rem]"
@@ -551,11 +593,12 @@ const WorkshopPage = () => {
       </ReusableModal>
       <ReusableModal
         isOpen={openScannerModal}
-        onClose={handleCancelClick}
+        onClose={closeModal}
         title="Código de barras"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "scan"]}
-        handleCancelClick={handleCancelClick}
+        handleCancelClick={closeModal}
+        onAccept={handleAccept}
       >
         <p className="text-sm leading-[1rem] text-black_m">
           Escanea el código de barras del producto para localizar la orden de
@@ -563,12 +606,7 @@ const WorkshopPage = () => {
         </p>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="px-8">
-            <Input
-              placeholder={"Ingrese el código..."}
-              {...register("name", {
-                required: "Este campo es requerido",
-              })}
-            />
+            <Input ref={inputRef} placeholder="Ingrese el código..." />
           </div>
         </form>
       </ReusableModal>
@@ -582,7 +620,11 @@ const WorkshopPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getOrderExcel}?recharge=true`}
+            download
+            target="_blank"
+          >
             <Button
               width="min-w-[14rem]"
               text="Descargar archivo Excel"
@@ -593,7 +635,11 @@ const WorkshopPage = () => {
             />
           </a>
 
-          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getOrderPdf}?recharge=true`}
+            download
+            target="_blank"
+          >
             <Button
               width="min-w-[14rem]"
               text="Descargar archivo PDF"
@@ -616,7 +662,7 @@ const WorkshopPage = () => {
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
           <a
-            href={`${BASE_URL}/${getClientsExcel}?competence=false`}
+            href={`${BASE_URL}/${getOrderExcel}?recharge=false`}
             download
             target="_blank"
           >
@@ -631,7 +677,7 @@ const WorkshopPage = () => {
           </a>
 
           <a
-            href={`${BASE_URL}/${getClientsPdf}?competence=false`}
+            href={`${BASE_URL}/${getOrderPdf}?recharge=false`}
             download
             target="_blank"
           >
@@ -655,16 +701,6 @@ const WorkshopPage = () => {
         onAccept={handleConfirmCancel}
       >
         Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isSaveConfirmationModalOpen}
-        onClose={closeSaveConfirmationModal}
-        title="Cambios guardados"
-        variant="confirmation"
-        buttons={["accept"]}
-        onAccept={closeSaveConfirmationModal}
-      >
-        Los cambios fueron guardados exitosamente.
       </ReusableModal>
     </div>
   );

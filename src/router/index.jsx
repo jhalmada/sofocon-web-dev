@@ -79,7 +79,6 @@ import ClientsOrdersPage from "../pages/ClientsOrdersPage";
 import NewSalePage from "../pages/NewSalePage";
 import BudgetDataPage from "../pages/BudgetDataPage";
 import AddPriceListPage from "../pages/AddPriceListPage";
-import { path } from "framer-motion/client";
 import ListPriceDetailsPage from "../pages/ListPriceDetailsPage";
 
 export const router = createBrowserRouter([
