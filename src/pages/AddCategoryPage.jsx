@@ -158,7 +158,7 @@ const AddCategoryPage = () => {
                 id="file"
                 type="file"
                 accept=".png, .jpg, .jpeg"
-                {...register("file")}
+                {...register("file", { required: "Este campo es obligatorio" })}
                 onChange={handleFileChange}
                 disabled={fileName.length > 0}
               />

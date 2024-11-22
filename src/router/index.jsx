@@ -80,6 +80,8 @@ import NewSalePage from "../pages/NewSalePage";
 import BudgetDataPage from "../pages/BudgetDataPage";
 import AddPriceListPage from "../pages/AddPriceListPage";
 import ListPriceDetailsPage from "../pages/ListPriceDetailsPage";
+import MetricsLayout from "../layouts/Metrics";
+import MetricsDetails from "../pages/MetricsDetails";
 
 export const router = createBrowserRouter([
   {
@@ -113,9 +115,20 @@ export const router = createBrowserRouter([
     element: <Public />,
     children: [
       {
-        index: true,
-        element: <HomePage />,
+        path: "",
+        element: <MetricsLayout />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+          },
+          {
+            path: "metrics",
+            element: <MetricsDetails />,
+          },
+        ],
       },
+
       {
         path: COMPANIES_ROUTE,
         element: <CompaniesLayout />,
