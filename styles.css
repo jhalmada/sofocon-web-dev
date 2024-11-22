@@ -1,0 +1,49 @@
+/* Selecciona el elemento principal */
+.overflow-y-auto[data-slot="listboxWrapper"] {
+  /* Asegúrate de que el scroll esté visible por defecto */
+  overflow-y: auto !important;
+}
+
+/* Si hay un atributo data-top-scroll, asegura que el scroll esté visible */
+.overflow-y-auto[data-slot="listbox-wrapper"][data-top-scroll] {
+  scrollbar-width: auto; /* Muestra la barra de desplazamiento en todos los navegadores */
+  &::-webkit-scrollbar {
+    width: 8px; /* Ancho del scroll en navegadores webkit */
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color del track */
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: #888; /* Color del thumb */
+    border-radius: 20px;
+    border: 3px solid #f1f1f1; /* Borde del thumb */
+  }
+}
+
+/* Si hay un atributo data-bottom-scroll, asegura que el scroll esté visible */
+.overflow-y-auto[data-slot="listbox-wrapper"][data-bottom-scroll] {
+  scrollbar-width: auto;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 20px;
+    border: 3px solid #f1f1f1;
+  }
+}
+
+/* Si hay una clase scrollbar-hide, asegura que el scroll esté visible */
+.overflow-y-auto[data-slot="listbox-wrapper"].scrollbar-hide {
+  scrollbar-width: auto !important;
+  &::-webkit-scrollbar {
+    display: block !important; /* Muestra el scroll en navegadores webkit */
+  }
+}

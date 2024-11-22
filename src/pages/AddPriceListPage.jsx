@@ -169,7 +169,7 @@ const AddPriceListPage = () => {
               <p className="text-sm">Lista de precios de venta directa</p>
             </Checkbox>
 
-            <div className="left-0">
+            <div className="flex justify-end">
               <Button
                 type="submit"
                 color="save"

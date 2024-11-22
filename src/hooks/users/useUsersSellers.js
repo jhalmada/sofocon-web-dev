@@ -21,9 +21,12 @@ const useUsersSellers = () => {
         route,
         isActive,
       });
-      setTotalPage(data.pagination.totalPages);
-      setTotal(data.pagination.total);
-      setUsersSellerResponse(data);
+      if (data) {
+        setTotalPage(data.pagination.totalPages);
+        setTotal(data.pagination.total);
+        setUsersSellerResponse(data);
+      }
+      
     } catch (e) {
       console.log(e);
     } finally {
