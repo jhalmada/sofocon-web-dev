@@ -41,12 +41,15 @@ const OrdersPage = () => {
     setOrderType,
     setInOrders,
     setSearch: setSearchOrders,
+    getAllOrders,
   } = useOrders();
 
   const [activeTab, setActiveTab] = useState(() => {
     return sessionStorage.getItem("activeTab") || CLIENTS_ORDERS_TAB;
   });
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+
+  console.log(activeTab);
 
   const monthsOptions = [
     "Enero",
@@ -143,25 +146,25 @@ const OrdersPage = () => {
   useEffect(() => {
     switch (activeTab) {
       case BUDGET_TAB:
-        setOrderType({ isDirect: false, isPreOrder: true });
-        setInOrders(false);
+        getAllOrders({ isDirect: false, isPreOrder: true, inOrders: false });
+        // setInOrders(false);
 
         break;
       case DIRECT_ORDERS_TAB:
-        setOrderType({ isDirect: true, isPreOrder: false });
-        setInOrders(true);
+        getAllOrders({ isDirect: true, isPreOrder: false, inOrders: true });
+        // setInOrders(true);
 
         break;
       case CLIENTS_ORDERS_TAB:
-        setOrderType({ isPreOrder: false, isDirect: false });
-        setInOrders(true);
+        getAllOrders({ isPreOrder: false, isDirect: false, inOrders: true });
+        // setInOrders(true);
 
         break;
       default:
-        setInOrders(null);
-        setOrderType(null);
+        // setInOrders(null);
+        getAllOrders({ isPreOrder: false, isDirect: false });
     }
-  }, [activeTab]);
+  }, [activeTab, getAllOrders]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
