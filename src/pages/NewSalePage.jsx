@@ -28,7 +28,6 @@ const NewSalePage = () => {
     control,
     setValue,
     formState: { errors },
-    trigger,
   } = useForm();
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
@@ -69,6 +68,7 @@ const NewSalePage = () => {
   const isDirectValue = watch("isDirect", false);
 
   const handleOrderCreation = async (orderData) => {
+    console.log("orderdata", orderData.client);
     const {
       isDirect,
       client,
@@ -101,6 +101,7 @@ const NewSalePage = () => {
         isPreOrder: false,
         isDirect,
         client,
+
         rut,
         user,
         productInOrder: productInOrder.map((product) => {
@@ -148,9 +149,6 @@ const NewSalePage = () => {
   };
 
   const onSubmit = (data) => {
-    {
-      console.log(data.isDelivered);
-    }
     if (isDirectValue) {
       handleOrderCreation({
         ...data,
@@ -171,6 +169,7 @@ const NewSalePage = () => {
     navigate("/inicio/ordenes");
   };
   const handleSelectCompany = (selectedCompany) => {
+    console.log("seleccionado", selectedCompany);
     if (selectedCompany) {
       setRutValue(selectedCompany);
     } else {
@@ -277,12 +276,6 @@ const NewSalePage = () => {
   }, [autocompleteResults, quantity, discount]);
 
   useEffect(() => {
-    trigger("clientAuthorize");
-    trigger("client");
-    trigger("paymentType");
-  }, [clientAuthorize, client, paymentType, trigger]);
-
-  useEffect(() => {
     if (checkQuantity) {
       setNumChecks(parseInt(checkQuantity, 10));
     }
@@ -347,7 +340,9 @@ const NewSalePage = () => {
                       message: "El nombre no puede exceder los 50 caracteres.",
                     },
                   })}
-                  msjError={errors.client ? errors.client.message : ""}
+                  msjError={
+                    errors.clientDirect ? errors.clientDirect.message : ""
+                  }
                 />
               ) : (
                 <div className="-mt-1 mb-4 w-full">
@@ -371,7 +366,7 @@ const NewSalePage = () => {
                       <CompleteSearchInput
                         label={"Empresa"}
                         array={companiesResponse}
-                        name={"client.name"}
+                        name={"client"}
                         setValue={setValue}
                         onChange={setSearchCompanies}
                         placeholder="Buscar empresa"

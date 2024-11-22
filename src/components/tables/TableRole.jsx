@@ -56,8 +56,6 @@ const TableRole = () => {
     useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalButtons, setModalButtons] = useState([]);
-  const totalRoles = RolesResponse ? RolesResponse.length : 0;
-  const totalPages = Math.ceil(totalRoles / rolePage);
   const [currentPage, setCurrentPage] = useState(0);
   const startIndex = currentPage * rolePage;
   const paginatedRoles = RolesResponse
@@ -166,6 +164,7 @@ const TableRole = () => {
             {paginatedRoles.map((role, index) => (
               <tr key={index} className="border-b border-gray text-center">
                 <td className="p-2 text-left">{role.name}</td>
+
                 <td className="p-2">{formatPermisos(role.permissions)}</td>
 
                 <td className="p-2">

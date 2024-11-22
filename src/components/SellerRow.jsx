@@ -2,8 +2,7 @@ const SellerRow = ({
   fullName,
   email,
   route,
-  state,
-  info,
+  contact,
   editIconSrc,
   deleteIconSrc,
   onEditClick,
@@ -25,15 +24,17 @@ const SellerRow = ({
       </td>
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
+        title={contact}
+      >
+        {contact}
+      </td>
+      <td
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={route}
       >
         {route}
       </td>
 
-      <td className="py-6 text-center text-md leading-[1.16rem]">
-        {state ? "Activo" : "Inactivo"}
-      </td>
-      <td className="cursor-pointer py-6 text-center underline">{info}</td>
       <td className="py-6">
         <div className="flex justify-center gap-4">
           <img
