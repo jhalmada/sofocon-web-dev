@@ -26,7 +26,9 @@ import {
   getOrderExcel,
   getOrderPdf,
 } from "../services/orders/orders.routes.js";
-import useGetOneOrder from "../hooks/orders/useGetOneOrder.js";
+//put
+// import useGetOneOrder from "../hooks/orders/useGetOneOrder.js";
+import BarcodeReader from "../components/scan/BarcodeReader.jsx";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
@@ -34,7 +36,7 @@ const STORAGE_TAB = "deposito";
 const WorkshopPage = () => {
   const { id } = useParams();
   const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
-  const { getOneOrder, setModified } = useGetOneOrder(id);
+  // const { getOneOrder, setModified } = useGetOneOrder(id);
   const { changedOrder } = usePutOrders();
 
   const {
@@ -107,13 +109,14 @@ const WorkshopPage = () => {
       setModified,
     );
   };
-  const oneOrder = async (id) => {
-    const newdatos = await getOneOrder(id);
-    setOrderDetails(newdatos);
-  };
-  useEffect(() => {
-    oneOrder(id);
-  }, [id]);
+  //put
+  // const oneOrder = async (id) => {
+  //   const newdatos = await getOneOrder(id);
+  //   setOrderDetails(newdatos);
+  // };
+  // useEffect(() => {
+  //   oneOrder(id);
+  // }, [id]);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -156,12 +159,6 @@ const WorkshopPage = () => {
     console.log("Código ingresado:", data.barCode);
     handleCancelClick();
   };
-
-  useEffect(() => {
-    if (openScannerModal) {
-      inputRef.current.focus();
-    }
-  }, [openScannerModal]);
 
   const handleStateFilterChange = (value) => {
     switch (value) {
@@ -392,13 +389,18 @@ const WorkshopPage = () => {
                       </thead>
 
                       <tbody>
+                        {console.log("orderresponse", ordersResponse)}
                         {ordersResponse.map((order, index) => (
                           <RechargeRow
                             key={index}
                             id={order.id}
                             name={order?.client?.name || "Sin nombre"}
                             orderId={order.orderId}
-                            entryData={formatDate(order.workShopDateEntry)}
+                            entryData={
+                              order?.status === "PREPARATION"
+                                ? formatDate(order.workShopDateEntry)
+                                : "Aún sin preparar"
+                            }
                             retirementDate={
                               "Aún sin retirar" ||
                               formatDate(order.workShopDateDeparture)
@@ -626,8 +628,8 @@ const WorkshopPage = () => {
           compra donde se encuentra, o ingresa el código de manera manual.
         </p>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="px-8">
-            <Input ref={inputRef} placeholder="Ingrese el código..." />
+          <div className="px-2">
+            <BarcodeReader />
           </div>
         </form>
       </ReusableModal>

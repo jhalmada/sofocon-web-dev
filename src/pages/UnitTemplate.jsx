@@ -17,6 +17,9 @@ import useGetUnitOrders from "../hooks/orders/useGetUnitOrders.js";
 const UnitTemplate = () => {
   const {
     orderUnitResponse,
+    year,
+    month,
+    setMonth,
     setItemsPerPage,
     totalPage,
     total,
@@ -25,7 +28,6 @@ const UnitTemplate = () => {
     itemsPerPage,
     setSearch,
   } = useGetUnitOrders();
-  
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -34,21 +36,20 @@ const UnitTemplate = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [routeId, setRouteId] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState(null);
 
-  const monthsOptions = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
+  const months = [
+    { label: "Enero", value: "01" },
+    { label: "Febrero", value: "02" },
+    { label: "Marzo", value: "03" },
+    { label: "Abril", value: "04" },
+    { label: "Mayo", value: "05" },
+    { label: "Junio", value: "06" },
+    { label: "Julio", value: "07" },
+    { label: "Agosto", value: "08" },
+    { label: "Septiembre", value: "09" },
+    { label: "Octubre", value: "10" },
+    { label: "Noviembre", value: "11" },
+    { label: "Diciembre", value: "12" },
   ];
 
   const formatDate = (dateString) => {
@@ -80,8 +81,9 @@ const UnitTemplate = () => {
     closeConfirmCancelModal();
     closeModal();
   };
-  const handleMonthChange = (e) => {
-    setSelectedMonth(e.target.value);
+  const handleChangeMonth = (value) => {
+    console.log(value);
+    setMonth(value);
   };
   const openExportModal = () => {
     setIsExportModalOpen(true);
@@ -134,13 +136,15 @@ const UnitTemplate = () => {
             <div className="flex items-center gap-2">
               <p className="ml-2 text-black_m">Período</p>
               <Select
-                className="w-52 rounded-lg border"
+                labelPlacement="outside"
                 placeholder="Selecciona un mes"
-                onChange={handleMonthChange}
+                className="w-52 rounded-lg border"
+                onChange={(e) => handleChangeMonth(e.target.value)}
+                aria-label="Mes"
               >
-                {monthsOptions.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
+                {months.map((unitMonth) => (
+                  <SelectItem key={unitMonth.value} value={unitMonth.value}>
+                    {unitMonth.label}
                   </SelectItem>
                 ))}
               </Select>
@@ -211,37 +215,30 @@ const UnitTemplate = () => {
                   <UnitTemplateRow
                     key={index}
                     id={order.id}
-                    entryDate={formatDate(order.workShopDateEntry)}
-                    name={order?.client?.name || "Sin nombre"}
-                    direction={order?.client?.address}
-                    type={order?.productInOrder[index]?.product?.type}
-                    color={order?.productInOrder[index]?.product?.color}
-                    capacity={
-                      order?.productInOrder[index]?.itemsRemoval[index]?.product
-                        ?.capacity
+                    entryDate={
+                      order.workShopDateEntry
+                        ? formatDate(order.workShopDateEntry)
+                        : "Sin fecha"
                     }
-                    factory={"Si"}
-                    current={
-                      order.productInOrder[index]?.itemsRemoval[index]
-                        ?.numberUNIT
+                    name={
+                      order?.productInOrder.order.client?.name || "Sin nombre"
                     }
-                    registration={
-                      order.productInOrder[index]?.itemsRemoval[index]
-                        ?.enrollment
+                    direction={
+                      order?.productInOrder.order.client?.address ||
+                      "Sin direccion"
                     }
-                    trial={formatDate(
-                      order.productInOrder[index]?.itemsRemoval[index]
-                        ?.lastDate,
-                    )}
-                    pressure={
-                      order?.productInOrder[index]?.itemsRemoval[index]?.product
-                        ?.pressure
+                    type={order?.type}
+                    color={order?.color}
+                    capacity={order?.capacity}
+                    factory={order.fabricUNIT ? "Si" : "No"}
+                    current={order.numberUNIT}
+                    registration={order.enrollment}
+                    trial={
+                      order.testDate ? formatDate(order.testDate) : "Sin fecha"
                     }
-                    exp={
-                      order?.productInOrder[index]?.itemsRemoval[index]?.product
-                        ?.expansion
-                    }
-                    discontinued={"No"}
+                    pressure={order?.pressure}
+                    exp={order?.expansion}
+                    discontinued={order?.status === "DISABLED" ? "Si" : "No"}
                   />
                 ))}
               </tbody>

@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react";
 import { OrdersService } from "../../services/orders/orders.service";
+
+const anhoActual = () => {
+  const fechaActual = new Date();
+  const anio = fechaActual.getFullYear();
+  const mes = fechaActual.getMonth() + 1;
+  return { anio, mes };
+};
 const useGetUnitOrders = () => {
   const [orderUnitResponse, setOrderUnitResponse] = useState([]);
   const [order, setOrder] = useState([]);
-  const [year, setYear] = useState(null);
-  const [month, setMonth] = useState(null);
+  const { anio, mes } = anhoActual();
+  const [year, setYear] = useState(anio);
+
+  const [month, setMonth] = useState(mes);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);

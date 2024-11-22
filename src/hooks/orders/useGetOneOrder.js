@@ -9,7 +9,6 @@ const useGetOneOrder = (id) => {
   const getOneOrder = async () => {
     try {
       setLoading(true);
-
       const { data } = await OrdersService.getOneOrderApi(id);
       return data;
     } catch (e) {
