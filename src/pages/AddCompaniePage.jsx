@@ -14,8 +14,18 @@ import useAddCompany from "../hooks/companies/useAddCompanies";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import Cards from "../components/cards/Cards";
+import { Map, Marker } from "@vis.gl/react-google-maps";
+
+const coordenadasUruguay = {
+  lat: -34.901,
+  lng: -56.1698,
+};
 
 const AddCompaniePage = () => {
+  const [markers, setMarkers] = useState([]);
+  const [selectedMarker, setSelectedMarker] = useState(null);
+  const [ubicacion, setUbicacion] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -195,6 +205,30 @@ const AddCompaniePage = () => {
     const noteT = [...notes];
     noteT.splice(index, 1);
     setNotes(noteT);
+  };
+
+  const addMarker = (position) => {
+    setMarkers((prevMarkers) => [...prevMarkers, position]);
+
+    // Aquí puedes añadir lógica adicional para mostrar el marcador
+    console.log("Marcador añadido:", position);
+  };
+
+  const saveCoordinates = (position) => {
+    // Aquí puedes guardar las coordenadas en tu backend o base de datos
+    console.log("Coordenadas guardadas:", position);
+  };
+
+  const dobleClick = (e) => {
+    console.log(e.detail.latLng.lat);
+    const position = {
+      lat: e.detail.latLng.lat,
+      lng: e.detail.latLng.lng,
+    };
+    addMarker(position);
+
+    // Guardar las coordenadas
+    saveCoordinates(position);
   };
 
   return (
@@ -565,8 +599,24 @@ const AddCompaniePage = () => {
         >
           <div className="flex flex-col">
             <Input label={"Dirección"} placeholder={"Escribir..."} />
-            <div className="flex h-[15rem] items-center justify-center bg-blue_l text-2xl text-white">
+            {/* <div className="flex h-[15rem] items-center justify-center bg-blue_l text-2xl text-white">
               Mapa
+            </div> */}
+            <div>
+              {" "}
+              <Map
+                style={{ height: "15rem" }}
+                defaultCenter={coordenadasUruguay}
+                defaultZoom={5}
+                onDblclick={(e) => dobleClick(e)}
+              >
+                {markers.map((marker) => (
+                  <Marker
+                    key={marker.lat + marker.lng}
+                    position={{ lat: marker.lat, lng: marker.lng }}
+                  />
+                ))}
+              </Map>
             </div>
           </div>
         </ReusableModal>
