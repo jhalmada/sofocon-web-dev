@@ -21,6 +21,7 @@ const AddPriceListPage = () => {
     useState(false);
   const [isDirect, setIsDirect] = useState(false);
   const [isAllCompanies, setIsAllCompanies] = useState(false);
+  const [modalValidationProduct, setModalValidationProduct] = useState(false);
 
   //Hooks
   const { productsResponse, setSearch } = useGetProducts();
@@ -43,22 +44,37 @@ const AddPriceListPage = () => {
 
   //Funciones
 
+  const validateInput = (array) => {
+    console.log(array);
+    const result = array.find((product) => {
+      product.value === "";
+    });
+
+    return result ? false : true;
+  };
+
   const onSubmit = async (data) => {
     const { name, productos, company } = data;
-    const PriceData = {
-      name,
-      product: productos.map((product) => ({
-        product: product.id,
-        price: product.value,
-      })),
-      client: isAllCompanies
-        ? null
-        : company.map((compan) => ({ id: compan.id })),
-      isDirect,
-    };
-    const response = await postAddPriceList(PriceData);
-    if (response) {
-      setSaveConfirmationModalOpen(true);
+    const respuesta = validateInput(productos);
+    if (respuesta) {
+      setModalValidationProduct(true);
+      return;
+    } else {
+      const PriceData = {
+        name,
+        product: productos.map((product) => ({
+          product: product.id,
+          price: product.value,
+        })),
+        client: isAllCompanies
+          ? null
+          : company.map((compan) => ({ id: compan.id })),
+        isDirect,
+      };
+      const response = await postAddPriceList(PriceData);
+      if (response) {
+        setSaveConfirmationModalOpen(true);
+      }
     }
   };
 
@@ -188,6 +204,16 @@ const AddPriceListPage = () => {
             onAccept={() => handleAccept()}
           >
             La lista fue agregada correctamente.
+          </ReusableModal>
+          <ReusableModal
+            isOpen={modalValidationProduct}
+            onClose={() => setModalValidationProduct(false)}
+            title="Faltan Precios"
+            variant="confirmation"
+            buttons={["accept"]}
+            onAccept={() => setModalValidationProduct(false)}
+          >
+            Porfavor ingresa el precio a todos los productos seleccionados.
           </ReusableModal>
         </div>
       </div>
