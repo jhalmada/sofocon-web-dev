@@ -69,12 +69,14 @@ const DirectOrdersRow = ({
       </td>
       <td className="py-6">
         <div className="flex justify-center">
+        {state === "REQUEST" && (
           <img
             src={deleteIconSrc}
             alt="Delete icon"
             className="h-5 w-5 cursor-pointer"
             onClick={onDeleteClick}
           />
+          )}
         </div>
       </td>
     </tr>

@@ -27,6 +27,8 @@ const RechargeRow = ({
   id,
   editIconSrc,
   onEditClick,
+  deleteIconSrc,
+  onDeleteClick,
 }) => {
   const navigate = useNavigate();
 
@@ -80,6 +82,14 @@ const RechargeRow = ({
               alt="Edit icon"
               className="h-5 w-5 cursor-pointer"
               onClick={onEditClick}
+            />
+          )}
+          {state === "REQUEST" && (
+            <img
+              src={deleteIconSrc}
+              alt="Delete icon"
+              className="h-5 w-5 cursor-pointer"
+              onClick={onDeleteClick}
             />
           )}
         </div>

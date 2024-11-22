@@ -161,9 +161,6 @@ const DirectOrdersPage = ({
                         />
                       </div>
                     </th>
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Acción
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -181,7 +178,7 @@ const DirectOrdersPage = ({
                       seller={order?.user?.userInfo?.fullName}
                       state={order.status}
                       deleteIconSrc={deleteIcon}
-                      onDeleteClick={() => openConfirmDeleteModal(order.id)}
+                      // onDeleteClick={() => openConfirmDeleteModal(order.id)}
                     />
                   ))}
                 </tbody>
