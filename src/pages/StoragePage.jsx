@@ -244,7 +244,7 @@ const StoragePage = ({
                     </th>
                   </tr>
                 </thead>
-                {console.log("respuesta", ordersResponse)}
+
                 <tbody>
                   {ordersResponse.map((order, index) => (
                     <StorageRow

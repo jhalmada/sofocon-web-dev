@@ -4,5 +4,6 @@ export const deleteOrders = "/orders";
 export const putOrders = "/orders";
 export const patchItems = "/orders/itemRemoval";
 export const getItems = "/orders/itemRemoval";
+export const getUnitOrders = "/orders/unit";
 export const getOrderExcel = "orders/xlsx";
 export const getOrderPdf = "orders/pdf";

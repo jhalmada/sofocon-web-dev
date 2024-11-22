@@ -3,36 +3,29 @@ import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Pagination from "../components/Pagination.jsx";
-import Input from "../components/inputs/Input.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { useForm } from "react-hook-form";
-import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
-import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
 import DownloadIcon from "../assets/icons/download.svg";
 import UnitTemplateRow from "../components/UnitTemplateRow.jsx";
 import { BASE_URL } from "../utils/Constants.js";
 import {
-  getClientsExcel,
-  getClientsPdf,
-} from "../services/companies/companies.routes.js";
-import useOrders from "../hooks/orders/useOrders.js";
+  getOrderExcel,
+  getOrderPdf,
+} from "../services/orders/orders.routes.js";
+import useGetUnitOrders from "../hooks/orders/useGetUnitOrders.js";
 const UnitTemplate = () => {
-  const { changedSellerRoute } = usePutSellerRoute();
-  const { deleteSellerRoute } = useDeleteSellerRoute();
-
   const {
-    ordersResponse,
+    orderUnitResponse,
     setItemsPerPage,
     totalPage,
     total,
     setPage,
     page,
     itemsPerPage,
-    setModified,
     setSearch,
-  } = useOrders();
+  } = useGetUnitOrders();
+  
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -42,13 +35,6 @@ const UnitTemplate = () => {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [routeId, setRouteId] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
-  const {
-    control,
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
 
   const monthsOptions = [
     "Enero",
@@ -80,19 +66,16 @@ const UnitTemplate = () => {
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
   const handleConfirmDelete = () => {
-    deleteSellerRoute(routeId, setModified);
     closeConfirmDeleteModal();
   };
-  const handleCancelClick = () => openConfirmCancelModal();
+
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
@@ -102,49 +85,6 @@ const UnitTemplate = () => {
   };
   const openExportModal = () => {
     setIsExportModalOpen(true);
-  };
-  const handleRouteCreation = async (routeData) => {
-    try {
-      const newRoute = await changedSellerRoute(
-        routeData,
-        routeId,
-        setModified,
-      );
-      if (newRoute) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        console.error("No se actualizó la ruta, por favor intenta de nuevo");
-      }
-    } catch (error) {
-      console.error("Error al actualizar la ruta:", error);
-      setIsModalOpen(true);
-    }
-  };
-  const filteredOrders = ordersResponse.filter((order) => {
-    if (!order.sellDate) {
-      return false;
-    }
-    const orderDate = new Date(order.sellDate);
-    if (isNaN(orderDate.getTime())) {
-      return false;
-    }
-    if (!selectedMonth) {
-      return true;
-    }
-    const orderMonthIndex = orderDate.getMonth();
-    const selectedMonthIndex = monthsOptions.indexOf(selectedMonth);
-    return orderMonthIndex === selectedMonthIndex;
-  });
-
-  const stringToBoolean = (str) => JSON.parse(str);
-  const onSubmit = (data) => {
-    const { name, zone, status } = data;
-    const sellerData = {
-      name,
-      zone,
-      isActive: stringToBoolean(status),
-    };
-    handleRouteCreation(sellerData);
   };
 
   return (
@@ -266,7 +206,8 @@ const UnitTemplate = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredOrders.map((order, index) => (
+                {console.log("order", orderUnitResponse)}
+                {orderUnitResponse.map((order, index) => (
                   <UnitTemplateRow
                     key={index}
                     id={order.id}
@@ -318,74 +259,7 @@ const UnitTemplate = () => {
           </div>
         </div>
       </div>
-      <ReusableModal
-        isOpen={isModalOpen}
-        onClose={handleCancelClick}
-        title="Editar Ruta"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            label={"Nombre Completo"}
-            placeholder={"Escribir..."}
-            {...register("name", {
-              required: "Este campo es obligatorio",
-              minLength: {
-                value: 2,
-                message: "Debe tener al menos 2 caracteres",
-              },
-              maxLength: {
-                value: 50,
-                message: "Debe tener máximo 50 caracteres",
-              },
-            })}
-            errorApi={errors.name}
-            msjError={errors.name ? errors.name.message : ""}
-          />
-          <Input
-            label={"Zona"}
-            placeholder={"Escribir..."}
-            {...register("zone", {
-              required: {
-                value: true,
-                message: "Campo obligatorio",
-              },
-              minLength: {
-                value: 2,
-                message: "Debe tener al menos 2 caracteres",
-              },
-              maxLength: {
-                value: 50,
-                message: "Debe tener máximo 50 caracteres",
-              },
-            })}
-            errorApi={errors.zone}
-            msjError={errors.zone ? errors.zone.message : ""}
-          />
-          <div className="mb-4 space-y-2">
-            <label className="text-gray-700 block text-sm font-light">
-              Asignar estado:
-            </label>
-            <Select
-              onSelectionChange={(value) => setValue("status", value)}
-              placeholder="Estado"
-              className="rounded-lg border"
-              {...register("status", {
-                validate: (value) =>
-                  value ? true : "Debes seleccionar una opción",
-              })}
-            >
-              <SelectItem key={true}>Activo</SelectItem>
-              <SelectItem key={false}>Inactivo</SelectItem>
-            </Select>
-            <p className="font-roboto text-xs text-red_e">
-              {errors.status ? errors.status.message : ""}
-            </p>
-          </div>
-        </form>
-      </ReusableModal>
+
       <ReusableModal
         isOpen={isExportModalOpen}
         onClose={closeModal}
@@ -396,7 +270,7 @@ const UnitTemplate = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+          <a href={`${BASE_URL}/${getOrderExcel}`} download target="_blank">
             <Button
               width="min-w-[14rem]"
               text="Descargar archivo Excel"
@@ -407,7 +281,7 @@ const UnitTemplate = () => {
             />
           </a>
 
-          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+          <a href={`${BASE_URL}/${getOrderPdf}`} download target="_blank">
             <Button
               width="min-w-[14rem]"
               text="Descargar archivo PDF"

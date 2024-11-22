@@ -89,7 +89,7 @@ const BudgetDataPage = () => {
             </div>
           </Link>
         </div>
-        {console.log(orderDetails)}
+
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           {orderDetails?.orderId || "sin id"}
         </h1>

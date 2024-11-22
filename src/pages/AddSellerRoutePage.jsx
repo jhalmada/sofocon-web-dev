@@ -72,7 +72,7 @@ const AddSellerRoutePage = ({
   const transformData = (array) => {
     return array.map((item) => ({
       id: item.id,
-      name: item.userInfo.fullName,
+      name: item?.userInfo?.fullName,
     }));
   };
   const handleStateFilterChange = (value) => {
@@ -118,7 +118,7 @@ const AddSellerRoutePage = ({
             {arraySeller.map((seller) => (
               <RouteSellerDetailsRow
                 key={seller.id}
-                name={seller.userInfo.fullName}
+                name={seller?.userInfo?.fullName}
                 contact={seller.email}
                 state={seller.isActive ? "Activo" : "Inactivo"}
                 deleteIconSrc={deleteIcon}

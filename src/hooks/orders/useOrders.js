@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { OrdersService } from "../../services/orders/orders.service";
 
 const useOrders = () => {
@@ -16,9 +16,6 @@ const useOrders = () => {
     isPreOrder: false,
     isDirect: false,
   });
-  // const [recharge, setRecharge] = useState(false);
-  // const [inOrders, setInOrders] = useState(null);
-
   const getAllOrders = useCallback(
     async ({ isPreOrder, isDirect, inOrders, recharge }) => {
       try {

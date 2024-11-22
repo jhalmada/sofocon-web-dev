@@ -35,11 +35,8 @@ const OrdersPage = () => {
     page,
     itemsPerPage,
     setModified,
-    status,
     setStatus,
     setEntryDate,
-    setOrderType,
-    setInOrders,
     setSearch: setSearchOrders,
     getAllOrders,
   } = useOrders();
@@ -48,8 +45,6 @@ const OrdersPage = () => {
     return sessionStorage.getItem("activeTab") || CLIENTS_ORDERS_TAB;
   });
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-
-  console.log(activeTab);
 
   const monthsOptions = [
     "Enero",

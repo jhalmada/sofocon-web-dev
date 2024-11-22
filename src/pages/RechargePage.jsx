@@ -210,12 +210,12 @@ const RechargePage = () => {
             <label className="block text-sm font-semibold text-black_b">
               Detalle
             </label>
-            <label className="-mb-6 block text-sm">Recarga</label>
+            {/* <label className="-mb-6 block text-sm">Recargas</label> */}
 
             {orderDetails?.productInOrder?.map((order) => (
               <div className="flex" key={order.id}>
-                <div className="flex w-1/2 space-x-2">
-                  <div className="mt-6 w-full">
+                <div className="flex w-[49.8%] space-x-2">
+                  <div className="w-full">
                     <Input
                       bg="bg-gray"
                       placeholderColor="placeholder-black_b"
@@ -225,7 +225,7 @@ const RechargePage = () => {
                     />
                   </div>
                 </div>
-                <div className="flex w-1/2 flex-col space-y-4 pl-2">
+                <div className="-mt-6 flex w-1/2 flex-col space-y-4 pl-2">
                   {order.itemsRemoval?.map((item, index) => (
                     <div className="flex items-center space-x-2" key={index}>
                       <Input
@@ -256,7 +256,7 @@ const RechargePage = () => {
                                   : "text-white"
                           }`}
                         >
-                          {item.status === ""
+                          {item.status === "" || item.status === "PENDING"
                             ? "Pendiente"
                             : translateProductState(item.status)}
                         </span>
