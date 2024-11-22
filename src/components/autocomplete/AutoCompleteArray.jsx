@@ -15,6 +15,7 @@ const AutoCompleteArray = ({
   placeholder = "Buscar...",
   hidden = false,
   msjError,
+  register,
 }) => {
   // Estado para las opciones seleccionadas y sus valores
   const [selectedItems, setSelectedItems] = useState(array2 || []);
@@ -85,6 +86,12 @@ const AutoCompleteArray = ({
                 placeholder="Ingrese valor"
                 value={item.value}
                 onChange={(e) => handleInputChange(item.id, e.target.value)}
+                {...register("priceInList", {
+                  required: {
+                    value: true,
+                    message: "Campo obligatorio",
+                  },
+                })}
               />
             </div>
           ))}

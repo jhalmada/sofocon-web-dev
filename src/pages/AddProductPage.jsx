@@ -13,13 +13,6 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { MEDIDA, TYPE_PRODUCTS } from "../utils/Constants";
 import useGetPriceList from "../hooks/priceList/useGetPriceList";
 
-const busquedas = [
-  { name: "Busqueda 1", id: 1 },
-  { name: "Busqueda 2", id: 2 },
-  { name: "Busqueda 3", id: 3 },
-  { name: "Busqueda 4", id: 4 },
-];
-
 const AddProductPage = () => {
   //estados
   const [file, setFile] = useState(null);
@@ -27,7 +20,6 @@ const AddProductPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [FileAccept, setFileAccept] = useState(false);
-  const [typeProduct, setTypeProduct] = useState("");
 
   //Hooks
   const navigate = useNavigate();
@@ -272,6 +264,7 @@ const AddProductPage = () => {
               }))}
               setValue={setValue}
               name={"list"}
+              register={register}
             />
 
             <div className="mt-4 min-w-40 max-w-60">
