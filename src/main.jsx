@@ -2,7 +2,11 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router/index.jsx";
-import { BASE_URL, SOFOCON_JWT_REFRESH_TOKEN } from "./utils/Constants.js";
+import {
+  BASE_URL,
+  MAP_API_KEY,
+  SOFOCON_JWT_REFRESH_TOKEN,
+} from "./utils/Constants.js";
 import axios from "axios";
 import { SOFOCON_JWT_TOKEN } from "./utils/Constants.js";
 import { NextUIProvider } from "@nextui-org/react";
@@ -10,6 +14,7 @@ import AuthProvider from "./hooks/context/AuthContext.jsx";
 import moment from "moment/moment.js";
 import { AuthService } from "./services/auth/auth.service.js";
 import * as authRoutes from "./services/auth/auth.routes.js";
+import { APIProvider } from "@vis.gl/react-google-maps";
 
 axios.defaults.baseURL = BASE_URL;
 axios.defaults.headers["origin-login"] = "dashboard";
@@ -95,7 +100,9 @@ axios.interceptors.response.use(
 createRoot(document.getElementById("root")).render(
   <NextUIProvider>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <APIProvider apiKey={MAP_API_KEY}>
+        <RouterProvider router={router} />
+      </APIProvider>
     </AuthProvider>
   </NextUIProvider>,
 );
