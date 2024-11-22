@@ -5,7 +5,7 @@ import Input from "../components/inputs/Input";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
@@ -14,17 +14,68 @@ import useAddCompany from "../hooks/companies/useAddCompanies";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import Cards from "../components/cards/Cards";
-import { Map, Marker } from "@vis.gl/react-google-maps";
+import {
+  AdvancedMarker,
+  Map,
+  useAdvancedMarkerRef,
+  useMap,
+  useMapsLibrary,
+} from "@vis.gl/react-google-maps";
 
 const coordenadasUruguay = {
   lat: -34.901,
   lng: -56.1698,
 };
 
+const MapHandler = ({ place, marker }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map || !place || !marker) return;
+
+    if (place.geometry?.viewport) {
+      map.fitBounds(place.geometry?.viewport);
+    }
+
+    marker.position = place.geometry?.location;
+  }, [map, place, marker]);
+  return null;
+};
+
+const PlaceAutocomplete = ({ onPlaceSelect }) => {
+  const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
+  const inputRef = useRef(null);
+  const places = useMapsLibrary("places");
+
+  useEffect(() => {
+    if (!places || !inputRef.current) return;
+
+    const options = {
+      fields: ["geometry", "name", "formatted_address"],
+    };
+
+    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
+  }, [places]);
+  useEffect(() => {
+    if (!placeAutocomplete) return;
+
+    placeAutocomplete.addListener("place_changed", () => {
+      onPlaceSelect(placeAutocomplete.getPlace());
+    });
+  }, [onPlaceSelect, placeAutocomplete]);
+  return (
+    <div className="autocomplete-container">
+      <Input ref={inputRef} />
+    </div>
+  );
+};
+
 const AddCompaniePage = () => {
+  const [selectedPlace, setSelectedPlace] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [ubicacion, setUbicacion] = useState(false);
+  const [markerRef, marker] = useAdvancedMarkerRef();
 
   const {
     register,
@@ -516,7 +567,6 @@ const AddCompaniePage = () => {
                 </Select>
                 <p className="mt-1 font-roboto text-xs text-red_e">
                   {errors.status ? errors.status.message : ""}
-                  {console.log(errors.status)}
                 </p>
               </>
             )}
@@ -598,25 +648,23 @@ const AddCompaniePage = () => {
           handleCancelClick={handleCancelClick}
         >
           <div className="flex flex-col">
-            <Input label={"Dirección"} placeholder={"Escribir..."} />
-            {/* <div className="flex h-[15rem] items-center justify-center bg-blue_l text-2xl text-white">
-              Mapa
-            </div> */}
+            <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
             <div>
               {" "}
               <Map
                 style={{ height: "15rem" }}
+                mapId={"8c732c82e4ec29d9"}
                 defaultCenter={coordenadasUruguay}
                 defaultZoom={5}
-                onDblclick={(e) => dobleClick(e)}
+                gestureHandling={"greedy"}
               >
-                {markers.map((marker) => (
-                  <Marker
-                    key={marker.lat + marker.lng}
-                    position={{ lat: marker.lat, lng: marker.lng }}
-                  />
-                ))}
+                <AdvancedMarker
+                  ref={markerRef}
+                  position={null}
+                  draggable={true}
+                />
               </Map>
+              <MapHandler place={selectedPlace} marker={marker} />
             </div>
           </div>
         </ReusableModal>

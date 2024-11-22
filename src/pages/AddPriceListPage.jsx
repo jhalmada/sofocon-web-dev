@@ -46,17 +46,15 @@ const AddPriceListPage = () => {
 
   const validateInput = (array) => {
     console.log(array);
-    const result = array.find((product) => {
-      product.value === "";
-    });
-
+    const result = array.find((product) => product.value === "");
+    console.log(result);
     return result ? false : true;
   };
 
   const onSubmit = async (data) => {
     const { name, productos, company } = data;
     const respuesta = validateInput(productos);
-    if (respuesta) {
+    if (!respuesta) {
       setModalValidationProduct(true);
       return;
     } else {
