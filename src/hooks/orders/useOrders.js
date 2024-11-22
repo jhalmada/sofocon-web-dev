@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { OrdersService } from "../../services/orders/orders.service";
 
 const useOrders = () => {
@@ -16,46 +16,36 @@ const useOrders = () => {
     isPreOrder: false,
     isDirect: false,
   });
-  const [recharge, setRecharge] = useState(false);
-  const [inOrders, setInOrders] = useState(null);
+  // const [recharge, setRecharge] = useState(false);
+  // const [inOrders, setInOrders] = useState(null);
 
-  const getAllOrders = async () => {
-    try {
-      setOrdersResponse([]);
-      setLoading(true);
-      const { data } = await OrdersService.getAllOrdersApi({
-        page,
-        itemsPerPage,
-        search,
-        recharge,
-        inOrders,
-        ...orderType,
-        status,
-        entryDate,
-      });
-      setTotalPage(data.pagination.totalPages);
-      setTotal(data.pagination.total);
-      setOrdersResponse(data.result);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getAllOrders();
-  }, [
-    page,
-    itemsPerPage,
-    modified,
-    search,
-    orderType,
-    status,
-    entryDate,
-    recharge,
-    inOrders,
-  ]);
+  const getAllOrders = useCallback(
+    async ({ isPreOrder, isDirect, inOrders, recharge }) => {
+      try {
+        setOrdersResponse([]);
+        setLoading(true);
+        const { data } = await OrdersService.getAllOrdersApi({
+          page,
+          itemsPerPage,
+          search,
+          recharge,
+          inOrders,
+          isPreOrder,
+          isDirect,
+          status,
+          entryDate,
+        });
+        setTotalPage(data.pagination.totalPages);
+        setTotal(data.pagination.total);
+        setOrdersResponse(data.result);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [entryDate, itemsPerPage, page, search, status],
+  );
 
   return {
     ordersResponse,
@@ -71,9 +61,8 @@ const useOrders = () => {
     setSearch,
     setStatus,
     setOrderType,
-    setRecharge,
-    setInOrders,
     setEntryDate,
+    getAllOrders,
   };
 };
 

@@ -42,6 +42,7 @@ const WorkshopPage = () => {
     setStatus,
     setRecharge,
     setEntryDate,
+    getAllOrders,
   } = useOrders();
   const {
     register,
@@ -215,13 +216,16 @@ const WorkshopPage = () => {
   useEffect(() => {
     switch (activeTab) {
       case RECHARGE_TAB:
-        setRecharge(true);
+        getAllOrders({ recharge: true });
+        // setRecharge(true);
         break;
       case STORAGE_TAB:
-        setRecharge(false);
+        getAllOrders({ recharge: false });
+        // setRecharge(false);
         break;
       default:
-        setRecharge(null);
+
+      // setRecharge(null);
     }
   }, [activeTab]);
 
