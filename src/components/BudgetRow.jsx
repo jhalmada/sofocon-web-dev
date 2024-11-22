@@ -57,6 +57,7 @@ const BudgetRow = ({
               onClick={onDownloadClick}
             />
           </a>
+
           <img
             src={deleteIconSrc}
             alt="Delete icon"

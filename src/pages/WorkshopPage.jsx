@@ -21,6 +21,7 @@ import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplet
 import useGetProducts from "../hooks/products/useGetProducts.js";
 import useOrders from "../hooks/orders/useOrders.js";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
+import deleteIcon from "../assets/icons/trash3.svg";
 import usePutOrders from "../hooks/orders/usePutOrders";
 import {
   getOrderExcel,
@@ -29,6 +30,7 @@ import {
 //put
 // import useGetOneOrder from "../hooks/orders/useGetOneOrder.js";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
+import useDeleteOrders from "../hooks/orders/useDeleteOrders.js";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
@@ -38,6 +40,7 @@ const WorkshopPage = () => {
   const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
   // const { getOneOrder, setModified } = useGetOneOrder(id);
   const { changedOrder } = usePutOrders();
+  const { deleteOrder } = useDeleteOrders();
 
   const {
     ordersResponse,
@@ -48,6 +51,7 @@ const WorkshopPage = () => {
     page,
     itemsPerPage,
     setStatus,
+    setModified,
     setEntryDate,
     getAllOrders,
   } = useOrders();
@@ -74,6 +78,8 @@ const WorkshopPage = () => {
     ordersResponse?.productInOrder,
   );
   const [orderDetails, setOrderDetails] = useState(null);
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [orderId, setOrderId] = useState(null);
 
   const stateOptions = ["Solicitado", "En preparación", "Para retirar"];
   const monthsOptions = [
@@ -129,6 +135,10 @@ const WorkshopPage = () => {
   const openExportCompetingModal = () => {
     setIsExportCompetingModalOpen(true);
   };
+  const openConfirmDeleteModal = (id) => {
+    setOrderId(id);
+    setConfirmDeleteModalOpen(true);
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -141,6 +151,7 @@ const WorkshopPage = () => {
   const closeConfirmCancelModal = () => {
     setConfirmCancelModalOpen(false);
   };
+  const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleAccept = () => {
     setOpenScannerModal(true);
@@ -153,6 +164,10 @@ const WorkshopPage = () => {
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
+  };
+  const handleConfirmDelete = () => {
+    deleteOrder(orderId, setModified);
+    closeConfirmDeleteModal();
   };
 
   const onSubmit = (data) => {
@@ -408,9 +423,13 @@ const WorkshopPage = () => {
                             seller={order?.user?.userInfo?.fullName}
                             state={order.status}
                             editIconSrc={editIcon}
+                            deleteIconSrc={deleteIcon}
                             onEditClick={() => {
                               openModal();
                             }}
+                            onDeleteClick={() =>
+                              openConfirmDeleteModal(order.id)
+                            }
                           />
                         ))}
                       </tbody>
@@ -632,6 +651,17 @@ const WorkshopPage = () => {
             <BarcodeReader />
           </div>
         </form>
+      </ReusableModal>
+
+      <ReusableModal
+        isOpen={isConfirmDeleteModalOpen}
+        onClose={closeConfirmDeleteModal}
+        title="Eliminar orden"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={() => handleConfirmDelete(orderId)}
+      >
+        Esta orden será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
       <ReusableModal
         isOpen={isExportModalOpen}

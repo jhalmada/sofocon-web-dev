@@ -292,9 +292,6 @@ const OrdersPage = () => {
                               />
                             </div>
                           </th>
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            Acción
-                          </th>
                         </tr>
                       </thead>
                       <tbody>
