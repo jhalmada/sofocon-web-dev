@@ -61,7 +61,7 @@ const TableRole = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const startIndex = currentPage * rolePage;
   const paginatedRoles = RolesResponse
-    ? RolesResponse.slice(startIndex, startIndex + rolePage)
+    ? RolesResponse
     : [];
 
   const openModal = (id) => {
