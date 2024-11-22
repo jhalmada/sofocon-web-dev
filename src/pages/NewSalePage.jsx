@@ -19,8 +19,6 @@ import useGetProducts from "../hooks/products/useGetProducts.js";
 import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
-import useOrders from "../hooks/orders/useOrders.js";
-import { use } from "framer-motion/client";
 
 const NewSalePage = () => {
   const {

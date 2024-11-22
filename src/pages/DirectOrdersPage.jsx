@@ -167,7 +167,6 @@ const DirectOrdersPage = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {console.log(ordersResponse)}
                   {ordersResponse.map((order, index) => (
                     <DirectOrdersRow
                       key={index}

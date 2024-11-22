@@ -273,7 +273,6 @@ const ClientsOrdersPage = () => {
                 </div>
               </div>
             ))}
-            {console.log(orderDetails?.productInOrder)}
             {orderDetails?.productInOrder?.map((order, index) =>
               order.isRecharge ? (
                 <>

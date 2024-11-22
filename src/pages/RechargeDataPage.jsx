@@ -1,11 +1,5 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
@@ -100,9 +94,7 @@ const RechargeDataPage = () => {
   useEffect(() => {
     oneItem(id);
   }, [id]);
-  {
-    console.log("orderdetails", itemDetails);
-  }
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
@@ -133,7 +125,6 @@ const RechargeDataPage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="flex-grow rounded-tr-lg bg-white px-14 py-10"
         >
-          {console.log("item details:", itemDetails)}
           <div>
             <Select
               className="mb-4 w-1/6 rounded-lg border"
@@ -145,7 +136,6 @@ const RechargeDataPage = () => {
                 required: "Este campo es obligatorio",
               })}
               onSelectionChange={(values) => {
-                console.log("Nuevo estado seleccionado:", values.anchorKey);
                 setValue(`status`, values.anchorKey);
               }}
             >

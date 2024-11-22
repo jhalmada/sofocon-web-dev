@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
@@ -21,16 +21,22 @@ import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplet
 import useGetProducts from "../hooks/products/useGetProducts.js";
 import useOrders from "../hooks/orders/useOrders.js";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
+import usePutOrders from "../hooks/orders/usePutOrders";
 import {
   getOrderExcel,
   getOrderPdf,
 } from "../services/orders/orders.routes.js";
+import useGetOneOrder from "../hooks/orders/useGetOneOrder.js";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
 
 const WorkshopPage = () => {
+  const { id } = useParams();
   const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
+  const { getOneOrder, setModified } = useGetOneOrder(id);
+  const { changedOrder } = usePutOrders();
+
   const {
     ordersResponse,
     setItemsPerPage,
@@ -40,7 +46,6 @@ const WorkshopPage = () => {
     page,
     itemsPerPage,
     setStatus,
-    setRecharge,
     setEntryDate,
     getAllOrders,
   } = useOrders();
@@ -61,10 +66,12 @@ const WorkshopPage = () => {
     useState(false);
   const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
   const [openScannerModal, setOpenScannerModal] = useState(false);
   const inputRef = useRef(null);
+  const [selectedProduct, setSelectedProduct] = useState(
+    ordersResponse?.productInOrder,
+  );
+  const [orderDetails, setOrderDetails] = useState(null);
 
   const stateOptions = ["Solicitado", "En preparación", "Para retirar"];
   const monthsOptions = [
@@ -90,6 +97,24 @@ const WorkshopPage = () => {
 
     return `${day}/${month}/${year}`;
   };
+
+  const handleAddProduct = async (e) => {
+    const newProduct = e.target.value;
+    setSelectedProduct(newProduct);
+    await changedOrder(
+      { productInOrder: newProduct },
+      ordersResponse.id,
+      setModified,
+    );
+  };
+  const oneOrder = async (id) => {
+    const newdatos = await getOneOrder(id);
+    setOrderDetails(newdatos);
+  };
+  useEffect(() => {
+    oneOrder(id);
+  }, [id]);
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -113,10 +138,7 @@ const WorkshopPage = () => {
   const closeConfirmCancelModal = () => {
     setConfirmCancelModalOpen(false);
   };
-  const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
-    closeModal();
-  };
+
   const handleAccept = () => {
     setOpenScannerModal(true);
   };
@@ -217,17 +239,13 @@ const WorkshopPage = () => {
     switch (activeTab) {
       case RECHARGE_TAB:
         getAllOrders({ recharge: true });
-        // setRecharge(true);
         break;
       case STORAGE_TAB:
         getAllOrders({ recharge: false });
-        // setRecharge(false);
         break;
       default:
-
-      // setRecharge(null);
     }
-  }, [activeTab]);
+  }, [activeTab, getAllOrders]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -373,7 +391,6 @@ const WorkshopPage = () => {
                         </tr>
                       </thead>
 
-                      {console.log(ordersResponse)}
                       <tbody>
                         {ordersResponse.map((order, index) => (
                           <RechargeRow
