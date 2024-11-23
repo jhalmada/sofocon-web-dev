@@ -17,6 +17,7 @@ import Cards from "../components/cards/Cards";
 import {
   AdvancedMarker,
   Map,
+  Marker,
   useAdvancedMarkerRef,
   useMap,
   useMapsLibrary,
@@ -61,6 +62,7 @@ const PlaceAutocomplete = ({ onPlaceSelect }) => {
 
     placeAutocomplete.addListener("place_changed", () => {
       onPlaceSelect(placeAutocomplete.getPlace());
+      console.log(placeAutocomplete.getPlace());
     });
   }, [onPlaceSelect, placeAutocomplete]);
   return (
@@ -72,10 +74,9 @@ const PlaceAutocomplete = ({ onPlaceSelect }) => {
 
 const AddCompaniePage = () => {
   const [selectedPlace, setSelectedPlace] = useState(null);
-  const [markers, setMarkers] = useState([]);
-  const [selectedMarker, setSelectedMarker] = useState(null);
-  const [ubicacion, setUbicacion] = useState(false);
+  const [selectManual, setSelectManual] = useState(false);
   const [markerRef, marker] = useAdvancedMarkerRef();
+  const [modalPrueba, setModalPrueba] = useState(false);
 
   const {
     register,
@@ -164,6 +165,14 @@ const AddCompaniePage = () => {
           rut: data.rut,
           competenceName: competence ? data.competenceName : "",
           note: notes,
+          latitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lat()
+              : selectManual.lat,
+          longitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lng()
+              : selectManual.lng,
         });
         break;
       default:
@@ -179,6 +188,14 @@ const AddCompaniePage = () => {
           ci: data.ci,
           competenceName: competence ? data.competenceName : "",
           note: notes,
+          latitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lat()
+              : selectManual.lat,
+          longitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lng()
+              : selectManual.lng,
         });
     }
   };
@@ -256,30 +273,6 @@ const AddCompaniePage = () => {
     const noteT = [...notes];
     noteT.splice(index, 1);
     setNotes(noteT);
-  };
-
-  const addMarker = (position) => {
-    setMarkers((prevMarkers) => [...prevMarkers, position]);
-
-    // Aquí puedes añadir lógica adicional para mostrar el marcador
-    console.log("Marcador añadido:", position);
-  };
-
-  const saveCoordinates = (position) => {
-    // Aquí puedes guardar las coordenadas en tu backend o base de datos
-    console.log("Coordenadas guardadas:", position);
-  };
-
-  const dobleClick = (e) => {
-    console.log(e.detail.latLng.lat);
-    const position = {
-      lat: e.detail.latLng.lat,
-      lng: e.detail.latLng.lng,
-    };
-    addMarker(position);
-
-    // Guardar las coordenadas
-    saveCoordinates(position);
   };
 
   return (
@@ -417,7 +410,7 @@ const AddCompaniePage = () => {
             </div>
 
             <div
-              onClick={() => openModalMap()}
+              onClick={() => setModalPrueba(true)}
               className="mb-2 flex w-[8rem] cursor-pointer justify-center"
             >
               <img src={geoaltIcon} alt="geo Icon" />
@@ -639,35 +632,7 @@ const AddCompaniePage = () => {
             />
           </div>
         </form>
-        <ReusableModal
-          width="w-[45.37rem]"
-          isOpen={isMapModal}
-          onClose={closeModalMap}
-          title="Marcar ubicación en el mapa"
-          buttons={["cancel", "save"]}
-          handleCancelClick={handleCancelClick}
-        >
-          <div className="flex flex-col">
-            <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
-            <div>
-              {" "}
-              <Map
-                style={{ height: "15rem" }}
-                mapId={"8c732c82e4ec29d9"}
-                defaultCenter={coordenadasUruguay}
-                defaultZoom={5}
-                gestureHandling={"greedy"}
-              >
-                <AdvancedMarker
-                  ref={markerRef}
-                  position={null}
-                  draggable={true}
-                />
-              </Map>
-              <MapHandler place={selectedPlace} marker={marker} />
-            </div>
-          </div>
-        </ReusableModal>
+
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
@@ -792,6 +757,56 @@ const AddCompaniePage = () => {
           onAccept={() => setModalEditSave(false)}
         >
           Los cambios fueron guardados exitosamente.
+        </ReusableModal>
+        <ReusableModal
+          isOpen={modalPrueba}
+          onClose={() => setModalPrueba(false)}
+          title="Marcar ubicacion"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setModalPrueba(false)}
+          width="w-[45.37rem]"
+        >
+          <div className="flex flex-col">
+            <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
+            <div>
+              {" "}
+              <Map
+                style={{ height: "15rem" }}
+                mapId={"8c732c82e4ec29d9"}
+                defaultCenter={coordenadasUruguay}
+                defaultZoom={5}
+                gestureHandling={"greedy"}
+                center={selectManual === false ? null : selectManual}
+              >
+                <Marker
+                  ref={markerRef}
+                  draggable={true}
+                  position={selectManual === false ? null : selectManual}
+                  onDragEnd={(e) =>
+                    setSelectManual({
+                      lat: e.latLng.lat(),
+                      lng: e.latLng.lng(),
+                    })
+                  }
+                />
+
+                <AdvancedMarker
+                  className={`${selectManual === false ? "visible" : "invisible"}`}
+                  ref={markerRef}
+                  position={null}
+                  draggable={true}
+                  onDragEnd={(e) =>
+                    setSelectManual({
+                      lat: e.latLng.lat(),
+                      lng: e.latLng.lng(),
+                    })
+                  }
+                />
+              </Map>
+              <MapHandler place={selectedPlace} marker={marker} />
+            </div>
+          </div>
         </ReusableModal>
       </div>
     </div>
