@@ -43,3 +43,4 @@ export const IMAGE_BASE = "https://nyc3.digitaloceanspaces.com/tribe-s3/";
 
 export const TYPE_PRODUCTS = ["A", "AE", "C", "H", "PA", "PB"];
 export const MEDIDA = ["cm", "cm3", "kg", "gr", "libras", "mts", "litro"];
+export const MAP_API_KEY = "AIzaSyB2WppIRyBKnjBjmaubxjeeP8eKbEZUDlQ";

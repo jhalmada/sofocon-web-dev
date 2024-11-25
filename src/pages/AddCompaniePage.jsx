@@ -5,7 +5,7 @@ import Input from "../components/inputs/Input";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
@@ -14,8 +14,70 @@ import useAddCompany from "../hooks/companies/useAddCompanies";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import Cards from "../components/cards/Cards";
+import {
+  AdvancedMarker,
+  Map,
+  Marker,
+  useAdvancedMarkerRef,
+  useMap,
+  useMapsLibrary,
+} from "@vis.gl/react-google-maps";
+
+const coordenadasUruguay = {
+  lat: -34.901,
+  lng: -56.1698,
+};
+
+const MapHandler = ({ place, marker }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map || !place || !marker) return;
+
+    if (place.geometry?.viewport) {
+      map.fitBounds(place.geometry?.viewport);
+    }
+
+    marker.position = place.geometry?.location;
+  }, [map, place, marker]);
+  return null;
+};
+
+const PlaceAutocomplete = ({ onPlaceSelect }) => {
+  const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
+  const inputRef = useRef(null);
+  const places = useMapsLibrary("places");
+
+  useEffect(() => {
+    if (!places || !inputRef.current) return;
+
+    const options = {
+      fields: ["geometry", "name", "formatted_address"],
+    };
+
+    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
+  }, [places]);
+  useEffect(() => {
+    if (!placeAutocomplete) return;
+
+    placeAutocomplete.addListener("place_changed", () => {
+      onPlaceSelect(placeAutocomplete.getPlace());
+      console.log(placeAutocomplete.getPlace());
+    });
+  }, [onPlaceSelect, placeAutocomplete]);
+  return (
+    <div className="autocomplete-container">
+      <Input ref={inputRef} />
+    </div>
+  );
+};
 
 const AddCompaniePage = () => {
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [selectManual, setSelectManual] = useState(false);
+  const [markerRef, marker] = useAdvancedMarkerRef();
+  const [modalPrueba, setModalPrueba] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -103,6 +165,14 @@ const AddCompaniePage = () => {
           rut: data.rut,
           competenceName: competence ? data.competenceName : "",
           note: notes,
+          latitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lat()
+              : selectManual.lat,
+          longitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lng()
+              : selectManual.lng,
         });
         break;
       default:
@@ -118,6 +188,14 @@ const AddCompaniePage = () => {
           ci: data.ci,
           competenceName: competence ? data.competenceName : "",
           note: notes,
+          latitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lat()
+              : selectManual.lat,
+          longitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lng()
+              : selectManual.lng,
         });
     }
   };
@@ -332,7 +410,7 @@ const AddCompaniePage = () => {
             </div>
 
             <div
-              onClick={() => openModalMap()}
+              onClick={() => setModalPrueba(true)}
               className="mb-2 flex w-[8rem] cursor-pointer justify-center"
             >
               <img src={geoaltIcon} alt="geo Icon" />
@@ -482,7 +560,6 @@ const AddCompaniePage = () => {
                 </Select>
                 <p className="mt-1 font-roboto text-xs text-red_e">
                   {errors.status ? errors.status.message : ""}
-                  {console.log(errors.status)}
                 </p>
               </>
             )}
@@ -555,21 +632,7 @@ const AddCompaniePage = () => {
             />
           </div>
         </form>
-        <ReusableModal
-          width="w-[45.37rem]"
-          isOpen={isMapModal}
-          onClose={closeModalMap}
-          title="Marcar ubicación en el mapa"
-          buttons={["cancel", "save"]}
-          handleCancelClick={handleCancelClick}
-        >
-          <div className="flex flex-col">
-            <Input label={"Dirección"} placeholder={"Escribir..."} />
-            <div className="flex h-[15rem] items-center justify-center bg-blue_l text-2xl text-white">
-              Mapa
-            </div>
-          </div>
-        </ReusableModal>
+
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
@@ -694,6 +757,56 @@ const AddCompaniePage = () => {
           onAccept={() => setModalEditSave(false)}
         >
           Los cambios fueron guardados exitosamente.
+        </ReusableModal>
+        <ReusableModal
+          isOpen={modalPrueba}
+          onClose={() => setModalPrueba(false)}
+          title="Marcar ubicacion"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={() => setModalPrueba(false)}
+          width="w-[45.37rem]"
+        >
+          <div className="flex flex-col">
+            <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
+            <div>
+              {" "}
+              <Map
+                style={{ height: "15rem" }}
+                mapId={"8c732c82e4ec29d9"}
+                defaultCenter={coordenadasUruguay}
+                defaultZoom={5}
+                gestureHandling={"greedy"}
+                center={selectManual === false ? null : selectManual}
+              >
+                <Marker
+                  ref={markerRef}
+                  draggable={true}
+                  position={selectManual === false ? null : selectManual}
+                  onDragEnd={(e) =>
+                    setSelectManual({
+                      lat: e.latLng.lat(),
+                      lng: e.latLng.lng(),
+                    })
+                  }
+                />
+
+                <AdvancedMarker
+                  className={`${selectManual === false ? "visible" : "invisible"}`}
+                  ref={markerRef}
+                  position={null}
+                  draggable={true}
+                  onDragEnd={(e) =>
+                    setSelectManual({
+                      lat: e.latLng.lat(),
+                      lng: e.latLng.lng(),
+                    })
+                  }
+                />
+              </Map>
+              <MapHandler place={selectedPlace} marker={marker} />
+            </div>
+          </div>
         </ReusableModal>
       </div>
     </div>
