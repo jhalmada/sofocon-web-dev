@@ -7,9 +7,9 @@ import useMetricsOrders from "../hooks/metrics/useGetMetricsOrders";
 import useMetricsProduts from "../hooks/metrics/useGetMetricsProducts";
 import MetricsCircle from "../components/metrics/MetricsCircle";
 import useGetSellerBest from "../hooks/metrics/useGetSellerBest";
-import chevroLeft from "../assets/icons/chevron-right.png";
-import { Link, useNavigate } from "react-router-dom";
-import { label } from "framer-motion/client";
+import { useSocket } from "../services/socket/socket.service";
+import { useEffect, useState } from "react";
+import { a } from "framer-motion/client";
 
 const months = [
   { label: "Enero", value: "01" },
@@ -43,7 +43,8 @@ const years = [
 const HomePage = () => {
   //estados
   //hooks
-  const navigate = useNavigate();
+  const { socketConnected } = useSocket();
+  const [userLocation, setUserLocation] = useState(null);
   const { metricsResponse } = useGetMetrics();
   const { metricsOrdersResponse, setMonth, month, year } = useMetricsOrders();
   const { metricsProductsResponse, setYear } = useMetricsProduts();
@@ -63,6 +64,15 @@ const HomePage = () => {
   const handleChangeYear = (value) => {
     setYear(value);
   };
+
+  useEffect(() => {
+    const socket = socketConnected();
+    if (socket) {
+      socket.on("user-location", (data) => {
+        console.log("user-location", data);
+      });
+    }
+  }, []);
 
   return (
     <div className="min-h-[calc(100vh-4.375rem)] bg-gray p-6">

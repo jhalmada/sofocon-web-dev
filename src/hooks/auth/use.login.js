@@ -18,6 +18,7 @@ const useLogin = () => {
       localStorage.setItem(SOFOCON_JWT_TOKEN, data.access_token);
       localStorage.setItem(SOFOCON_JWT_REFRESH_TOKEN, data.refresh_token);
       localStorage.setItem(SOFOCON_PERMISSIONS, data.permissions);
+      console.log(data);
       setUserToken(data.access_token);
       return data.access_token;
     } catch (e) {

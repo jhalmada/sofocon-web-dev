@@ -35,7 +35,7 @@ const CardMetrics = ({ title, total }) => {
     }
   }, [title]);
   return (
-    <div className="shadow-card relative flex h-[11.125rem] w-[23.4375rem] flex-col justify-between rounded-[0.875rem] bg-white p-[0.875rem]">
+    <div className="relative flex h-[11.125rem] w-[23.4375rem] flex-col justify-between rounded-[0.875rem] bg-white p-[0.875rem] shadow-card">
       <div className="h-[3.75rem]">
         <img
           src={image}
@@ -51,11 +51,6 @@ const CardMetrics = ({ title, total }) => {
           {numberFormatter.format(total)}
         </p>
       </div>
-      <img
-        src={IconMetrics}
-        alt=""
-        className="absolute bottom-4 right-5 h-[1.375rem] w-[1.375rem]"
-      />
     </div>
   );
 };
