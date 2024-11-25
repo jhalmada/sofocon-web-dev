@@ -25,8 +25,6 @@ const RechargeRow = ({
   seller,
   state,
   id,
-  editIconSrc,
-  onEditClick,
   deleteIconSrc,
   onDeleteClick,
 }) => {
@@ -76,14 +74,6 @@ const RechargeRow = ({
       </td>
       <td className="py-6">
         <div className="flex justify-center gap-4">
-          {state === "REQUEST" && (
-            <img
-              src={editIconSrc}
-              alt="Edit icon"
-              className="h-5 w-5 cursor-pointer"
-              onClick={onEditClick}
-            />
-          )}
           {state === "REQUEST" && (
             <img
               src={deleteIconSrc}

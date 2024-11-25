@@ -98,6 +98,12 @@ const RechargePage = () => {
     };
     const newStatus = translateState(e.target.value);
     setSelectedState(newStatus);
+    const currentDate = new Date().toISOString();
+    const updatedOrderData = { status: newStatus };
+
+    if (newStatus === "EGRESS") {
+      updatedOrderData.workShopDateEntry = currentDate;
+    }
     await changedOrder({ status: newStatus }, orderDetails.id, setModified);
   };
 
@@ -247,7 +253,7 @@ const RechargePage = () => {
                       <div className="mt-3 flex items-center space-x-2">
                         <span
                           className={`flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg px-1 ${
-                            item.status === ""
+                            item.status === "" || item.status === "PENDING"
                               ? "bg-gray text-black_b"
                               : item.status === "Inhabilitado"
                                 ? "bg-red_e text-white"

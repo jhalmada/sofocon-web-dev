@@ -20,8 +20,10 @@ export class OrdersService {
   static postAddOrdersApi = async (orderData) =>
     await axios.post(ordersRoutes.postOrders, orderData);
 
-  static putOrderApi = async (orderData, orderId) =>
-    await axios.put(`${ordersRoutes.putOrders}/${orderId}`, orderData);
+  static putOrderApi = async (orderData, orderId) => {
+    console.log("respuestaaaa", orderData);
+    return await axios.put(`${ordersRoutes.putOrders}/${orderId}`, orderData);
+  };
 
   static deleteOrderApi = async (orderId) =>
     await axios.delete(`${ordersRoutes.deleteOrders}/${orderId}`);
