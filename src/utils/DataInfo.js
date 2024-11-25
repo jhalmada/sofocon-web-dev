@@ -102,18 +102,30 @@ const menuItems = [
     path: "/inicio",
     icon: houseIcon,
     activeIcon: houseActiveIcon,
+    permisses: [
+      "SECTION_HOME",
+      "USER_SUPER_ADMIN",
+      "SECTION_ADMINISTRATION",
+      "SECTION_USERS",
+      "SECTION_ROUTES",
+      "SECTION_PRODUCTS",
+      "SECTION_ORDERS",
+      "SECTION_WORKSHOP",
+    ],
   },
   {
     name: "Empresas",
     path: "/inicio/empresas",
     icon: shopIcon,
     activeIcon: shopActiveIcon,
+    permisses: ["SECTION_ADMINISTRATION", "USER_SUPER_ADMIN"],
   },
   {
     name: "Personal",
     path: "/inicio/personal",
     icon: peopleIcon,
     activeIcon: peopleActiveIcon,
+    permisses: ["SECTION_USERS", "USER_SUPER_ADMIN"],
   },
 
   {
@@ -121,24 +133,28 @@ const menuItems = [
     path: "/inicio/rutas",
     icon: compassIcon,
     activeIcon: compassActiveIcon,
+    permisses: ["SECTION_ROUTES", "USER_SUPER_ADMIN"],
   },
   {
     name: "Productos",
     path: "/inicio/productos",
     icon: boxIcon,
     activeIcon: boxActiveIcon,
+    permisses: ["SECTION_PRODUCTS", "USER_SUPER_ADMIN"],
   },
   {
     name: "Órdenes",
     path: "/inicio/ordenes",
     icon: clipboardChek,
     activeIcon: clipboardChekActive,
+    permisses: ["SECTION_ORDERS", "USER_SUPER_ADMIN"],
   },
   {
     name: "Taller",
     path: "/inicio/taller",
     icon: briefcaseIcon,
     activeIcon: briefActiveIcon,
+    permisses: ["SECTION_WORKSHOP", "USER_SUPER_ADMIN"],
   },
 ];
 

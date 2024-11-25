@@ -57,12 +57,11 @@ const AddUserPage = () => {
       role,
       nameRole,
       permissions,
-      state,
     } = data;
     switch (checkSelected) {
       case "existente":
         handleUserCreation({
-          isActive: state === "Activo" ? true : false,
+          isActive: true,
           fullName,
           ci,
           phone,
@@ -73,7 +72,7 @@ const AddUserPage = () => {
         break;
       default:
         handleUserCreation({
-          isActive: state === "Activo" ? true : false,
+          isActive: true,
           fullName,
           ci,
           phone,

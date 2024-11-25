@@ -40,6 +40,29 @@ const Public = () => {
     }
   }, [userToken]);
 
+  function formatearArrayLocalStorage() {
+    // Extraer los datos del localStorage
+    const datosGuardados = localStorage.getItem("SOFOCON_PERMISSIONS");
+
+    // Si no hay datos guardados, retornar un array vacío
+    if (!datosGuardados) {
+      return [];
+    }
+
+    // Dividir la cadena en un array
+    const arrayOriginal = datosGuardados.split(",");
+
+    // Convertir cada elemento a una cadena si es necesario
+    const arrayFormateado = arrayOriginal.map((item) => String(item).trim());
+
+    // Aplicar el formateador para excluir "USER_ADMIN"
+    const elementosExcluir = ["USER_ADMIN"];
+    return arrayFormateado.filter((item) => !elementosExcluir.includes(item));
+  }
+
+  const permisos = formatearArrayLocalStorage();
+  console.log(permisos);
+
   return (
     <div className="flex h-screen flex-col font-roboto">
       <div className="flex flex-1 overflow-hidden">
@@ -57,24 +80,32 @@ const Public = () => {
             </div>
             <div className="flex h-[30.625rem] flex-col items-center space-y-4 p-2">
               {menuItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`flex h-12 ${isOpen ? "w-[15.625rem]" : "w-20 justify-center"} items-center gap-1.5 rounded-[.75rem] px-6 py-1.5 ${isActive(item.path) ? "bg-red_m text-white" : ""} transition-all duration-200 ease-in-out ${isActive(item.path) ? "shadow-br" : ""}`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <img
-                      src={isActive(item.path) ? item.activeIcon : item.icon}
-                      alt=""
-                      className="h-5 w-5 rounded"
-                    />
-                    {isOpen && (
-                      <p className="text-sm font-light leading-[.875rem]">
-                        {item.name}
-                      </p>
-                    )}
-                  </div>
-                </Link>
+                <>
+                  {item.permisses.some((permiso) =>
+                    permisos.includes(permiso),
+                  ) && (
+                    <Link
+                      key={item.name}
+                      to={item.path}
+                      className={`flex h-12 ${isOpen ? "w-[15.625rem]" : "w-20 justify-center"} items-center gap-1.5 rounded-[.75rem] px-6 py-1.5 ${isActive(item.path) ? "bg-red_m text-white" : ""} transition-all duration-200 ease-in-out ${isActive(item.path) ? "shadow-br" : ""}`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <img
+                          src={
+                            isActive(item.path) ? item.activeIcon : item.icon
+                          }
+                          alt=""
+                          className="h-5 w-5 rounded"
+                        />
+                        {isOpen && (
+                          <p className="text-sm font-light leading-[.875rem]">
+                            {item.name}
+                          </p>
+                        )}
+                      </div>
+                    </Link>
+                  )}
+                </>
               ))}
             </div>
           </div>

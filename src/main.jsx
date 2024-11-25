@@ -12,7 +12,6 @@ import { SOFOCON_JWT_TOKEN } from "./utils/Constants.js";
 import { NextUIProvider } from "@nextui-org/react";
 import AuthProvider from "./hooks/context/AuthContext.jsx";
 import moment from "moment/moment.js";
-import { AuthService } from "./services/auth/auth.service.js";
 import * as authRoutes from "./services/auth/auth.routes.js";
 import { APIProvider } from "@vis.gl/react-google-maps";
 
