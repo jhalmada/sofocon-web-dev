@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
-import Input from "../components/inputs/Input";
 import SearchInput from "../components/inputs/SearchInput";
 import barCodeIcon from "../assets/icons/barcode.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
-import x from "../assets/icons/x.svg";
 import RechargeRow from "../components/RechargeRow.jsx";
 import FileIcon from "../assets/icons/file-earmark-ruled.svg";
 import { useForm } from "react-hook-form";
@@ -16,31 +14,27 @@ import { BASE_URL } from "../utils/Constants.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import StoragePage from "./StoragePage.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
-import editIcon from "../assets/icons/pencil-square.svg";
-import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import useGetProducts from "../hooks/products/useGetProducts.js";
 import useOrders from "../hooks/orders/useOrders.js";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
+import SaveImg from "../assets/img/save.png";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutOrders from "../hooks/orders/usePutOrders";
 import {
   getOrderExcel,
   getOrderPdf,
 } from "../services/orders/orders.routes.js";
-//put
-// import useGetOneOrder from "../hooks/orders/useGetOneOrder.js";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders.js";
+import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
 
 const WorkshopPage = () => {
-  const { id } = useParams();
-  const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
-  // const { getOneOrder, setModified } = useGetOneOrder(id);
   const { changedOrder } = usePutOrders();
   const { deleteOrder } = useDeleteOrders();
+  const { setSearch: setSearchProducts, setList } = useGetProducts();
 
   const {
     ordersResponse,
@@ -51,12 +45,10 @@ const WorkshopPage = () => {
     page,
     itemsPerPage,
     setStatus,
-    setModified,
     setEntryDate,
     getAllOrders,
   } = useOrders();
   const {
-    register,
     handleSubmit,
     setValue,
     formState: { errors },
@@ -71,15 +63,16 @@ const WorkshopPage = () => {
   const [isExportCompetingModalOpen, setIsExportCompetingModalOpen] =
     useState(false);
   const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
-  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
+  const [isConfirmCancelModalOpen, setIsConfirmCancelModalOpen] =
+    useState(false);
   const [openScannerModal, setOpenScannerModal] = useState(false);
-  const inputRef = useRef(null);
+  const [confirmModal, setConfirmModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(
     ordersResponse?.productInOrder,
   );
-  const [orderDetails, setOrderDetails] = useState(null);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [orderId, setOrderId] = useState(null);
+  const [isPriceListSelected, setIsPriceListSelected] = useState(true);
 
   const stateOptions = ["Solicitado", "En preparación", "Para retirar"];
   const monthsOptions = [
@@ -106,28 +99,14 @@ const WorkshopPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const handleAddProduct = async (e) => {
-    const newProduct = e.target.value;
-    setSelectedProduct(newProduct);
-    await changedOrder(
-      { productInOrder: newProduct },
-      ordersResponse.id,
-      setModified,
-    );
+  const handleAddProduct = async (data) => {
+    setConfirmModal(true);
+    const { productInOrder } = data;
+    setSelectedProduct(productInOrder);
+    await changedOrder({ productInOrder }, orderId);
   };
-  //put
-  // const oneOrder = async (id) => {
-  //   const newdatos = await getOneOrder(id);
-  //   setOrderDetails(newdatos);
-  // };
-  // useEffect(() => {
-  //   oneOrder(id);
-  // }, [id]);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
+  const openConfirmCancelModal = () => setIsConfirmCancelModalOpen(true);
   const openExportModal = () => {
     setIsExportModalOpen(true);
   };
@@ -149,7 +128,7 @@ const WorkshopPage = () => {
   };
 
   const closeConfirmCancelModal = () => {
-    setConfirmCancelModalOpen(false);
+    setIsConfirmCancelModalOpen(false);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
@@ -157,22 +136,17 @@ const WorkshopPage = () => {
     setOpenScannerModal(true);
   };
 
-  const handleCancelClick = () => {
-    openConfirmCancelModal();
-    setOpenScannerModal(false);
-  };
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
   };
   const handleConfirmDelete = () => {
-    deleteOrder(orderId, setModified);
+    deleteOrder(orderId);
     closeConfirmDeleteModal();
   };
 
   const onSubmit = (data) => {
-    console.log("Código ingresado:", data.barCode);
-    handleCancelClick();
+    handleAddProduct(data);
   };
 
   const handleStateFilterChange = (value) => {
@@ -205,27 +179,6 @@ const WorkshopPage = () => {
     }
   };
 
-  const handleSelectionChange = (id, value) => {
-    const selectedValue = value.anchorKey === "true";
-    setRecharged((prev) => ({
-      ...prev,
-      [id]: selectedValue,
-    }));
-  };
-  const handleQuantityChange = (itemId, value) => {
-    setQuantity((prev) => ({
-      ...prev,
-      [itemId]: value,
-    }));
-  };
-  const handleDeleteSelection = (id) => {
-    const updatedSelectedItems = autocompleteResults.filter(
-      (selection) => selection.id !== id,
-    );
-
-    setValue(name, updatedSelectedItems);
-    setAutocompleteResults(updatedSelectedItems);
-  };
   const handleMonthChange = (e) => {
     const monthMap = {
       Enero: "01",
@@ -404,7 +357,6 @@ const WorkshopPage = () => {
                       </thead>
 
                       <tbody>
-                        {console.log("orderresponse", ordersResponse)}
                         {ordersResponse.map((order, index) => (
                           <RechargeRow
                             key={index}
@@ -412,9 +364,8 @@ const WorkshopPage = () => {
                             name={order?.client?.name || "Sin nombre"}
                             orderId={order.orderId}
                             entryData={
-                              order?.status === "PREPARATION"
-                                ? formatDate(order.workShopDateEntry)
-                                : "Aún sin preparar"
+                              formatDate(order.workShopDateEntry) ||
+                              "Aún sin preparar"
                             }
                             retirementDate={
                               "Aún sin retirar" ||
@@ -422,11 +373,7 @@ const WorkshopPage = () => {
                             }
                             seller={order?.user?.userInfo?.fullName}
                             state={order.status}
-                            editIconSrc={editIcon}
                             deleteIconSrc={deleteIcon}
-                            onEditClick={() => {
-                              openModal();
-                            }}
                             onDeleteClick={() =>
                               openConfirmDeleteModal(order.id)
                             }
@@ -471,168 +418,7 @@ const WorkshopPage = () => {
           />
         )}
       </div>
-      <ReusableModal
-        width="w-[30rem]"
-        isOpen={isModalOpen}
-        onClose={handleCancelClick}
-        title="Editar Orden"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <div>
-              <ProductsAutocomplete
-                label={"Productos"}
-                array={productsResponse || []}
-                name={"products"}
-                setValue={setValue}
-                onChange={setSearchProducts}
-                placeholder="Buscar productos"
-                setAutocompleteResults={setAutocompleteResults}
-                selectedItems={autocompleteResults}
-              />
-              <p>{errors.products && errors.products.message}</p>
-            </div>
-            <div>
-              {autocompleteResults.length > 0 && (
-                <div>
-                  {autocompleteResults.map((item, index) => (
-                    <div className="flex w-full space-x-2" key={item.id}>
-                      <div className="w-1/2">
-                        <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br">
-                          {item.name}
-                          <img
-                            src={x}
-                            alt="delete"
-                            className="mr-1 cursor-pointer"
-                            onClick={() => handleDeleteSelection(item.id)}
-                          />
-                        </span>
-                        <Input
-                          hidden={true}
-                          value={item.id}
-                          defaultValue={item.id}
-                          {...register(`productInOrder[${index}].product.id`, {
-                            value: item.id,
-                          })}
-                          disabled
-                        />
-                      </div>
-                      <div className="flex w-1/2 space-x-2">
-                        <Input
-                          type="number"
-                          label={"Cantidad"}
-                          defaultValue={1}
-                          minValue={1}
-                          placeholder={"Cant."}
-                          onInput={(e) =>
-                            handleQuantityChange(item.id, e.target.value)
-                          }
-                          {...register(`productInOrder[${index}].amount`)}
-                          msjError={
-                            errors[`productInOrder[${index}].amount`]
-                              ?.message || ""
-                          }
-                        />
-                        <div className="w-full">
-                          <label className="block text-sm font-light">
-                            Recarga
-                          </label>
-                          <Select
-                            defaultValue={false}
-                            className="rounded-lg border"
-                            placeholder={recharged[item.id] ? "Si" : "No"}
-                            {...register(`productInOrder[${index}].isRecharge`)}
-                            onSelectionChange={(value) =>
-                              handleSelectionChange(item.id, value)
-                            }
-                          >
-                            <SelectItem key={true}>Si</SelectItem>
-                            <SelectItem key={false}>No</SelectItem>
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {autocompleteResults.map((item) => {
-                    return (
-                      recharged[item.id] &&
-                      Array.from({ length: quantity[item.id] || 1 }).map(
-                        (_, index) => (
-                          <div
-                            key={`recharged-${item.id}-${index}`}
-                            className="mb-8 rounded-lg bg-gray p-4"
-                          >
-                            <p className="mb-4 text-center text-sm">
-                              Recarga del producto
-                              <span className="ml-1 font-semibold uppercase">
-                                {item.name}
-                              </span>
-                            </p>
-                            <div className="flex space-x-2">
-                              <Input
-                                label={"Código de barras"}
-                                placeholder={"..."}
-                                bg="bg-white"
-                                {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].barCode`,
-                                  {
-                                    required: "Este campo es obligatorio",
-                                  },
-                                )}
-                                msjError={errors.barCode?.message || ""}
-                              />
-                              <span className="flex items-center">
-                                <Link to={"/inicio"}>
-                                  <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
-                                    <img
-                                      src={barCodeIcon}
-                                      alt=""
-                                      className="h-5 w-5"
-                                    />
-                                  </div>
-                                </Link>
-                              </span>
-                            </div>
-                            <div className="flex space-x-2">
-                              <Input
-                                label={"Matrícula"}
-                                placeholder={"X234234"}
-                                bg="bg-white"
-                                {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].enrollment`,
-                                  {
-                                    required: "Este campo es obligatorio",
-                                  },
-                                )}
-                                msjError={errors.enrollment?.message || ""}
-                              />
-                              <Input
-                                label={"N° UNIT de fábrica"}
-                                placeholder={"123455"}
-                                bg="bg-white"
-                                {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].fabricUNIT`,
-                                  {
-                                    required: "Este campo es obligatorio",
-                                  },
-                                )}
-                                msjError={errors.fabricUNIT?.message || ""}
-                              />
-                            </div>
-                          </div>
-                        ),
-                      )
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </form>
-      </ReusableModal>
+
       <ReusableModal
         isOpen={openScannerModal}
         onClose={closeModal}
@@ -754,6 +540,21 @@ const WorkshopPage = () => {
         onAccept={handleConfirmCancel}
       >
         Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
+      </ReusableModal>
+      <ReusableModal
+        isOpen={confirmModal}
+        onClose={() => setConfirmModal(false)}
+        title="Cambios guardados"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setConfirmModal(false)}
+      >
+        <div className="flex flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );

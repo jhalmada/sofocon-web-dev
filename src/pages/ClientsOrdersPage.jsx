@@ -110,6 +110,10 @@ const ClientsOrdersPage = () => {
     };
     const newStatus = translateState(e.target.value);
     setSelectedState(newStatus);
+    const updatedData = { status: newStatus };
+    if (newStatus === "READY_PICKUP") {
+      updatedData.workShopDateEntry = new Date();
+    }
     await changedOrder({ status: newStatus }, orderDetails.id, setModified);
   };
   const handleConfirm = () => {

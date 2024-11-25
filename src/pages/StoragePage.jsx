@@ -1,9 +1,8 @@
 import Pagination from "../components/Pagination";
 import { useForm } from "react-hook-form";
-import editIcon from "../assets/icons/pencil-square.svg";
 import x from "../assets/icons/x.svg";
 import cameraIcon from "../assets/icons/camera.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import StorageRow from "../components/StorageRow";
 import { Select, SelectItem } from "@nextui-org/react";
@@ -11,8 +10,11 @@ import ReusableModal from "../components/modals/ReusableModal";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete";
 import useGetProducts from "../hooks/products/useGetProducts";
 import Input from "../components/inputs/Input";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
+import deleteIcon from "../assets/icons/trash3.svg";
+import useDeleteOrders from "../hooks/orders/useDeleteOrders";
+import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 const StoragePage = ({
   ordersResponse,
   setEntryDate,
@@ -24,6 +26,17 @@ const StoragePage = ({
   page,
   itemsPerPage,
 }) => {
+  const { id } = useParams();
+  const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
+  const { getOneOrder, setModified } = useGetOneOrder(id);
+  const { deleteOrder } = useDeleteOrders();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
+
   const [autocompleteResults, setAutocompleteResults] = useState([]);
   const [quantity, setQuantity] = useState({});
   const [recharged, setRecharged] = useState({});
@@ -36,14 +49,9 @@ const StoragePage = ({
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [openScannerModal, setOpenScannerModal] = useState(false);
-
-  const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
+  const [orderId, setOrderId] = useState(null);
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [orderDetails, setOrderDetails] = useState(null);
 
   const stateOptions = [
     "Solicitado",
@@ -94,6 +102,11 @@ const StoragePage = ({
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
+  const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
+  const openConfirmDeleteModal = (id) => {
+    setOrderId(id);
+    setConfirmDeleteModalOpen(true);
+  };
 
   const handleCancelClick = () => {
     openConfirmCancelModal();
@@ -103,9 +116,20 @@ const StoragePage = ({
     closeConfirmCancelModal();
     closeModal();
   };
+  const handleConfirmDelete = () => {
+    deleteOrder(orderId, setModified);
+    closeConfirmDeleteModal();
+  };
   const onSubmit = (data) => {
     console.log(data);
   };
+  const oneOrder = async (id) => {
+    const newdatos = await getOneOrder(id);
+    setOrderDetails(newdatos);
+  };
+  useEffect(() => {
+    oneOrder(id);
+  }, [id]);
 
   const handleStateFilterChange = (value) => {
     switch (value) {
@@ -259,10 +283,8 @@ const StoragePage = ({
                       }
                       seller={order?.user?.userInfo?.fullName}
                       state={order.status}
-                      editIconSrc={editIcon}
-                      onEditClick={() => {
-                        openModal();
-                      }}
+                      deleteIconSrc={deleteIcon}
+                      onDeleteClick={() => openConfirmDeleteModal(order.id)}
                     />
                   ))}
                 </tbody>
@@ -450,6 +472,16 @@ const StoragePage = ({
             </div>
           </div>
         </form>
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isConfirmDeleteModalOpen}
+        onClose={closeConfirmDeleteModal}
+        title="Eliminar orden"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={() => handleConfirmDelete(orderId)}
+      >
+        Esta orden será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}

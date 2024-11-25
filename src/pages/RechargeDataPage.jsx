@@ -41,6 +41,7 @@ const RechargeDataPage = () => {
 
   const oneItem = async (id) => {
     const newdatos = await getOneItemRemoval(id);
+
     setItemDetails(newdatos);
   };
   const stateOptions = ["Habilitado", "Inhabilitado"];
@@ -54,9 +55,10 @@ const RechargeDataPage = () => {
   };
 
   const handleDetailsCreation = async (itemData) => {
-    const { testDate } = itemData;
+    const { testDate, pressure, expansion, color, newUNIT } = itemData;
     try {
       const newItemsDetails = await patchOneItem({
+        ...itemData,
         testDate: testDate
           ? new Date(
               testDate.year,
@@ -64,7 +66,10 @@ const RechargeDataPage = () => {
               testDate.day,
             ).toISOString()
           : null,
-        ...itemData,
+        pressure,
+        expansion,
+        color,
+        newUNIT,
       });
 
       if (newItemsDetails) {
@@ -127,14 +132,16 @@ const RechargeDataPage = () => {
         >
           <div>
             <Select
-              className="mb-4 w-1/6 rounded-lg border"
+              className="mb-8 w-1/6 rounded-lg border"
               label="Estado del extintor"
               labelPlacement="outside"
-              placeholder={"Estado del extintor"}
+              placeholder={
+                itemDetails?.status === "PENDING" || !itemDetails?.status === ""
+                  ? "Pendiente"
+                  : itemDetails?.status
+              }
               defaultSelectedKeys={[itemDetails?.status]}
-              {...register(`status`, {
-                required: "Este campo es obligatorio",
-              })}
+              {...register("status", {})}
               onSelectionChange={(values) => {
                 setValue(`status`, values.anchorKey);
               }}
@@ -227,8 +234,10 @@ const RechargeDataPage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"Capacidad (kg/l)"}
-                placeholder={itemDetails?.capacity || "sin dato"}
+                label={"Capacidad (Kg/l)"}
+                placeholder={
+                  itemDetails?.productInOrder?.product?.amount || "sin dato"
+                }
                 disabled
               />
             </div>
@@ -264,7 +273,8 @@ const RechargeDataPage = () => {
               </span>
               <Input
                 label={"N° UNIT actual"}
-                placeholder={"Escribir..."}
+                placeholder={itemDetails?.newUNIT || "Escribir..."}
+                defaultSelectedKeys={itemDetails?.newUNIT}
                 {...register("newUNIT", {
                   required: "Este campo es obligatorio",
                   minLength: {
@@ -288,15 +298,19 @@ const RechargeDataPage = () => {
                   placeholderColor="placeholder-black_b"
                   border="none"
                   label={"Tipo"}
-                  placeholder={itemDetails?.type || "sin dato"}
+                  placeholder={
+                    itemDetails?.productInOrder?.product?.type || "sin dato"
+                  }
                   disabled
                 />
               </div>
               <div className="flex w-1/2 items-center space-x-2">
                 <div className="flex w-full flex-col">
                   <Input
+                    type="text"
                     label={"Color"}
-                    placeholder={"Escribir..."}
+                    placeholder={itemDetails?.color || "Escribir..."}
+                    defaultSelectedKeys={itemDetails?.color}
                     {...register(`color`, {
                       required: "Este campo es obligatorio",
                       minLength: {
@@ -317,7 +331,8 @@ const RechargeDataPage = () => {
             <div className="mt-3 flex space-x-2">
               <Input
                 label={"Presión (MPa)"}
-                placeholder={"35"}
+                placeholder={itemDetails?.pressure || "Escribir..."}
+                defaultSelectedKeys={itemDetails?.pressure}
                 {...register("pressure", {
                   required: "Este campo es obligatorio",
                   minLength: {
@@ -334,7 +349,8 @@ const RechargeDataPage = () => {
 
               <Input
                 label={"Expansión (%)"}
-                placeholder={"1,23"}
+                placeholder={itemDetails?.expansion || "Escribir..."}
+                defaultSelectedKeys={itemDetails?.expansion}
                 {...register("expansion", {
                   required: "Este campo es obligatorio",
                   minLength: {
@@ -345,6 +361,11 @@ const RechargeDataPage = () => {
                   maxLength: {
                     value: 50,
                     message: "La expansión no puede exceder los 50 caracteres.",
+                  },
+                  pattern: {
+                    value: /^[0-9]+([,][0-9]+)?$/,
+                    message:
+                      "Por favor ingrese un número válido (por ejemplo, 10 o 10,5).",
                   },
                 })}
                 msjError={errors.expansion ? errors.expansion.message : ""}

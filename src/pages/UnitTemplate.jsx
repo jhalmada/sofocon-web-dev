@@ -17,8 +17,6 @@ import useGetUnitOrders from "../hooks/orders/useGetUnitOrders.js";
 const UnitTemplate = () => {
   const {
     orderUnitResponse,
-    year,
-    month,
     setMonth,
     setItemsPerPage,
     totalPage,
@@ -82,7 +80,6 @@ const UnitTemplate = () => {
     closeModal();
   };
   const handleChangeMonth = (value) => {
-    console.log(value);
     setMonth(value);
   };
   const openExportModal = () => {
@@ -169,7 +166,7 @@ const UnitTemplate = () => {
                 </tr>
                 <tr>
                   <th className="border-b-2 border-gray p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Fecha ing.
+                    Fecha
                   </th>
                   <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
                     Nombre
@@ -210,15 +207,14 @@ const UnitTemplate = () => {
                 </tr>
               </thead>
               <tbody>
-                {console.log("order", orderUnitResponse)}
                 {orderUnitResponse.map((order, index) => (
                   <UnitTemplateRow
                     key={index}
                     id={order.id}
                     entryDate={
-                      order.workShopDateEntry
-                        ? formatDate(order.workShopDateEntry)
-                        : "Sin fecha"
+                      formatDate(
+                        order?.productInOrder.order.workShopDateEntry,
+                      ) || "Sin fecha"
                     }
                     name={
                       order?.productInOrder.order.client?.name || "Sin nombre"
@@ -238,7 +234,12 @@ const UnitTemplate = () => {
                     }
                     pressure={order?.pressure}
                     exp={order?.expansion}
-                    discontinued={order?.status === "DISABLED" ? "Si" : "No"}
+                    discontinued={
+                      order?.status === "DISABLED" ||
+                      order?.status === "Inhabilitado"
+                        ? "Si"
+                        : "No"
+                    }
                   />
                 ))}
               </tbody>

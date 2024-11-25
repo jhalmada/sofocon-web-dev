@@ -84,6 +84,12 @@ const DepositPage = () => {
     };
     const newStatus = translateState(e.target.value);
     setSelectedState(newStatus);
+    const currentDate = new Date().toISOString();
+    const updatedOrderData = { status: newStatus };
+
+    if (newStatus === "EGRESS") {
+      updatedOrderData.workShopDateEntry = currentDate;
+    }
     await changedOrder({ status: newStatus }, orderDetails.id, setModified);
   };
   const handleCloseModal = () => {

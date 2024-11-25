@@ -24,6 +24,8 @@ const StorageRow = ({
   id,
   editIconSrc,
   onEditClick,
+  deleteIconSrc,
+  onDeleteClick,
 }) => {
   const navigate = useNavigate();
 
@@ -73,10 +75,10 @@ const StorageRow = ({
         <div className="flex justify-center gap-4">
           {state === "REQUEST" && (
             <img
-              src={editIconSrc}
-              alt="Edit icon"
+              src={deleteIconSrc}
+              alt="Delete icon"
               className="h-5 w-5 cursor-pointer"
-              onClick={onEditClick}
+              onClick={onDeleteClick}
             />
           )}
         </div>

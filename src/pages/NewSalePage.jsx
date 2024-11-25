@@ -41,34 +41,36 @@ const NewSalePage = () => {
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
+  const [confirmation, setConfirmation] = useState(false);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [rutValue, setRutValue] = useState("");
+  const [company, setCompany] = useState(null);
+  const [seller, setSeller] = useState(null);
   const [autocompleteResults, setAutocompleteResults] = useState([]);
   const [name, setName] = useState("productInOrder");
   const [recharged, setRecharged] = useState({});
   const [selectedPayment, setSelectedPayment] = useState("Efectivo");
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
+  const [orderData, setOrderData] = useState(null);
+
   const [quantity, setQuantity] = useState({});
   const [subtotal, setSubtotal] = useState(0);
   const [discount, setDiscount] = useState([]);
   const [discount2, setDiscount2] = useState("");
   const [numChecks, setNumChecks] = useState(0);
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+
   const total = subtotal
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
     : 0;
 
   //validacion en tiempo real react-hook-form
-  const client = watch("client");
-  const clientAuthorize = watch("clientAuthorize");
-  const paymentType = watch("paymentType");
+
   const checkQuantity = watch("checkQuantity");
   const deliveredValue = watch("delivered", false);
   const isDirectValue = watch("isDirect", false);
 
   const handleOrderCreation = async (orderData) => {
-    console.log("orderdata", orderData.client);
     const {
       isDirect,
       client,
@@ -97,11 +99,12 @@ const NewSalePage = () => {
       );
       const formattedDate = newdata.toISOString();
       const newOrder = await postAddOrders({
-        workShopDateEntry: new Date(),
+        workShopDateEntry: new Date().toISOString(),
+        workShopDateDeparture:
+          delivered !== "DELIVERED" ? new Date().toISOString() : null,
         isPreOrder: false,
         isDirect,
         client,
-
         rut,
         user,
         productInOrder: productInOrder.map((product) => {
@@ -139,7 +142,7 @@ const NewSalePage = () => {
       });
 
       if (newOrder) {
-        setSaveConfirmationModalOpen(true);
+        setIsModalOpen(false);
       } else {
         setIsModalOpen(true);
       }
@@ -149,31 +152,41 @@ const NewSalePage = () => {
   };
 
   const onSubmit = (data) => {
-    if (isDirectValue) {
-      handleOrderCreation({
-        ...data,
-        client: { rut: data.rut, name: data.client },
-      });
-    } else {
-      handleOrderCreation({
-        ...data,
-      });
-    }
+    setOrderData(data);
+    setIsConfirmationModalOpen(true);
   };
 
   const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
+    setIsConfirmationModalOpen(false);
   };
   const handleConfirmSaveClick = () => {
-    closeSaveConfirmationModal();
+    setConfirmation(true);
+    setIsConfirmationModalOpen(false);
+    if (orderData) {
+      handleOrderCreation({
+        ...orderData,
+        client: isDirectValue
+          ? { rut: orderData.rut, name: orderData.client }
+          : company,
+        user: seller,
+      });
+    }
     navigate("/inicio/ordenes");
   };
   const handleSelectCompany = (selectedCompany) => {
-    console.log("seleccionado", selectedCompany);
     if (selectedCompany) {
-      setRutValue(selectedCompany);
+      setCompany(selectedCompany);
+      setRutValue(selectedCompany.rut);
     } else {
+      setCompany(null);
       setRutValue("");
+    }
+  };
+  const handleSelectSeller = (selectedSeller) => {
+    if (selectedSeller) {
+      setSeller(selectedSeller);
+    } else {
+      setSeller(null);
     }
   };
   const handleWriteCompany = (writedCompany) => {
@@ -212,7 +225,6 @@ const NewSalePage = () => {
       ...prev,
       [id]: selectedValue,
     }));
-    console.log(selectedValue);
   };
   const handleSelectionPaymentChange = (value) => {
     const selectedValue = value.anchorKey;
@@ -450,9 +462,10 @@ const NewSalePage = () => {
                       array={
                         transformData(userSellerResponse?.result || []) || []
                       }
-                      name={"user.name"}
+                      name={"user"}
                       setValue={setValue}
                       onChange={setSearchSellers}
+                      onSelect={handleSelectSeller}
                       placeholder="Buscar vendedores"
                       {...field}
                     />
@@ -688,23 +701,6 @@ const NewSalePage = () => {
                                       : ""}
                                   </p>
                                 </I18nProvider>
-                                {/* <Select
-                                  className="rounded-lg border"
-                                  placeholder="MM/AA"
-                                  {...register(
-                                    `productInOrder[${index}].itemsRemoval[${index}].lastDate`,
-                                  )}
-                                  onSelectionChange={(values) =>
-                                    setValue(
-                                      `productInOrder[${index}].itemsRemoval[${index}].lastDate`,
-                                      values,
-                                    )
-                                  }
-                                >
-                                  {monthsOptions.map((month) => (
-                                    <SelectItem key={month}>{month}</SelectItem>
-                                  ))}
-                                </Select> */}
                               </div>
                               <Input
                                 label={"N° UNIT actual"}
@@ -902,6 +898,7 @@ const NewSalePage = () => {
             />
           </div>
         </form>
+
         <ReusableModal
           isOpen={confirmationModalOpen}
           onClose={handleClose}
@@ -913,6 +910,16 @@ const NewSalePage = () => {
           ¿Estás seguro/a que deseas marcar como Entregado?
         </ReusableModal>
         <ReusableModal
+          isOpen={isConfirmationModalOpen}
+          onClose={closeSaveConfirmationModal}
+          title="Confirmación"
+          variant="confirmation"
+          buttons={["accept", "cancel"]}
+          onAccept={handleConfirmSaveClick}
+        >
+          Los datos de la orden no se podrán modificar. ¿Continuar?
+        </ReusableModal>
+        {/* <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
           title="Orden creada"
@@ -921,7 +928,7 @@ const NewSalePage = () => {
           onAccept={handleConfirmSaveClick}
         >
           La orden fue creada exitosamente.
-        </ReusableModal>
+        </ReusableModal> */}
       </div>
     </div>
   );

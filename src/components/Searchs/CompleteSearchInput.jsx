@@ -8,7 +8,6 @@ const CompleteSearchInput = ({
   name,
   setValue,
   onChange,
-  label2,
   array2,
   placeholder = "Buscar...",
   isDisabled = false,
@@ -17,11 +16,10 @@ const CompleteSearchInput = ({
   const [selectedItem, setSelectedItem] = useState(array2 || []);
 
   const handleSelect = (item) => {
-    console.log("item", item);
     if (selectedItem?.id !== item.id) {
       setSelectedItem(item);
-      setValue(name, item);
-      onSelect(item.rut);
+      setValue(name, item.id);
+      onSelect(item);
     } else {
       setSelectedItem(null);
       setValue(name, null);
