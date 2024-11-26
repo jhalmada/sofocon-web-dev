@@ -410,6 +410,9 @@ const CompaniesPage = () => {
                         Nombre
                       </th>
                       <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Dirección
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                         Departamento
                       </th>
                       <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
@@ -449,8 +452,9 @@ const CompaniesPage = () => {
                         key={index}
                         id={companie.id}
                         name={companie.name}
-                        departament={companie.department}
                         direction={companie.address}
+                        departament={companie.department}
+                        neighborhood={companie.neighborhood}
                         sellers={"Vendedores"}
                         nextVisits={formatDate(companie.nextVisit)}
                         state={companie.status}

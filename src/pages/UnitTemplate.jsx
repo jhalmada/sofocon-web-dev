@@ -207,6 +207,7 @@ const UnitTemplate = () => {
                 </tr>
               </thead>
               <tbody>
+                {console.log("respuesta de ordenes", orderUnitResponse)}
                 {orderUnitResponse.map((order, index) => (
                   <UnitTemplateRow
                     key={index}
@@ -223,9 +224,9 @@ const UnitTemplate = () => {
                       order?.productInOrder.order.client?.address ||
                       "Sin direccion"
                     }
-                    type={order?.type}
+                    type={order?.productInOrder.product?.type}
                     color={order?.color}
-                    capacity={order?.capacity}
+                    capacity={order?.productInOrder.product?.amount}
                     factory={order.fabricUNIT ? "Si" : "No"}
                     current={order.numberUNIT}
                     registration={order.enrollment}

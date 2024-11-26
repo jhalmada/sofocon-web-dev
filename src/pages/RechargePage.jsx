@@ -7,26 +7,37 @@ import ChevronRightIcon from "../assets/icons/chevron-right.svg";
 import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import usePutOrders from "../hooks/orders/usePutOrders";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
+import useUsersSellers from "../hooks/users/useUsersSellers";
+import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
+import { I18nProvider } from "@react-aria/i18n";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import { DatePicker } from "@nextui-org/react";
 const RechargePage = () => {
   const {
     handleSubmit,
+    control,
+    setValue,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
   const [mnsError, setMnsError] = useState("");
   const { changedOrder, isLoading } = usePutOrders();
-  const { id } = useParams();
   const { getOneOrder, setModified } = useGetOneOrder(id);
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
 
   const [orderDetails, setOrderDetails] = useState(null);
   const [selectedState, setSelectedState] = useState(orderDetails?.status);
+  const [isConfirmModal, setIsConfirmModal] = useState(false);
+  const [seller, setSeller] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaveConfirmationModalOpen, setIsSaveConfirmationModalOpen] =
+    useState(false);
+  const [newStatus, setNewStatus] = useState(null);
 
   const oneOrder = async (id) => {
     const newdatos = await getOneOrder(id);
@@ -67,6 +78,12 @@ const RechargePage = () => {
         return state;
     }
   };
+  const transformData = (array) => {
+    return array.map((item) => ({
+      id: item.id,
+      name: item.userInfo.fullName,
+    }));
+  };
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -75,47 +92,72 @@ const RechargePage = () => {
     return `${month}/${year}`;
   };
 
-  const onSubmit = () => {
-    navigate("/inicio/taller");
+  const onSubmit = async (data) => {
+    if (newStatus === "EGRESS") {
+      await changedOrder(
+        {
+          status: newStatus,
+          user: data.user,
+          // sellDate: data.dateV,
+        },
+        orderDetails.id,
+        setModified,
+      );
+      setIsSaveConfirmationModalOpen(true);
+    } else {
+      await changedOrder({ status: newStatus }, orderDetails.id, setModified);
+      setIsSaveConfirmationModalOpen(true);
+    }
+  };
+  const translateStateToEnglish = (state) => {
+    switch (state) {
+      case "Solicitado":
+        return "REQUEST";
+      case "En preparación":
+        return "PREPARATION";
+      case "Para retirar":
+        return "READY_PICKUP";
+      case "Egreso":
+        return "EGRESS";
+      case "Entregado":
+        return "DELIVERED";
+      default:
+        return state;
+    }
   };
 
-  const handleStateChange = async (e) => {
-    const translateState = (state) => {
-      switch (state) {
-        case "Solicitado":
-          return "REQUEST";
-        case "En preparación":
-          return "PREPARATION";
-        case "Para retirar":
-          return "READY_PICKUP";
-        case "Egreso":
-          return "EGRESS";
-        case "Entregado":
-          return "DELIVERED";
-        default:
-          return state;
-      }
-    };
-    const newStatus = translateState(e.target.value);
+  const handleState = async (e) => {
+    const newStatus = translateStateToEnglish(e.target.value);
     setSelectedState(newStatus);
     const currentDate = new Date().toISOString();
     const updatedOrderData = { status: newStatus };
 
     if (newStatus === "EGRESS") {
       updatedOrderData.workShopDateEntry = currentDate;
+      setIsConfirmModal(true);
+      setNewStatus("EGRESS");
+    } else {
+      setNewStatus(newStatus);
     }
-    await changedOrder({ status: newStatus }, orderDetails.id, setModified);
   };
 
   const handleCloseModal = () => {
+    setIsConfirmModal(false);
     setIsModalOpen(false);
   };
+  const handleSelectSeller = (selectedSeller) => {
+    if (selectedSeller) {
+      setSeller(selectedSeller);
+    } else {
+      setSeller(null);
+    }
+  };
   const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
+    setIsSaveConfirmationModalOpen(false);
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
-    navigate("/inicio/personal");
+    navigate("/inicio/taller");
   };
   useEffect(() => {
     oneOrder(id);
@@ -138,7 +180,7 @@ const RechargePage = () => {
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Recarga
         </h1>
-        {/*navbar */}
+
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
@@ -157,7 +199,7 @@ const RechargePage = () => {
               labelPlacement="outside"
               placeholder={translateState(orderDetails?.status)}
               value={translateState(stateOptions)}
-              onChange={handleStateChange}
+              onChange={handleState}
               disabled={isLoading}
             >
               {stateOptions.map((option) => (
@@ -335,6 +377,64 @@ const RechargePage = () => {
             {mnsError}
           </ReusableModal>
         )}
+        <ReusableModal
+          isOpen={isConfirmModal}
+          onClose={handleCloseModal}
+          title="Egreso de orden"
+          variant="confirmation"
+          buttons={["cancel", "accept"]}
+          onAccept={handleCloseModal}
+        >
+          <div>
+            <span className="text-sm font-light leading-[1rem] text-black_b">
+              Fecha de venta
+            </span>
+            <I18nProvider locale="es-ES">
+              <Controller
+                name="dateV"
+                control={control}
+                rules={{
+                  required: "La fecha es obligatoria",
+                }}
+                render={({ field }) => (
+                  <DatePicker
+                    minValue={today(getLocalTimeZone())}
+                    className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
+                    label=""
+                    placeholder="Seleccione una fecha"
+                    granularity="day"
+                    {...field}
+                  />
+                )}
+              />
+              <p className="font-roboto text-xs text-red_e">
+                {errors.dateV ? errors.dateV.message : ""}
+              </p>
+            </I18nProvider>
+          </div>
+          <div className="-mt-[.08rem]">
+            <Controller
+              name="user"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              render={({ field }) => (
+                <CompleteSearchInput
+                  label={"Vendedores"}
+                  array={transformData(userSellerResponse?.result || []) || []}
+                  name={"user"}
+                  setValue={setValue}
+                  onChange={setSearchSellers}
+                  onSelect={handleSelectSeller}
+                  placeholder="Buscar vendedores"
+                  {...field}
+                />
+              )}
+            />
+            {errors.user && (
+              <p className="text-xs text-red_e">{errors.user.message}</p>
+            )}
+          </div>
+        </ReusableModal>
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ const useOrders = () => {
     isPreOrder: false,
     isDirect: false,
   });
+  const [barCode, setBarCode] = useState(null);
   const getAllOrders = useCallback(
     async ({ isPreOrder, isDirect, inOrders, recharge }) => {
       try {
@@ -31,17 +32,19 @@ const useOrders = () => {
           isDirect,
           status,
           entryDate,
+          barCode,
         });
         setTotalPage(data.pagination.totalPages);
         setTotal(data.pagination.total);
         setOrdersResponse(data.result);
+        console.log("data de ordenes", data.result);
       } catch (e) {
         console.log(e);
       } finally {
         setLoading(false);
       }
     },
-    [entryDate, itemsPerPage, page, search, status],
+    [entryDate, itemsPerPage, page, search, status, barCode],
   );
 
   return {
@@ -59,6 +62,7 @@ const useOrders = () => {
     setStatus,
     setOrderType,
     setEntryDate,
+    setBarCode,
     getAllOrders,
   };
 };

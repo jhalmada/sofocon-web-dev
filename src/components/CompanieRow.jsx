@@ -26,6 +26,7 @@ const parseDate = (dateString) => {
 const CompanieRow = ({
   name,
   departament,
+  neighborhood,
   direction,
   sellers,
   nextVisits,
@@ -68,12 +69,18 @@ const CompanieRow = ({
       <div className="flex">
         {icon && <img src={icon} alt="watch icon" title={msjIcon} />}
         <td
-          className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap py-6"
+          className="max-w-[9rem] overflow-hidden text-ellipsis whitespace-nowrap py-6 2xl:max-w-[10rem]"
           title={name}
         >
           {name}
         </td>
       </div>
+      <td
+        className="max-w-[7rem] overflow-hidden text-ellipsis whitespace-nowrap py-6 2xl:max-w-[10rem]"
+        title={direction}
+      >
+        {direction}
+      </td>
       <td
         className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={departament}
@@ -82,9 +89,9 @@ const CompanieRow = ({
       </td>
       <td
         className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap py-6"
-        title={direction}
+        title={neighborhood}
       >
-        {direction}
+        {neighborhood}
       </td>
       <td onClick={onClick} className="cursor-pointer py-6 underline">
         {sellers}

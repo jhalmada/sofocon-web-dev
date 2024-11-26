@@ -142,21 +142,14 @@ const OrdersPage = () => {
     switch (activeTab) {
       case BUDGET_TAB:
         getAllOrders({ isDirect: false, isPreOrder: true, inOrders: false });
-        // setInOrders(false);
-
         break;
       case DIRECT_ORDERS_TAB:
         getAllOrders({ isDirect: true, isPreOrder: false, inOrders: true });
-        // setInOrders(true);
-
         break;
       case CLIENTS_ORDERS_TAB:
         getAllOrders({ isPreOrder: false, isDirect: false, inOrders: true });
-        // setInOrders(true);
-
         break;
       default:
-        // setInOrders(null);
         getAllOrders({ isPreOrder: false, isDirect: false });
     }
   }, [activeTab, getAllOrders]);
@@ -364,7 +357,9 @@ const OrdersPage = () => {
             setEntryDate={setEntryDate}
           />
         )}
-        {activeTab === STATUS_PANEL_TAB && <StatusPanelPage />}
+        {activeTab === STATUS_PANEL_TAB && (
+          <StatusPanelPage ordersResponse={ordersResponse || []} />
+        )}
       </div>
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
