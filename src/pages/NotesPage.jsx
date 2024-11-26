@@ -24,9 +24,9 @@ import {
 const NOTES_TAB = "notes";
 const NotesPage = () => {
   const [dateSelected, setDateSelected] = useState(false);
-  const { changedNote, isChanged } = usePutNotes();
+  const { changedNote} = usePutNotes();
   const [noteId, setNoteId] = useState(null);
-  const { deleteNote, isDeleted, isLoading } = useDeleteNotes();
+  const { deleteNote} = useDeleteNotes();
   const [activeTab, setActiveTab] = useState(NOTES_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -35,22 +35,12 @@ const NotesPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [reminderSelected, setReminderSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const [visitFilter, setVisitFilter] = useState("");
 
   const { id } = useParams();
-
-  const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
   const {
     notesResponse,
-    setItemsPerPage,
-    totalPage,
-    total,
-    setPage,
-    page,
-    itemsPerPage,
     setModified,
     setClient,
-    setNextVisit,
     setSearch,
   } = useNotes();
 
@@ -152,7 +142,7 @@ const NotesPage = () => {
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio/empresas" className="text-sm font-medium leading-4">
             <div className="mb-4 flex w-[4rem] items-center">
@@ -175,7 +165,7 @@ const NotesPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(NOTES_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === NOTES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Notas
             </h2>
@@ -279,6 +269,8 @@ const NotesPage = () => {
                     control={control}
                     render={({ field }) => (
                       <DatePicker
+                        value={null}
+                        onChange={(value) => setValue(value)}
                         minValue={today(getLocalTimeZone())}
                         className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
                         {...field}

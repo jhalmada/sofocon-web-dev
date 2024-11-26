@@ -1,5 +1,5 @@
 import Pagination from "../components/Pagination";
-import { Controller, set, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import CompetingRow from "../components/CompetingRow";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
@@ -34,7 +34,6 @@ const CompetingPage = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [competence, setCompetenceEdit] = useState(false);
-  const [visitFilter, setVisitFilter] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [checkSelected, setCheckSelected] = useState("RUT");
@@ -186,7 +185,7 @@ const CompetingPage = ({
     <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div className="flex justify-center">
         {companiesResponse.length === 0 ? (
-          <tr>
+          <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
             <td colSpan="5" className="p-4 text-center">
               <p className="text-md font-semibold leading-[1.3rem] text-black_l">
                 Ningún elemento coincide con tu búsqueda, inténtalo de nuevo.{" "}

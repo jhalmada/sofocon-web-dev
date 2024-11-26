@@ -151,7 +151,7 @@ const UsersPage = () => {
 
   return (
     <div className="flex h-full flex-col justify-between">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <BackButton />
         </div>
@@ -164,7 +164,7 @@ const UsersPage = () => {
         <div className="flex items-center">
           <div className="flex">
             <h2
-              className={`w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               {name}
             </h2>

@@ -35,7 +35,7 @@ const AddRolePage = () => {
   };
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between overflow-auto bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <BackButton route="/inicio/personal" />
         </div>

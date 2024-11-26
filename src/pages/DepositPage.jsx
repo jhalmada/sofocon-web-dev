@@ -1,95 +1,96 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
-import ChevronRightIcon from "../assets/icons/chevron-right.svg";
-import { useState } from "react";
-import AddUsers from "../hooks/users/use.addUsers";
+import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import useRoles from "../hooks/roles/use.roles";
 import { useForm } from "react-hook-form";
+import useGetOneOrder from "../hooks/orders/useGetOneOrder";
+import usePutOrders from "../hooks/orders/usePutOrders";
 const DepositPage = () => {
   const {
-    register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
-  const { RolesResponse } = useRoles();
-  const { postAddUsers, loading } = AddUsers();
+
+  const { changedOrder, isLoading } = usePutOrders();
+  const { id } = useParams();
+  const { getOneOrder, setModified } = useGetOneOrder(id);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [mnsError, setMnsError] = useState("");
 
+  const [mnsError, setMnsError] = useState("");
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [selectedState, setSelectedState] = useState(orderDetails?.status);
+
+  const oneOrder = async (id) => {
+    const newdatos = await getOneOrder(id);
+    setOrderDetails(newdatos);
+  };
   const stateOptions = [
     "Solicitado",
     "En preparación",
     "Para retirar",
     "Egreso",
   ];
-
-  const handleUserCreation = async (userData) => {
-    try {
-      const newUser = await postAddUsers(userData);
-
-      if (newUser) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        setIsModalOpen(true);
-      }
-    } catch (error) {
-      if (error.response.status === 409) {
-        setMnsError("El correo electrónico ya se encuentra registrado");
-        setIsModalOpen(true);
-      } else {
-        setMnsError("Error al crear el usuario");
-      }
+  const translateState = (state) => {
+    switch (state) {
+      case "REQUEST":
+        return "Solicitado";
+      case "PREPARATION":
+        return "En preparación";
+      case "READY_PICKUP":
+        return "Para retirar";
+      case "EGRESS":
+        return "Egreso";
+      case "DELIVERED":
+        return "Entregado";
+      default:
+        return state;
     }
   };
-  const onSubmit = (data) => {
-    const {
-      fullName,
-      ci,
-      phone,
-      email,
-      password,
-      role,
-      nameRole,
-      permissions,
-      state,
-    } = data;
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          isActive: state === "Activo" ? true : false,
-          fullName,
-          ci,
-          phone,
-          email,
-          password,
-          role: { id: role },
-        });
-        break;
-      default:
-        handleUserCreation({
-          isActive: state === "Activo" ? true : false,
-          fullName,
-          ci,
-          phone,
-          email,
-          password,
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-          },
-        });
-    }
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+
+    return `${month}/${year}`;
+  };
+  const onSubmit = () => {
     navigate("/inicio/taller");
+  };
+
+  const handleStateChange = async (e) => {
+    const translateState = (state) => {
+      switch (state) {
+        case "Solicitado":
+          return "REQUEST";
+        case "En preparación":
+          return "PREPARATION";
+        case "Para retirar":
+          return "READY_PICKUP";
+        case "Egreso":
+          return "EGRESS";
+        case "Entregado":
+          return "DELIVERED";
+        default:
+          return state;
+      }
+    };
+    const newStatus = translateState(e.target.value);
+    setSelectedState(newStatus);
+    const currentDate = new Date().toISOString();
+    const updatedOrderData = { status: newStatus };
+
+    if (newStatus === "EGRESS") {
+      updatedOrderData.workShopDateEntry = currentDate;
+    }
+    await changedOrder({ status: newStatus }, orderDetails.id, setModified);
   };
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -101,9 +102,12 @@ const DepositPage = () => {
     closeSaveConfirmationModal();
     navigate("/inicio/personal");
   };
+  useEffect(() => {
+    oneOrder(id);
+  }, [id]);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio/taller" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -122,8 +126,8 @@ const DepositPage = () => {
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
-            <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
-              ID de órden
+            <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
+              {orderDetails?.orderId}
             </span>
           </div>
         </div>
@@ -134,9 +138,12 @@ const DepositPage = () => {
           <div>
             <Select
               className="mb-4 w-1/6 rounded-lg border"
-              label="Estado"
+              label="Seleccionar estado"
               labelPlacement="outside"
-              placeholder="Estado"
+              placeholder={translateState(orderDetails?.status)}
+              value={translateState(stateOptions)}
+              onChange={handleStateChange}
+              disabled={isLoading}
             >
               {stateOptions.map((option) => (
                 <SelectItem key={option} value={option}>
@@ -149,8 +156,8 @@ const DepositPage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"ID de órden"}
-                placeholder={"1234566"}
+                label={"ID de orden"}
+                placeholder={orderDetails?.orderId}
                 disabled
               />
               <span className="w-full"></span>
@@ -160,8 +167,8 @@ const DepositPage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"Cliente"}
-                placeholder={"..."}
+                label={"Empresa"}
+                placeholder={orderDetails?.client?.name}
                 disabled
               />
               <Input
@@ -169,7 +176,7 @@ const DepositPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"R.U.T./CI"}
-                placeholder={"123456789"}
+                placeholder={orderDetails?.client?.rut}
                 disabled
               />
             </div>
@@ -179,7 +186,7 @@ const DepositPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Fecha de venta"}
-                placeholder={"14/09/2024"}
+                placeholder={formatDate(orderDetails?.sellDate)}
                 disabled
               />
               <Input
@@ -187,63 +194,37 @@ const DepositPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Vendedor"}
-                placeholder={"Nombre vendedor"}
+                placeholder={orderDetails?.user?.userInfo?.fullName}
                 disabled
               />
             </div>
             <label className="block text-sm font-semibold text-black_b">
               Detalle
             </label>
-            <div className="flex w-[28.5rem] space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Producto"}
-                placeholder={"Arena"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Cantidad"}
-                placeholder={"3kg"}
-                disabled
-              />
-            </div>
-            <div className="flex w-[28.5rem] space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Cartel ABC"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"2 Und"}
-                disabled
-              />
-            </div>
-            <div className="flex w-[28.5rem] space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Alarmas"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"3 Und"}
-                disabled
-              />
-            </div>
+            {orderDetails?.productInOrder?.map((order) => (
+              <div className="flex space-x-2" key={order.id}>
+                <div className="w-1/2">
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Producto"}
+                    placeholder={order.product?.name}
+                    disabled
+                  />
+                </div>
+                <div>
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label={"Cantidad"}
+                    placeholder={order.amount}
+                    disabled
+                  />
+                </div>
+              </div>
+            ))}
           </div>
           <div className="mt-5 flex w-full justify-end">
             <Button

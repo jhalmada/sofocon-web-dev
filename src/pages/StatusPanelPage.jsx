@@ -1,24 +1,11 @@
-import Pagination from "../components/Pagination";
-import { useForm } from "react-hook-form";
-import editIcon from "../assets/icons/pencil-square.svg";
-import deleteIcon from "../assets/icons/trash3.svg";
-import useCompanies from "../hooks/companies/useCompanies";
-import { useState } from "react";
-import { Checkbox, Select, SelectItem } from "@nextui-org/react";
-import { Input } from "postcss";
-import ReusableModal from "../components/modals/ReusableModal";
-import BudgetRow from "../components/BudgetRow";
+import { Select, SelectItem } from "@nextui-org/react";
 import StatusCard from "../components/cards/StatusCard";
+import useOrders from "../hooks/orders/useOrders";
+import { useEffect } from "react";
+
 const StatusPanelPage = () => {
-  const [companyId, setCompanyId] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
-  const [competence, setCompetence] = useState(false);
-  const [visitFilter, setVisitFilter] = useState("");
-  const [stateFilter, setStateFilter] = useState("");
-  const visitOptions = ["< 1 mes", "< 2 meses", "> 3 meses"];
-  const stateOptions = ["Activo", "Inactivo"];
+  const { ordersResponse, getAllOrders, setEntryDate, setPage } = useOrders();
+
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -33,87 +20,55 @@ const StatusPanelPage = () => {
     "Noviembre",
     "Diciembre",
   ];
-  const {
-    control,
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
-  const {
-    companiesResponse,
-    setItemsPerPage,
-    totalPage,
-    total,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-  } = useCompanies();
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    return `${month}/${day}/${year}`;
+
+    return `${day}/${month}/${year}`;
+  };
+  const countOrdersByStatus = (status) => {
+    return ordersResponse.filter(
+      (order) =>
+        order.status === status || order.status === translateStatus(status),
+    ).length;
+  };
+  const translateStatus = (status) => {
+    const statusTranslations = {
+      REQUEST: "Solicitado",
+      PREPARATION: "En preparación",
+      READY_PICKUP: "Para retirar",
+      REGRESS: "Egreso",
+      DELIVERED: "Entregado",
+    };
+    return statusTranslations[status] || status;
+  };
+  const handleMonthChange = (e) => {
+    const monthMap = {
+      Enero: "01",
+      Febrero: "02",
+      Marzo: "03",
+      Abril: "04",
+      Mayo: "05",
+      Junio: "06",
+      Julio: "07",
+      Agosto: "08",
+      Septiembre: "09",
+      Octubre: "10",
+      Noviembre: "11",
+      Diciembre: "12",
+    };
+
+    const selectedMonth = monthMap[e.target.value] || "";
+    setEntryDate(selectedMonth ? `${selectedMonth}` : "");
+    setPage(0);
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
-    const {
-      nextVisit,
-      name,
-      department,
-      managerName,
-      phone,
-      status,
-      address,
-      neighborhood,
-    } = data;
-  };
-  const openModal = (id) => {
-    const companyToEdit = companiesResponse.find(
-      (company) => company.id === id,
-    );
-    if (companyToEdit) {
-      setValue("name", companyToEdit?.name || "");
-      setValue("department", companyToEdit?.department || "");
-      setValue("neighborhood", companyToEdit?.neighborhood || "");
-      setValue("address", companyToEdit?.address || "");
-      setValue("managerName", companyToEdit?.managerName || "");
-      setValue("phone", companyToEdit?.phone || "");
-      setValue("rut", companyToEdit?.rut || "");
-      setValue("status", companyToEdit?.status || "");
-      setValue(
-        "nextVisit",
-        parseAbsoluteToLocal(
-          companyToEdit?.nextVisit || "2024-10-02T21:46:00.330Z",
-        ),
-      );
-      companyToEdit.competenceName
-        ? setValue("competenceName", companyToEdit.competenceName)
-        : setValue("competenceName", "");
-      companyToEdit.competenceName ? setCompetence(true) : setCompetence(false);
-    }
-    setIsModalOpen(true);
-    setCompanyId(id);
-    setIsModalOpen(true);
-  };
-  const openConfirmDeleteModal = (id) => {
-    setCompanyId(id);
-    setConfirmDeleteModalOpen(true);
-  };
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
-  const handleCancelClick = () => {
-    openConfirmCancelModal();
-    setOpenScannerModal(false);
-  };
-  const handleVisitFilterChange = (value) => {
-    setVisitFilter(value);
-  };
-  const handleStateFilterChange = (value) => {
-    setStateFilter(value);
-  };
+  useEffect(() => {
+    getAllOrders({});
+  }, [getAllOrders]);
+
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div>
@@ -121,114 +76,194 @@ const StatusPanelPage = () => {
           <p className="ml-2 text-black_m">Período</p>
           <Select
             className="w-52 rounded-lg border"
-            placeholder="OCTUBRE 2024 "
-            onSelectionChange={(values) => setValue("period", values)}
+            placeholder="Selecciona un mes"
+            onChange={handleMonthChange}
           >
             {monthsOptions.map((option) => (
-              <SelectItem key={option}>{option}</SelectItem>
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
             ))}
           </Select>
         </div>
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
-          <p>Solicitado (+99)</p>
-          <p>Preparación (2)</p>
-          <p>Para retirar (47)</p>
-          <p>Egreso (2)</p>
-          <p>Entregado (+99)</p>
+          <p>Solicitado ({countOrdersByStatus("REQUEST")})</p>
+          <p>Preparación ({countOrdersByStatus("PREPARATION")})</p>
+          <p>Para retirar ({countOrdersByStatus("READY_PICKUP")})</p>
+          <p>Egreso ({countOrdersByStatus("REGRESS")})</p>
+          <p>Entregado ({countOrdersByStatus("DELIVERED")})</p>
         </div>
         <div className="grid grid-cols-5">
-          {/* Solicitado */}
-          <div className="space-y-6 border-r-2 border-gray px-2">
-            <StatusCard
-              clientName={"Nombre del cliente"}
-              orderId={"ID de la orden"}
-              productsList={"Lista de productos"}
-              date={"24/09/2024"}
-              sellerName={"Nombre vendedor"}
-            />
-            <StatusCard
-              clientName={"Nombre del cliente"}
-              orderId={"ID de la orden"}
-              productsList={"Lista de productos"}
-              date={"24/09/2024"}
-              sellerName={"Nombre vendedor"}
-            />
+          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
+            {ordersResponse.filter(
+              (order) =>
+                order.status === "REQUEST" || order.status === "Solicitado",
+            ).length === 0 ? (
+              <p className="mt-28 flex justify-center text-md font-semibold">
+                Sin resultados
+              </p>
+            ) : (
+              ordersResponse
+                .filter(
+                  (order) =>
+                    order.status === "REQUEST" || order.status === "Solicitado",
+                )
+                .map((order, index) => (
+                  <StatusCard
+                    key={index}
+                    clientName={order?.client?.name}
+                    orderId={"ID: " + order?.orderId}
+                    productsList={
+                      order?.productInOrder?.map(
+                        (productInOrder) => productInOrder?.product?.name,
+                      ) || []
+                    }
+                    date={formatDate(order?.sellDate)}
+                    sellerName={
+                      order?.user?.userInfo?.fullName || "Sin vendedor"
+                    }
+                  />
+                ))
+            )}
           </div>
-          {/* Preparación */}
-          <div className="space-y-6 border-r-2 border-gray px-2">
-            <StatusCard
-              bg="bg-red_b"
-              clientName={"Nombre del cliente"}
-              orderId={"ID de la orden"}
-              productsList={"Lista de productos"}
-              date={"24/09/2024"}
-              sellerName={"Nombre vendedor"}
-            />
-            <StatusCard
-              bg="bg-red_b"
-              clientName={"Nombre del cliente"}
-              orderId={"ID de la orden"}
-              productsList={"Lista de productos"}
-              date={"24/09/2024"}
-              sellerName={"Nombre vendedor"}
-            />
+
+          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
+            {ordersResponse.filter(
+              (order) =>
+                order.status === "PREPARATION" ||
+                order.status === "En preparación",
+            ).length === 0 ? (
+              <p className="mt-28 flex justify-center text-md font-semibold">
+                Sin resultados
+              </p>
+            ) : (
+              ordersResponse
+                .filter(
+                  (order) =>
+                    order.status === "PREPARATION" ||
+                    order.status === "En preparación",
+                )
+                .map((order, index) => (
+                  <StatusCard
+                    key={index}
+                    clientName={order?.client?.name}
+                    orderId={"ID: " + order?.orderId}
+                    productsList={
+                      order?.productInOrder?.map(
+                        (productInOrder) => productInOrder?.product?.name,
+                      ) || []
+                    }
+                    date={formatDate(order?.sellDate)}
+                    sellerName={
+                      order?.user?.userInfo?.fullName || "Sin vendedor"
+                    }
+                    bg="bg-red_b"
+                  />
+                ))
+            )}
           </div>
-          {/* Para retirar */}
-          <div className="space-y-6 border-r-2 border-gray px-2">
-            <StatusCard
-              bg="bg-yellow"
-              clientName={"Nombre del cliente"}
-              orderId={"ID de la orden"}
-              productsList={"Lista de productos"}
-              date={"24/09/2024"}
-              sellerName={"Nombre vendedor"}
-            />
-            <StatusCard
-              bg="bg-yellow"
-              clientName={"Nombre del cliente"}
-              orderId={"ID de la orden"}
-              productsList={"Lista de productos"}
-              date={"24/09/2024"}
-              sellerName={"Nombre vendedor"}
-            />
+          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
+            {ordersResponse.filter(
+              (order) =>
+                order.status === "READY_PICKUP" ||
+                order.status === "Para retirar",
+            ).length === 0 ? (
+              <p className="mt-28 flex justify-center text-md font-semibold">
+                Sin resultados
+              </p>
+            ) : (
+              ordersResponse
+                .filter(
+                  (order) =>
+                    order.status === "READY_PICKUP" ||
+                    order.status === "Para retirar",
+                )
+                .map((order, index) => (
+                  <StatusCard
+                    key={index}
+                    clientName={order?.client?.name}
+                    orderId={"ID: " + order?.orderId}
+                    productsList={
+                      order?.productInOrder?.map(
+                        (productInOrder) => productInOrder?.product?.name,
+                      ) || []
+                    }
+                    date={formatDate(order?.sellDate)}
+                    sellerName={
+                      order?.user?.userInfo?.fullName || "Sin vendedor"
+                    }
+                    bg="bg-yellow"
+                  />
+                ))
+            )}
           </div>
-          {/* Egreso */}
-          <div className="space-y-6 border-r-2 border-gray px-2">
-            <StatusCard
-              bg="bg-blue_b"
-              clientName={"Nombre del cliente"}
-              orderId={"ID de la orden"}
-              productsList={"Lista de productos"}
-              date={"24/09/2024"}
-              sellerName={"Nombre vendedor"}
-            />
-            <StatusCard
-              bg="bg-blue_b"
-              clientName={"Nombre del cliente"}
-              orderId={"ID de la orden"}
-              productsList={"Lista de productos"}
-              date={"24/09/2024"}
-              sellerName={"Nombre vendedor"}
-            />
+
+          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
+            {ordersResponse.filter(
+              (order) => order.status === "EGRESS" || order.status === "Egreso",
+            ).length === 0 ? (
+              <p className="mt-28 flex justify-center text-md font-semibold">
+                Sin resultados
+              </p>
+            ) : (
+              ordersResponse
+                .filter(
+                  (order) =>
+                    order.status === "EGRESS" || order.status === "Egreso",
+                )
+                .map((order, index) => (
+                  <StatusCard
+                    key={index}
+                    clientName={order?.client?.name}
+                    orderId={"ID: " + order?.orderId}
+                    productsList={
+                      order?.productInOrder?.map(
+                        (productInOrder) => productInOrder?.product?.name,
+                      ) || []
+                    }
+                    date={formatDate(order?.sellDate)}
+                    sellerName={
+                      order?.user?.userInfo?.fullName || "Sin vendedor"
+                    }
+                    bg="bg-blue_b"
+                  />
+                ))
+            )}
           </div>
-          {/* Entregado */}
-          <div className="space-y-6 border-r-2 border-gray px-2">
-            <StatusCard
-              bg="bg-green"
-              clientName={"Nombre del cliente"}
-              orderId={"ID de la orden"}
-              productsList={"Lista de productos"}
-              date={"24/09/2024"}
-              sellerName={"Nombre vendedor"}
-            />
-            <StatusCard
-              bg="bg-green"
-              clientName={"Nombre del cliente"}
-              orderId={"ID de la orden"}
-              productsList={"Lista de productos"}
-              date={"24/09/2024"}
-              sellerName={"Nombre vendedor"}
-            />
+
+          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
+            {ordersResponse.filter(
+              (order) =>
+                order.status === "DELIVERED" || order.status === "Entregado",
+            ).length === 0 ? (
+              <p className="mt-28 flex justify-center text-md font-semibold">
+                Sin resultados
+              </p>
+            ) : (
+              ordersResponse
+                .filter(
+                  (order) =>
+                    order.status === "DELIVERED" ||
+                    order.status === "Entregado",
+                )
+                .map((order, index) => (
+                  <StatusCard
+                    key={index}
+                    clientName={order?.client?.name}
+                    orderId={"ID: " + order?.orderId}
+                    productsList={
+                      order?.productInOrder?.map(
+                        (productInOrder) => productInOrder?.product?.name,
+                      ) || []
+                    }
+                    date={formatDate(order?.sellDate)}
+                    sellerName={
+                      order?.user?.userInfo?.fullName || "Sin vendedor"
+                    }
+                    bg="bg-green"
+                  />
+                ))
+            )}
           </div>
         </div>
       </div>

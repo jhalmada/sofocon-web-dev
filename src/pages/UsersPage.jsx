@@ -205,7 +205,7 @@ const UsersPage = () => {
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <BackButton route="/inicio" />
         </div>
@@ -227,19 +227,19 @@ const UsersPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(USER_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === USER_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Usuarios
             </h2>
             <h2
               onClick={() => setActiveTab(SELLERS_TAB)}
-              className={`w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Vendedores
             </h2>
             <h2
               onClick={() => setActiveTab(ROLES_TAB)}
-              className={`${activeTab === ROLES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`${activeTab === ROLES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} min-w-40 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Roles
             </h2>
@@ -306,7 +306,7 @@ const UsersPage = () => {
                         Email
                       </th>
                       <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col items-center gap-2">
                           <FilterSelect
                             options={roleOptions}
                             placeholder="Rol"
@@ -314,15 +314,7 @@ const UsersPage = () => {
                           />
                         </div>
                       </th>
-                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                        <div className="flex flex-col items-center gap-2">
-                          <FilterSelect
-                            options={stateOptions}
-                            placeholder="Estado"
-                            onChange={handleStateFilterChange}
-                          />
-                        </div>
-                      </th>
+
                       <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                         Acción
                       </th>

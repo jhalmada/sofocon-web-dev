@@ -1,16 +1,17 @@
 import { useNavigate } from "react-router-dom";
-import watchIcon from "../assets/icons/watch.svg";
-import { Select, SelectItem } from "@nextui-org/select";
+
 const translateState = (state) => {
   switch (state) {
-    case "POTENTIAL":
-      return "Potencial";
-    case "UNSUBSCRIBED":
-      return "De baja";
-    case "FRECUENT":
-      return "Frecuente";
-    case "COMPETENCE":
-      return "Competencia";
+    case "REQUEST":
+      return "Solicitado";
+    case "PREPARATION":
+      return "En preparación";
+    case "READY_PICKUP":
+      return "Para retirar";
+    case "EGRESS":
+      return "Egreso";
+    case "DELIVERED":
+      return "Entregado";
     default:
       return state;
   }
@@ -24,83 +25,63 @@ const RechargeRow = ({
   seller,
   state,
   id,
-  editIconSrc,
   deleteIconSrc,
-  onEditClick,
   onDeleteClick,
 }) => {
   const navigate = useNavigate();
+
   const handleRowClick = () => {
-    navigate(`/inicio/taller/recarga`);
+    navigate(`/inicio/taller/recarga/${id}`);
   };
-  const options = [
-    "Solicitado",
-    "En preparación",
-    "Listo para retirar",
-    "Egreso",
-  ];
+
   return (
     <tr className="cursor-pointer border-b border-gray text-center transition-all duration-300 hover:bg-gray">
-      <div className="mt-2 flex">
-        <img
-          src={watchIcon}
-          alt="watch icon"
-          title="Cliente próximo a vencer"
-        />
-        <td
-          className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
-          onClick={handleRowClick}
-          title={name}
-        >
-          {name}
-        </td>
-      </div>
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6 text-left"
+        onClick={handleRowClick}
+        title={name}
+      >
+        {name}
+      </td>
+
+      <td
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
         onClick={handleRowClick}
         title={orderId}
       >
         {orderId}
       </td>
       <td
-        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap py-6"
         onClick={handleRowClick}
         title={entryData}
       >
         {entryData}
       </td>
-      <td className="p-2" onClick={handleRowClick}>
+      <td className="py-6" onClick={handleRowClick}>
         {retirementDate}
       </td>
 
-      <td className="p-2" onClick={handleRowClick}>
+      <td className="py-6" onClick={handleRowClick}>
         {seller}
       </td>
 
       <td
-        className="p-2 text-md font-semibold leading-[1.16rem]"
+        className="py-6 text-md font-semibold leading-[1.16rem]"
         onClick={handleRowClick}
       >
-        <Select placeholder="Estado" className="rounded-lg border">
-          {options.map((option) => (
-            <SelectItem key={option}>{option}</SelectItem>
-          ))}
-        </Select>
+        {translateState(state)}
       </td>
-      <td className="p-2">
+      <td className="py-6">
         <div className="flex justify-center gap-4">
-          <img
-            src={editIconSrc}
-            alt="Edit icon"
-            className="h-5 w-5 cursor-pointer"
-            onClick={onEditClick}
-          />
-          <img
-            src={deleteIconSrc}
-            alt="Delete icon"
-            className="h-5 w-5 cursor-pointer"
-            onClick={onDeleteClick}
-          />
+          {state === "REQUEST" && (
+            <img
+              src={deleteIconSrc}
+              alt="Delete icon"
+              className="h-5 w-5 cursor-pointer"
+              onClick={onDeleteClick}
+            />
+          )}
         </div>
       </td>
     </tr>

@@ -18,6 +18,9 @@ const Input = forwardRef(
       width = "w-full",
       width2 = "w-full",
       mb = "mb-3",
+      fontWeight = "font-normal",
+      onInput,
+      hidden = false,
       ...props
     },
     ref,
@@ -63,12 +66,15 @@ const Input = forwardRef(
             placeholder={placeholder}
             inputMode={type === "number" ? "numeric" : undefined} // Ayuda a dispositivos móviles a solo permitir números
             pattern={type === "number" ? "[0-9]*" : undefined} // Permite solo números en dispositivos compatibles
-            className={`${placeholderColor} relative h-10 ${bg} w-full rounded-md ${border} p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${
+            className={`${placeholderColor} ${fontWeight} ${
+              hidden ? "hidden" : ""
+            } relative h-10 ${bg} w-full rounded-md ${border} p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${
               errorApi || msjError
                 ? "border-red_e placeholder-red_e"
                 : "border-gray-300"
             }`}
             onChange={handleChange} // Usar la función handleChange
+            onInput={onInput}
           />
           {type === "password" && (
             <span

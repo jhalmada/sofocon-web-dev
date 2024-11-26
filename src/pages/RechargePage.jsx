@@ -1,109 +1,170 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import ChevronRightIcon from "../assets/icons/chevron-right.svg";
-import { useState } from "react";
-import AddUsers from "../hooks/users/use.addUsers";
+import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import useRoles from "../hooks/roles/use.roles";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import usePutOrders from "../hooks/orders/usePutOrders";
+import useGetOneOrder from "../hooks/orders/useGetOneOrder";
+import useUsersSellers from "../hooks/users/useUsersSellers";
+import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
+import { I18nProvider } from "@react-aria/i18n";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import { DatePicker } from "@nextui-org/react";
 const RechargePage = () => {
   const {
-    register,
     handleSubmit,
+    control,
     setValue,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
-  const { RolesResponse } = useRoles();
-  const { postAddUsers, loading } = AddUsers();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [mnsError, setMnsError] = useState("");
+  const { id } = useParams();
 
+  const [mnsError, setMnsError] = useState("");
+  const { changedOrder, isLoading } = usePutOrders();
+  const { getOneOrder, setModified } = useGetOneOrder(id);
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [selectedState, setSelectedState] = useState(orderDetails?.status);
+  const [isConfirmModal, setIsConfirmModal] = useState(false);
+  const [seller, setSeller] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaveConfirmationModalOpen, setIsSaveConfirmationModalOpen] =
+    useState(false);
+  const [newStatus, setNewStatus] = useState(null);
+
+  const oneOrder = async (id) => {
+    const newdatos = await getOneOrder(id);
+    setOrderDetails(newdatos);
+  };
   const stateOptions = [
     "Solicitado",
     "En preparación",
     "Para retirar",
     "Egreso",
   ];
-
-  const handleUserCreation = async (userData) => {
-    try {
-      const newUser = await postAddUsers(userData);
-
-      if (newUser) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        setIsModalOpen(true);
-      }
-    } catch (error) {
-      if (error.response.status === 409) {
-        setMnsError("El correo electrónico ya se encuentra registrado");
-        setIsModalOpen(true);
-      } else {
-        setMnsError("Error al crear el usuario");
-      }
-    }
-  };
-  const onSubmit = (data) => {
-    const {
-      fullName,
-      ci,
-      phone,
-      email,
-      password,
-      role,
-      nameRole,
-      permissions,
-      state,
-    } = data;
-    switch (checkSelected) {
-      case "existente":
-        handleUserCreation({
-          isActive: state === "Activo" ? true : false,
-          fullName,
-          ci,
-          phone,
-          email,
-          password,
-          role: { id: role },
-        });
-        break;
+  const translateState = (state) => {
+    switch (state) {
+      case "REQUEST":
+        return "Solicitado";
+      case "PREPARATION":
+        return "En preparación";
+      case "READY_PICKUP":
+        return "Para retirar";
+      case "EGRESS":
+        return "Egreso";
+      case "DELIVERED":
+        return "Entregado";
       default:
-        handleUserCreation({
-          isActive: state === "Activo" ? true : false,
-          fullName,
-          ci,
-          phone,
-          email,
-          password,
-          role: {
-            name: nameRole,
-            permissions: [...permissions, "USER_ADMIN"],
-          },
-        });
+        return state;
     }
-    navigate("/inicio/taller");
   };
+  const translateProductState = (state) => {
+    switch (state) {
+      case "PENDING":
+        return "Pendiente";
+      case "ENABLED":
+        return "Habilitado";
+      case "DISABLED":
+        return "Inhabilitado";
+
+      default:
+        return state;
+    }
+  };
+  const transformData = (array) => {
+    return array.map((item) => ({
+      id: item.id,
+      name: item.userInfo.fullName,
+    }));
+  };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+
+    return `${month}/${year}`;
+  };
+
+  const onSubmit = async (data) => {
+    if (newStatus === "EGRESS") {
+      await changedOrder(
+        {
+          status: newStatus,
+          user: data.user,
+          // sellDate: data.dateV,
+        },
+        orderDetails.id,
+        setModified,
+      );
+      setIsSaveConfirmationModalOpen(true);
+    } else {
+      await changedOrder({ status: newStatus }, orderDetails.id, setModified);
+      setIsSaveConfirmationModalOpen(true);
+    }
+  };
+  const translateStateToEnglish = (state) => {
+    switch (state) {
+      case "Solicitado":
+        return "REQUEST";
+      case "En preparación":
+        return "PREPARATION";
+      case "Para retirar":
+        return "READY_PICKUP";
+      case "Egreso":
+        return "EGRESS";
+      case "Entregado":
+        return "DELIVERED";
+      default:
+        return state;
+    }
+  };
+
+  const handleState = async (e) => {
+    const newStatus = translateStateToEnglish(e.target.value);
+    setSelectedState(newStatus);
+    const currentDate = new Date().toISOString();
+    const updatedOrderData = { status: newStatus };
+
+    if (newStatus === "EGRESS") {
+      updatedOrderData.workShopDateEntry = currentDate;
+      setIsConfirmModal(true);
+      setNewStatus("EGRESS");
+    } else {
+      setNewStatus(newStatus);
+    }
+  };
+
   const handleCloseModal = () => {
+    setIsConfirmModal(false);
     setIsModalOpen(false);
   };
+  const handleSelectSeller = (selectedSeller) => {
+    if (selectedSeller) {
+      setSeller(selectedSeller);
+    } else {
+      setSeller(null);
+    }
+  };
   const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
+    setIsSaveConfirmationModalOpen(false);
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
-    navigate("/inicio/personal");
+    navigate("/inicio/taller");
   };
+  useEffect(() => {
+    oneOrder(id);
+  }, [id]);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio/taller" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -119,11 +180,11 @@ const RechargePage = () => {
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Recarga
         </h1>
-        {/*navbar */}
+
         <div className="flex items-center justify-between">
           <div className="flex">
-            <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
-              ID de órden
+            <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
+              {orderDetails?.orderId}
             </span>
           </div>
         </div>
@@ -134,9 +195,12 @@ const RechargePage = () => {
           <div>
             <Select
               className="mb-4 w-1/6 rounded-lg border"
-              label="Estado"
+              label="Seleccionar estado"
               labelPlacement="outside"
-              placeholder="Estado"
+              placeholder={translateState(orderDetails?.status)}
+              value={translateState(stateOptions)}
+              onChange={handleState}
+              disabled={isLoading}
             >
               {stateOptions.map((option) => (
                 <SelectItem key={option} value={option}>
@@ -149,8 +213,8 @@ const RechargePage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"ID de órden"}
-                placeholder={"1234566"}
+                label={"ID de orden"}
+                placeholder={orderDetails?.orderId}
                 disabled
               />
               <span className="w-full"></span>
@@ -160,8 +224,8 @@ const RechargePage = () => {
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"Cliente"}
-                placeholder={"..."}
+                label={"Empresa"}
+                placeholder={orderDetails?.client?.name}
                 disabled
               />
               <Input
@@ -169,7 +233,7 @@ const RechargePage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"R.U.T./CI"}
-                placeholder={"123456789"}
+                placeholder={orderDetails?.client?.rut}
                 disabled
               />
             </div>
@@ -179,7 +243,7 @@ const RechargePage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Fecha de venta"}
-                placeholder={"14/09/2024"}
+                placeholder={formatDate(orderDetails?.sellDate)}
                 disabled
               />
               <Input
@@ -187,72 +251,101 @@ const RechargePage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Vendedor"}
-                placeholder={"Nombre vendedor"}
+                placeholder={orderDetails?.user?.userInfo?.fullName}
                 disabled
               />
             </div>
             <label className="block text-sm font-semibold text-black_b">
               Detalle
             </label>
-            <div className="flex w-1/2 space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Producto"}
-                placeholder={"Arena"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Cantidad"}
-                placeholder={"3kg"}
-                disabled
-              />
-            </div>
-            <div className="flex">
-              <div className="flex w-1/2 space-x-2">
-                <div className="w-1/2">
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Recarga"}
-                    placeholder={"Arena"}
-                    disabled
-                  />
+            {/* <label className="-mb-6 block text-sm">Recargas</label> */}
+
+            {orderDetails?.productInOrder?.map((order) => (
+              <div className="flex" key={order.id}>
+                <div className="flex w-[49.8%] space-x-2">
+                  <div className="w-full">
+                    <Input
+                      bg="bg-gray"
+                      placeholderColor="placeholder-black_b"
+                      border="none"
+                      placeholder={order.product?.name}
+                      disabled
+                    />
+                  </div>
                 </div>
-                <div className="flex w-1/2 space-x-2">
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Matrícula"}
-                    placeholder={"M404"}
-                    disabled
-                  />
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label={"Cód. de barras"}
-                    placeholder={"1234567890"}
-                    disabled
-                  />
+                <div className="-mt-6 flex w-1/2 flex-col space-y-4 pl-2">
+                  {order.itemsRemoval?.map((item, index) => (
+                    <div className="flex items-center space-x-2" key={index}>
+                      <Input
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        label={"Matrícula"}
+                        placeholder={item.enrollment}
+                        disabled
+                      />
+                      <Input
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        label={"Cód."}
+                        placeholder={item.barCode}
+                        disabled
+                      />
+                      <div className="mt-3 flex items-center space-x-2">
+                        <span
+                          className={`flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg px-1 ${
+                            item.status === "" || item.status === "PENDING"
+                              ? "bg-gray text-black_b"
+                              : item.status === "Inhabilitado"
+                                ? "bg-red_e text-white"
+                                : item.status === "Habilitado"
+                                  ? "bg-green text-white"
+                                  : "text-white"
+                          }`}
+                        >
+                          {item.status === "" || item.status === "PENDING"
+                            ? "Pendiente"
+                            : translateProductState(item.status)}
+                        </span>
+                        <Link
+                          to={`/inicio/taller/datos-recarga/${item.id}?orderId=${orderDetails.orderId}&id=${orderDetails.id}`}
+                        >
+                          <Button
+                            width="w-[7.5rem] 2xl:w-[12rem]"
+                            text="Ensayo"
+                            icon={ChevronRightIcon}
+                          />
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div className="mt-2 flex w-1/2 items-center justify-between pl-2">
-                <span className="flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg bg-green px-1 text-white">
-                  Habilitado
-                </span>
-                <Link to={"/inicio/taller/datos-recarga"}>
-                  <Button text="Datos Recarga" icon={ChevronRightIcon} />
-                </Link>
+            ))}
+
+            {orderDetails?.productInOrder?.map((order) => (
+              <div className="flex w-1/2 space-x-2" key={order.id}>
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Producto"}
+                  placeholder={order.product?.name}
+                  disabled
+                />
+                <Input
+                  bg="bg-gray"
+                  placeholderColor="placeholder-black_b"
+                  border="none"
+                  label={"Cantidad"}
+                  placeholder={order.amount}
+                  disabled
+                />
               </div>
-            </div>
+            ))}
           </div>
+
           <div className="mt-5 flex w-full justify-end">
             <Button
               text={"GUARDAR"}
@@ -284,6 +377,64 @@ const RechargePage = () => {
             {mnsError}
           </ReusableModal>
         )}
+        <ReusableModal
+          isOpen={isConfirmModal}
+          onClose={handleCloseModal}
+          title="Egreso de orden"
+          variant="confirmation"
+          buttons={["cancel", "accept"]}
+          onAccept={handleCloseModal}
+        >
+          <div>
+            <span className="text-sm font-light leading-[1rem] text-black_b">
+              Fecha de venta
+            </span>
+            <I18nProvider locale="es-ES">
+              <Controller
+                name="dateV"
+                control={control}
+                rules={{
+                  required: "La fecha es obligatoria",
+                }}
+                render={({ field }) => (
+                  <DatePicker
+                    minValue={today(getLocalTimeZone())}
+                    className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
+                    label=""
+                    placeholder="Seleccione una fecha"
+                    granularity="day"
+                    {...field}
+                  />
+                )}
+              />
+              <p className="font-roboto text-xs text-red_e">
+                {errors.dateV ? errors.dateV.message : ""}
+              </p>
+            </I18nProvider>
+          </div>
+          <div className="-mt-[.08rem]">
+            <Controller
+              name="user"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              render={({ field }) => (
+                <CompleteSearchInput
+                  label={"Vendedores"}
+                  array={transformData(userSellerResponse?.result || []) || []}
+                  name={"user"}
+                  setValue={setValue}
+                  onChange={setSearchSellers}
+                  onSelect={handleSelectSeller}
+                  placeholder="Buscar vendedores"
+                  {...field}
+                />
+              )}
+            />
+            {errors.user && (
+              <p className="text-xs text-red_e">{errors.user.message}</p>
+            )}
+          </div>
+        </ReusableModal>
       </div>
     </div>
   );

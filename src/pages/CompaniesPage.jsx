@@ -15,8 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
 import notesIcon from "../assets/icons/sticky-fill.svg";
-import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
-import PlusFillIcon from "../assets/icons/plus-fill.svg";
+import { Checkbox, DatePicker } from "@nextui-org/react";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 import { parseAbsoluteToLocal } from "@internationalized/date";
@@ -307,7 +306,7 @@ const CompaniesPage = () => {
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -389,7 +388,7 @@ const CompaniesPage = () => {
           <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
             <div className="flex justify-center">
               {companiesResponse.length === 0 ? (
-                <tr>
+                <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
                   <td colSpan="5" className="p-4 text-center">
                     <p className="text-md font-semibold leading-[1.3rem] text-black_l">
                       Ningún elemento coincide con tu búsqueda, inténtalo de
@@ -409,6 +408,9 @@ const CompaniesPage = () => {
                     <tr>
                       <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                         Nombre
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Dirección
                       </th>
                       <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                         Departamento
@@ -450,8 +452,9 @@ const CompaniesPage = () => {
                         key={index}
                         id={companie.id}
                         name={companie.name}
-                        departament={companie.department}
                         direction={companie.address}
+                        departament={companie.department}
+                        neighborhood={companie.neighborhood}
                         sellers={"Vendedores"}
                         nextVisits={formatDate(companie.nextVisit)}
                         state={companie.status}

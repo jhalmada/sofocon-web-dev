@@ -69,7 +69,7 @@ const SellersPage = ({
     }
   };
   const onSubmit = (data) => {
-    const { phone, ci, fullName, email, role, state, route } = data;
+    const { phone, ci, fullName, email, role, route } = data;
     handleUserCreation({
       email,
       userInfo: {
@@ -78,7 +78,6 @@ const SellersPage = ({
         phone,
       },
       role: { id: role },
-      isActive: state === "Activo" ? true : false,
     });
   };
   //funcion para editar
@@ -139,7 +138,7 @@ const SellersPage = ({
     <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div className="flex justify-center">
         {userSellerResponse.length === 0 ? (
-          <tr>
+          <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
             <td colSpan="5" className="p-4 text-center">
               <p className="text-md font-semibold leading-[1.3rem] text-black_l">
                 Tu búsqueda no arrojó resultados. !Prueba algo distinto!. <br />{" "}
@@ -156,23 +155,15 @@ const SellersPage = ({
                   Nombre Completo
                 </th>
                 <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Email
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                   Contacto
                 </th>
                 <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                   Ruta
                 </th>
-                <th className="text-lecenterft p-2 text-md font-semibold leading-[1.125rem]">
-                  <div className="flex flex-col gap-2">
-                    <FilterSelect
-                      options={stateOptions}
-                      placeholder="Estado"
-                      onChange={handleStateFilterChange}
-                    />
-                  </div>
-                </th>
-                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                  Mas info
-                </th>
+
                 <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                   Acción
                 </th>
@@ -184,8 +175,8 @@ const SellersPage = ({
                   key={index}
                   fullName={user.userInfo?.fullName || "Nombre no disponible"}
                   email={user.email}
+                  contact={user.userInfo?.phone}
                   route={"Ruta"}
-                  info={"Ver más"}
                   editIconSrc={editIcon}
                   deleteIconSrc={deleteIcon}
                   state={user.isActive}
@@ -217,7 +208,7 @@ const SellersPage = ({
       <ReusableModal
         isOpen={isModalOpen}
         onClose={handleCancelClick}
-        title="Editar Usuario"
+        title="Editar Vendedor"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
         handleCancelClick={handleCancelClick}
@@ -293,25 +284,7 @@ const SellersPage = ({
               msjError={errors.email ? errors.email.message : ""}
             />
           </div>
-          <div className="mt-2">
-            <Select
-              labelPlacement="outside"
-              label="Estado"
-              placeholder="Seleccione un estado"
-              className="mt-2 rounded-lg border"
-              {...register("state", {
-                validate: (value) =>
-                  value
-                    ? true
-                    : "Este campo es requerido, Porfavor elija un rol",
-              })}
-              onSelectionChange={(value) => setValue("state", value)}
-            >
-              {stateOptions.map((option) => (
-                <SelectItem key={option}>{option}</SelectItem>
-              ))}
-            </Select>
-          </div>
+
           <div className="relative">
             <NextAutoComplete
               label2={"Rutas Asignadas"}

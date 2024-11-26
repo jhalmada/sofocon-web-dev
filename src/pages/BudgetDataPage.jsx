@@ -1,94 +1,82 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
-import { useState } from "react";
-import AddUsers from "../hooks/users/use.addUsers";
+import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
+import { useForm } from "react-hook-form";
+import DownloadIcon from "../assets/icons/download-white.svg";
+import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Controller, useForm } from "react-hook-form";
-import { I18nProvider } from "@react-aria/i18n";
-import { DatePicker } from "@nextui-org/react";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import useUsersSellers from "../hooks/users/useUsersSellers.js";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete.jsx";
-import CheckLgIcon from "../assets/icons/check-lg.svg";
+import { BASE_URL } from "../utils/Constants";
+import { getOrderPdf } from "../services/orders/orders.routes";
 
 const BudgetDataPage = () => {
   const {
     register,
     handleSubmit,
-    control,
     setValue,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { getOneOrder } = useGetOneOrder(id);
 
-  const { postAddUsers, loading } = AddUsers();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
-  const [checkSelected, setCheckSelected] = useState("existente");
-  const [mnsError, setMnsError] = useState("");
-  const [dateSelected, setDateSelected] = useState(false);
-  const [errorDataPicker, setErrorDataPicker] = useState(false);
-  const { userSellerResponse, setSearch } = useUsersSellers();
 
-  const stateOptions = ["Entregado", "Solicitado", "Preparación", "Retiro"];
-  const pricesList = ["Lista 1", "Lista 2", "Lista 3"];
-  const productsOptions = ["Polvo", "Arena"];
-  const subProductsOptions = ["Subproducto 1", "Subproducto 2"];
-  const colorsOptions = ["Color 1", "Color 2", "Color 3"];
-  const paymentsOptions = ["Efectivo", "Tarjeta"];
-  const monthsOptions = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [subTotal, setSubTotal] = useState(0);
+  const [iva, setIva] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const discountPercent = orderDetails?.discountPercent || 0;
+
+  const stateOptions = [
+    "Solicitado",
+    "En preparación",
+    "Para retirar",
+    "Egreso",
   ];
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
-  const handleUserCreation = async (userData) => {
-    try {
-      const newUser = await postAddUsers(userData);
+    return `${day}/${month}/${year}`;
+  };
+  const oneOrder = async (id) => {
+    const newdatos = await getOneOrder(id);
+    setOrderDetails(newdatos);
+  };
 
-      if (newUser) {
-        setSaveConfirmationModalOpen(true);
-      } else {
-        setIsModalOpen(true);
-      }
-    } catch (error) {
-      if (error.response.status === 409) {
-        setMnsError("El correo electrónico ya se encuentra registrado");
-        setIsModalOpen(true);
-      } else {
-        setMnsError("Error al crear el usuario");
-      }
-    }
-  };
-  const onSubmit = () => {
-    navigate("/inicio/taller/recarga");
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-  const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
-  };
-  const handleConfirmSaveClick = () => {
-    closeSaveConfirmationModal();
-    navigate("/inicio/personal");
-  };
+  useEffect(() => {
+    oneOrder(id);
+  }, [id]);
+
+  useEffect(() => {
+    let newSubTotal = 0;
+    orderDetails?.productInOrder?.forEach((order) => {
+      const price = order.fixedPrice || 0;
+      const amount = order.amount || 1;
+      const productDiscount = (price * (order.discountPercent || 0)) / 100;
+      const discountedPrice = price - productDiscount;
+
+      newSubTotal += discountedPrice * amount;
+    });
+    const newIva = newSubTotal * 0.22;
+    const discountAmount = (newSubTotal + newIva) * (discountPercent / 100);
+    const newTotal = newSubTotal + newIva - discountAmount;
+    setSubTotal(newSubTotal.toFixed(2));
+    setIva(newIva.toFixed(2));
+    setTotal(newTotal.toFixed(2));
+    setDiscount(discountAmount.toFixed(2));
+  }, [orderDetails, discountPercent]);
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col px-6 pt-6">
+      <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
           <Link to="/inicio/ordenes" className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
@@ -101,171 +89,105 @@ const BudgetDataPage = () => {
             </div>
           </Link>
         </div>
+
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          ID de órden
+          {orderDetails?.orderId || "sin id"}
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
           <div className="flex">
-            <span className="w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
+            <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
               Detalle
             </span>
           </div>
         </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex-grow rounded-tr-lg bg-white px-14 py-10"
-        >
+        <form className="flex flex-grow flex-col justify-between rounded-tr-lg bg-white px-14 py-10">
           <div>
             <div className="flex space-x-2">
               <Input
                 bg="bg-gray"
                 border="none"
+                label={"ID de orden"}
+                placeholder={orderDetails?.orderId}
                 placeholderColor="placeholder-black_b"
                 disabled
-                label={"ID de órden"}
-                placeholder={"1234566"}
               />
               <Input
                 bg="bg-gray"
                 border="none"
+                label={"Empresa"}
+                placeholder={orderDetails?.client?.name}
                 placeholderColor="placeholder-black_b"
                 disabled
-                label={"Cliente"}
-                placeholder={"..."}
               />
             </div>
             <Input
-              label={"R.U.T./CI"}
-              placeholder={"123456789"}
               bg="bg-gray"
               border="none"
+              label={"R.U.T./CI"}
+              placeholder={orderDetails?.client?.rut || "sin rut"}
               placeholderColor="placeholder-black_b"
               disabled
             />
             <div className="flex space-x-2">
-              <div className="w-1/2">
-                <span className="text-sm font-light leading-[1rem] text-black_b">
-                  Fecha de presupuesto
-                </span>
-                <Input
-                  placeholder={"14/09/2024"}
-                  bg="bg-gray"
-                  border="none"
-                  placeholderColor="placeholder-black_b"
-                  disabled
-                />
-              </div>
-              <div className="w-1/2">
-                <Input
-                  label={"Vendedor"}
-                  placeholder={"Nombre vendedor"}
-                  bg="bg-gray"
-                  border="none"
-                  placeholderColor="placeholder-black_b"
-                  disabled
-                />
-              </div>
+              <Input
+                bg="bg-gray"
+                placeholderColor="placeholder-black_b"
+                border="none"
+                label={"Fecha de presupuesto"}
+                placeholder={formatDate(orderDetails?.sellDate)}
+                disabled
+              />
+              <Input
+                bg="bg-gray"
+                placeholderColor="placeholder-black_b"
+                border="none"
+                label={"Vendedor"}
+                placeholder={orderDetails?.user?.userInfo?.fullName}
+                disabled
+              />
             </div>
+            {orderDetails?.productInOrder?.map((order) => (
+              <div className="flex w-full space-x-2" key={order.id}>
+                <div className="w-1/2">
+                  <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg bg-gray p-2">
+                    {order.product?.name || "nombre del producto"}
+                  </span>
+                </div>
 
-            <label className="block text-sm font-semibold text-black_b">
-              Detalle
-            </label>
-
-            <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Producto"}
-                placeholder={"Producto 1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Cant."}
-                placeholder={"1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Subproducto"}
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Color"}
-                placeholder={"-"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Precio"}
-                placeholder={"$345"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                label={"Desc."}
-                placeholder={"10%"}
-                disabled
-              />
-            </div>
-            <div className="flex space-x-2">
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Recarga"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"1"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"PA"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"Amarillo"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"$432"}
-                disabled
-              />
-              <Input
-                bg="bg-gray"
-                placeholderColor="placeholder-black_b"
-                border="none"
-                placeholder={"10%"}
-                disabled
-              />
-            </div>
+                <div className="flex w-1/2 space-x-2">
+                  <Input
+                    type="number"
+                    label="Cantidad"
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    disabled
+                    defaultValue={order.amount || 1}
+                    minValue={1}
+                    placeholder="Cant."
+                  />
+                  <Input
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    label="Precio"
+                    value={order.fixedPrice || "precio"}
+                    disabled
+                  />
+                  <Input
+                    type="number"
+                    label="Desc."
+                    placeholder="%"
+                    value={order.discountPercent + "%"}
+                    bg="bg-gray"
+                    placeholderColor="placeholder-black_b"
+                    border="none"
+                    disabled
+                  />
+                </div>
+              </div>
+            ))}
 
             <div className="flex space-x-2">
               <Input
@@ -273,7 +195,7 @@ const BudgetDataPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"Subtotal"}
-                placeholder={"$10000"}
+                placeholder={subTotal}
                 disabled
               />
               <Input
@@ -281,39 +203,38 @@ const BudgetDataPage = () => {
                 placeholderColor="placeholder-black_b"
                 border="none"
                 label={"IVA 22%"}
-                placeholder={"$1000"}
+                placeholder={iva}
                 disabled
               />
-
               <Input
                 bg="bg-gray"
                 placeholderColor="placeholder-black_b"
                 border="none"
-                label={"TOTAL"}
-                placeholder={"$100000"}
+                label={"Desc."}
+                placeholder={orderDetails?.discountPercent + "%"}
                 disabled
               />
             </div>
-          </div>
-          <div className="mt-5 flex w-full justify-end">
-            <Button
-              text={"GUARDAR"}
-              color={"save"}
-              type={"submit"}
-              icon={CheckLgIcon}
+            <Input
+              bg="bg-gray"
+              placeholderColor="placeholder-black_b"
+              fontWeight="font-bold"
+              border="none"
+              label={"TOTAL"}
+              placeholder={total}
+              disabled
             />
           </div>
+          <div className="mt-5 flex w-full justify-end">
+            <a
+              href={`${BASE_URL}/${getOrderPdf}/${id}`}
+              download
+              target="_blank"
+            >
+              <Button text={"DESCARGAR"} color={"save"} icon={DownloadIcon} />
+            </a>
+          </div>
         </form>
-        <ReusableModal
-          isOpen={isSaveConfirmationModalOpen}
-          onClose={closeSaveConfirmationModal}
-          title="Cambios guardados"
-          variant="confirmation"
-          buttons={["accept"]}
-          onAccept={handleConfirmSaveClick}
-        >
-          Los cambios fueron guardados exitosamente.
-        </ReusableModal>
       </div>
     </div>
   );

@@ -14,14 +14,14 @@ const PriceListRow = ({
   return (
     <tr className="border-b border-gray text-center transition-all duration-300 hover:bg-gray">
       <td
-        className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
+        className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap py-6 text-left"
         title={name}
         onClick={() => navigate(`/inicio/productos/lista/${id}/${name}`)}
       >
         {name}
       </td>
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={totalClients}
       >
         {totalClients === 0 ? "Asignado a todas las " : totalClients}
@@ -29,12 +29,12 @@ const PriceListRow = ({
         {totalClients === 1 ? "Empresa" : "Empresas"}
       </td>
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap p-2"
+        className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={totalProducts}
       >
         {totalProducts} {totalProducts === 1 ? "Producto" : "Productos"}
       </td>
-      <td className="p-2">
+      <td className="py-6">
         <div className="flex justify-center gap-4">
           <img
             src={editIconSrc}
