@@ -1,11 +1,5 @@
-import {
-  AdvancedMarker,
-  InfoWindow,
-  Map,
-  Marker,
-} from "@vis.gl/react-google-maps";
+import { Map, Marker } from "@vis.gl/react-google-maps";
 import IconVisit from "../assets/icons/VisitDisponible.png";
-import { Tooltip } from "@nextui-org/react";
 import { useState } from "react";
 const coordenadasUruguay = {
   lat: -34.901,
@@ -14,25 +8,35 @@ const coordenadasUruguay = {
 
 const position = { lat: -34.901, lng: -56.1698 };
 
-const HouseInfoWindow = ({ name }) => (
-  <div>
-    <h3>{name}</h3>
-  </div>
-);
+const RouteMapDetailsRow = ({
+  name,
+  zone,
+  companies,
+  sellers,
+  state,
+  id,
+  array,
+}) => {
+  const [selectedMarker, setSelectedMarker] = useState(null);
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
-const RouteMapDetailsRow = ({ name, zone, companies, sellers, state }) => {
-  const [activeMarker, setActiveMarker] = useState(null);
-  const [showInfoWindow, setShowInfoWindow] = useState(false);
-
-  const handleMarkerClick = (props) => {
-    setActiveMarker(props);
-    setShowInfoWindow(true);
+  console.log(array);
+  const handleMouseMove = (e) => {
+    setCursorPosition({ x: e.pageX, y: e.pageY });
   };
 
-  const handleInfoWindowClose = () => {
-    setActiveMarker(null);
-    setShowInfoWindow(false);
+  const filtrarEmpresasConCoordenadas = (empresas) => {
+    return empresas.filter(
+      (empresa) =>
+        empresa.latitude !== undefined &&
+        empresa.longitude !== undefined &&
+        empresa.latitude !== null &&
+        empresa.longitude !== null,
+    );
   };
+
+  const empresasConCoordenadas = filtrarEmpresasConCoordenadas(array);
+
   return (
     <>
       <tr className="text-center">
@@ -64,31 +68,48 @@ const RouteMapDetailsRow = ({ name, zone, companies, sellers, state }) => {
       </tr>
       <tr className="border-b border-gray">
         <td colSpan="5">
-          <Map
-            style={{ height: "15rem" }}
-            mapId={"8c732c82e4ec29d9"}
-            defaultCenter={coordenadasUruguay}
-            defaultZoom={5}
-            gestureHandling={"greedy"}
-          >
-            <Marker
-              position={position}
-              icon={{
-                url: IconVisit,
-                scaledSize: { width: 30, height: 30 },
-              }}
-              onClick={handleMarkerClick}
+          <div onMouseMove={handleMouseMove}>
+            <Map
+              style={{ height: "15rem" }}
+              mapId={"8c732c82e4ec29d9"}
+              defaultCenter={coordenadasUruguay}
+              defaultZoom={5}
+              gestureHandling={"greedy"}
             >
-              {showInfoWindow && (
-                <InfoWindow
-                  anchor={activeMarker}
-                  onClose={handleInfoWindowClose}
+              {empresasConCoordenadas.map((empresa) => (
+                <Marker
+                  key={empresa.id}
+                  position={{
+                    lat: Number(empresa.latitude),
+                    lng: Number(empresa.longitude),
+                  }}
+                  icon={{
+                    url: IconVisit,
+                    scaledSize: { width: 30, height: 30 },
+                  }}
+                  onMouseOver={() => setSelectedMarker(empresa)}
+                  onMouseOut={() => setSelectedMarker(null)}
+                ></Marker>
+              ))}
+
+              {selectedMarker && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: cursorPosition.y - 300, // Ajusta el div 10px debajo del cursor
+                    left: cursorPosition.x - 400, // Ajusta el div 10px a la derecha del cursor
+                    background: "white",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.3)",
+                  }}
                 >
-                  <div>Contenido de la InfoWindow</div>
-                </InfoWindow>
+                  <h4 className="font-medium">{selectedMarker.name}</h4>
+                  <p>Más detalles aquí...</p>
+                </div>
               )}
-            </Marker>
-          </Map>
+            </Map>
+          </div>
         </td>
       </tr>
     </>
