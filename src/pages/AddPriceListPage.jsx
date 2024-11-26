@@ -169,7 +169,8 @@ const AddPriceListPage = () => {
                 {...register("company", {
                   required: {
                     value: !isAllCompanies,
-                    message: "Campo obligatorio",
+                    message:
+                      "Debes seleccionar al menos una empresa o seleccionar todas las empresas",
                   },
                 })}
                 msjError={!isAllCompanies && errors?.company?.message}

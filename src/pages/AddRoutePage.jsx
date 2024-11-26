@@ -50,8 +50,12 @@ const AddRoutePage = () => {
   };
   const onSubmit = (data) => {
     const { name, status, vendedores, empresas, zone } = data;
-    const seller = vendedores.map((vendedor) => ({ id: vendedor.id }));
-    const companies = empresas.map((empresa) => ({ client: empresa.id }));
+    const seller = vendedores
+      ? vendedores.map((vendedor) => ({ id: vendedor.id }))
+      : [];
+    const companies = empresas
+      ? empresas.map((empresa) => ({ client: empresa.id }))
+      : [];
     const newData = {
       name,
       zone,
@@ -180,7 +184,7 @@ const AddRoutePage = () => {
               <span className="text-gray-700 block text-sm font-light">
                 Asignar nuevo vendedor
               </span>
-              <Link to={"/inicio/personal/agregar-vendedor"}>
+              <Link to={"agregar-usuario"}>
                 <Button
                   text="Nuevo vendedor"
                   icon={PlusFillIcon}
@@ -204,7 +208,7 @@ const AddRoutePage = () => {
               <span className="text-gray-700 block text-sm font-light">
                 Asignar nueva empresa
               </span>
-              <Link to={"/inicio/empresas/agregar-empresa"}>
+              <Link to={"agregar-empresa"}>
                 <Button
                   text="Nueva Empresa"
                   icon={PlusFillIcon}

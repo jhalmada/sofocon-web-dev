@@ -221,7 +221,7 @@ const AddCompaniePage = () => {
   };
 
   const handleConfirmSaveClick = () => {
-    navigate("/inicio/empresas");
+    navigate("..");
     closeSaveConfirmationModal();
   };
 
@@ -277,11 +277,8 @@ const AddCompaniePage = () => {
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
-      <div className="flex flex-grow flex-col p-6">
-        <Link
-          to="/inicio/empresas"
-          className="cursor-pointer text-sm font-medium leading-4"
-        >
+      <div className="flex flex-grow flex-col px-6 pt-6">
+        <Link to=".." className="cursor-pointer text-sm font-medium leading-4">
           <div className="mb-4 flex items-center">
             <img
               src={ChevronLeftIcon}

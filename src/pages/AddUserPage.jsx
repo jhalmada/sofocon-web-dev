@@ -93,13 +93,13 @@ const AddUserPage = () => {
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
-    navigate("/inicio/personal");
+    navigate("..");
   };
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
-          <Link to="/inicio/personal" className="text-sm font-medium leading-4">
+          <Link to=".." className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
               <img
                 src={ChevronLeftIcon}

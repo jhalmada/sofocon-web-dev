@@ -8,8 +8,13 @@ import useMetricsProduts from "../hooks/metrics/useGetMetricsProducts";
 import MetricsCircle from "../components/metrics/MetricsCircle";
 import useGetSellerBest from "../hooks/metrics/useGetSellerBest";
 import { useSocket } from "../services/socket/socket.service";
+import IconVisitRealizada from "../assets/icons/VisitVisitado.png";
 import { useEffect, useState } from "react";
-import { a } from "framer-motion/client";
+import { Map, Marker } from "@vis.gl/react-google-maps";
+const coordenadasUruguay = {
+  lat: -34.901,
+  lng: -56.1698,
+};
 
 const months = [
   { label: "Enero", value: "01" },
@@ -44,13 +49,21 @@ const HomePage = () => {
   //estados
   //hooks
   const { socketConnected } = useSocket();
-  const [userLocation, setUserLocation] = useState(null);
+  const [usersActives, setUsersActive] = useState([]);
   const { metricsResponse } = useGetMetrics();
   const { metricsOrdersResponse, setMonth, month, year } = useMetricsOrders();
   const { metricsProductsResponse, setYear } = useMetricsProduts();
   const { sellerBestResponse, setMonth: setMonthCircle } = useGetSellerBest();
   //funciones
   const keys = metricsResponse ? Object.keys(metricsResponse) : [];
+
+  const [selectedMarker, setSelectedMarker] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [infoUser, setInfoUser] = useState(null);
+
+  const handleMouseMove = (e) => {
+    setCursorPosition({ x: e.pageX, y: e.pageY });
+  };
 
   const handleChangeMonth = (value) => {
     console.log(value);
@@ -65,11 +78,40 @@ const HomePage = () => {
     setYear(value);
   };
 
+  const tootltip = (data) => {
+    setInfoUser(data);
+    setSelectedMarker(true);
+  };
+
+  const handleSocketData = (data) => {
+    const { id, longitude, latitude, userInfo } = data;
+
+    // Buscamos el usuario existente o creamos uno nuevo
+    const numberIndex = usersActives.findIndex((user) => user.id === id);
+    console.log(numberIndex);
+
+    if (numberIndex >= 0) {
+      usersActives.splice(numberIndex, 1, {
+        id,
+        longitude,
+        latitude,
+        userInfo,
+      });
+    } else {
+      usersActives.splice(usersActives.length + 1, 0, {
+        id,
+        longitude,
+        latitude,
+        userInfo,
+      });
+    }
+  };
+
   useEffect(() => {
     const socket = socketConnected();
     if (socket) {
       socket.on("user-location", (data) => {
-        console.log("user-location", data);
+        handleSocketData(data);
       });
     }
   }, []);
@@ -162,6 +204,51 @@ const HomePage = () => {
             </div>
             <MetricsAnual dataApi={metricsProductsResponse} />
           </div>
+        </div>
+        <div
+          onMouseMove={handleMouseMove}
+          className="rounded-[0.875rem] bg-white pt-4 shadow-card"
+        >
+          <p className="ml-4 text-lg font-medium">Vendedores Activos:</p>
+          <Map
+            mapId={"8c732c82e4ec29d9"}
+            defaultCenter={coordenadasUruguay}
+            defaultZoom={5}
+            gestureHandling={"greedy"}
+            className="relative h-[15rem]"
+          >
+            {usersActives &&
+              usersActives.map((empresa) => (
+                <Marker
+                  key={empresa.id}
+                  position={{
+                    lat: Number(empresa.latitude),
+                    lng: Number(empresa.longitude),
+                  }}
+                  icon={{
+                    url: IconVisitRealizada,
+                    scaledSize: { width: 40, height: 40 },
+                  }}
+                  onMouseOver={() => tootltip(empresa)}
+                  onMouseOut={() => setSelectedMarker(false)}
+                ></Marker>
+              ))}
+            {selectedMarker && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: cursorPosition.y - 680, // Ajusta el div 10px debajo del cursor
+                  left: cursorPosition.x - 300, // Ajusta el div 10px a la derecha del cursor
+                  background: "white",
+                  padding: "10px",
+                  borderRadius: "5px",
+                  boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.3)",
+                }}
+              >
+                <h4 className="font-semibold">{infoUser.userInfo.fullName}</h4>
+              </div>
+            )}
+          </Map>
         </div>
       </div>
     </div>

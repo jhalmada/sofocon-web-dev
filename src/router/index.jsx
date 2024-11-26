@@ -82,6 +82,7 @@ import AddPriceListPage from "../pages/AddPriceListPage";
 import ListPriceDetailsPage from "../pages/ListPriceDetailsPage";
 import MetricsLayout from "../layouts/Metrics";
 import MetricsDetails from "../pages/MetricsDetails";
+import AddRouteLayout from "../layouts/AddRouteLayout";
 
 export const router = createBrowserRouter([
   {
@@ -195,7 +196,18 @@ export const router = createBrowserRouter([
           },
           {
             path: ADD_ROUTE_ROUTE,
-            element: <AddRoutePage />,
+            element: <AddRouteLayout />,
+            children: [
+              { index: true, element: <AddRoutePage /> },
+              {
+                path: ADD_USER_ROUTE,
+                element: <AddUserPage />,
+              },
+              {
+                path: ADD_COMPANIE_ROUTE,
+                element: <AddCompaniePage />,
+              },
+            ],
           },
           {
             path: ROUTES_MAP_ROUTE,
