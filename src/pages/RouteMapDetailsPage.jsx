@@ -83,7 +83,7 @@ const RouteMapDetailsPage = () => {
     setDatos(newdatos);
     setNameCompany(newdatos.name);
   };
-  console.log(datos);
+
   useEffect(() => {
     oneRute(id);
   }, []);
