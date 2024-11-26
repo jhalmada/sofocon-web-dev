@@ -1,13 +1,16 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
-const BarcodeReader = () => {
+const BarcodeReader = ({ onBarcodeChange }) => {
   const codigoRef = useRef(null);
-
+  const handleInputChange = (event) => {
+    const codigo = event.target.value;
+    onBarcodeChange(codigo);
+  };
   useEffect(() => {
     const handleKeyDown = (evento) => {
       if (evento.keyCode === 13) {
         const codigoDeBarras = codigoRef.current.value;
-        console.log("Tenemos un código de barras:");
+
         console.log(codigoDeBarras);
         codigoRef.current.value = "";
       }
@@ -28,6 +31,7 @@ const BarcodeReader = () => {
         type="text"
         ref={codigoRef}
         placeholder="Enfoca este input y usa el lector"
+        onChange={handleInputChange}
       />
       <br />
     </div>

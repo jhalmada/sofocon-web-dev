@@ -14,7 +14,6 @@ import { BASE_URL } from "../utils/Constants.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import StoragePage from "./StoragePage.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
-import useGetProducts from "../hooks/products/useGetProducts.js";
 import useOrders from "../hooks/orders/useOrders.js";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
 import SaveImg from "../assets/img/save.png";
@@ -26,7 +25,6 @@ import {
 } from "../services/orders/orders.routes.js";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders.js";
-import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
@@ -34,7 +32,6 @@ const STORAGE_TAB = "deposito";
 const WorkshopPage = () => {
   const { changedOrder } = usePutOrders();
   const { deleteOrder } = useDeleteOrders();
-  const { setSearch: setSearchProducts, setList } = useGetProducts();
 
   const {
     ordersResponse,
@@ -46,6 +43,7 @@ const WorkshopPage = () => {
     itemsPerPage,
     setStatus,
     setEntryDate,
+    setBarCode,
     getAllOrders,
   } = useOrders();
   const {
@@ -54,9 +52,6 @@ const WorkshopPage = () => {
     formState: { errors },
   } = useForm();
 
-  const [autocompleteResults, setAutocompleteResults] = useState([]);
-  const [quantity, setQuantity] = useState({});
-  const [recharged, setRecharged] = useState({});
   const [activeTab, setActiveTab] = useState(RECHARGE_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -72,7 +67,6 @@ const WorkshopPage = () => {
   );
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [orderId, setOrderId] = useState(null);
-  const [isPriceListSelected, setIsPriceListSelected] = useState(true);
 
   const stateOptions = ["Solicitado", "En preparación", "Para retirar"];
   const monthsOptions = [
@@ -106,7 +100,6 @@ const WorkshopPage = () => {
     await changedOrder({ productInOrder }, orderId);
   };
 
-  const openConfirmCancelModal = () => setIsConfirmCancelModalOpen(true);
   const openExportModal = () => {
     setIsExportModalOpen(true);
   };
@@ -146,6 +139,7 @@ const WorkshopPage = () => {
   };
 
   const onSubmit = (data) => {
+    setBarCode(data.barCode);
     handleAddProduct(data);
   };
 
@@ -426,7 +420,6 @@ const WorkshopPage = () => {
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "scan"]}
         handleCancelClick={closeModal}
-        onAccept={handleAccept}
       >
         <p className="text-sm leading-[1rem] text-black_m">
           Escanea el código de barras del producto para localizar la orden de
@@ -434,7 +427,7 @@ const WorkshopPage = () => {
         </p>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="px-2">
-            <BarcodeReader />
+            <BarcodeReader onBarcodeChange={setBarCode} />
           </div>
         </form>
       </ReusableModal>
