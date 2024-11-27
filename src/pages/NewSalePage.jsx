@@ -76,6 +76,13 @@ const NewSalePage = () => {
   const deliveredValue = watch("delivered", false);
   const isDirectValue = watch("isDirect", false);
 
+  const customMessages = {
+    "es-ES": {
+      calendar: {
+        shortDays: ["L", "M", "M", "J", "V", "S", "D"],
+      },
+    },
+  };
   const handleOrderCreation = async (orderData) => {
     const {
       isDirect,
@@ -439,7 +446,7 @@ const NewSalePage = () => {
                 <span className="text-sm font-light leading-[1rem] text-black_b">
                   Fecha de venta
                 </span>
-                <I18nProvider locale="es-ES">
+                <I18nProvider locale="es-ES" messages={customMessages}>
                   <Controller
                     name="dateV"
                     control={control}
@@ -703,7 +710,10 @@ const NewSalePage = () => {
                                 <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                                   Fecha última carga
                                 </span>
-                                <I18nProvider locale="es-ES">
+                                <I18nProvider
+                                  locale="es-ES"
+                                  messages={customMessages}
+                                >
                                   <Controller
                                     name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
                                     control={control}
