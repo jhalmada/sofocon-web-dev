@@ -49,6 +49,14 @@ const NewBudgetPage = () => {
   const total = subtotal
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
     : 0;
+
+  const customMessages = {
+    "es-ES": {
+      calendar: {
+        shortDays: ["L", "M", "M", "J", "V", "S", "D"],
+      },
+    },
+  };
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -393,7 +401,7 @@ const NewBudgetPage = () => {
                 <span className="text-sm font-light leading-[1rem] text-black_b">
                   Fecha de presupuesto
                 </span>
-                <I18nProvider locale="es-ES">
+                <I18nProvider locale="es-ES" messages={customMessages}>
                   <Controller
                     name="dateV"
                     control={control}
