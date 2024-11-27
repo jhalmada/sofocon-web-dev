@@ -6,27 +6,36 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import usePutOrders from "../hooks/orders/usePutOrders";
+import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
+import { DatePicker } from "@nextui-org/react";
+import { I18nProvider } from "@react-aria/i18n";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import useUsersSellers from "../hooks/users/useUsersSellers";
 const DepositPage = () => {
   const {
     handleSubmit,
+    control,
+    setValue,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
-
   const { changedOrder, isLoading } = usePutOrders();
   const { id } = useParams();
   const { getOneOrder, setModified } = useGetOneOrder(id);
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+  const [isSaveConfirmationModalOpen, setIsSaveConfirmationModalOpen] =
     useState(false);
-
   const [mnsError, setMnsError] = useState("");
   const [orderDetails, setOrderDetails] = useState(null);
   const [selectedState, setSelectedState] = useState(orderDetails?.status);
+  const [newStatus, setNewStatus] = useState(null);
+  const [isConfirmModal, setIsConfirmModal] = useState(false);
+  const [seller, setSeller] = useState(null);
 
   const oneOrder = async (id) => {
     const newdatos = await getOneOrder(id);
@@ -61,46 +70,82 @@ const DepositPage = () => {
 
     return `${month}/${year}`;
   };
-  const onSubmit = () => {
-    navigate("/inicio/taller");
+  const onSubmit = async (data) => {
+    const newdata = new Date(
+      data.dateV?.year || 1,
+      data.dateV?.month - 1 || 1,
+      data.dateV?.day || 1,
+    );
+    const formattedDate = newdata.toISOString();
+    if (newStatus === "EGRESS") {
+      await changedOrder(
+        {
+          status: newStatus,
+          user: data.user,
+          sellDate: formattedDate ? formattedDate : null,
+        },
+        orderDetails.id,
+        setModified,
+      );
+      setIsSaveConfirmationModalOpen(true);
+    } else {
+      await changedOrder({ status: newStatus }, orderDetails.id, setModified);
+      setIsSaveConfirmationModalOpen(true);
+    }
   };
-
-  const handleStateChange = async (e) => {
-    const translateState = (state) => {
-      switch (state) {
-        case "Solicitado":
-          return "REQUEST";
-        case "En preparación":
-          return "PREPARATION";
-        case "Para retirar":
-          return "READY_PICKUP";
-        case "Egreso":
-          return "EGRESS";
-        case "Entregado":
-          return "DELIVERED";
-        default:
-          return state;
-      }
-    };
-    const newStatus = translateState(e.target.value);
+  const handleSelectSeller = (selectedSeller) => {
+    if (selectedSeller) {
+      setSeller(selectedSeller);
+    } else {
+      setSeller(null);
+    }
+  };
+  const handleState = async (e) => {
+    const newStatus = translateStateToEnglish(e.target.value);
     setSelectedState(newStatus);
     const currentDate = new Date().toISOString();
     const updatedOrderData = { status: newStatus };
 
     if (newStatus === "EGRESS") {
       updatedOrderData.workShopDateEntry = currentDate;
+      setIsConfirmModal(true);
+      setNewStatus("EGRESS");
+    } else {
+      setNewStatus(newStatus);
     }
-    await changedOrder({ status: newStatus }, orderDetails.id, setModified);
+  };
+  const translateStateToEnglish = (state) => {
+    switch (state) {
+      case "Solicitado":
+        return "REQUEST";
+      case "En preparación":
+        return "PREPARATION";
+      case "Para retirar":
+        return "READY_PICKUP";
+      case "Egreso":
+        return "EGRESS";
+      case "Entregado":
+        return "DELIVERED";
+      default:
+        return state;
+    }
   };
   const handleCloseModal = () => {
+    setIsConfirmModal(false);
     setIsModalOpen(false);
   };
   const closeSaveConfirmationModal = () => {
-    setSaveConfirmationModalOpen(false);
+    setIsSaveConfirmationModalOpen(false);
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
-    navigate("/inicio/personal");
+    navigate("/inicio/taller");
+  };
+  const transformData = (array) => {
+    return array.map((item) => ({
+      id: item.id,
+      name: item.userInfo.fullName,
+    }));
   };
   useEffect(() => {
     oneOrder(id);
@@ -142,7 +187,7 @@ const DepositPage = () => {
               labelPlacement="outside"
               placeholder={translateState(orderDetails?.status)}
               value={translateState(stateOptions)}
-              onChange={handleStateChange}
+              onChange={handleState}
               disabled={isLoading}
             >
               {stateOptions.map((option) => (
@@ -235,6 +280,64 @@ const DepositPage = () => {
             />
           </div>
         </form>
+        <ReusableModal
+          isOpen={isConfirmModal}
+          onClose={handleCloseModal}
+          title="Egreso de orden"
+          variant="confirmation"
+          buttons={["cancel", "accept"]}
+          onAccept={handleCloseModal}
+        >
+          <div>
+            <span className="text-sm font-light leading-[1rem] text-black_b">
+              Fecha de venta
+            </span>
+            <I18nProvider locale="es-ES">
+              <Controller
+                name="dateV"
+                control={control}
+                rules={{
+                  required: "La fecha es obligatoria",
+                }}
+                render={({ field }) => (
+                  <DatePicker
+                    minValue={today(getLocalTimeZone())}
+                    className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
+                    label=""
+                    placeholder="Seleccione una fecha"
+                    granularity="day"
+                    {...field}
+                  />
+                )}
+              />
+              <p className="font-roboto text-xs text-red_e">
+                {errors.dateV ? errors.dateV.message : ""}
+              </p>
+            </I18nProvider>
+          </div>
+          <div className="-mt-[.08rem]">
+            <Controller
+              name="user"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              render={({ field }) => (
+                <CompleteSearchInput
+                  label={"Vendedores"}
+                  array={transformData(userSellerResponse?.result || []) || []}
+                  name={"user"}
+                  setValue={setValue}
+                  onChange={setSearchSellers}
+                  onSelect={handleSelectSeller}
+                  placeholder="Buscar vendedores"
+                  {...field}
+                />
+              )}
+            />
+            {errors.user && (
+              <p className="text-xs text-red_e">{errors.user.message}</p>
+            )}
+          </div>
+        </ReusableModal>
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
