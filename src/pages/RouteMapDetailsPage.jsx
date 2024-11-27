@@ -90,8 +90,6 @@ const RouteMapDetailsPage = () => {
     /*Vendedores*/
   }
   const [allSellers, setAllSellers] = useState([]);
-  const [assignedSellers, setAssignedSellers] = useState([]);
-  const [availableSellers, setAvailableSellers] = useState(allSellers);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredSellers, setFilteredSellers] = useState(allSellers);
 
@@ -106,12 +104,6 @@ const RouteMapDetailsPage = () => {
   const [assignedCompanies, setAssignedCompanies] = useState([]);
   const [filteredCompanies, setFilteredCompanies] = useState(allCompanies);
   const [companySearchTerm, setCompanySearchTerm] = useState("");
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
 
   const openModal = (id) => {
     setIsModalOpen(true);
@@ -126,10 +118,7 @@ const RouteMapDetailsPage = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-  const openConfirmDeleteModal = (id) => {
-    setCompanyId(id);
-    setConfirmDeleteModalOpen(true);
-  };
+
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
@@ -140,60 +129,6 @@ const RouteMapDetailsPage = () => {
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
-  };
-
-  const handleUserCreation = async (userData) => {};
-
-  const onSubmit = (data) => {};
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${month}/${day}/${year}`;
-  };
-
-  const handleAddSeller = (seller) => {
-    setAssignedSellers((prev) => [...prev, seller]);
-    setAvailableSellers((prev) => prev.filter((s) => s.id !== seller.id));
-  };
-
-  const handleAddCompany = (company) => {
-    setAssignedCompanies((prev) => [...prev, company]);
-    setFilteredCompanies((prev) => prev.filter((c) => c.id !== company.id));
-  };
-
-  const handleRemoveSeller = (seller) => {
-    setAssignedSellers((prev) => prev.filter((s) => s.id !== seller.id));
-    setAvailableSellers((prev) => [...prev, seller]);
-  };
-  const handleRemoveCompany = (company) => {
-    setAssignedCompanies((prev) => prev.filter((c) => c.id !== company.id));
-    setFilteredCompanies((prev) => [...prev, company]);
-  };
-  const handleSearch = (term) => {
-    setFilteredSellers(
-      availableSellers.filter((seller) =>
-        seller.userInfo.fullName.toLowerCase().includes(term.toLowerCase()),
-      ),
-    );
-  };
-  const handleSearchChange = (e) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-    const filtered = availableSellers.filter((seller) =>
-      seller.userInfo.fullName.toLowerCase().includes(term.toLowerCase()),
-    );
-    setFilteredSellers(filtered);
-  };
-  const handleCompanySearchChange = (e) => {
-    const term = e.target.value;
-    setCompanySearchTerm(term);
-    const filtered = companiesResponse.filter((company) =>
-      company.name.toLowerCase().includes(term.toLowerCase()),
-    );
-    setFilteredCompanies(filtered);
   };
 
   useEffect(() => {
@@ -251,7 +186,7 @@ const RouteMapDetailsPage = () => {
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
       <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
-          <Link to="/inicio/rutas" className="text-sm font-medium leading-4">
+          <Link to=".." className="text-sm font-medium leading-4">
             <div className="mb-4 flex items-center">
               <img
                 src={ChevronLeftIcon}
@@ -264,7 +199,7 @@ const RouteMapDetailsPage = () => {
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Nombre de ruta
+            {datos?.name}
           </h1>
           {activeTab === SELLERS_TAB && (
             <SearchInput placeholder="Buscar..." onChange={setSearch} />
@@ -357,11 +292,13 @@ const RouteMapDetailsPage = () => {
               </thead>
               <tbody>
                 <RouteMapDetailsRow
+                  id={datos?.id}
                   name={datos?.name || "Nombre de la ruta"}
                   zone={datos?.zone || "zona de la ruta"}
                   companies={datos?.totalClients || "cargando"}
                   sellers={datos?.totalSeller || "cargando"}
                   state={datos?.isActive || "cargando"}
+                  array={companiesResponse}
                 />
               </tbody>
             </table>

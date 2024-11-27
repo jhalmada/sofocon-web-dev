@@ -33,6 +33,8 @@ const AddCompanyRoutePage = ({
   const stateOptions = ["Frecuente", "Potencial", "De baja"];
   //hooks
   const { companiesResponse, setSearch } = useCompanies();
+  console.log(companiesResponse);
+  console.log(arrayCompanies);
   const { changedSellerRoute } = usePutSellerRoute();
   const {
     register,

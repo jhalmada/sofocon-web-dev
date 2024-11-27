@@ -28,11 +28,12 @@ const AddSellerRoutePage = ({
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [sellerId, setSellerId] = useState(null);
-  const [stateFilter, setStateFilter] = useState("");
 
   const stateOptions = ["Activo", "Inactivo"];
   //Hooks
   const { userSellerResponse, setSearch } = useUsersSellers();
+  console.log(userSellerResponse);
+  console.log(arraySeller);
   const { changedSellerRoute } = usePutSellerRoute();
   const {
     register,

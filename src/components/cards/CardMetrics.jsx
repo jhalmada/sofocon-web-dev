@@ -11,6 +11,19 @@ const CardMetrics = ({ title, total }) => {
     useGrouping: true,
   });
 
+  const traslate = (str) => {
+    switch (str) {
+      case "Orders":
+        return "Pedidos";
+      case "Clients":
+        return "Clientes";
+      case "Stock":
+        return "Stock";
+      default:
+        return str;
+    }
+  };
+
   const reescribir = (str) => {
     return str
       .trim()
@@ -45,7 +58,7 @@ const CardMetrics = ({ title, total }) => {
       </div>
       <div className="h-[3.4325rem]">
         <p className="text-base font-semibold text-red_m">
-          {reescribir(title)}
+          {traslate(reescribir(title))}
         </p>
         <p className="text-xl font-medium text-red_m">
           {numberFormatter.format(total)}
