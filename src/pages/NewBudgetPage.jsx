@@ -448,27 +448,44 @@ const NewBudgetPage = () => {
                 <Select
                   placeholder="Elegir lista de precios..."
                   className="rounded-lg border"
-                  {...register("priceList")}
+                  {...register("priceList", {
+                    required: "Este campo es obligatorio",
+                  })}
                   onSelectionChange={handleSelectionListChange}
                 >
                   {priceListResponse.map((option) => (
                     <SelectItem key={option.id}>{option.name}</SelectItem>
                   ))}
                 </Select>
+                {errors.priceList && (
+                  <p className="text-xs text-red_e">
+                    {errors.priceList.message}
+                  </p>
+                )}
               </div>
               <div className="mt-3 w-1/2">
-                <ProductsAutocomplete
-                  label={"Productos"}
-                  array={productsResponse || []}
-                  name={"products"}
-                  setValue={setValue}
-                  onChange={setSearchProducts}
-                  placeholder="Buscar productos"
-                  setAutocompleteResults={setAutocompleteResults}
-                  selectedItems={autocompleteResults}
-                  isDisabled={isPriceListSelected}
+                <Controller
+                  name="products"
+                  control={control}
+                  rules={{ required: "Este campo es requerido" }}
+                  render={({ field }) => (
+                    <ProductsAutocomplete
+                      {...field}
+                      label="Productos"
+                      array={productsResponse || []}
+                      name="products"
+                      setValue={setValue}
+                      onChange={setSearchProducts}
+                      placeholder="Buscar productos"
+                      setAutocompleteResults={setAutocompleteResults}
+                      selectedItems={autocompleteResults}
+                      isDisabled={isPriceListSelected}
+                    />
+                  )}
                 />
-                <p>{errors.products && errors.products.message}</p>
+                <p className="text-xs text-red_e">
+                  {errors.products && errors.products.message}
+                </p>
               </div>
             </div>
 
