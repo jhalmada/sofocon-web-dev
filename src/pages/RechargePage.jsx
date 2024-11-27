@@ -93,12 +93,18 @@ const RechargePage = () => {
   };
 
   const onSubmit = async (data) => {
+    const newdata = new Date(
+      data.dateV?.year || 1,
+      data.dateV?.month - 1 || 1,
+      data.dateV?.day || 1,
+    );
+    const formattedDate = newdata.toISOString();
     if (newStatus === "EGRESS") {
       await changedOrder(
         {
           status: newStatus,
           user: data.user,
-          // sellDate: data.dateV,
+          sellDate: formattedDate ? formattedDate : null,
         },
         orderDetails.id,
         setModified,

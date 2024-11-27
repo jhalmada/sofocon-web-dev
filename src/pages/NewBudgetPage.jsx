@@ -29,7 +29,6 @@ const NewBudgetPage = () => {
     control,
     setValue,
     formState: { errors },
-    trigger,
   } = useForm();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -80,7 +79,6 @@ const NewBudgetPage = () => {
   const { priceListResponse } = useGetPriceList();
   const navigate = useNavigate();
 
-  const client = watch("client");
   const handleBudgetCreation = async (budgetData) => {
     const {
       client,
@@ -241,9 +239,6 @@ const NewBudgetPage = () => {
 
     setSubtotal(total);
   }, [autocompleteResults, quantity, discount]);
-  useEffect(() => {
-    trigger("client");
-  }, [client, trigger]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">

@@ -19,6 +19,8 @@ import useGetProducts from "../hooks/products/useGetProducts.js";
 import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
+import BarcodeReader from "../components/scan/BarcodeReader.jsx";
+import useOrders from "../hooks/orders/useOrders.js";
 
 const NewSalePage = () => {
   const {
@@ -29,6 +31,7 @@ const NewSalePage = () => {
     setValue,
     formState: { errors },
   } = useForm();
+  const { setBarCode } = useOrders();
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
@@ -53,6 +56,7 @@ const NewSalePage = () => {
   const [selectedPayment, setSelectedPayment] = useState("Efectivo");
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
   const [orderData, setOrderData] = useState(null);
+  const [openScannerModal, setOpenScannerModal] = useState(false);
 
   const [quantity, setQuantity] = useState({});
   const [subtotal, setSubtotal] = useState(0);
@@ -154,6 +158,11 @@ const NewSalePage = () => {
   const onSubmit = (data) => {
     setOrderData(data);
     setIsConfirmationModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setOpenScannerModal(false);
   };
 
   const closeSaveConfirmationModal = () => {
@@ -632,15 +641,16 @@ const NewSalePage = () => {
                                 msjError={errors.barCode?.message || ""}
                               />
                               <span className="flex items-center">
-                                <Link to={"/inicio"}>
-                                  <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
-                                    <img
-                                      src={cameraIcon}
-                                      alt=""
-                                      className="h-5 w-5"
-                                    />
-                                  </div>
-                                </Link>
+                                <div
+                                  className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur"
+                                  onClick={() => setOpenScannerModal(true)}
+                                >
+                                  <img
+                                    src={cameraIcon}
+                                    alt=""
+                                    className="h-5 w-5"
+                                  />
+                                </div>
                               </span>
                             </div>
                             <div className="flex space-x-2">
@@ -929,6 +939,22 @@ const NewSalePage = () => {
         >
           La orden fue creada exitosamente.
         </ReusableModal> */}
+        <ReusableModal
+          isOpen={openScannerModal}
+          onClose={closeModal}
+          title="Código de barras"
+          handleCancelClick={closeModal}
+        >
+          <p className="text-sm leading-[1rem] text-black_m">
+            Escanea el código de barras del producto para localizar la orden de
+            compra donde se encuentra, o ingresa el código de manera manual.
+          </p>
+          <form className="space-y-4">
+            <div className="px-2">
+              <BarcodeReader onBarcodeChange={setBarCode} />
+            </div>
+          </form>
+        </ReusableModal>
       </div>
     </div>
   );
