@@ -48,7 +48,7 @@ const CardMetrics = ({ title, total }) => {
     }
   }, [title]);
   return (
-    <div className="relative flex h-[11.125rem] w-[23.4375rem] flex-col justify-between rounded-[0.875rem] bg-white p-[0.875rem] shadow-card">
+    <div className="relative flex h-[11.125rem] w-[12.375rem] flex-col justify-between rounded-[0.875rem] bg-white p-[0.875rem] shadow-card">
       <div className="h-[3.75rem]">
         <img
           src={image}

@@ -114,10 +114,9 @@ const MetricsAnual = ({ dataApi = [] }) => {
     return null;
   };
   return (
-    <div className="h-[13.8rem] w-full min-w-[48rem] rounded-[0.875rem] bg-white">
+    <div className="h-[13.8rem] w-full rounded-[0.875rem] bg-white">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
-          width={500}
           height={200}
           data={newData}
           margin={{

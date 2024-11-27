@@ -11,6 +11,7 @@ import { useSocket } from "../services/socket/socket.service";
 import IconVisitRealizada from "../assets/icons/VisitVisitado.png";
 import { useEffect, useState } from "react";
 import { Map, Marker } from "@vis.gl/react-google-maps";
+import mapNotPermisse from "../assets/images/MapNotPermisses.png";
 const coordenadasUruguay = {
   lat: -34.901,
   lng: -56.1698,
@@ -48,6 +49,7 @@ const years = [
 const HomePage = () => {
   //estados
   //hooks
+  const datosGuardados = localStorage.getItem("SOFOCON_PERMISSIONS");
   const { socketConnected } = useSocket();
   const [usersActives, setUsersActive] = useState([]);
   const { metricsResponse } = useGetMetrics();
@@ -122,12 +124,73 @@ const HomePage = () => {
         Inicio
       </h1>
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between">
-          {keys.map((key) => (
-            <CardMetrics key={key} title={key} total={metricsResponse[key]} />
-          ))}
+        {/* Contenedor CardMetrics y maps */}
+        <div className="flex w-full justify-between gap-4">
+          <div className="flex flex-col justify-between gap-4">
+            {keys.map((key) => (
+              <CardMetrics key={key} title={key} total={metricsResponse[key]} />
+            ))}
+          </div>
+          {/*Mapa*/}
+          {datosGuardados.includes("USER_SUPER_ADMIN") ? (
+            <div
+              onMouseMove={handleMouseMove}
+              className="w-[85%] rounded-[0.875rem] bg-white pt-4 shadow-card"
+            >
+              <p className="mb-4 ml-4 text-lg font-medium">
+                Vendedores Activos: {usersActives.length}
+              </p>
+              <Map
+                mapId={"8c732c82e4ec29d9"}
+                defaultCenter={coordenadasUruguay}
+                defaultZoom={5}
+                borderRadius={"0.875rem"}
+                gestureHandling={"greedy"}
+                className="relative h-[89%]"
+                disableDefaultUI={true}
+              >
+                {usersActives &&
+                  usersActives.map((empresa) => (
+                    <Marker
+                      key={empresa.id}
+                      position={{
+                        lat: Number(empresa.latitude),
+                        lng: Number(empresa.longitude),
+                      }}
+                      icon={{
+                        url: IconVisitRealizada,
+                        scaledSize: { width: 40, height: 40 },
+                      }}
+                      onMouseOver={() => tootltip(empresa)}
+                      onMouseOut={() => setSelectedMarker(false)}
+                    ></Marker>
+                  ))}
+                {selectedMarker && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: cursorPosition.y - 680, // Ajusta el div 10px debajo del cursor
+                      left: cursorPosition.x - 300, // Ajusta el div 10px a la derecha del cursor
+                      background: "white",
+                      padding: "10px",
+                      borderRadius: "5px",
+                      boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.3)",
+                    }}
+                  >
+                    <h4 className="font-semibold">
+                      {infoUser.userInfo.fullName}
+                    </h4>
+                  </div>
+                )}
+              </Map>
+            </div>
+          ) : (
+            <div className={`h-[35.5rem] w-[85%]`}>
+              <img src={mapNotPermisse} className="h-full w-full" />
+            </div>
+          )}
         </div>
-
+        {/* Contenedor de ventas mensual */}
         <div className="flex flex-col justify-between rounded-[0.875rem] bg-white shadow-card">
           <div className="flex w-full justify-between p-4">
             <p className="text-lg font-medium">Ventas Mensuales</p>
@@ -151,8 +214,11 @@ const HomePage = () => {
 
           <MetricsVentas apiData={metricsOrdersResponse} />
         </div>
-        <div className="flex justify-between gap-2">
-          <div className="relative h-[19rem] rounded-[0.875rem] bg-white shadow-card">
+
+        {/* Contenedor de ventas por vendedores y ventas anuales */}
+        <div className="flex min-h-[19rem] w-full flex-wrap justify-between gap-2">
+          <div className="h-[19rem] w-full rounded-[0.875rem] bg-white shadow-card sm:w-full md:w-full lg:w-full xl:w-[49%]">
+            {" "}
             <div className="flex w-full justify-between p-4">
               <p className="text-lg font-medium">Ventas por Vendedores</p>
               <Select
@@ -182,7 +248,7 @@ const HomePage = () => {
             )}
             <MetricsCircle dataArray={sellerBestResponse} />
           </div>
-          <div className="w-full max-w-[59rem] rounded-[0.875rem] bg-white shadow-card">
+          <div className="w-full rounded-[0.875rem] bg-white shadow-card sm:w-full md:w-full lg:w-full xl:w-[50%]">
             <div className="flex w-full justify-between p-4">
               <p className="text-lg font-medium">Ventas: anual/productos</p>
               <Select
@@ -204,51 +270,6 @@ const HomePage = () => {
             </div>
             <MetricsAnual dataApi={metricsProductsResponse} />
           </div>
-        </div>
-        <div
-          onMouseMove={handleMouseMove}
-          className="rounded-[0.875rem] bg-white pt-4 shadow-card"
-        >
-          <p className="ml-4 text-lg font-medium">Vendedores Activos:</p>
-          <Map
-            mapId={"8c732c82e4ec29d9"}
-            defaultCenter={coordenadasUruguay}
-            defaultZoom={5}
-            gestureHandling={"greedy"}
-            className="relative h-[15rem]"
-          >
-            {usersActives &&
-              usersActives.map((empresa) => (
-                <Marker
-                  key={empresa.id}
-                  position={{
-                    lat: Number(empresa.latitude),
-                    lng: Number(empresa.longitude),
-                  }}
-                  icon={{
-                    url: IconVisitRealizada,
-                    scaledSize: { width: 40, height: 40 },
-                  }}
-                  onMouseOver={() => tootltip(empresa)}
-                  onMouseOut={() => setSelectedMarker(false)}
-                ></Marker>
-              ))}
-            {selectedMarker && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: cursorPosition.y - 680, // Ajusta el div 10px debajo del cursor
-                  left: cursorPosition.x - 300, // Ajusta el div 10px a la derecha del cursor
-                  background: "white",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.3)",
-                }}
-              >
-                <h4 className="font-semibold">{infoUser.userInfo.fullName}</h4>
-              </div>
-            )}
-          </Map>
         </div>
       </div>
     </div>

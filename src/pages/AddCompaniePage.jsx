@@ -775,6 +775,7 @@ const AddCompaniePage = () => {
                 defaultZoom={5}
                 gestureHandling={"greedy"}
                 center={selectManual === false ? null : selectManual}
+                disableDefaultUI={true}
               >
                 <Marker
                   ref={markerRef}
