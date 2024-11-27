@@ -57,6 +57,8 @@ const NewSalePage = () => {
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
   const [orderData, setOrderData] = useState(null);
   const [openScannerModal, setOpenScannerModal] = useState(false);
+  const [isSaveConfirmationModalOpen, setIsSaveConfirmationModalOpen] =
+    useState(false);
 
   const [quantity, setQuantity] = useState({});
   const [subtotal, setSubtotal] = useState(0);
@@ -157,7 +159,7 @@ const NewSalePage = () => {
 
   const onSubmit = (data) => {
     setOrderData(data);
-    setIsConfirmationModalOpen(true);
+    setIsSaveConfirmationModalOpen(true);
   };
 
   const closeModal = () => {
@@ -167,10 +169,12 @@ const NewSalePage = () => {
 
   const closeSaveConfirmationModal = () => {
     setIsConfirmationModalOpen(false);
+    setIsSaveConfirmationModalOpen(false);
   };
   const handleConfirmSaveClick = () => {
     setConfirmation(true);
     setIsConfirmationModalOpen(false);
+
     if (orderData) {
       handleOrderCreation({
         ...orderData,
@@ -361,9 +365,7 @@ const NewSalePage = () => {
                       message: "El nombre no puede exceder los 50 caracteres.",
                     },
                   })}
-                  msjError={
-                    errors.clientDirect ? errors.clientDirect.message : ""
-                  }
+                  msjError={errors.client ? errors.client.message : ""}
                 />
               ) : (
                 <div className="-mt-1 mb-4 w-full">
@@ -493,27 +495,44 @@ const NewSalePage = () => {
                 <Select
                   placeholder="Elegir lista de precios..."
                   className="rounded-lg border"
-                  {...register("priceList")}
+                  {...register("priceList", {
+                    required: "Este campo es obligatorio",
+                  })}
                   onSelectionChange={handleSelectionListChange}
                 >
                   {priceListResponse.map((option) => (
                     <SelectItem key={option.id}>{option.name}</SelectItem>
                   ))}
                 </Select>
+                {errors.priceList && (
+                  <p className="text-xs text-red_e">
+                    {errors.priceList.message}
+                  </p>
+                )}
               </div>
               <div className="mt-3 w-1/2">
-                <ProductsAutocomplete
-                  label={"Productos"}
-                  array={productsResponse || []}
-                  name={"products"}
-                  setValue={setValue}
-                  onChange={setSearchProducts}
-                  placeholder="Buscar productos"
-                  setAutocompleteResults={setAutocompleteResults}
-                  selectedItems={autocompleteResults}
-                  isDisabled={isPriceListSelected}
+                <Controller
+                  name="products"
+                  control={control}
+                  rules={{ required: "Este campo es requerido" }}
+                  render={({ field }) => (
+                    <ProductsAutocomplete
+                      {...field}
+                      label="Productos"
+                      array={productsResponse || []}
+                      name="products"
+                      setValue={setValue}
+                      onChange={setSearchProducts}
+                      placeholder="Buscar productos"
+                      setAutocompleteResults={setAutocompleteResults}
+                      selectedItems={autocompleteResults}
+                      isDisabled={isPriceListSelected}
+                    />
+                  )}
                 />
-                <p>{errors.products && errors.products.message}</p>
+                <p className="text-xs text-red_e">
+                  {errors.products && errors.products.message}
+                </p>
               </div>
             </div>
 
@@ -929,7 +948,7 @@ const NewSalePage = () => {
         >
           Los datos de la orden no se podrán modificar. ¿Continuar?
         </ReusableModal>
-        {/* <ReusableModal
+        <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
           title="Orden creada"
@@ -938,7 +957,7 @@ const NewSalePage = () => {
           onAccept={handleConfirmSaveClick}
         >
           La orden fue creada exitosamente.
-        </ReusableModal> */}
+        </ReusableModal>
         <ReusableModal
           isOpen={openScannerModal}
           onClose={closeModal}
