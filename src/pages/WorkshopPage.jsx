@@ -47,8 +47,6 @@ const WorkshopPage = () => {
     getAllOrders,
   } = useOrders();
   const {
-    handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm();
 
@@ -125,10 +123,6 @@ const WorkshopPage = () => {
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
-  const handleAccept = () => {
-    setOpenScannerModal(true);
-  };
-
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
@@ -136,11 +130,6 @@ const WorkshopPage = () => {
   const handleConfirmDelete = () => {
     deleteOrder(orderId);
     closeConfirmDeleteModal();
-  };
-
-  const onSubmit = (data) => {
-    setBarCode(data.barCode);
-    handleAddProduct(data);
   };
 
   const handleStateFilterChange = (value) => {
@@ -417,15 +406,13 @@ const WorkshopPage = () => {
         isOpen={openScannerModal}
         onClose={closeModal}
         title="Código de barras"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "scan"]}
         handleCancelClick={closeModal}
       >
         <p className="text-sm leading-[1rem] text-black_m">
           Escanea el código de barras del producto para localizar la orden de
           compra donde se encuentra, o ingresa el código de manera manual.
         </p>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form className="space-y-4">
           <div className="px-2">
             <BarcodeReader onBarcodeChange={setBarCode} />
           </div>
