@@ -28,7 +28,6 @@ const MetricsVentas = ({ apiData = [] }) => {
     <div className="w-full rounded-[0.875rem] bg-white p-3">
       <ResponsiveContainer width="100%" height={200}>
         <AreaChart
-          width={500}
           height={200}
           data={transformedData}
           syncId="anyId"

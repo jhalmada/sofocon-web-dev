@@ -134,7 +134,6 @@ const AddCategoryPage = () => {
               label={"Descripción"}
               placeholder={"Escribir..."}
               {...register("description", {
-                required: "Este campo es obligatorio",
                 maxLength: {
                   value: 50,
                   message: "Este campo no debe exceder los 50 caracteres",
