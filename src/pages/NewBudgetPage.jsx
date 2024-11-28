@@ -358,12 +358,12 @@ const NewBudgetPage = () => {
                   {...register("rut", {
                     required: "Este campo es obligatorio",
                     minLength: {
-                      value: 12,
-                      message: "Ingrese los 12 digitos de su RUT.",
+                      value: 2,
+                      message: "Mínimo de 2 caracteres.",
                     },
                     maxLength: {
                       value: 12,
-                      message: "Ingrese solo los 12 digitos de su RUT.",
+                      message: "No se puede exceder de 12 caracteres.",
                     },
                   })}
                   errorApi={errors.rut}

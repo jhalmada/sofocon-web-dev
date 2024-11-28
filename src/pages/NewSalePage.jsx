@@ -190,9 +190,11 @@ const NewSalePage = () => {
     if (selectedCompany) {
       setCompany(selectedCompany);
       setRutValue(selectedCompany.rut);
+      setValue("client", selectedCompany ? selectedCompany.name : "");
     } else {
       setCompany(null);
       setRutValue("");
+      setValue("");
     }
   };
   const handleSelectSeller = (selectedSeller) => {
@@ -394,6 +396,7 @@ const NewSalePage = () => {
                         onChange={setSearchCompanies}
                         placeholder="Buscar empresa"
                         onSelect={handleSelectCompany}
+                        setRut={setRutValue}
                         {...field}
                       />
                     )}
@@ -412,12 +415,12 @@ const NewSalePage = () => {
                 {...register("rut", {
                   required: "Este campo es obligatorio",
                   minLength: {
-                    value: 12,
-                    message: "Ingrese los 12 digitos de su RUT.",
+                    value: 2,
+                    message: "Mínimo de 2 caracteres.",
                   },
                   maxLength: {
                     value: 12,
-                    message: "Ingrese solo los 12 digitos de su RUT.",
+                    message: "No se puede exceder de 12 caracteres.",
                   },
                 })}
                 errorApi={errors.rut}
@@ -473,10 +476,11 @@ const NewSalePage = () => {
                       array={
                         transformData(userSellerResponse?.result || []) || []
                       }
-                      name={"user"}
+                      name={"user.name"}
                       setValue={setValue}
                       onChange={setSearchSellers}
                       onSelect={handleSelectSeller}
+                      setRUT={setRutValue}
                       placeholder="Buscar vendedores"
                       {...field}
                     />
@@ -713,7 +717,7 @@ const NewSalePage = () => {
                                     }}
                                     render={({ field }) => (
                                       <DatePicker
-                                        minValue={today(getLocalTimeZone())}
+                                        maxValue={today(getLocalTimeZone())}
                                         className={`${errors.productInOrder?.[index]?.itemsRemoval?.[indexRemoval]?.lastDate ? "border-red_e text-red_e" : ""} rounded-lg border`}
                                         label=""
                                         placeholder="Seleccione una fecha"
