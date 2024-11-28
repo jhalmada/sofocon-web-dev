@@ -18,7 +18,6 @@ const StorageRow = ({
   name,
   orderId,
   entryData,
-  retirementDate,
   seller,
   state,
   id,
@@ -56,9 +55,6 @@ const StorageRow = ({
         title={entryData}
       >
         {entryData}
-      </td>
-      <td className="py-6" onClick={handleRowClick}>
-        {retirementDate}
       </td>
 
       <td className="py-6" onClick={handleRowClick}>

@@ -277,7 +277,7 @@ const ClientsOrdersPage = () => {
                 </div>
               </div>
             ))}
-            {orderDetails?.productInOrder?.map((order, index) =>
+            {/* {orderDetails?.productInOrder?.map((order, index) =>
               order.isRecharge ? (
                 <>
                   <div className="bg-black_l p-4">
@@ -334,7 +334,7 @@ const ClientsOrdersPage = () => {
                   </div>
                 </>
               ) : null,
-            )}
+            )} */}
 
             <div className="flex space-x-2">
               <Input

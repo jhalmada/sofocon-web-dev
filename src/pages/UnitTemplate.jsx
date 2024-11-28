@@ -105,7 +105,6 @@ const UnitTemplate = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Taller
           </h1>
-          <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
         <div className="flex items-center">
           <div className="flex">
@@ -130,21 +129,26 @@ const UnitTemplate = () => {
 
         <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
           <div>
-            <div className="flex items-center gap-2">
-              <p className="ml-2 text-black_m">Período</p>
-              <Select
-                labelPlacement="outside"
-                placeholder="Selecciona un mes"
-                className="w-52 rounded-lg border"
-                onChange={(e) => handleChangeMonth(e.target.value)}
-                aria-label="Mes"
-              >
-                {months.map((unitMonth) => (
-                  <SelectItem key={unitMonth.value} value={unitMonth.value}>
-                    {unitMonth.label}
-                  </SelectItem>
-                ))}
-              </Select>
+            <div className="flex justify-between">
+              <div className="flex items-center gap-2">
+                <p className="ml-2 text-black_m">Período</p>
+                <Select
+                  labelPlacement="outside"
+                  placeholder="Selecciona un mes"
+                  className="w-52 rounded-lg border"
+                  onChange={(e) => handleChangeMonth(e.target.value)}
+                  aria-label="Mes"
+                >
+                  {months.map((unitMonth) => (
+                    <SelectItem key={unitMonth.value} value={unitMonth.value}>
+                      {unitMonth.label}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <SearchInput placeholder="Buscar..." onChange={setSearch} />
+              </div>
             </div>
             <table className="mt-2 w-full">
               <thead>

@@ -17,8 +17,10 @@ import { Checkbox, DatePicker } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
 import pageLostImg from "../assets/images/pageLost.svg";
 import { useState } from "react";
+import SearchInput from "../components/inputs/SearchInput";
 const CompetingPage = ({
   companiesResponse,
+  setSearchCompanies,
   setItemsPerPage,
   totalPage,
   total,
@@ -183,7 +185,10 @@ const CompetingPage = ({
 
   return (
     <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-      <div className="flex justify-center">
+      <div>
+        <div className="flex justify-end">
+          <SearchInput placeholder="Buscar...." onChange={setSearchCompanies} />
+        </div>
         {companiesResponse.length === 0 ? (
           <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
             <td colSpan="5" className="p-4 text-center">

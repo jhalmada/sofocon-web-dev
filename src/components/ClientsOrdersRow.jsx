@@ -23,6 +23,7 @@ const ClientsOrdersRow = ({
   seller,
   state,
   id,
+  retirementDate,
   deleteIconSrc,
   onDeleteClick,
 }) => {
@@ -54,6 +55,9 @@ const ClientsOrdersRow = ({
         title={date}
       >
         {date}
+      </td>
+      <td className="py-6" onClick={handleRowClick}>
+        {retirementDate}
       </td>
 
       <td className="py-6" onClick={handleRowClick}>

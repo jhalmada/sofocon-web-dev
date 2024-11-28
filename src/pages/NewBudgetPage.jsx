@@ -45,18 +45,13 @@ const NewBudgetPage = () => {
   const [discount, setDiscount] = useState([]);
   const [discount2, setDiscount2] = useState("");
   const [isDirectValue, setIsDirectValue] = useState(false);
+  const [company, setCompany] = useState(null);
+  const [seller, setSeller] = useState(null);
 
   const total = subtotal
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
     : 0;
 
-  const customMessages = {
-    "es-ES": {
-      calendar: {
-        shortDays: ["L", "M", "M", "J", "V", "S", "D"],
-      },
-    },
-  };
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -164,8 +159,10 @@ const NewBudgetPage = () => {
   };
   const handleSelectCompany = (selectedCompany) => {
     if (selectedCompany) {
-      setRutValue(selectedCompany);
+      setCompany(selectedCompany);
+      setRutValue(selectedCompany.rut);
     } else {
+      setCompany(null);
       setRutValue("");
     }
   };
@@ -183,6 +180,13 @@ const NewBudgetPage = () => {
 
     setValue(name, updatedSelectedItems);
     setAutocompleteResults(updatedSelectedItems);
+  };
+  const handleSelectSeller = (selectedSeller) => {
+    if (selectedSeller) {
+      setSeller(selectedSeller);
+    } else {
+      setSeller(null);
+    }
   };
   const handleWriteRut = (writedRut) => {
     if (writedRut) {
@@ -330,7 +334,7 @@ const NewBudgetPage = () => {
                       <CompleteSearchInput
                         label={"Empresa"}
                         array={companiesResponse}
-                        name={"client.name"}
+                        name={"client"}
                         setValue={setValue}
                         onChange={setSearchCompanies}
                         placeholder="Buscar empresa"
@@ -401,7 +405,7 @@ const NewBudgetPage = () => {
                 <span className="text-sm font-light leading-[1rem] text-black_b">
                   Fecha de presupuesto
                 </span>
-                <I18nProvider locale="es-ES" messages={customMessages}>
+                <I18nProvider locale="es-ES">
                   <Controller
                     name="dateV"
                     control={control}
@@ -435,9 +439,10 @@ const NewBudgetPage = () => {
                       array={
                         transformData(userSellerResponse?.result || []) || []
                       }
-                      name={"user.name"}
+                      name={"user"}
                       setValue={setValue}
                       onChange={setSearchSellers}
+                      onSelect={handleSelectSeller}
                       placeholder="Buscar vendedores"
                       {...field}
                     />

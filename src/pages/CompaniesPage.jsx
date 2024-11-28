@@ -323,18 +323,6 @@ const CompaniesPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Empresas
           </h1>
-          {activeTab === COMPANIE_TAB && (
-            <SearchInput
-              placeholder="Buscar..."
-              onChange={setSearchCompanies}
-            />
-          )}
-          {activeTab === COMPETING_TAB && (
-            <SearchInput
-              placeholder="Buscar...."
-              onChange={setSearchCompanies}
-            />
-          )}
         </div>
 
         <div className="flex items-center">
@@ -386,7 +374,15 @@ const CompaniesPage = () => {
         </div>
         {activeTab === COMPANIE_TAB && (
           <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-            <div className="flex justify-center">
+            <div>
+              <div className="flex justify-end">
+                {activeTab === COMPANIE_TAB && (
+                  <SearchInput
+                    placeholder="Buscar..."
+                    onChange={setSearchCompanies}
+                  />
+                )}
+              </div>
               {companiesResponse.length === 0 ? (
                 <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
                   <td colSpan="5" className="p-4 text-center">
@@ -499,6 +495,7 @@ const CompaniesPage = () => {
         {activeTab === COMPETING_TAB && (
           <CompetingPage
             companiesResponse={companiesResponse || []}
+            setSearch={setSearchCompanies}
             setItemsPerPage={setItemsPerPage}
             totalPage={totalPage}
             total={total}

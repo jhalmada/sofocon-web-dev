@@ -104,7 +104,7 @@ const RechargePage = () => {
         {
           status: newStatus,
           user: data.user,
-          sellDate: formattedDate ? formattedDate : null,
+          workShopDateDeparture: formattedDate ? formattedDate : null,
         },
         orderDetails.id,
         setModified,

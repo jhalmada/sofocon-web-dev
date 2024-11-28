@@ -8,6 +8,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
+import SearchInput from "../components/inputs/SearchInput";
 
 const AddCompanyRoutePage = ({
   setItemsPerPage,
@@ -102,54 +103,59 @@ const AddCompanyRoutePage = ({
   };
 
   return (
-    <div className="min-h-[calc(100vh-4.375rem)] overflow-auto rounded-tr-lg bg-white p-5">
-      <table className="mt-2 w-full">
-        <thead>
-          <tr>
-            <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-              Nombre
-            </th>
+    <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+      <div>
+        <div className="flex justify-end">
+          <SearchInput placeholder="Buscar..." onChange={setSearch} />
+        </div>
+        <table className="mt-2 w-full">
+          <thead>
+            <tr>
+              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                Nombre
+              </th>
 
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Dirección
-            </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Dirección
+              </th>
 
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Próx. visita
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              <div className="flex flex-col items-center gap-2">
-                <FilterSelect
-                  options={stateOptions}
-                  placeholder="Estado"
-                  onChange={handleStateFilterChange}
-                />
-              </div>
-            </th>
-            <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-              Notas
-            </th>
-            <th className="p-2 text-md font-semibold leading-[1.125rem]">
-              Acción
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {arrayCompanies.map((companie, index) => (
-            <RouteCompanieDetailsRow
-              key={index}
-              id={companie.id}
-              name={companie.name}
-              direction={companie.address}
-              nextVisits={formatDate(companie.nextVisit)}
-              state={companie.status}
-              notes={"Ver notas"}
-              deleteIconSrc={deleteIcon}
-              onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-            />
-          ))}
-        </tbody>
-      </table>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Próx. visita
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                <div className="flex flex-col items-center gap-2">
+                  <FilterSelect
+                    options={stateOptions}
+                    placeholder="Estado"
+                    onChange={handleStateFilterChange}
+                  />
+                </div>
+              </th>
+              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                Notas
+              </th>
+              <th className="p-2 text-md font-semibold leading-[1.125rem]">
+                Acción
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {arrayCompanies.map((companie, index) => (
+              <RouteCompanieDetailsRow
+                key={index}
+                id={companie.id}
+                name={companie.name}
+                direction={companie.address}
+                nextVisits={formatDate(companie.nextVisit)}
+                state={companie.status}
+                notes={"Ver notas"}
+                deleteIconSrc={deleteIcon}
+                onDeleteClick={() => openConfirmDeleteModal(companie.id)}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
       <div className="flex justify-center p-6">
         <Pagination
           pageIndex={setItemsPerPage}

@@ -8,6 +8,7 @@ const BudgetRow = ({
   date,
   seller,
   id,
+  retirementDate,
   downloadIconSrc,
   deleteIconSrc,
   onDownloadClick,
@@ -41,6 +42,9 @@ const BudgetRow = ({
         title={date}
       >
         {date}
+      </td>
+      <td className="py-6" onClick={handleRowClick}>
+        {retirementDate}
       </td>
 
       <td className="py-6" onClick={handleRowClick}>

@@ -24,6 +24,7 @@ const DirectOrdersRow = ({
   seller,
   state,
   id,
+  retirementDate,
   deleteIconSrc,
   onDeleteClick,
 }) => {
@@ -56,6 +57,9 @@ const DirectOrdersRow = ({
       >
         {date}
       </td>
+      <td className="py-6" onClick={handleRowClick}>
+        {retirementDate}
+      </td>
 
       <td className="py-6" onClick={handleRowClick}>
         {seller}
@@ -69,13 +73,13 @@ const DirectOrdersRow = ({
       </td>
       <td className="py-6">
         <div className="flex justify-center">
-        {state === "REQUEST" && (
-          <img
-            src={deleteIconSrc}
-            alt="Delete icon"
-            className="h-5 w-5 cursor-pointer"
-            onClick={onDeleteClick}
-          />
+          {state === "REQUEST" && (
+            <img
+              src={deleteIconSrc}
+              alt="Delete icon"
+              className="h-5 w-5 cursor-pointer"
+              onClick={onDeleteClick}
+            />
           )}
         </div>
       </td>

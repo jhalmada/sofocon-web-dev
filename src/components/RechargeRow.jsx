@@ -21,7 +21,6 @@ const RechargeRow = ({
   name,
   orderId,
   entryData,
-  retirementDate,
   seller,
   state,
   id,
@@ -58,10 +57,6 @@ const RechargeRow = ({
       >
         {entryData}
       </td>
-      <td className="py-6" onClick={handleRowClick}>
-        {retirementDate}
-      </td>
-
       <td className="py-6" onClick={handleRowClick}>
         {seller}
       </td>

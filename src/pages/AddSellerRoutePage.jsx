@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
+import SearchInput from "../components/inputs/SearchInput";
 
 const AddSellerRoutePage = ({
   arraySeller,
@@ -90,8 +91,12 @@ const AddSellerRoutePage = ({
     }
   };
   return (
-    <div>
-      <div className="min-h-[calc(100vh-4.375rem)] overflow-auto rounded-tr-lg bg-white p-5">
+    <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+      <div>
+        <div className="flex justify-end">
+          <SearchInput placeholder="Buscar..." onChange={setSearch} />
+        </div>
+
         <table className="mt-2 w-full">
           <thead>
             <tr>
@@ -128,17 +133,18 @@ const AddSellerRoutePage = ({
             ))}
           </tbody>
         </table>
-        <div className="flex justify-center p-6">
-          <Pagination
-            pageIndex={setItemsPerPage}
-            currentPage={page}
-            totalPages={totalPage}
-            onPageChange={setPage}
-            itemPerPage={itemsPerPage}
-            total={total}
-          />
-        </div>
       </div>
+      <div className="flex justify-center p-6">
+        <Pagination
+          pageIndex={setItemsPerPage}
+          currentPage={page}
+          totalPages={totalPage}
+          onPageChange={setPage}
+          itemPerPage={itemsPerPage}
+          total={total}
+        />
+      </div>
+
       <ReusableModal
         onSubmit={handleSubmit(onSubmit)}
         isOpen={isSellersModalOpen}
