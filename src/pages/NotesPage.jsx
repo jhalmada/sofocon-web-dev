@@ -25,8 +25,6 @@ const NOTES_TAB = "notes";
 const NotesPage = () => {
   const { changedNote } = usePutNotes();
   const { deleteNote } = useDeleteNotes();
-  const [dateSelected, setDateSelected] = useState(false);
-  const { id } = useParams();
   const { notesResponse, setModified, setClient, setSearch } = useNotes();
   const {
     register,
@@ -43,25 +41,11 @@ const NotesPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [dateSelected, setDateSelected] = useState(false);
   const [reminderSelected, setReminderSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
 
   const { id } = useParams();
-  const {
-    notesResponse,
-    setModified,
-    setClient,
-    setSearch,
-  } = useNotes();
-
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm();
 
   const openModal = (noteId) => {
     const noteToEdit = notesResponse.find((note) => note.id === noteId);
