@@ -15,8 +15,10 @@ import pageLostImg from "../assets/images/pageLostWorkshop.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
+import SearchInput from "../components/inputs/SearchInput";
 const StoragePage = ({
   ordersResponse,
+  setSearch,
   setEntryDate,
   setStatus,
   setItemsPerPage,
@@ -205,19 +207,24 @@ const StoragePage = ({
 
   return (
     <div className="flex flex-grow flex-col overflow-auto rounded-tr-lg bg-white p-5">
-      <div className="flex items-center gap-2">
-        <p className="ml-2 text-black_m">Período</p>
-        <Select
-          className="w-52 rounded-lg border"
-          placeholder="Selecciona un mes"
-          onChange={handleMonthChange}
-        >
-          {monthsOptions.map((option) => (
-            <SelectItem key={option} value={option}>
-              {option}
-            </SelectItem>
-          ))}
-        </Select>
+      <div className="flex justify-between">
+        <div className="flex items-center gap-2">
+          <p className="ml-2 text-black_m">Período</p>
+          <Select
+            className="w-52 rounded-lg border"
+            placeholder="Selecciona un mes"
+            onChange={handleMonthChange}
+          >
+            {monthsOptions.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
+        <div>
+          <SearchInput placeholder="Buscar..." onChange={setSearch} />
+        </div>
       </div>
       {ordersResponse.length === 0 ? (
         <>
@@ -247,10 +254,6 @@ const StoragePage = ({
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                       Fecha de ingreso
                     </th>
-
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Fecha de retiro
-                    </th>
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                       Vendedor
                     </th>
@@ -277,11 +280,7 @@ const StoragePage = ({
                       name={order?.client?.name || "Sin nombre"}
                       orderId={order.orderId}
                       entryData={formatDate(order.workShopDateEntry)}
-                      retirementDate={
-                        "Aún sin retirar" ||
-                        formatDate(order.workShopDateDeparture)
-                      }
-                      seller={order?.user?.userInfo?.fullName}
+                      seller={order?.user?.userInfo?.fullName || "Sin asignar"}
                       state={order.status}
                       deleteIconSrc={deleteIcon}
                       onDeleteClick={() => openConfirmDeleteModal(order.id)}

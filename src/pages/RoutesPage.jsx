@@ -147,7 +147,6 @@ const RoutesPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Rutas
           </h1>
-          <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
         <div className="flex items-center">
           <div className="flex">
@@ -170,7 +169,10 @@ const RoutesPage = () => {
         </div>
         {activeTab === SELLER_TAB && (
           <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-            <div className="flex justify-center">
+            <div>
+              <div className="flex justify-end">
+                <SearchInput placeholder="Buscar..." onChange={setSearch} />
+              </div>
               {sellerRoutesResponse.length === 0 ? (
                 <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
                   <td colSpan="5" className="p-4 text-center">

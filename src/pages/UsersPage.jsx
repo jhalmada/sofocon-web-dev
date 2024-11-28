@@ -213,15 +213,6 @@ const UsersPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Personal
           </h1>
-          {activeTab === USER_TAB && (
-            <SearchInput placeholder="Buscar..." onChange={setSearch} />
-          )}
-          {activeTab === SELLERS_TAB && (
-            <SearchInput placeholder="Buscar..." onChange={setSearchSellers} />
-          )}
-          {activeTab === ROLES_TAB && (
-            <SearchInput placeholder="Buscar..." onChange={setSearchSellers} />
-          )}
         </div>
         <div className="flex items-center">
           <div className="flex">
@@ -280,9 +271,14 @@ const UsersPage = () => {
         </div>
         {activeTab === USER_TAB && (
           <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-            <div className="flex justify-center">
+            <div>
+              <div className="flex justify-end">
+                {activeTab === USER_TAB && (
+                  <SearchInput placeholder="Buscar..." onChange={setSearch} />
+                )}
+              </div>
               {usersResponse.length === 0 ? (
-                <tr>
+                <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
                   <td colSpan="5" className="p-4 text-center">
                     <p className="text-md font-semibold leading-[1.3rem] text-black_l">
                       Tu búsqueda no arrojó resultados. !Prueba algo distinto!.{" "}
@@ -361,6 +357,7 @@ const UsersPage = () => {
         {activeTab === SELLERS_TAB && (
           <SellersPage
             openConfirmDeleteModal={openConfirmDeleteModal}
+            setSearch={setSearchSellers}
             userSellerResponse={userSellerResponse}
             setItemsPerPage={setItemsPerPageSellers}
             totalPage={totalPageSellers}

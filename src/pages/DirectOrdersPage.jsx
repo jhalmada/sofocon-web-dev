@@ -7,9 +7,11 @@ import ReusableModal from "../components/modals/ReusableModal";
 import DirectOrdersRow from "../components/DirectOrdersRow";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
 import pageLostImg from "../assets/images/pageLostOrders.svg";
+import SearchInput from "../components/inputs/SearchInput";
 
 const DirectOrdersPage = ({
   ordersResponse,
+  setSearch,
   setItemsPerPage,
   totalPage,
   total,
@@ -106,19 +108,24 @@ const DirectOrdersPage = ({
 
   return (
     <div className="flex flex-grow flex-col overflow-auto rounded-tr-lg bg-white p-5">
-      <div className="flex items-center gap-2">
-        <p className="ml-2 text-black_m">Período</p>
-        <Select
-          className="w-52 rounded-lg border"
-          placeholder="Selecciona un mes"
-          onChange={handleMonthChange}
-        >
-          {monthsOptions.map((option) => (
-            <SelectItem key={option} value={option}>
-              {option}
-            </SelectItem>
-          ))}
-        </Select>
+      <div className="flex justify-between">
+        <div className="flex items-center gap-2">
+          <p className="ml-2 text-black_m">Período</p>
+          <Select
+            className="w-52 rounded-lg border"
+            placeholder="Selecciona un mes"
+            onChange={handleMonthChange}
+          >
+            {monthsOptions.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
+        <div>
+          <SearchInput placeholder="Buscar..." onChange={setSearch} />
+        </div>
       </div>
       {ordersResponse.length === 0 ? (
         <>
@@ -146,7 +153,10 @@ const DirectOrdersPage = ({
                       ID de orden
                     </th>
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Fecha
+                      Fecha de venta
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Egreso del taller
                     </th>
 
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
@@ -175,10 +185,10 @@ const DirectOrdersPage = ({
                           ? formatDate(order.sellDate)
                           : "Sin fecha"
                       }
+                      retirementDate={formatDate(order.workShopDateDeparture)}
                       seller={order?.user?.userInfo?.fullName}
                       state={order.status}
                       deleteIconSrc={deleteIcon}
-                      // onDeleteClick={() => openConfirmDeleteModal(order.id)}
                     />
                   ))}
                 </tbody>

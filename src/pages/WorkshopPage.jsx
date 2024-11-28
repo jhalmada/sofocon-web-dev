@@ -42,6 +42,7 @@ const WorkshopPage = () => {
     page,
     itemsPerPage,
     setStatus,
+    setSearch,
     setEntryDate,
     setBarCode,
     getAllOrders,
@@ -216,7 +217,6 @@ const WorkshopPage = () => {
               Taller
             </h1>
           </div>
-          <SearchInput placeholder="Buscar..." />
         </div>
 
         <div className="flex items-center">
@@ -269,19 +269,24 @@ const WorkshopPage = () => {
         </div>
         {activeTab === RECHARGE_TAB && (
           <div className="flex h-full flex-grow flex-col overflow-auto rounded-tr-lg bg-white p-5">
-            <div className="flex items-center gap-2">
-              <p className="ml-2 text-black_m">Período</p>
-              <Select
-                className="w-52 rounded-lg border"
-                placeholder="Selecciona un mes"
-                onChange={handleMonthChange}
-              >
-                {monthsOptions.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </Select>
+            <div className="flex justify-between">
+              <div className="flex items-center gap-2">
+                <p className="ml-2 text-black_m">Período</p>
+                <Select
+                  className="w-52 rounded-lg border"
+                  placeholder="Selecciona un mes"
+                  onChange={handleMonthChange}
+                >
+                  {monthsOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <SearchInput placeholder="Buscar..." onChange={setSearch} />
+              </div>
             </div>
             {ordersResponse.length === 0 ? (
               <>
@@ -318,10 +323,6 @@ const WorkshopPage = () => {
                           </th>
 
                           <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            Fecha de retiro
-                          </th>
-
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                             Vendedor
                           </th>
                           <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
@@ -350,11 +351,9 @@ const WorkshopPage = () => {
                               formatDate(order.workShopDateEntry) ||
                               "Aún sin preparar"
                             }
-                            retirementDate={
-                              "Aún sin retirar" ||
-                              formatDate(order.workShopDateDeparture)
+                            seller={
+                              order?.user?.userInfo?.fullName || "Sin asignar"
                             }
-                            seller={order?.user?.userInfo?.fullName}
                             state={order.status}
                             deleteIconSrc={deleteIcon}
                             onDeleteClick={() =>
@@ -390,6 +389,7 @@ const WorkshopPage = () => {
         {activeTab === STORAGE_TAB && (
           <StoragePage
             ordersResponse={ordersResponse || []}
+            setSearch={setSearch}
             setEntryDate={setEntryDate}
             setStatus={setStatus}
             pageIndex={setItemsPerPage}

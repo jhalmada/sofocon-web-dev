@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import SellerRow from "../components/SellerRow";
 import Pagination from "../components/Pagination";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import useUsersSellers from "../hooks/users/useUsersSellers";
 import { useForm } from "react-hook-form";
 import { Select, SelectItem } from "@nextui-org/select";
 import ReusableModal from "../components/modals/ReusableModal";
@@ -11,12 +10,13 @@ import useRoles from "../hooks/roles/use.roles";
 import Input from "../components/inputs/Input";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
-import FilterSelect from "../components/filters/FilterSelect";
 import usePutusers from "../hooks/users/usePutUsers";
 import notFoundImg from "../assets/images/notFound.svg";
+import SearchInput from "../components/inputs/SearchInput";
 
 const SellersPage = ({
   openConfirmDeleteModal,
+  setSearchSellers,
   userSellerResponse,
   setItemsPerPage,
   totalPage,
@@ -136,7 +136,10 @@ const SellersPage = ({
   };
   return (
     <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-      <div className="flex justify-center">
+      <div>
+        <div className="flex w-full justify-end">
+          <SearchInput placeholder="Buscar..." onChange={setSearchSellers} />
+        </div>
         {userSellerResponse.length === 0 ? (
           <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
             <td colSpan="5" className="p-4 text-center">

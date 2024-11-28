@@ -39,7 +39,7 @@ const StatusPanelPage = () => {
       REQUEST: "Solicitado",
       PREPARATION: "En preparación",
       READY_PICKUP: "Para retirar",
-      REGRESS: "Egreso",
+      EGRESS: "Egreso",
       DELIVERED: "Entregado",
     };
     return statusTranslations[status] || status;
@@ -90,7 +90,7 @@ const StatusPanelPage = () => {
           <p>Solicitado ({countOrdersByStatus("REQUEST")})</p>
           <p>Preparación ({countOrdersByStatus("PREPARATION")})</p>
           <p>Para retirar ({countOrdersByStatus("READY_PICKUP")})</p>
-          <p>Egreso ({countOrdersByStatus("REGRESS")})</p>
+          <p>Egreso ({countOrdersByStatus("EGRESS")})</p>
           <p>Entregado ({countOrdersByStatus("DELIVERED")})</p>
         </div>
         <div className="grid grid-cols-5">

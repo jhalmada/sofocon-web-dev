@@ -171,21 +171,16 @@ const ProductsPage = () => {
             </h2>
           </div>
           {activeTab === INVENTORY_TAB && (
-            <div className="mb-12 flex flex-col items-end justify-start">
-              <SearchInput onChange={setSearch} placeholder="Buscar..." />
+            <div className="flex flex-col items-end justify-start">
               <div className="flex gap-[0.625rem] p-2">
-                <Link to="agregar-categoria">
+                <Link to="nueva-categoria">
                   <Button text="Nueva Categoria" icon={plusIcon} />
                 </Link>
               </div>
             </div>
           )}
           {activeTab === PRICES_TAB && (
-            <div className="mb-12 flex flex-col items-end justify-start">
-              <SearchInput
-                placeholder="Buscar..."
-                onChange={setSearchPriceList}
-              />
+            <div className="flex flex-col items-end justify-start">
               <div className="flex gap-[0.625rem] p-2">
                 <Link to="nueva-lista">
                   <Button text="Nueva Lista" icon={plusIcon} />
@@ -196,6 +191,17 @@ const ProductsPage = () => {
         </div>
 
         <div className="flex min-h-[70vh] flex-col items-center justify-center rounded-tr-lg bg-white px-7 pb-3 pt-7 shadow-t">
+          <div className="flex w-full justify-end">
+            {activeTab === INVENTORY_TAB && (
+              <SearchInput placeholder="Buscar..." onChange={setSearch} />
+            )}
+            {activeTab === PRICES_TAB && (
+              <SearchInput
+                placeholder="Buscar..."
+                onChange={setSearchPriceList}
+              />
+            )}
+          </div>
           {activeTab === INVENTORY_TAB && (
             <>
               <section className="mb-4 flex min-h-[60vh] flex-wrap items-center justify-center gap-8 p-[0.625rem]">

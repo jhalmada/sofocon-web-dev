@@ -10,6 +10,7 @@ import useRoles from "../../hooks/roles/use.roles";
 import ReusableModal from "../modals/ReusableModal";
 import Input from "../inputs/Input";
 import notFoundImg from "../../assets/images/notFound.svg";
+import SearchInput from "../inputs/SearchInput";
 
 const translatePermission = (permission) => {
   switch (permission) {
@@ -58,9 +59,7 @@ const TableRole = () => {
   const [modalButtons, setModalButtons] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const startIndex = currentPage * rolePage;
-  const paginatedRoles = RolesResponse
-    ? RolesResponse
-    : [];
+  const paginatedRoles = RolesResponse ? RolesResponse : [];
 
   const openModal = (id) => {
     const roleEdit = RolesResponse.find((role) => role.id === id);

@@ -201,12 +201,6 @@ const RouteMapDetailsPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             {datos?.name}
           </h1>
-          {activeTab === SELLERS_TAB && (
-            <SearchInput placeholder="Buscar..." onChange={setSearch} />
-          )}
-          {activeTab === COMPANIES_TAB && (
-            <SearchInput placeholder="Buscar..." onChange={setCompanySearch} />
-          )}
         </div>
         <div className="flex items-center">
           <div className="flex">
