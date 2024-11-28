@@ -67,7 +67,7 @@ const NextAutoComplete = ({
           ))}
         </div>
       )}
-      <label className="mt-1 block font-roboto text-sm">{label}</label>
+      <label className="mt-3 block font-roboto text-sm">{label}</label>
       <Autocomplete
         isDisabled={isDisabled}
         disabledKeys={selectedItems.map((item) => item.id)}

@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
@@ -47,6 +47,7 @@ const PlaceAutocomplete = ({ onPlaceSelect }) => {
   const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
   const inputRef = useRef(null);
   const places = useMapsLibrary("places");
+  const [name, setName] = useState("");
 
   useEffect(() => {
     if (!places || !inputRef.current) return;
@@ -66,8 +67,13 @@ const PlaceAutocomplete = ({ onPlaceSelect }) => {
     });
   }, [onPlaceSelect, placeAutocomplete]);
   return (
-    <div className="autocomplete-container">
-      <Input ref={inputRef} />
+    <div className="autocomplete-container mb-4">
+      <Input
+        ref={inputRef}
+        placeholder="Ingrese una ubicacion para comenzar"
+        msjError={name.length === 0 ? "Este campo es requerido" : ""}
+        onChange={(e) => setName(e.target.value)}
+      />
     </div>
   );
 };
@@ -289,7 +295,7 @@ const AddCompaniePage = () => {
           </div>
         </Link>
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-          Empresas
+          Empresa
         </h1>
         {/*navbar */}
         <div className="flex items-center justify-between">
@@ -440,12 +446,12 @@ const AddCompaniePage = () => {
               {...register("phone", {
                 required: "Este campo es requerido",
                 minLength: {
-                  value: 15,
-                  message: "Ingrese los 15 digitos de su numero.",
+                  value: 8,
+                  message: "Debe ingresar minimo 8 digitos.",
                 },
                 maxLength: {
                   value: 15,
-                  message: "Ingrese solo los 15 digitos de su numero.",
+                  message: "Solo se permiten 15 digitos.",
                 },
               })}
               errorApi={errors.phone}
@@ -704,25 +710,22 @@ const AddCompaniePage = () => {
                       control={control2}
                       render={({ field }) => (
                         <DatePicker
+                          isDisabled={!dateSelected}
                           minValue={today(getLocalTimeZone())}
                           className={`${errors2.dateV ? "text-red_e" : ""} ${errors2.dateV ? "border-red_e" : ""} rounded-lg border`}
                           {...field}
                           label={""}
                           placeholder="Seleccione una fecha"
                           granularity="day"
-                          errorMessage={(value) => {
-                            if (value.isInvalid) {
-                              setErrorDataPicker(true);
-                              return "";
-                            } else {
-                              setErrorDataPicker(false);
-                              return "";
-                            }
-                          }}
+                          errorMessage={
+                            dateSelected
+                              ? setErrorDataPicker(true)
+                              : setErrorDataPicker(false)
+                          }
                         />
                       )}
                       rules={{
-                        required: dateSelected && "La fecha es obligatoria",
+                        required: dateSelected ? "La fecha es obligatoria" : "",
                       }}
                     />
                     <p className="font-roboto text-xs text-red_e">
