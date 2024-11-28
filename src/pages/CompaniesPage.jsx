@@ -650,7 +650,7 @@ const CompaniesPage = () => {
               errorApi={errors.phone}
               msjError={errors.phone ? errors.phone.message : ""}
             />
-            <div className="flex gap-[.63rem]">
+            <div className="mt-5 flex gap-[.63rem]">
               <div className="w-full">
                 <Checkbox
                   defaultSelected={checkSelected === "RUT"}

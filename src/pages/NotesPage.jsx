@@ -44,6 +44,7 @@ const NotesPage = () => {
     setSearch,
   } = useNotes();
 
+
   const {
     register,
     handleSubmit,
