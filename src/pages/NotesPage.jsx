@@ -23,28 +23,9 @@ import {
 
 const NOTES_TAB = "notes";
 const NotesPage = () => {
-  const [dateSelected, setDateSelected] = useState(false);
-  const { changedNote} = usePutNotes();
-  const [noteId, setNoteId] = useState(null);
-  const { deleteNote} = useDeleteNotes();
-  const [activeTab, setActiveTab] = useState(NOTES_TAB);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
-  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [reminderSelected, setReminderSelected] = useState(false);
-  const [errorDataPicker, setErrorDataPicker] = useState(false);
-
-  const { id } = useParams();
-  const {
-    notesResponse,
-    setModified,
-    setClient,
-    setSearch,
-  } = useNotes();
-
-
+  const { changedNote } = usePutNotes();
+  const { deleteNote } = useDeleteNotes();
+  const { notesResponse, setModified, setClient, setSearch } = useNotes();
   const {
     register,
     handleSubmit,
@@ -52,6 +33,19 @@ const NotesPage = () => {
     control,
     formState: { errors },
   } = useForm();
+
+  const [noteId, setNoteId] = useState(null);
+  const [activeTab, setActiveTab] = useState(NOTES_TAB);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
+  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
+    useState(false);
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [dateSelected, setDateSelected] = useState(false);
+  const [reminderSelected, setReminderSelected] = useState(false);
+  const [errorDataPicker, setErrorDataPicker] = useState(false);
+
+  const { id } = useParams();
 
   const openModal = (noteId) => {
     const noteToEdit = notesResponse.find((note) => note.id === noteId);
@@ -158,7 +152,7 @@ const NotesPage = () => {
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Empresas
+            Nombre de la empresa
           </h1>
           <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>

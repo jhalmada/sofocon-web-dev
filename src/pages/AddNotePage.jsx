@@ -33,21 +33,12 @@ const AddNotesPage = () => {
   }, [id]);
 
   const navigate = useNavigate();
-  const {
-    notesResponse,
-    setItemsPerPage,
-    totalPage,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-  } = useNotes();
+
   const { postAddNotes, loading } = useAddNotes();
 
   const {
     register,
     handleSubmit,
-    setValue,
     control,
     formState: { errors },
   } = useForm();
