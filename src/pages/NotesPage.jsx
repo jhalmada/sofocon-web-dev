@@ -46,6 +46,23 @@ const NotesPage = () => {
   const [reminderSelected, setReminderSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
 
+  const { id } = useParams();
+  const {
+    notesResponse,
+    setModified,
+    setClient,
+    setSearch,
+  } = useNotes();
+
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm();
+
   const openModal = (noteId) => {
     const noteToEdit = notesResponse.find((note) => note.id === noteId);
     if (noteToEdit) {
