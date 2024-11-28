@@ -1,5 +1,12 @@
-import { p } from "framer-motion/client";
-import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
+import { p, s } from "framer-motion/client";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import TrophyIcon from "../../assets/icons/Trophy.png";
 
 const data = [
@@ -24,10 +31,24 @@ const MetricsCircle = ({ dataArray = [], width = 800 }) => {
   const sortedDataWithPercentages = [...dataWithPercentages].sort(
     (a, b) => b.value - a.value,
   );
+
+  const calColor = (index) => {
+    switch (index) {
+      case 0:
+        return "#4071D1";
+      case 1:
+        return "#E03030";
+      case 2:
+        return "#F09393";
+      case 3:
+        return "#F7CCCC";
+      default:
+        return "#fff";
+    }
+  };
   return (
     <div className="relative">
       <PieChart width={width} height={200}>
-        <Legend layout="vertical" verticalAlign="middle" align="center" />
         <Tooltip />
 
         <Pie
@@ -51,13 +72,15 @@ const MetricsCircle = ({ dataArray = [], width = 800 }) => {
       </PieChart>
       <div className="absolute right-16 top-[26%]">
         {sortedDataWithPercentages.map((data, index) => (
-          <div key={index} className="flex items-center justify-center gap-1">
+          <div key={index} className="flex items-center gap-1 text-right">
             <img
               alt={TrophyIcon}
               src={TrophyIcon}
               className={`${index === 0 ? "visible" : "invisible"} h-4 w-4`}
             />
-            <p>{data.percent} %</p>
+            <p className={`text-[${calColor(index)}]`}>
+              {data.name} - {data.percent} %
+            </p>
           </div>
         ))}
       </div>

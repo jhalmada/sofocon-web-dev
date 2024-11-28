@@ -5,10 +5,10 @@ const usePatchRoles = () => {
   const [isChanged, setIsChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const changedUser = useCallback(async (roleData, userId, setRolModified) => {
+  const changedUser = useCallback(async (roleData, roleId, setRolModified) => {
     try {
       setIsLoading(true);
-      await RolesService.putRoleApi(roleData, userId);
+      await RolesService.putRoleApi(roleData, roleId);
       setIsChanged(true);
       setRolModified((prev) => !prev);
     } catch (error) {
