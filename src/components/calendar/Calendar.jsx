@@ -15,8 +15,6 @@ const Calendar = ({
   const dateValue = today(getLocalTimeZone());
   const dateProps = forward ? { minValue: dateValue } : { maxValue: dateValue };
 
-  const startDate = today(getLocalTimeZone());
-
   return (
     <div className="flex flex-col">
       <label className="text-sm font-light text-black">{label}</label>
@@ -33,7 +31,6 @@ const Calendar = ({
                 {...field}
                 label={""}
                 placeholder="Seleccione una fecha"
-                defaultValue={startDate}
                 errorMessage={(value) => {
                   if (value.isInvalid) {
                     setErrorDataPicker(true);
