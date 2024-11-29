@@ -78,6 +78,7 @@ const CompaniesPage = () => {
     handleSubmit,
     setValue,
     control,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -167,6 +168,7 @@ const CompaniesPage = () => {
 
       if (newCompany) {
         setSaveConfirmationModalOpen(true);
+        reset();
       } else {
         setIsModalOpen(true);
       }
@@ -543,6 +545,8 @@ const CompaniesPage = () => {
             </Checkbox>
             <Input
               disabled={!competence}
+              bg={!competence ? "bg-gray" : "bg-white"}
+              border={!competence ? "none" : "border"}
               label={"Empresas actual"}
               placeholder={"Escribe el nombre..."}
               {...register("competenceName", {

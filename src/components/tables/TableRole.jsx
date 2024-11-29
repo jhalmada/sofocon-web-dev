@@ -63,6 +63,7 @@ const TableRole = () => {
 
   const openModal = (id) => {
     const roleEdit = RolesResponse.find((role) => role.id === id);
+    console.log(roleEdit);
     if (roleEdit) {
       setValue("name", roleEdit.name);
     }
@@ -97,7 +98,7 @@ const TableRole = () => {
   const onSubmit = (data) => {
     const roleData = {
       name: data.name,
-      permissions: [...data.permissions, "USER_ADMIN"],
+      permissions: [...data.permissions.split(","), "USER_ADMIN"],
     };
     changedUser(roleData, roleId, setRolModified);
     openSaveConfirmationModal();
@@ -124,12 +125,9 @@ const TableRole = () => {
     closeModal();
   };
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-
-  const pageIndexChange = (e) => {
-    setRolePage(e);
+  const onChangesPermissions = (e) => {
+    console.log(e.target.value);
+    setValue("permissions", e.target.value);
   };
 
   return (
@@ -221,7 +219,7 @@ const TableRole = () => {
             {...register("permissions", {
               required: "Debes asignar al menos un permiso",
             })}
-            onSelectionChange={(values) => setValue("permissions", values)}
+            onChange={onChangesPermissions}
           >
             {permisos.map((permiso) => (
               <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
