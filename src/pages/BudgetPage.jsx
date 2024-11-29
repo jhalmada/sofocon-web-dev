@@ -132,10 +132,7 @@ const BudgetPage = ({
                       Contacto
                     </th>
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Fecha de venta
-                    </th>
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Egreso del taller
+                      Fecha
                     </th>
 
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
@@ -159,7 +156,6 @@ const BudgetPage = ({
                           ? formatDate(order.sellDate)
                           : "Sin fecha"
                       }
-                      retirementDate={formatDate(order.workShopDateDeparture)}
                       seller={order?.user?.userInfo?.fullName}
                       downloadIconSrc={downloadIcon}
                       deleteIconSrc={deleteIcon}

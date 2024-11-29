@@ -71,7 +71,6 @@ const NewSalePage = () => {
     : 0;
 
   //validacion en tiempo real react-hook-form
-
   const checkQuantity = watch("checkQuantity");
   const deliveredValue = watch("delivered", false);
   const isDirectValue = watch("isDirect", false);
@@ -159,7 +158,7 @@ const NewSalePage = () => {
 
   const onSubmit = (data) => {
     setOrderData(data);
-    setIsSaveConfirmationModalOpen(true);
+    setIsConfirmationModalOpen(true);
   };
 
   const closeModal = () => {
@@ -546,7 +545,7 @@ const NewSalePage = () => {
                 <div>
                   {autocompleteResults.map((item, index) => (
                     <div className="flex w-full space-x-2" key={item.id}>
-                      <div className="w-1/2">
+                      <div className="h-10 w-1/2">
                         <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br">
                           {item.name}
                           <img
@@ -708,32 +707,33 @@ const NewSalePage = () => {
                                 <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                                   Fecha última carga
                                 </span>
-
-                                <Controller
-                                  name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
-                                  control={control}
-                                  rules={{
-                                    required: "La fecha es obligatoria",
-                                  }}
-                                  render={({ field }) => (
-                                    <DatePicker
-                                      maxValue={today(getLocalTimeZone())}
-                                      className={`${errors.productInOrder?.[index]?.itemsRemoval?.[indexRemoval]?.lastDate ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                                      label=""
-                                      placeholder="Seleccione una fecha"
-                                      granularity="day"
-                                      {...field}
-                                    />
-                                  )}
-                                />
-                                <p className="font-roboto text-xs text-red_e">
-                                  {errors.productInOrder?.[index]
-                                    ?.itemsRemoval?.[indexRemoval]?.lastDate
-                                    ? errors.productInOrder?.[index]
-                                        ?.itemsRemoval?.[indexRemoval]?.lastDate
-                                        .message
-                                    : ""}
-                                </p>
+                                <I18nProvider locale="es-ES">
+                                  <Controller
+                                    name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
+                                    control={control}
+                                    rules={{
+                                      required: "La fecha es obligatoria",
+                                    }}
+                                    render={({ field }) => (
+                                      <DatePicker
+                                        maxValue={today(getLocalTimeZone())}
+                                        className={`${errors.productInOrder?.[index]?.itemsRemoval?.[indexRemoval]?.lastDate ? "border-red_e text-red_e" : ""} rounded-lg border`}
+                                        label=""
+                                        placeholder="Seleccione una fecha"
+                                        granularity="day"
+                                        {...field}
+                                      />
+                                    )}
+                                  />
+                                  <p className="font-roboto text-xs text-red_e">
+                                    {errors.productInOrder?.[index]
+                                      ?.itemsRemoval?.[indexRemoval]?.lastDate
+                                      ? errors.productInOrder?.[index]
+                                          ?.itemsRemoval?.[indexRemoval]
+                                          ?.lastDate.message
+                                      : ""}
+                                  </p>
+                                </I18nProvider>
                               </div>
                               <Input
                                 label={"N° UNIT actual"}
