@@ -708,33 +708,32 @@ const NewSalePage = () => {
                                 <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                                   Fecha última carga
                                 </span>
-                                <I18nProvider locale="es-ES">
-                                  <Controller
-                                    name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
-                                    control={control}
-                                    rules={{
-                                      required: "La fecha es obligatoria",
-                                    }}
-                                    render={({ field }) => (
-                                      <DatePicker
-                                        maxValue={today(getLocalTimeZone())}
-                                        className={`${errors.productInOrder?.[index]?.itemsRemoval?.[indexRemoval]?.lastDate ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                                        label=""
-                                        placeholder="Seleccione una fecha"
-                                        granularity="day"
-                                        {...field}
-                                      />
-                                    )}
-                                  />
-                                  <p className="font-roboto text-xs text-red_e">
-                                    {errors.productInOrder?.[index]
-                                      ?.itemsRemoval?.[indexRemoval]?.lastDate
-                                      ? errors.productInOrder?.[index]
-                                          ?.itemsRemoval?.[indexRemoval]
-                                          ?.lastDate.message
-                                      : ""}
-                                  </p>
-                                </I18nProvider>
+
+                                <Controller
+                                  name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
+                                  control={control}
+                                  rules={{
+                                    required: "La fecha es obligatoria",
+                                  }}
+                                  render={({ field }) => (
+                                    <DatePicker
+                                      maxValue={today(getLocalTimeZone())}
+                                      className={`${errors.productInOrder?.[index]?.itemsRemoval?.[indexRemoval]?.lastDate ? "border-red_e text-red_e" : ""} rounded-lg border`}
+                                      label=""
+                                      placeholder="Seleccione una fecha"
+                                      granularity="day"
+                                      {...field}
+                                    />
+                                  )}
+                                />
+                                <p className="font-roboto text-xs text-red_e">
+                                  {errors.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.lastDate
+                                    ? errors.productInOrder?.[index]
+                                        ?.itemsRemoval?.[indexRemoval]?.lastDate
+                                        .message
+                                    : ""}
+                                </p>
                               </div>
                               <Input
                                 label={"N° UNIT actual"}
