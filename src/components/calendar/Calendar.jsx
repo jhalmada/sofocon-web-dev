@@ -1,8 +1,7 @@
-import React from "react";
 import { Controller } from "react-hook-form";
-import { I18nProvider } from "react-i18next";
-import DatePicker from "some-datepicker-library";
-import { today, getLocalTimeZone } from "utils";
+import { I18nProvider } from "@react-aria/i18n";
+import DatePicker from "@nextui-org/date-picker";
+import { today, getLocalTimeZone } from "@internationalized/date";
 
 const Calendar = ({
   control,
