@@ -8,11 +8,9 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useEffect, useRef, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
-import { Controller, set, useForm } from "react-hook-form";
+import { Checkbox } from "@nextui-org/react";
+import { useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import { I18nProvider } from "@react-aria/i18n";
 import Cards from "../components/cards/Cards";
 import {
   AdvancedMarker,
@@ -22,6 +20,7 @@ import {
   useMap,
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
+import Calendar from "../components/calendar/Calendar";
 
 const coordenadasUruguay = {
   lat: -34.901,
@@ -446,7 +445,6 @@ const AddCompaniePage = () => {
               label={"Contacto"}
               placeholder={"Escribe el teléfono del contacto..."}
               {...register("phone", {
-                required: "Este campo es requerido",
                 minLength: {
                   value: 8,
                   message: "Debe ingresar minimo 8 digitos.",
@@ -575,29 +573,13 @@ const AddCompaniePage = () => {
               >
                 Próxima visita
               </label>
-              <Controller
-                name={"nextVisit"}
+              <Calendar
                 control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    minValue={today(getLocalTimeZone())}
-                    className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
-                    {...field}
-                    label={""}
-                    placeholder="Seleccione una fecha"
-                    granularity="day"
-                  />
-                )}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "Este campo es requerido",
-                  },
-                }}
+                errors={errors}
+                setErrorDataPicker={setErrorDataPicker}
+                errorDataPicker={errorDataPicker}
+                name="nextVisit"
               />
-              <p className="font-roboto text-xs text-red_e">
-                {errors.nextVisit ? errors.nextVisit.message : ""}
-              </p>
             </div>
             <div className="mt-4 flex flex-col justify-between">
               <div className="max-w-[10rem] space-y-2">
@@ -706,34 +688,13 @@ const AddCompaniePage = () => {
                   </span>
                 </Checkbox>
                 <div className="flex w-[18rem] flex-col">
-                  <I18nProvider locale="es-ES">
-                    <Controller
-                      name={"dateV"}
-                      control={control2}
-                      render={({ field }) => (
-                        <DatePicker
-                          isDisabled={!dateSelected}
-                          minValue={today(getLocalTimeZone())}
-                          className={`${errors2.dateV ? "text-red_e" : ""} ${errors2.dateV ? "border-red_e" : ""} rounded-lg border`}
-                          {...field}
-                          label={""}
-                          placeholder="Seleccione una fecha"
-                          granularity="day"
-                          errorMessage={
-                            dateSelected
-                              ? setErrorDataPicker(true)
-                              : setErrorDataPicker(false)
-                          }
-                        />
-                      )}
-                      rules={{
-                        required: dateSelected ? "La fecha es obligatoria" : "",
-                      }}
-                    />
-                    <p className="font-roboto text-xs text-red_e">
-                      {errors2.dateV ? errors2.dateV.message : ""}
-                    </p>
-                  </I18nProvider>
+                  <Calendar
+                    control={control2}
+                    errors={errors2}
+                    setErrorDataPicker={setErrorDataPicker}
+                    errorDataPicker={errorDataPicker}
+                    name="dateV"
+                  />
                 </div>
               </div>
               <div className="w-[12.6rem]">

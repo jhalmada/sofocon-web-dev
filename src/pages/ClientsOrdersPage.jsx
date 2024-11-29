@@ -8,10 +8,11 @@ import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import usePutOrders from "../hooks/orders/usePutOrders";
-import { BASE_URL } from "../utils/Constants";
+import { BASE_URL, SOFOCON_JWT_TOKEN } from "../utils/Constants";
 import { getOrderPdf } from "../services/orders/orders.routes";
 import ReusableModal from "../components/modals/ReusableModal";
 import useOrders from "../hooks/orders/useOrders";
+
 const ClientsOrdersPage = () => {
   const {
     register,
@@ -33,6 +34,33 @@ const ClientsOrdersPage = () => {
   const [discount, setDiscount] = useState(0);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
+  const accessToken = localStorage.getItem(SOFOCON_JWT_TOKEN);
+  const handleDownloadClick = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/${getOrderPdf}/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `order_${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download the file:", error);
+    }
+  };
   const discountPercent = orderDetails?.discountPercent || 0;
   const stateOptions = ["Para retirar", "Entregado"];
   const formatDate = (dateString) => {
@@ -392,13 +420,15 @@ const ClientsOrdersPage = () => {
             </div>
           </div>
           <div className="mt-5 flex w-full justify-end">
-            <a
-              href={`${BASE_URL}/${getOrderPdf}/${id}`}
-              download
-              target="_blank"
-            >
-              <Button text={"DESCARGAR"} color={"save"} icon={DownloadIcon} />
-            </a>
+            <Button
+              text={"DESCARGAR"}
+              color={"save"}
+              icon={DownloadIcon}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDownloadClick();
+              }}
+            />
           </div>
         </form>
       </div>

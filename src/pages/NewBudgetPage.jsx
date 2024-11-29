@@ -6,9 +6,7 @@ import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
-import { I18nProvider } from "@react-aria/i18n";
-import { Checkbox, DatePicker } from "@nextui-org/react";
-import { getLocalTimeZone, today } from "@internationalized/date";
+import { Checkbox } from "@nextui-org/react";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import cameraIcon from "../assets/icons/camera.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
@@ -20,6 +18,7 @@ import useGetProducts from "../hooks/products/useGetProducts.js";
 import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
+import Calendar from "../components/calendar/Calendar.jsx";
 
 const NewBudgetPage = () => {
   const {
@@ -138,16 +137,17 @@ const NewBudgetPage = () => {
   };
 
   const onSubmit = (data) => {
-    if (isDirectValue) {
+    if (data) {
       handleBudgetCreation({
         ...data,
-        client: { rut: data.rut, name: data.client, phone: data.phone },
-      });
-    } else {
-      handleBudgetCreation({
-        ...data,
+        client: isDirectValue
+          ? { rut: data.rut, name: data.client, phone: data.phone }
+          : company,
+        user: seller,
       });
     }
+    isSaveConfirmationModalOpen(true);
+    navigate("/inicio/ordenes");
   };
 
   const closeSaveConfirmationModal = () => {
@@ -161,9 +161,11 @@ const NewBudgetPage = () => {
     if (selectedCompany) {
       setCompany(selectedCompany);
       setRutValue(selectedCompany.rut);
+      setValue("client", selectedCompany ? selectedCompany.name : "");
     } else {
       setCompany(null);
       setRutValue("");
+      setValue("");
     }
   };
 
@@ -339,6 +341,7 @@ const NewBudgetPage = () => {
                         onChange={setSearchCompanies}
                         placeholder="Buscar empresa"
                         onSelect={handleSelectCompany}
+                        setRut={setRutValue}
                         {...field}
                       />
                     )}
@@ -358,12 +361,12 @@ const NewBudgetPage = () => {
                   {...register("rut", {
                     required: "Este campo es obligatorio",
                     minLength: {
-                      value: 12,
-                      message: "Ingrese los 12 digitos de su RUT.",
+                      value: 2,
+                      message: "Mínimo de 2 caracteres.",
                     },
                     maxLength: {
                       value: 12,
-                      message: "Ingrese solo los 12 digitos de su RUT.",
+                      message: "No se puede exceder de 12 caracteres.",
                     },
                   })}
                   errorApi={errors.rut}
@@ -405,28 +408,7 @@ const NewBudgetPage = () => {
                 <span className="text-sm font-light leading-[1rem] text-black_b">
                   Fecha de presupuesto
                 </span>
-                <I18nProvider locale="es-ES">
-                  <Controller
-                    name="dateV"
-                    control={control}
-                    rules={{
-                      required: "La fecha es obligatoria",
-                    }}
-                    render={({ field }) => (
-                      <DatePicker
-                        minValue={today(getLocalTimeZone())}
-                        className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                        label=""
-                        placeholder="Seleccione una fecha"
-                        granularity="day"
-                        {...field}
-                      />
-                    )}
-                  />
-                  <p className="font-roboto text-xs text-red_e">
-                    {errors.dateV ? errors.dateV.message : ""}
-                  </p>
-                </I18nProvider>
+                <Calendar control={control} errors={errors} name="dateV" />
               </div>
               <div className="-mt-[.08rem] w-1/2">
                 <Controller
@@ -507,7 +489,7 @@ const NewBudgetPage = () => {
                 <div>
                   {autocompleteResults.map((item, index) => (
                     <div className="flex w-full space-x-2" key={item.id}>
-                      <div className="w-1/2">
+                      <div className="h-10 w-1/2">
                         <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br">
                           {item.name}
                           <img

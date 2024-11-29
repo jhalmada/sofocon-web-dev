@@ -152,7 +152,6 @@ const AddSellerPage = () => {
               label={"Teléfono de contacto"}
               placeholder={"123456789"}
               {...register("phone", {
-                required: "Este campo es obligatorio",
                 maxLength: {
                   value: 12,
                   message: "Solo se permiten 12 caracteres",

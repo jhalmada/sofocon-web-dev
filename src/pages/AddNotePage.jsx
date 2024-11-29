@@ -3,14 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Input from "../components/inputs/Input";
-import useNotes from "../hooks/notes/useNotes.js";
-import { Controller, useForm } from "react-hook-form";
-import { Checkbox, DatePicker } from "@nextui-org/react";
+import { useForm } from "react-hook-form";
+import { Checkbox } from "@nextui-org/react";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import useAddNotes from "../hooks/notes/useAddNotes.js";
-import { I18nProvider } from "@react-aria/i18n";
-import { getLocalTimeZone, today } from "@internationalized/date";
 import BackButton from "../components/buttons/BackButton.jsx";
+import Calendar from "../components/calendar/Calendar.jsx";
 const NOTES_TAB = "notes";
 const AddNotesPage = () => {
   const [noteId, setNoteId] = useState(null);
@@ -33,21 +31,12 @@ const AddNotesPage = () => {
   }, [id]);
 
   const navigate = useNavigate();
-  const {
-    notesResponse,
-    setItemsPerPage,
-    totalPage,
-    setPage,
-    page,
-    itemsPerPage,
-    setModified,
-  } = useNotes();
+
   const { postAddNotes, loading } = useAddNotes();
 
   const {
     register,
     handleSubmit,
-    setValue,
     control,
     formState: { errors },
   } = useForm();
@@ -175,39 +164,13 @@ const AddNotesPage = () => {
                 </span>
               </Checkbox>
               <div className="flex w-[18rem] flex-col">
-                <I18nProvider locale="es-ES">
-                  <Controller
-                    name={"dateV"}
-                    control={control}
-                    render={({ field }) => (
-                      <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
-                        <DatePicker
-                          minValue={today(getLocalTimeZone())}
-                          className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
-                          {...field}
-                          label={""}
-                          placeholder="Seleccione una fecha"
-                          isDisabled={!dateSelected}
-                          errorMessage={(value) => {
-                            if (value.isInvalid) {
-                              setErrorDataPicker(true);
-                              return "";
-                            } else {
-                              setErrorDataPicker(false);
-                              return "";
-                            }
-                          }}
-                        />
-                      </div>
-                    )}
-                    rules={{
-                      required: dateSelected && "La fecha es obligatoria",
-                    }}
-                  />
-                  <p className="font-roboto text-xs text-red_e">
-                    {errors.dateV ? errors.dateV.message : ""}
-                  </p>
-                </I18nProvider>
+                <Calendar
+                  control={control}
+                  errors={errors}
+                  setErrorDataPicker={setErrorDataPicker}
+                  errorDataPicker={errorDataPicker}
+                  name="dateV"
+                />
               </div>
             </div>
             <div className="w-[12.6rem]">

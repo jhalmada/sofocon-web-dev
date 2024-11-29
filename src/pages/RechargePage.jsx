@@ -12,9 +12,6 @@ import usePutOrders from "../hooks/orders/usePutOrders";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
-import { I18nProvider } from "@react-aria/i18n";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import { DatePicker } from "@nextui-org/react";
 const RechargePage = () => {
   const {
     handleSubmit,
@@ -99,6 +96,7 @@ const RechargePage = () => {
       data.dateV?.day || 1,
     );
     const formattedDate = newdata.toISOString();
+
     if (newStatus === "EGRESS") {
       await changedOrder(
         {
@@ -395,28 +393,7 @@ const RechargePage = () => {
             <span className="text-sm font-light leading-[1rem] text-black_b">
               Fecha de venta
             </span>
-            <I18nProvider locale="es-ES">
-              <Controller
-                name="dateV"
-                control={control}
-                rules={{
-                  required: "La fecha es obligatoria",
-                }}
-                render={({ field }) => (
-                  <DatePicker
-                    minValue={today(getLocalTimeZone())}
-                    className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                    label=""
-                    placeholder="Seleccione una fecha"
-                    granularity="day"
-                    {...field}
-                  />
-                )}
-              />
-              <p className="font-roboto text-xs text-red_e">
-                {errors.dateV ? errors.dateV.message : ""}
-              </p>
-            </I18nProvider>
+            <Calendar control={control} errors={errors} name="dateV" />
           </div>
           <div className="-mt-[.08rem]">
             <Controller

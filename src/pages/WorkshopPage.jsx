@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
@@ -10,7 +10,6 @@ import DownloadIcon from "../assets/icons/download.svg";
 import RechargeRow from "../components/RechargeRow.jsx";
 import FileIcon from "../assets/icons/file-earmark-ruled.svg";
 import { useForm } from "react-hook-form";
-import { BASE_URL } from "../utils/Constants.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import StoragePage from "./StoragePage.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -19,6 +18,7 @@ import pageLostImg from "../assets/images/pageLostWorkshop.svg";
 import SaveImg from "../assets/img/save.png";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutOrders from "../hooks/orders/usePutOrders";
+import { BASE_URL, SOFOCON_JWT_TOKEN } from "../utils/Constants";
 import {
   getOrderExcel,
   getOrderPdf,
@@ -50,6 +50,7 @@ const WorkshopPage = () => {
   const {
     formState: { errors },
   } = useForm();
+  const { id } = useParams();
 
   const [activeTab, setActiveTab] = useState(RECHARGE_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,6 +67,8 @@ const WorkshopPage = () => {
   );
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [orderId, setOrderId] = useState(null);
+
+  const accessToken = localStorage.getItem(SOFOCON_JWT_TOKEN);
 
   const stateOptions = ["Solicitado", "En preparación", "Para retirar"];
   const monthsOptions = [
@@ -412,7 +415,12 @@ const WorkshopPage = () => {
           Escanea el código de barras del producto para localizar la orden de
           compra donde se encuentra, o ingresa el código de manera manual.
         </p>
-        <form className="space-y-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+          className="space-y-4"
+        >
           <div className="px-2">
             <BarcodeReader onBarcodeChange={setBarCode} />
           </div>

@@ -6,9 +6,7 @@ import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
-import { I18nProvider } from "@react-aria/i18n";
-import { Checkbox, DatePicker } from "@nextui-org/react";
-import { getLocalTimeZone, today } from "@internationalized/date";
+import { Checkbox } from "@nextui-org/react";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import cameraIcon from "../assets/icons/camera.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
@@ -21,6 +19,7 @@ import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplet
 import x from "../assets/icons/x.svg";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
 import useOrders from "../hooks/orders/useOrders.js";
+import Calendar from "../components/calendar/Calendar.jsx";
 
 const NewSalePage = () => {
   const {
@@ -71,7 +70,6 @@ const NewSalePage = () => {
     : 0;
 
   //validacion en tiempo real react-hook-form
-
   const checkQuantity = watch("checkQuantity");
   const deliveredValue = watch("delivered", false);
   const isDirectValue = watch("isDirect", false);
@@ -159,7 +157,7 @@ const NewSalePage = () => {
 
   const onSubmit = (data) => {
     setOrderData(data);
-    setIsSaveConfirmationModalOpen(true);
+    setIsConfirmationModalOpen(true);
   };
 
   const closeModal = () => {
@@ -190,9 +188,11 @@ const NewSalePage = () => {
     if (selectedCompany) {
       setCompany(selectedCompany);
       setRutValue(selectedCompany.rut);
+      setValue("client", selectedCompany ? selectedCompany.name : "");
     } else {
       setCompany(null);
       setRutValue("");
+      setValue("");
     }
   };
   const handleSelectSeller = (selectedSeller) => {
@@ -394,6 +394,7 @@ const NewSalePage = () => {
                         onChange={setSearchCompanies}
                         placeholder="Buscar empresa"
                         onSelect={handleSelectCompany}
+                        setRut={setRutValue}
                         {...field}
                       />
                     )}
@@ -412,12 +413,12 @@ const NewSalePage = () => {
                 {...register("rut", {
                   required: "Este campo es obligatorio",
                   minLength: {
-                    value: 12,
-                    message: "Ingrese los 12 digitos de su RUT.",
+                    value: 2,
+                    message: "Mínimo de 2 caracteres.",
                   },
                   maxLength: {
                     value: 12,
-                    message: "Ingrese solo los 12 digitos de su RUT.",
+                    message: "No se puede exceder de 12 caracteres.",
                   },
                 })}
                 errorApi={errors.rut}
@@ -439,28 +440,7 @@ const NewSalePage = () => {
                 <span className="text-sm font-light leading-[1rem] text-black_b">
                   Fecha de venta
                 </span>
-                <I18nProvider locale="es-ES">
-                  <Controller
-                    name="dateV"
-                    control={control}
-                    rules={{
-                      required: "La fecha es obligatoria",
-                    }}
-                    render={({ field }) => (
-                      <DatePicker
-                        minValue={today(getLocalTimeZone())}
-                        className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                        label=""
-                        placeholder="Seleccione una fecha"
-                        granularity="day"
-                        {...field}
-                      />
-                    )}
-                  />
-                  <p className="font-roboto text-xs text-red_e">
-                    {errors.dateV ? errors.dateV.message : ""}
-                  </p>
-                </I18nProvider>
+                <Calendar control={control} errors={errors} name="dateV" />
               </div>
               <div className="-mt-[.08rem] w-1/2">
                 <Controller
@@ -473,10 +453,11 @@ const NewSalePage = () => {
                       array={
                         transformData(userSellerResponse?.result || []) || []
                       }
-                      name={"user"}
+                      name={"user.name"}
                       setValue={setValue}
                       onChange={setSearchSellers}
                       onSelect={handleSelectSeller}
+                      setRUT={setRutValue}
                       placeholder="Buscar vendedores"
                       {...field}
                     />
@@ -542,7 +523,7 @@ const NewSalePage = () => {
                 <div>
                   {autocompleteResults.map((item, index) => (
                     <div className="flex w-full space-x-2" key={item.id}>
-                      <div className="w-1/2">
+                      <div className="h-10 w-1/2">
                         <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br">
                           {item.name}
                           <img
@@ -704,33 +685,12 @@ const NewSalePage = () => {
                                 <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                                   Fecha última carga
                                 </span>
-                                <I18nProvider locale="es-ES">
-                                  <Controller
-                                    name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
-                                    control={control}
-                                    rules={{
-                                      required: "La fecha es obligatoria",
-                                    }}
-                                    render={({ field }) => (
-                                      <DatePicker
-                                        minValue={today(getLocalTimeZone())}
-                                        className={`${errors.productInOrder?.[index]?.itemsRemoval?.[indexRemoval]?.lastDate ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                                        label=""
-                                        placeholder="Seleccione una fecha"
-                                        granularity="day"
-                                        {...field}
-                                      />
-                                    )}
-                                  />
-                                  <p className="font-roboto text-xs text-red_e">
-                                    {errors.productInOrder?.[index]
-                                      ?.itemsRemoval?.[indexRemoval]?.lastDate
-                                      ? errors.productInOrder?.[index]
-                                          ?.itemsRemoval?.[indexRemoval]
-                                          ?.lastDate.message
-                                      : ""}
-                                  </p>
-                                </I18nProvider>
+
+                                <Calendar
+                                  control={control}
+                                  errors={errors}
+                                  name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
+                                />
                               </div>
                               <Input
                                 label={"N° UNIT actual"}
