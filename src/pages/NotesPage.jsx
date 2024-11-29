@@ -18,6 +18,7 @@ import Calendar from "../components/calendar/Calendar.jsx";
 import useGetOneCompany from "../hooks/companies/useGetOneCompany.js";
 import axios from "axios";
 import { use } from "framer-motion/client";
+import { useForm } from "react-hook-form";
 
 const NOTES_TAB = "notes";
 const NotesPage = () => {
@@ -46,15 +47,6 @@ const NotesPage = () => {
   const { id } = useParams();
   const { companyResponse, isLoading } = useGetOneCompany(id);
   console.log(companyResponse);
-  const { notesResponse, setModified, setClient, setSearch } = useNotes();
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm();
 
   const openModal = (noteId) => {
     const noteToEdit = notesResponse.find((note) => note.id === noteId);
