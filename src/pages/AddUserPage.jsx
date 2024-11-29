@@ -162,10 +162,17 @@ const AddUserPage = () => {
               label={"Teléfono de contacto"}
               placeholder={"123456789"}
               {...register("phone", {
-                required: "Este campo es obligatorio",
+                minLength: {
+                  value: 8,
+                  message: "Debe ingresar minimo 8 digitos.",
+                },
+                maxLength: {
+                  value: 15,
+                  message: "Solo se permiten 15 digitos.",
+                },
               })}
-              errorApi={errors.fullName}
-              msjError={errors.fullName ? errors.fullName.message : ""}
+              errorApi={errors.phone}
+              msjError={errors.phone ? errors.phone.message : ""}
             />
             <Input
               placeholder={"Escribe el email del usuario..."}

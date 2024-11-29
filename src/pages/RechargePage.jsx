@@ -99,6 +99,7 @@ const RechargePage = () => {
       data.dateV?.day || 1,
     );
     const formattedDate = newdata.toISOString();
+
     if (newStatus === "EGRESS") {
       await changedOrder(
         {

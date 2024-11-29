@@ -9,6 +9,7 @@ const BarcodeReader = ({ onBarcodeChange }) => {
   useEffect(() => {
     const handleKeyDown = (evento) => {
       if (evento.keyCode === 13) {
+        evento.preventDefault();
         const codigoDeBarras = codigoRef.current.value;
 
         console.log(codigoDeBarras);

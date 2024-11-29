@@ -1,6 +1,8 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/Constants";
 import { getOrderPdf } from "../services/orders/orders.routes";
+import { SOFOCON_JWT_TOKEN } from "../utils/Constants.js";
 
 const BudgetRow = ({
   name,
@@ -8,7 +10,6 @@ const BudgetRow = ({
   date,
   seller,
   id,
-  retirementDate,
   downloadIconSrc,
   deleteIconSrc,
   onDownloadClick,
@@ -17,6 +18,34 @@ const BudgetRow = ({
   const navigate = useNavigate();
   const handleRowClick = () => {
     navigate(`/inicio/ordenes/presupuesto/${id}`);
+  };
+  const accessToken = localStorage.getItem(SOFOCON_JWT_TOKEN);
+
+  const handleDownloadClick = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/${getOrderPdf}/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `order_${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download the file:", error);
+    }
   };
 
   return (
@@ -43,9 +72,6 @@ const BudgetRow = ({
       >
         {date}
       </td>
-      <td className="py-6" onClick={handleRowClick}>
-        {retirementDate}
-      </td>
 
       <td className="py-6" onClick={handleRowClick}>
         {seller}
@@ -53,20 +79,24 @@ const BudgetRow = ({
 
       <td className="py-6">
         <div className="flex justify-center gap-4">
-          <a href={`${BASE_URL}/${getOrderPdf}/${id}`} download target="_blank">
-            <img
-              src={downloadIconSrc}
-              alt="Download icon"
-              className="h-5 w-5 cursor-pointer"
-              onClick={onDownloadClick}
-            />
-          </a>
-
+          <img
+            src={downloadIconSrc}
+            alt="Download icon"
+            className="h-5 w-5 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDownloadClick();
+              onDownloadClick && onDownloadClick();
+            }}
+          />
           <img
             src={deleteIconSrc}
             alt="Delete icon"
             className="h-5 w-5 cursor-pointer"
-            onClick={onDeleteClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteClick && onDeleteClick();
+            }}
           />
         </div>
       </td>

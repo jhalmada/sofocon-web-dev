@@ -138,16 +138,17 @@ const NewBudgetPage = () => {
   };
 
   const onSubmit = (data) => {
-    if (isDirectValue) {
+    if (data) {
       handleBudgetCreation({
         ...data,
-        client: { rut: data.rut, name: data.client, phone: data.phone },
-      });
-    } else {
-      handleBudgetCreation({
-        ...data,
+        client: isDirectValue
+          ? { rut: data.rut, name: data.client, phone: data.phone }
+          : company,
+        user: seller,
       });
     }
+    isSaveConfirmationModalOpen(true);
+    navigate("/inicio/ordenes");
   };
 
   const closeSaveConfirmationModal = () => {
@@ -161,9 +162,11 @@ const NewBudgetPage = () => {
     if (selectedCompany) {
       setCompany(selectedCompany);
       setRutValue(selectedCompany.rut);
+      setValue("client", selectedCompany ? selectedCompany.name : "");
     } else {
       setCompany(null);
       setRutValue("");
+      setValue("");
     }
   };
 
@@ -339,6 +342,7 @@ const NewBudgetPage = () => {
                         onChange={setSearchCompanies}
                         placeholder="Buscar empresa"
                         onSelect={handleSelectCompany}
+                        setRut={setRutValue}
                         {...field}
                       />
                     )}
@@ -507,7 +511,7 @@ const NewBudgetPage = () => {
                 <div>
                   {autocompleteResults.map((item, index) => (
                     <div className="flex w-full space-x-2" key={item.id}>
-                      <div className="w-1/2">
+                      <div className="h-10 w-1/2">
                         <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br">
                           {item.name}
                           <img

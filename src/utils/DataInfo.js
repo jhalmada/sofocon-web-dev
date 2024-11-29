@@ -5,8 +5,8 @@ import deleteIcon from "../assets/icons/trash3.svg";
 import houseIcon from "../assets/icons/house-door.svg";
 import shopIcon from "../assets/icons/shop-window.svg";
 import peopleIcon from "../assets/icons/people.svg";
-import briefcaseIcon from "../assets/icons/briefcase.svg";
-import briefActiveIcon from "../assets/icons/briefcase-fill.svg";
+import toolsIcon from "../assets/icons/tools-fill.svg";
+import toolsActiveIcon from "../assets/icons/tools.svg";
 import compassIcon from "../assets/icons/compass.svg";
 import boxIcon from "../assets/icons/box-seam.svg";
 import boxActiveIcon from "../assets/icons/box-seam-fill.svg";
@@ -152,8 +152,8 @@ const menuItems = [
   {
     name: "Taller",
     path: "/inicio/taller",
-    icon: briefcaseIcon,
-    activeIcon: briefActiveIcon,
+    icon: toolsIcon,
+    activeIcon: toolsActiveIcon,
     permisses: ["SECTION_WORKSHOP", "USER_SUPER_ADMIN"],
   },
 ];

@@ -8,8 +8,8 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useEffect, useRef, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Checkbox, DatePicker, Tooltip } from "@nextui-org/react";
-import { Controller, set, useForm } from "react-hook-form";
+import { Checkbox, DatePicker } from "@nextui-org/react";
+import { Controller, useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
@@ -444,7 +444,6 @@ const AddCompaniePage = () => {
               label={"Contacto"}
               placeholder={"Escribe el teléfono del contacto..."}
               {...register("phone", {
-                required: "Este campo es requerido",
                 minLength: {
                   value: 8,
                   message: "Debe ingresar minimo 8 digitos.",
@@ -573,29 +572,32 @@ const AddCompaniePage = () => {
               >
                 Próxima visita
               </label>
-              <Controller
-                name={"nextVisit"}
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    minValue={today(getLocalTimeZone())}
-                    className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
-                    {...field}
-                    label={""}
-                    placeholder="Seleccione una fecha"
-                    granularity="day"
-                  />
-                )}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "Este campo es requerido",
-                  },
-                }}
-              />
-              <p className="font-roboto text-xs text-red_e">
-                {errors.nextVisit ? errors.nextVisit.message : ""}
-              </p>
+              <I18nProvider locale="es-ES">
+                <Controller
+                  name={"nextVisit"}
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      minValue={today(getLocalTimeZone())}
+                      className={`${errors.dateV ? "text-red_e" : ""} ${errors.dateV ? "border-red_e" : ""} rounded-lg border`}
+                      {...field}
+                      label={""}
+                      placeholder="Seleccione una fecha"
+                      granularity="day"
+                    />
+                  )}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Este campo es requerido",
+                    },
+                  }}
+                />
+
+                <p className="font-roboto text-xs text-red_e">
+                  {errors.nextVisit ? errors.nextVisit.message : ""}
+                </p>
+              </I18nProvider>
             </div>
             <div className="mt-4 flex flex-col justify-between">
               <div className="max-w-[10rem] space-y-2">
