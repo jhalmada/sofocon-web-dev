@@ -15,6 +15,10 @@ import { Checkbox } from "@nextui-org/react";
 import NotesRow from "../components/NotesRow.jsx";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import Calendar from "../components/calendar/Calendar.jsx";
+import useGetOneCompany from "../hooks/companies/useGetOneCompany.js";
+import axios from "axios";
+import { use } from "framer-motion/client";
+import { useForm } from "react-hook-form";
 
 const NOTES_TAB = "notes";
 const NotesPage = () => {
@@ -41,6 +45,8 @@ const NotesPage = () => {
   const [errorDataPicker, setErrorDataPicker] = useState(false);
 
   const { id } = useParams();
+  const { companyResponse, isLoading } = useGetOneCompany(id);
+  console.log(companyResponse);
 
   const openModal = (noteId) => {
     const noteToEdit = notesResponse.find((note) => note.id === noteId);
@@ -147,7 +153,7 @@ const NotesPage = () => {
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Nombre de la empresa
+            {companyResponse.name} - Notas
           </h1>
           <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>

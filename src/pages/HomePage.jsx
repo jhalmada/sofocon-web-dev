@@ -13,8 +13,8 @@ import { useEffect, useState } from "react";
 import { Map, Marker } from "@vis.gl/react-google-maps";
 import mapNotPermisse from "../assets/images/MapNotPermisses.png";
 const coordenadasUruguay = {
-  lat: -34.901,
-  lng: -56.1698,
+  lat: -33.2405,
+  lng: -56.0128,
 };
 
 const months = [
@@ -143,7 +143,7 @@ const HomePage = () => {
               <Map
                 mapId={"8c732c82e4ec29d9"}
                 defaultCenter={coordenadasUruguay}
-                defaultZoom={5}
+                defaultZoom={7}
                 borderRadius={"0.875rem"}
                 gestureHandling={"greedy"}
                 className="relative h-[89%]"
