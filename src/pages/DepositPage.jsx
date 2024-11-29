@@ -10,10 +10,8 @@ import { Controller, useForm } from "react-hook-form";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import usePutOrders from "../hooks/orders/usePutOrders";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
-import { DatePicker } from "@nextui-org/react";
-import { I18nProvider } from "@react-aria/i18n";
-import { getLocalTimeZone, today } from "@internationalized/date";
 import useUsersSellers from "../hooks/users/useUsersSellers";
+import Calendar from "../components/calendar/Calendar";
 const DepositPage = () => {
   const {
     handleSubmit,
@@ -292,28 +290,7 @@ const DepositPage = () => {
             <span className="text-sm font-light leading-[1rem] text-black_b">
               Fecha de venta
             </span>
-            <I18nProvider locale="es-ES">
-              <Controller
-                name="dateV"
-                control={control}
-                rules={{
-                  required: "La fecha es obligatoria",
-                }}
-                render={({ field }) => (
-                  <DatePicker
-                    minValue={today(getLocalTimeZone())}
-                    className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                    label=""
-                    placeholder="Seleccione una fecha"
-                    granularity="day"
-                    {...field}
-                  />
-                )}
-              />
-              <p className="font-roboto text-xs text-red_e">
-                {errors.dateV ? errors.dateV.message : ""}
-              </p>
-            </I18nProvider>
+            <Calendar control={control} errors={errors} name="dateV" />
           </div>
           <div className="-mt-[.08rem]">
             <Controller

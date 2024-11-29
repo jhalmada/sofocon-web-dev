@@ -1,23 +1,19 @@
 import Pagination from "../components/Pagination";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import CompetingRow from "../components/CompetingRow";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import {
-  getLocalTimeZone,
-  parseAbsoluteToLocal,
-  today,
-} from "@internationalized/date";
+import { parseAbsoluteToLocal } from "@internationalized/date";
 import notesIcon from "../assets/icons/sticky-fill.svg";
 import FilterSelect from "../components/filters/FilterSelect";
-import { I18nProvider } from "@react-aria/i18n";
 import { Select, SelectItem } from "@nextui-org/select";
 import Input from "../components/inputs/Input";
-import { Checkbox, DatePicker } from "@nextui-org/react";
+import { Checkbox } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
 import pageLostImg from "../assets/images/pageLost.svg";
 import { useState } from "react";
 import SearchInput from "../components/inputs/SearchInput";
+import Calendar from "../components/calendar/Calendar";
 const CompetingPage = ({
   companiesResponse,
   setSearchCompanies,
@@ -509,45 +505,13 @@ const CompetingPage = ({
             <label className="text-sm font-light text-black">
               Próxima visita
             </label>
-            <I18nProvider locale="es-ES">
-              <Controller
-                name={"nextVisit"}
-                control={control}
-                render={({ field }) => (
-                  <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
-                    <DatePicker
-                      granularity="day"
-                      minValue={today(getLocalTimeZone())}
-                      className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
-                      {...field}
-                      label={""}
-                      placeholder="Seleccione una fecha"
-                      errorMessage={(value) => {
-                        if (value.isInvalid) {
-                          setErrorDataPicker(true);
-                          return "";
-                        } else {
-                          setErrorDataPicker(false);
-                          return "";
-                        }
-                      }}
-                    />
-                  </div>
-                )}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "La fecha es obligatoria",
-                  },
-                }}
-              />
-              <p className="font-roboto text-xs text-red_e">
-                {errors.nextVisit ? errors.nextVisit.message : ""}
-              </p>
-              <p className="font-roboto text-xs text-red_e">
-                {errorDataPicker ? "La fecha de visita expiró" : ""}
-              </p>
-            </I18nProvider>
+            <Calendar
+              control={control}
+              errors={errors}
+              setErrorDataPicker={setErrorDataPicker}
+              errorDataPicker={errorDataPicker}
+              name="nextVisit"
+            />
           </div>
         </form>
       </ReusableModal>

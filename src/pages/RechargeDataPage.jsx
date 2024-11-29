@@ -6,13 +6,12 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import React, { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import barCodeIcon from "../assets/icons/barcode.svg";
-import { Checkbox, DatePicker } from "@nextui-org/react";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import { I18nProvider } from "@react-aria/i18n";
+import { Checkbox } from "@nextui-org/react";
 import useGetRemovalItem from "../hooks/orders/useGetRemovalItem";
 import usePatchRemovalItem from "../hooks/orders/usePatchRemovalItem";
+import Calendar from "../components/calendar/Calendar";
 function useQuery() {
   const { search } = useLocation();
 
@@ -247,28 +246,7 @@ const RechargeDataPage = () => {
                   <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                     Fecha ensayo
                   </span>
-                  <I18nProvider locale="es-ES">
-                    <Controller
-                      name={`testDate`}
-                      control={control}
-                      rules={{
-                        required: "La fecha es obligatoria",
-                      }}
-                      render={({ field }) => (
-                        <DatePicker
-                          minValue={today(getLocalTimeZone())}
-                          className={`${errors.testDate ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                          label=""
-                          placeholder="Seleccione una fecha"
-                          granularity="day"
-                          {...field}
-                        />
-                      )}
-                    />
-                    <p className="font-roboto text-xs text-red_e">
-                      {errors.testDate ? errors.testDate.message : ""}
-                    </p>
-                  </I18nProvider>
+                  <Calendar control={control} errors={errors} name="testDate" />
                 </div>
               </span>
               <Input
