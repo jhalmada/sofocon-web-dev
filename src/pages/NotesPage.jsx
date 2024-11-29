@@ -20,13 +20,16 @@ import {
   parseAbsoluteToLocal,
   today,
 } from "@internationalized/date";
+import useGetOneCompany from "../hooks/companies/useGetOneCompany.js";
+import axios from "axios";
+import { use } from "framer-motion/client";
 
 const NOTES_TAB = "notes";
 const NotesPage = () => {
   const [dateSelected, setDateSelected] = useState(false);
-  const { changedNote} = usePutNotes();
+  const { changedNote } = usePutNotes();
   const [noteId, setNoteId] = useState(null);
-  const { deleteNote} = useDeleteNotes();
+  const { deleteNote } = useDeleteNotes();
   const [activeTab, setActiveTab] = useState(NOTES_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -37,13 +40,9 @@ const NotesPage = () => {
   const [errorDataPicker, setErrorDataPicker] = useState(false);
 
   const { id } = useParams();
-  const {
-    notesResponse,
-    setModified,
-    setClient,
-    setSearch,
-  } = useNotes();
-
+  const { companyResponse, isLoading } = useGetOneCompany(id);
+  console.log(companyResponse);
+  const { notesResponse, setModified, setClient, setSearch } = useNotes();
 
   const {
     register,
@@ -158,7 +157,7 @@ const NotesPage = () => {
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Empresas
+            {companyResponse.name} - Notas
           </h1>
           <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>

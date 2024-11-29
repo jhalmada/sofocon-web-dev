@@ -337,7 +337,9 @@ const AddCompaniePage = () => {
               </Checkbox>
               <Input
                 disabled={!competence}
-                label={"Empresas actual"}
+                bg={!competence ? "bg-gray" : "bg-white"}
+                border={!competence ? "none" : "border"}
+                label={"Empresa actual"}
                 placeholder={"Escribe el nombre..."}
                 {...register("competenceName", {
                   required: competence && "Este campo es requerido",

@@ -19,4 +19,7 @@ export class CompaniesService {
       `${companiesRoutes.putClients}/${companyId}/users`,
       listUsers,
     );
+
+  static getOneCompanyApi = async (companyId) =>
+    await axios.get(`${companiesRoutes.getOneClient}/${companyId}`);
 }
