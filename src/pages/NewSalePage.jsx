@@ -6,9 +6,7 @@ import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
-import { I18nProvider } from "@react-aria/i18n";
-import { Checkbox, DatePicker } from "@nextui-org/react";
-import { getLocalTimeZone, today } from "@internationalized/date";
+import { Checkbox } from "@nextui-org/react";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import cameraIcon from "../assets/icons/camera.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
@@ -21,6 +19,7 @@ import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplet
 import x from "../assets/icons/x.svg";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
 import useOrders from "../hooks/orders/useOrders.js";
+import Calendar from "../components/calendar/Calendar.jsx";
 
 const NewSalePage = () => {
   const {
@@ -441,28 +440,7 @@ const NewSalePage = () => {
                 <span className="text-sm font-light leading-[1rem] text-black_b">
                   Fecha de venta
                 </span>
-                <I18nProvider locale="es-ES">
-                  <Controller
-                    name="dateV"
-                    control={control}
-                    rules={{
-                      required: "La fecha es obligatoria",
-                    }}
-                    render={({ field }) => (
-                      <DatePicker
-                        minValue={today(getLocalTimeZone())}
-                        className={`${errors.dateV ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                        label=""
-                        placeholder="Seleccione una fecha"
-                        granularity="day"
-                        {...field}
-                      />
-                    )}
-                  />
-                  <p className="font-roboto text-xs text-red_e">
-                    {errors.dateV ? errors.dateV.message : ""}
-                  </p>
-                </I18nProvider>
+                <Calendar control={control} errors={errors} name="dateV" />
               </div>
               <div className="-mt-[.08rem] w-1/2">
                 <Controller
@@ -707,33 +685,12 @@ const NewSalePage = () => {
                                 <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                                   Fecha última carga
                                 </span>
-                                <I18nProvider locale="es-ES">
-                                  <Controller
-                                    name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
-                                    control={control}
-                                    rules={{
-                                      required: "La fecha es obligatoria",
-                                    }}
-                                    render={({ field }) => (
-                                      <DatePicker
-                                        maxValue={today(getLocalTimeZone())}
-                                        className={`${errors.productInOrder?.[index]?.itemsRemoval?.[indexRemoval]?.lastDate ? "border-red_e text-red_e" : ""} rounded-lg border`}
-                                        label=""
-                                        placeholder="Seleccione una fecha"
-                                        granularity="day"
-                                        {...field}
-                                      />
-                                    )}
-                                  />
-                                  <p className="font-roboto text-xs text-red_e">
-                                    {errors.productInOrder?.[index]
-                                      ?.itemsRemoval?.[indexRemoval]?.lastDate
-                                      ? errors.productInOrder?.[index]
-                                          ?.itemsRemoval?.[indexRemoval]
-                                          ?.lastDate.message
-                                      : ""}
-                                  </p>
-                                </I18nProvider>
+
+                                <Calendar
+                                  control={control}
+                                  errors={errors}
+                                  name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
+                                />
                               </div>
                               <Input
                                 label={"N° UNIT actual"}

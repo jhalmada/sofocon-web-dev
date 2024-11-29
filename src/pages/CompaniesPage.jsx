@@ -11,18 +11,16 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
 import notesIcon from "../assets/icons/sticky-fill.svg";
-import { Checkbox, DatePicker } from "@nextui-org/react";
+import { Checkbox } from "@nextui-org/react";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
 import { BASE_URL } from "../utils/Constants.js";
-import { I18nProvider } from "@react-aria/i18n";
-import { getLocalTimeZone, today } from "@internationalized/date";
 import {
   getClientsExcel,
   getClientsPdf,
@@ -32,6 +30,7 @@ import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import useUserCompany from "../hooks/companies/useUsersCompany.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import pageLostImg from "../assets/images/pageLost.svg";
+import Calendar from "../components/calendar/Calendar.jsx";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -769,45 +768,13 @@ const CompaniesPage = () => {
             <label className="text-sm font-light text-black">
               Próxima visita
             </label>
-            <I18nProvider locale="es-ES">
-              <Controller
-                name={"nextVisit"}
-                control={control}
-                render={({ field }) => (
-                  <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
-                    <DatePicker
-                      granularity="day"
-                      minValue={today(getLocalTimeZone())}
-                      className={`${errors.nextVisit ? "text-red_e" : ""} ${errors.nextVisit ? "border-red_e" : ""} rounded-lg border`}
-                      {...field}
-                      label={""}
-                      placeholder="Seleccione una fecha"
-                      errorMessage={(value) => {
-                        if (value.isInvalid) {
-                          setErrorDataPicker(true);
-                          return "";
-                        } else {
-                          setErrorDataPicker(false);
-                          return "";
-                        }
-                      }}
-                    />
-                  </div>
-                )}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "La fecha es obligatoria",
-                  },
-                }}
-              />
-              <p className="font-roboto text-xs text-red_e">
-                {errors.nextVisit ? errors.nextVisit.message : ""}
-              </p>
-              <p className="font-roboto text-xs text-red_e">
-                {errorDataPicker ? "La fecha de visita expiró" : ""}
-              </p>
-            </I18nProvider>
+            <Calendar
+              control={control}
+              errors={errors}
+              setErrorDataPicker={setErrorDataPicker}
+              errorDataPicker={errorDataPicker}
+              name="nextVisit"
+            />
           </div>
         </form>
       </ReusableModal>
