@@ -687,6 +687,7 @@ const NewSalePage = () => {
                                 </span>
 
                                 <Calendar
+                                  forward={false}
                                   control={control}
                                   errors={errors}
                                   name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}

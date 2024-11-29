@@ -1,19 +1,20 @@
 import { Controller } from "react-hook-form";
 import { I18nProvider } from "@react-aria/i18n";
-import DatePicker from "@nextui-org/date-picker";
+import { DatePicker } from "@nextui-org/date-picker";
 import { today, getLocalTimeZone } from "@internationalized/date";
 
 const Calendar = ({
   control,
   errors,
-  setErrorDataPicker,
-  errorDataPicker,
+  setErrorDataPicker = () => {},
+  errorDataPicker = false,
   name,
   label = "",
+  forward = true,
 }) => {
-  const forward = true;
   const dateValue = today(getLocalTimeZone());
   const dateProps = forward ? { minValue: dateValue } : { maxValue: dateValue };
+
   return (
     <div className="flex flex-col">
       <label className="text-sm font-light text-black">{label}</label>
