@@ -12,6 +12,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { MEDIDA, TYPE_PRODUCTS } from "../utils/Constants";
 import useGetPriceList from "../hooks/priceList/useGetPriceList";
+import { Checkbox } from "@nextui-org/react";
 
 const AddProductPage = () => {
   //estados
@@ -20,6 +21,7 @@ const AddProductPage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [FileAccept, setFileAccept] = useState(false);
+  const [isToRecharge, setIsToRecharge] = useState(false);
 
   //Hooks
   const navigate = useNavigate();
@@ -72,6 +74,7 @@ const AddProductPage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("amount", data.amount);
+    formData.append("isToRecharge", isToRecharge.toString());
     if (file) {
       formData.append("file", file);
     }
@@ -312,6 +315,13 @@ const AddProductPage = () => {
                   {errors?.file?.message}
                 </p>
               )}
+
+              <Checkbox
+                className="mt-3"
+                onChange={() => setIsToRecharge(!isToRecharge)}
+              >
+                Producto de recarga
+              </Checkbox>
             </div>
 
             <div className="flex justify-end">

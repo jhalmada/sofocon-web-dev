@@ -277,45 +277,46 @@ const UsersPage = () => {
                   <SearchInput placeholder="Buscar..." onChange={setSearch} />
                 )}
               </div>
-              {usersResponse.length === 0 ? (
-                <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
-                  <td colSpan="5" className="p-4 text-center">
-                    <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                      Tu búsqueda no arrojó resultados. !Prueba algo distinto!.{" "}
-                      <br /> Puedes encontrar a los usuarios creados aquí.
-                    </p>
-                    <img
-                      src={notFoundImg}
-                      alt="Tabla vacía"
-                      className="mx-auto"
-                    />
-                  </td>
-                </tr>
-              ) : (
-                <table className="mt-2 w-full">
-                  <thead>
-                    <tr>
-                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                        Nombre Completo
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Email
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        <div className="flex flex-col items-center gap-2">
-                          <FilterSelect
-                            options={roleOptions}
-                            placeholder="Rol"
-                            onChange={handleRoleFilterChange}
-                          />
-                        </div>
-                      </th>
+              <table className="mt-2 w-full">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Nombre Completo
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Email
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      <div className="flex flex-col items-center gap-2">
+                        <FilterSelect
+                          options={roleOptions}
+                          placeholder="Rol"
+                          onChange={handleRoleFilterChange}
+                        />
+                      </div>
+                    </th>
 
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Acción
-                      </th>
-                    </tr>
-                  </thead>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Acción
+                    </th>
+                  </tr>
+                </thead>
+                {usersResponse.length === 0 ? (
+                  <tr className="">
+                    <td colSpan="5" className="p-4 text-center">
+                      <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                        Tu búsqueda no arrojó resultados. !Prueba algo
+                        distinto!. <br /> Puedes encontrar a los usuarios
+                        creados aquí.
+                      </p>
+                      <img
+                        src={notFoundImg}
+                        alt="Tabla vacía"
+                        className="mx-auto"
+                      />
+                    </td>
+                  </tr>
+                ) : (
                   <tbody>
                     {usersResponse.map((user, index) => (
                       <UserRow
@@ -333,8 +334,8 @@ const UsersPage = () => {
                       />
                     ))}
                   </tbody>
-                </table>
-              )}
+                )}
+              </table>
             </div>
             <div
               className={
