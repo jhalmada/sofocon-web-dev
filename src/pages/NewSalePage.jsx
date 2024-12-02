@@ -8,7 +8,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
 import { Checkbox } from "@nextui-org/react";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
-import cameraIcon from "../assets/icons/camera.svg";
+import barCodeIcon from "../assets/icons/barcode.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import useAddOrders from "../hooks/orders/useAddOrders.js";
 import useCompanies from "../hooks/companies/useCompanies.js";
@@ -30,7 +30,7 @@ const NewSalePage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const { setBarCode } = useOrders();
+  const { barCode, setBarCode } = useOrders();
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
@@ -44,7 +44,6 @@ const NewSalePage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmation, setConfirmation] = useState(false);
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [rutValue, setRutValue] = useState("");
   const [company, setCompany] = useState(null);
@@ -58,6 +57,7 @@ const NewSalePage = () => {
   const [openScannerModal, setOpenScannerModal] = useState(false);
   const [isSaveConfirmationModalOpen, setIsSaveConfirmationModalOpen] =
     useState(false);
+  const [deliveredValue, setDeliveredValue] = useState(false);
 
   const [quantity, setQuantity] = useState({});
   const [subtotal, setSubtotal] = useState(0);
@@ -71,7 +71,6 @@ const NewSalePage = () => {
 
   //validacion en tiempo real react-hook-form
   const checkQuantity = watch("checkQuantity");
-  const deliveredValue = watch("delivered", false);
   const isDirectValue = watch("isDirect", false);
 
   const handleOrderCreation = async (orderData) => {
@@ -156,7 +155,7 @@ const NewSalePage = () => {
   };
 
   const onSubmit = (data) => {
-    setOrderData(data);
+    setOrderData({ ...data, delivered: deliveredValue });
     setIsConfirmationModalOpen(true);
   };
 
@@ -168,11 +167,11 @@ const NewSalePage = () => {
   const closeSaveConfirmationModal = () => {
     setIsConfirmationModalOpen(false);
     setIsSaveConfirmationModalOpen(false);
+    navigate("/inicio/ordenes");
   };
   const handleConfirmSaveClick = () => {
     setConfirmation(true);
     setIsConfirmationModalOpen(false);
-
     if (orderData) {
       handleOrderCreation({
         ...orderData,
@@ -181,8 +180,8 @@ const NewSalePage = () => {
           : company,
         user: seller,
       });
+      setIsSaveConfirmationModalOpen(true);
     }
-    navigate("/inicio/ordenes");
   };
   const handleSelectCompany = (selectedCompany) => {
     if (selectedCompany) {
@@ -208,13 +207,6 @@ const NewSalePage = () => {
     } else {
       setRutValue("");
     }
-  };
-  const handleClose = () => {
-    setConfirmationModalOpen(false);
-    setValue("delivered", false);
-  };
-  const handleConfirm = () => {
-    setConfirmationModalOpen(false);
   };
 
   const transformData = (array) => {
@@ -632,6 +624,7 @@ const NewSalePage = () => {
                               <Input
                                 label={"Código de barras"}
                                 placeholder={"..."}
+                                value={barCode || "..."}
                                 bg="bg-white"
                                 {...register(
                                   `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
@@ -647,7 +640,7 @@ const NewSalePage = () => {
                                   onClick={() => setOpenScannerModal(true)}
                                 >
                                   <img
-                                    src={cameraIcon}
+                                    src={barCodeIcon}
                                     alt=""
                                     className="h-5 w-5"
                                   />
@@ -867,12 +860,7 @@ const NewSalePage = () => {
                   isSelected={deliveredValue}
                   onChange={(e) => {
                     const checked = e.target.checked;
-                    setValue("delivered", checked);
-                    if (checked) {
-                      setConfirmationModalOpen(true);
-                    } else {
-                      setConfirmationModalOpen(false);
-                    }
+                    setDeliveredValue(checked);
                   }}
                 >
                   Entregado
@@ -891,18 +879,8 @@ const NewSalePage = () => {
         </form>
 
         <ReusableModal
-          isOpen={confirmationModalOpen}
-          onClose={handleClose}
-          title="Confirmación de orden"
-          onAccept={handleConfirm}
-          variant="confirmation"
-          buttons={["back", "accept"]}
-        >
-          ¿Estás seguro/a que deseas marcar como Entregado?
-        </ReusableModal>
-        <ReusableModal
           isOpen={isConfirmationModalOpen}
-          onClose={closeSaveConfirmationModal}
+          onClose={() => setIsConfirmationModalOpen(false)}
           title="Confirmación"
           variant="confirmation"
           buttons={["accept", "cancel"]}
@@ -916,9 +894,11 @@ const NewSalePage = () => {
           title="Orden creada"
           variant="confirmation"
           buttons={["accept"]}
-          onAccept={handleConfirmSaveClick}
+          onAccept={closeSaveConfirmationModal}
         >
-          La orden fue creada exitosamente.
+          {deliveredValue
+            ? "La orden fue creada exitosamente y se encuentra en órdenes."
+            : "La orden fue creada exitosamente y se encuentra en taller."}
         </ReusableModal>
         <ReusableModal
           isOpen={openScannerModal}

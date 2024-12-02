@@ -9,6 +9,7 @@ import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import SearchInput from "../components/inputs/SearchInput";
+import disconnectedImg from "../assets/images/disconnected.svg";
 
 const AddSellerRoutePage = ({
   arraySeller,
@@ -121,20 +122,40 @@ const AddSellerRoutePage = ({
             </tr>
           </thead>
           <tbody>
-            {arraySeller.map((seller) => (
-              <RouteSellerDetailsRow
-                key={seller.id}
-                name={seller?.userInfo?.fullName}
-                contact={seller.email}
-                state={seller.isActive ? "Activo" : "Inactivo"}
-                deleteIconSrc={deleteIcon}
-                onDeleteClick={() => openConfirmDeleteModal(seller.id)}
-              />
-            ))}
+            {arraySeller.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="p-4 text-center">
+                  <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                    Ningún elemento coincide con tu búsqueda, inténtalo de
+                    nuevo. <br /> Puedes encontrar las rutas creadas aquí.
+                  </p>
+                  <img
+                    src={disconnectedImg}
+                    alt="Tabla vacía"
+                    className="mx-auto"
+                  />
+                </td>
+              </tr>
+            ) : (
+              arraySeller.map((seller) => (
+                <RouteSellerDetailsRow
+                  key={seller.id}
+                  name={seller?.userInfo?.fullName}
+                  contact={seller.email}
+                  state={seller.isActive ? "Activo" : "Inactivo"}
+                  deleteIconSrc={deleteIcon}
+                  onDeleteClick={() => openConfirmDeleteModal(seller.id)}
+                />
+              ))
+            )}
           </tbody>
         </table>
       </div>
-      <div className="flex justify-center p-6">
+      <div
+        className={
+          arraySeller.length === 0 ? "hidden" : `flex justify-center p-6`
+        }
+      >
         <Pagination
           pageIndex={setItemsPerPage}
           currentPage={page}

@@ -17,9 +17,6 @@ import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
 import PriceListPage from "./PriceListPage";
 import useGetPriceList from "../hooks/priceList/useGetPriceList";
-import { BASE_URL } from "../utils/Constants";
-import { getProductsExcel } from "../services/products/products.routes";
-import DownloadIcon from "../assets/icons/download.svg";
 
 const INVENTORY_TAB = "inventory";
 const PRICES_TAB = "prices";
@@ -71,7 +68,6 @@ const ProductsPage = () => {
     register,
     handleSubmit,
     setValue,
-    control,
     setError,
     formState: { errors },
   } = useForm();

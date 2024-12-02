@@ -291,101 +291,95 @@ const WorkshopPage = () => {
                 <SearchInput placeholder="Buscar..." onChange={setSearch} />
               </div>
             </div>
-            {ordersResponse.length === 0 ? (
-              <>
-                <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
-                  <td colSpan="5" className="p-4 text-center">
-                    <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                      Ningún elemento coincide con tu búsqueda, inténtalo de
-                      nuevo. <br /> Puedes encontrar a las solicitudes creadas
-                      aquí.
-                    </p>
-                    <img
-                      src={pageLostImg}
-                      alt="Tabla vacía"
-                      className="mx-auto"
-                    />
-                  </td>
-                </tr>
-              </>
-            ) : (
-              <>
-                <div className="flex flex-grow flex-col justify-between">
-                  <div>
-                    <table className="mt-2 w-full">
-                      <thead>
-                        <tr>
-                          <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                            Empresa
-                          </th>
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            ID de orden
-                          </th>
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            Fecha de ingreso
-                          </th>
+            <div className="flex flex-grow flex-col justify-between">
+              <div>
+                <table className="mt-2 w-full">
+                  <thead>
+                    <tr>
+                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                        Empresa
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        ID de orden
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Fecha de ingreso
+                      </th>
 
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            Vendedor
-                          </th>
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            <div className="flex flex-col items-center gap-2">
-                              <FilterSelect
-                                options={stateOptions}
-                                placeholder="Estado"
-                                onChange={handleStateFilterChange}
-                              />
-                            </div>
-                          </th>
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            Acción
-                          </th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {ordersResponse.map((order, index) => (
-                          <RechargeRow
-                            key={index}
-                            id={order.id}
-                            name={order?.client?.name || "Sin nombre"}
-                            orderId={order.orderId}
-                            entryData={
-                              formatDate(order.workShopDateEntry) ||
-                              "Aún sin preparar"
-                            }
-                            seller={
-                              order?.user?.userInfo?.fullName || "Sin asignar"
-                            }
-                            state={order.status}
-                            deleteIconSrc={deleteIcon}
-                            onDeleteClick={() =>
-                              openConfirmDeleteModal(order.id)
-                            }
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Vendedor
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        <div className="flex flex-col items-center gap-2">
+                          <FilterSelect
+                            options={stateOptions}
+                            placeholder="Estado"
+                            onChange={handleStateFilterChange}
                           />
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div
-                    className={
-                      ordersResponse.length === 0
-                        ? "hidden"
-                        : `flex justify-center p-6`
-                    }
-                  >
-                    <Pagination
-                      pageIndex={setItemsPerPage}
-                      currentPage={page}
-                      totalPages={totalPage}
-                      onPageChange={setPage}
-                      itemsPerPage={itemsPerPage}
-                      total={total}
-                    />
-                  </div>
-                </div>
-              </>
-            )}
+                        </div>
+                      </th>
+                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                        Acción
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {ordersResponse.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="p-4 text-center">
+                          <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                            Ningún elemento coincide con tu búsqueda, inténtalo
+                            de nuevo. <br /> Puedes encontrar a las solicitudes
+                            creadas aquí.
+                          </p>
+                          <img
+                            src={pageLostImg}
+                            alt="Tabla vacía"
+                            className="mx-auto"
+                          />
+                        </td>
+                      </tr>
+                    ) : (
+                      ordersResponse.map((order, index) => (
+                        <RechargeRow
+                          key={index}
+                          id={order.id}
+                          name={order?.client?.name || "Sin nombre"}
+                          orderId={order.orderId}
+                          entryData={
+                            formatDate(order.workShopDateEntry) ||
+                            "Aún sin preparar"
+                          }
+                          seller={
+                            order?.user?.userInfo?.fullName || "Sin asignar"
+                          }
+                          state={order.status}
+                          deleteIconSrc={deleteIcon}
+                          onDeleteClick={() => openConfirmDeleteModal(order.id)}
+                        />
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <div
+                className={
+                  ordersResponse.length === 0
+                    ? "hidden"
+                    : `flex justify-center p-6`
+                }
+              >
+                <Pagination
+                  pageIndex={setItemsPerPage}
+                  currentPage={page}
+                  totalPages={totalPage}
+                  onPageChange={setPage}
+                  itemsPerPage={itemsPerPage}
+                  total={total}
+                />
+              </div>
+            </div>
           </div>
         )}
 
@@ -395,10 +389,10 @@ const WorkshopPage = () => {
             setSearch={setSearch}
             setEntryDate={setEntryDate}
             setStatus={setStatus}
-            pageIndex={setItemsPerPage}
-            currentPage={page}
-            totalPages={totalPage}
-            onPageChange={setPage}
+            setItemsPerPage={setItemsPerPage}
+            page={page}
+            totalPage={totalPage}
+            setPage={setPage}
             itemsPerPage={itemsPerPage}
             total={total}
           />

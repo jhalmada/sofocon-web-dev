@@ -33,6 +33,8 @@ const ClientsOrdersPage = () => {
   const [total, setTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tempStatus, setTempStatus] = useState(null);
 
   const accessToken = localStorage.getItem(SOFOCON_JWT_TOKEN);
   const handleDownloadClick = async () => {
@@ -117,7 +119,7 @@ const ClientsOrdersPage = () => {
     setDiscount(discountAmount.toFixed(2));
   }, [orderDetails, discountPercent]);
 
-  const handleStateChange = async (e) => {
+  const handleStateChange = (e) => {
     const translateState = (state) => {
       switch (state) {
         case "Solicitado":
@@ -125,33 +127,55 @@ const ClientsOrdersPage = () => {
         case "En preparación":
           return "PREPARATION";
         case "Para retirar":
-          return "READY_PICKUP";
+          setTempStatus("READY_PICKUP");
+          setIsModalOpen(true);
+          return null;
         case "Egreso":
           return "EGRESS";
         case "Entregado":
+          setTempStatus("DELIVERED");
           setConfirmationModalOpen(true);
-          return "DELIVERED";
-
+          return null;
         default:
           return state;
       }
     };
+
     const newStatus = translateState(e.target.value);
-    setSelectedState(newStatus);
-    const updatedData = { status: newStatus };
-    if (newStatus === "READY_PICKUP") {
+    if (newStatus) {
+      updateOrderState(newStatus);
+    }
+  };
+
+  const updateOrderState = async (status) => {
+    setSelectedState(status);
+    const updatedData = { status };
+    if (status === "READY_PICKUP") {
       updatedData.workShopDateEntry = new Date();
     }
-    await changedOrder({ status: newStatus }, orderDetails.id, setModified);
+    await changedOrder({ status }, orderDetails.id, setModified);
   };
+
   const handleConfirm = () => {
-    setStatus("DELIVERED");
-    setPage(0);
+    if (tempStatus) {
+      updateOrderState(tempStatus);
+      setTempStatus(null);
+    }
     setConfirmationModalOpen(false);
+  };
+  const handleConfirmState = () => {
+    if (tempStatus) {
+      updateOrderState(tempStatus);
+      setTempStatus(null);
+    }
+    setIsModalOpen(false);
+    navigate("/inicio/ordenes");
   };
 
   const handleClose = () => {
+    setTempStatus(null);
     setConfirmationModalOpen(false);
+    setIsModalOpen(false);
   };
 
   return (
@@ -198,6 +222,16 @@ const ClientsOrdersPage = () => {
                 </SelectItem>
               ))}
             </Select>
+            <ReusableModal
+              isOpen={isModalOpen}
+              onClose={handleClose}
+              title="Cambio de estado"
+              onAccept={handleConfirmState}
+              variant="confirmation"
+              buttons={["accept"]}
+            >
+              La orden fue movida a taller
+            </ReusableModal>
             <ReusableModal
               isOpen={confirmationModalOpen}
               onClose={handleClose}

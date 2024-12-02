@@ -245,58 +245,59 @@ const OrdersPage = () => {
               </div>
             </div>
 
-            {ordersResponse.length === 0 ? (
-              <>
-                <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
-                  <td colSpan="5" className="p-4 text-center">
-                    <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                      Ningún elemento coincide con tu búsqueda, inténtalo de
-                      nuevo. <br /> Puedes encontrar a las órdenes creadas aquí.
-                    </p>
-                    <img
-                      src={pageLostImg}
-                      alt="Tabla vacía"
-                      className="mx-auto"
-                    />
-                  </td>
-                </tr>
-              </>
-            ) : (
-              <>
-                <div className="flex flex-grow flex-col justify-between">
-                  <div>
-                    <table className="mt-2 w-full">
-                      <thead>
-                        <tr>
-                          <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                            Empresa
-                          </th>
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            ID de orden
-                          </th>
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            Fecha de venta
-                          </th>
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            Egreso del taller
-                          </th>
+            <>
+              <div className="flex flex-grow flex-col justify-between">
+                <div>
+                  <table className="mt-2 w-full">
+                    <thead>
+                      <tr>
+                        <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                          Empresa
+                        </th>
+                        <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                          ID de orden
+                        </th>
+                        <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                          Fecha de venta
+                        </th>
+                        <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                          Egreso del taller
+                        </th>
 
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            Vendedor
-                          </th>
-                          <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                            <div className="flex flex-col items-center gap-2">
-                              <FilterSelect
-                                options={stateOptions}
-                                placeholder="Estado"
-                                onChange={handleStateFilterChange}
+                        <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                          Vendedor
+                        </th>
+                        <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                          <div className="flex flex-col items-center gap-2">
+                            <FilterSelect
+                              options={stateOptions}
+                              placeholder="Estado"
+                              onChange={handleStateFilterChange}
+                            />
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ordersResponse.length === 0 ? (
+                        <>
+                          <tr>
+                            <td colSpan="6" className="p-4 text-center">
+                              <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                                Ningún elemento coincide con tu búsqueda,
+                                inténtalo de nuevo. <br /> Puedes encontrar a
+                                las órdenes creadas aquí.
+                              </p>
+                              <img
+                                src={pageLostImg}
+                                alt="Tabla vacía"
+                                className="mx-auto"
                               />
-                            </div>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {ordersResponse.map((order, index) => (
+                            </td>
+                          </tr>
+                        </>
+                      ) : (
+                        ordersResponse.map((order, index) => (
                           <ClientsOrdersRow
                             key={index}
                             id={order.id}
@@ -317,29 +318,29 @@ const OrdersPage = () => {
                               openConfirmDeleteModal(order.id)
                             }
                           />
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div
-                    className={
-                      ordersResponse.length === 0
-                        ? "hidden"
-                        : `flex justify-center p-6`
-                    }
-                  >
-                    <Pagination
-                      pageIndex={setItemsPerPage}
-                      currentPage={page}
-                      totalPages={totalPage}
-                      onPageChange={setPage}
-                      itemsPerPage={itemsPerPage}
-                      total={total}
-                    />
-                  </div>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
                 </div>
-              </>
-            )}
+                <div
+                  className={
+                    ordersResponse.length === 0
+                      ? "hidden"
+                      : `flex justify-center p-6`
+                  }
+                >
+                  <Pagination
+                    pageIndex={setItemsPerPage}
+                    currentPage={page}
+                    totalPages={totalPage}
+                    onPageChange={setPage}
+                    itemsPerPage={itemsPerPage}
+                    total={total}
+                  />
+                </div>
+              </div>
+            </>
           </div>
         )}
         {activeTab === DIRECT_ORDERS_TAB && (

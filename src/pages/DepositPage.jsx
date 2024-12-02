@@ -34,6 +34,7 @@ const DepositPage = () => {
   const [newStatus, setNewStatus] = useState(null);
   const [isConfirmModal, setIsConfirmModal] = useState(false);
   const [seller, setSeller] = useState(null);
+  const [confirmStatus, setConfirmStatus] = useState(false);
 
   const oneOrder = async (id) => {
     const newdatos = await getOneOrder(id);
@@ -75,20 +76,27 @@ const DepositPage = () => {
       data.dateV?.day || 1,
     );
     const formattedDate = newdata.toISOString();
+
     if (newStatus === "EGRESS") {
       await changedOrder(
         {
           status: newStatus,
           user: data.user,
           sellDate: formattedDate ? formattedDate : null,
+          workShopDateDeparture: new Date().toISOString(),
         },
         orderDetails.id,
         setModified,
       );
-      setIsSaveConfirmationModalOpen(true);
     } else {
       await changedOrder({ status: newStatus }, orderDetails.id, setModified);
-      setIsSaveConfirmationModalOpen(true);
+    }
+  };
+  const onSubmitWithValidation = (data) => {
+    if (Object.keys(errors).length === 0 || Object.keys(errors).length === 1) {
+      setConfirmStatus(true);
+      handleCloseModal();
+      onSubmit(data);
     }
   };
   const handleSelectSeller = (selectedSeller) => {
@@ -129,8 +137,10 @@ const DepositPage = () => {
     }
   };
   const handleCloseModal = () => {
+    setConfirmStatus(false);
     setIsConfirmModal(false);
     setIsModalOpen(false);
+    navigate("/inicio/taller");
   };
   const closeSaveConfirmationModal = () => {
     setIsSaveConfirmationModalOpen(false);
@@ -269,22 +279,24 @@ const DepositPage = () => {
               </div>
             ))}
           </div>
-          <div className="mt-5 flex w-full justify-end">
-            <Button
-              text={"GUARDAR"}
-              color={"save"}
-              type={"submit"}
-              icon={ArrowRightIcon}
-            />
-          </div>
         </form>
+        <ReusableModal
+          isOpen={confirmStatus}
+          onClose={handleCloseModal}
+          title="Cambio de estado"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={handleCloseModal}
+        >
+          La orden fue movida a órdenes.
+        </ReusableModal>
         <ReusableModal
           isOpen={isConfirmModal}
           onClose={handleCloseModal}
           title="Egreso de orden"
           variant="confirmation"
-          buttons={["cancel", "accept"]}
-          onAccept={handleCloseModal}
+          buttons={["accept"]}
+          onAccept={handleSubmit(onSubmitWithValidation)}
         >
           <div>
             <span className="text-sm font-light leading-[1rem] text-black_b">

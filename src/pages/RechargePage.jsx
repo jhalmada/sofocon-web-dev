@@ -12,6 +12,8 @@ import usePutOrders from "../hooks/orders/usePutOrders";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
+import Calendar from "../components/calendar/Calendar";
+
 const RechargePage = () => {
   const {
     handleSubmit,
@@ -34,6 +36,8 @@ const RechargePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setIsSaveConfirmationModalOpen] =
     useState(false);
+  const [confirmStatus, setConfirmStatus] = useState(false);
+
   const [newStatus, setNewStatus] = useState(null);
 
   const oneOrder = async (id) => {
@@ -102,16 +106,23 @@ const RechargePage = () => {
         {
           status: newStatus,
           user: data.user,
-          workShopDateDeparture: formattedDate ? formattedDate : null,
+          sellDate: formattedDate ? formattedDate : null,
+          workShopDateDeparture: new Date().toISOString(),
         },
         orderDetails.id,
         setModified,
       );
-      setIsSaveConfirmationModalOpen(true);
     } else {
       await changedOrder({ status: newStatus }, orderDetails.id, setModified);
-      setIsSaveConfirmationModalOpen(true);
     }
+  };
+  const onSubmitWithValidation = (data) => {
+    if (Object.keys(errors).length === 0 || Object.keys(errors).length === 1) {
+      setConfirmStatus(true);
+      handleCloseModal();
+      onSubmit(data);
+    }
+    setConfirmStatus(true);
   };
   const translateStateToEnglish = (state) => {
     switch (state) {
@@ -146,8 +157,10 @@ const RechargePage = () => {
   };
 
   const handleCloseModal = () => {
+    setConfirmStatus(false);
     setIsConfirmModal(false);
     setIsModalOpen(false);
+    navigate("/inicio/taller");
   };
   const handleSelectSeller = (selectedSeller) => {
     if (selectedSeller) {
@@ -184,7 +197,6 @@ const RechargePage = () => {
         <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
           Recarga
         </h1>
-
         <div className="flex items-center justify-between">
           <div className="flex">
             <span className="min-w-40 cursor-pointer rounded-t-lg bg-white p-4 text-center text-md font-medium leading-6 shadow-t">
@@ -349,16 +361,17 @@ const RechargePage = () => {
               </div>
             ))}
           </div>
-
-          <div className="mt-5 flex w-full justify-end">
-            <Button
-              text={"GUARDAR"}
-              color={"save"}
-              type={"submit"}
-              icon={ArrowRightIcon}
-            />
-          </div>
         </form>
+        <ReusableModal
+          isOpen={confirmStatus}
+          onClose={handleCloseModal}
+          title="Cambio de estado"
+          variant="confirmation"
+          buttons={["accept"]}
+          onAccept={handleCloseModal}
+        >
+          La orden fue movida a órdenes.
+        </ReusableModal>
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
@@ -386,8 +399,8 @@ const RechargePage = () => {
           onClose={handleCloseModal}
           title="Egreso de orden"
           variant="confirmation"
-          buttons={["cancel", "accept"]}
-          onAccept={handleCloseModal}
+          buttons={["accept"]}
+          onAccept={handleSubmit(onSubmitWithValidation)}
         >
           <div>
             <span className="text-sm font-light leading-[1rem] text-black_b">
