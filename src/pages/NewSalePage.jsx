@@ -8,7 +8,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
 import { Checkbox } from "@nextui-org/react";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
-import cameraIcon from "../assets/icons/camera.svg";
+import barCodeIcon from "../assets/icons/barcode.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import useAddOrders from "../hooks/orders/useAddOrders.js";
 import useCompanies from "../hooks/companies/useCompanies.js";
@@ -30,7 +30,7 @@ const NewSalePage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const { setBarCode } = useOrders();
+  const { barCode, setBarCode } = useOrders();
   const { postAddOrders } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
@@ -624,6 +624,7 @@ const NewSalePage = () => {
                               <Input
                                 label={"Código de barras"}
                                 placeholder={"..."}
+                                value={barCode || "..."}
                                 bg="bg-white"
                                 {...register(
                                   `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
@@ -639,7 +640,7 @@ const NewSalePage = () => {
                                   onClick={() => setOpenScannerModal(true)}
                                 >
                                   <img
-                                    src={cameraIcon}
+                                    src={barCodeIcon}
                                     alt=""
                                     className="h-5 w-5"
                                   />
