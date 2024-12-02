@@ -26,8 +26,26 @@ const coordenadasUruguay = {
   lat: -34.901,
   lng: -56.1698,
 };
+const direccionText = (address) => {
+  const parts = address.split(","); // Divide la dirección por comas
 
-const MapHandler = ({ place, marker }) => {
+  if (parts.length < 2) {
+    return { error: "La dirección no está en el formato esperado" };
+  }
+
+  const direccion = parts[0].trim(); // Primer parte como dirección
+
+  // Extraemos el barrio de la segunda parte
+  const barrioParts = parts[1].trim().split(" ");
+  const barrio = barrioParts.slice(1).join(" ").trim(); // Ignora el código postal y toma el resto
+
+  return {
+    direccion,
+    barrio,
+  };
+};
+
+const MapHandler = ({ place, marker, setValue }) => {
   const map = useMap();
 
   useEffect(() => {
@@ -38,6 +56,8 @@ const MapHandler = ({ place, marker }) => {
     }
 
     marker.position = place.geometry?.location;
+    setValue("address", direccionText(place.formatted_address).direccion);
+    setValue("neighborhood", direccionText(place.formatted_address).barrio);
   }, [map, place, marker]);
   return null;
 };
@@ -78,6 +98,11 @@ const PlaceAutocomplete = ({ onPlaceSelect }) => {
 };
 
 const AddCompaniePage = () => {
+  console.log(
+    direccionText(
+      "Magallanes 744, B1704FLD Ramos Mejía, Provincia de Buenos Aires, ",
+    ),
+  );
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [selectManual, setSelectManual] = useState(false);
   const [markerRef, marker] = useAdvancedMarkerRef();
@@ -747,12 +772,13 @@ const AddCompaniePage = () => {
                   ref={markerRef}
                   draggable={true}
                   position={selectManual === false ? null : selectManual}
-                  onDragEnd={(e) =>
+                  onDragEnd={(e) => {
                     setSelectManual({
                       lat: e.latLng.lat(),
                       lng: e.latLng.lng(),
-                    })
-                  }
+                    }),
+                      console.log(e);
+                  }}
                 />
 
                 <AdvancedMarker
@@ -768,7 +794,11 @@ const AddCompaniePage = () => {
                   }
                 />
               </Map>
-              <MapHandler place={selectedPlace} marker={marker} />
+              <MapHandler
+                place={selectedPlace}
+                marker={marker}
+                setValue={setValue}
+              />
             </div>
           </div>
         </ReusableModal>
