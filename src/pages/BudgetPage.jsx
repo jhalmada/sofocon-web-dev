@@ -106,46 +106,52 @@ const BudgetPage = ({
           <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
       </div>
-      {ordersResponse.length === 0 ? (
-        <>
-          <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
-            <td colSpan="5" className="p-4 text-center">
-              <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                Ningún elemento coincide con tu búsqueda, inténtalo de nuevo.{" "}
-                <br /> Puedes encontrar a los presupuestos creados aquí.
-              </p>
-              <img src={pageLostImg} alt="Tabla vacía" className="mx-auto" />
-            </td>
-          </tr>
-        </>
-      ) : (
-        <>
-          <div className="flex flex-grow flex-col justify-between">
-            <div>
-              <table className="mt-5 w-full">
-                <thead>
-                  <tr>
-                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                      Empresa
-                    </th>
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Contacto
-                    </th>
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Fecha
-                    </th>
 
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Vendedor
-                    </th>
+      <>
+        <div className="flex flex-grow flex-col justify-between">
+          <div>
+            <table className="mt-5 w-full">
+              <thead>
+                <tr>
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                    Empresa
+                  </th>
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Contacto
+                  </th>
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Fecha
+                  </th>
 
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Acción
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ordersResponse.map((order, index) => (
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Vendedor
+                  </th>
+
+                  <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                    Acción
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {ordersResponse.length === 0 ? (
+                  <>
+                    <tr>
+                      <td colSpan="6" className="p-4 text-center">
+                        <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                          Ningún elemento coincide con tu búsqueda, inténtalo de
+                          nuevo. <br /> Puedes encontrar a los presupuestos
+                          creados aquí.
+                        </p>
+                        <img
+                          src={pageLostImg}
+                          alt="Tabla vacía"
+                          className="mx-auto"
+                        />
+                      </td>
+                    </tr>
+                  </>
+                ) : (
+                  ordersResponse.map((order, index) => (
                     <BudgetRow
                       key={index}
                       id={order.id}
@@ -164,29 +170,27 @@ const BudgetPage = ({
                       }}
                       onDeleteClick={() => openConfirmDeleteModal(order.id)}
                     />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div
-              className={
-                ordersResponse.length === 0
-                  ? "hidden"
-                  : `flex justify-center p-6`
-              }
-            >
-              <Pagination
-                pageIndex={setItemsPerPage}
-                currentPage={page}
-                totalPages={totalPage}
-                onPageChange={setPage}
-                itemsPerPage={itemsPerPage}
-                total={total}
-              />
-            </div>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
-        </>
-      )}
+          <div
+            className={
+              ordersResponse.length === 0 ? "hidden" : `flex justify-center p-6`
+            }
+          >
+            <Pagination
+              pageIndex={setItemsPerPage}
+              currentPage={page}
+              totalPages={totalPage}
+              onPageChange={setPage}
+              itemsPerPage={itemsPerPage}
+              total={total}
+            />
+          </div>
+        </div>
+      </>
 
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
