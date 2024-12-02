@@ -25,7 +25,6 @@ import {
 } from "../services/orders/orders.routes.js";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders.js";
-import { div } from "framer-motion/client";
 
 const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
@@ -390,10 +389,10 @@ const WorkshopPage = () => {
             setSearch={setSearch}
             setEntryDate={setEntryDate}
             setStatus={setStatus}
-            pageIndex={setItemsPerPage}
-            currentPage={page}
-            totalPages={totalPage}
-            onPageChange={setPage}
+            setItemsPerPage={setItemsPerPage}
+            page={page}
+            totalPage={totalPage}
+            setPage={setPage}
             itemsPerPage={itemsPerPage}
             total={total}
           />

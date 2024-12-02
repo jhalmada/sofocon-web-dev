@@ -22,11 +22,11 @@ const StoragePage = ({
   setEntryDate,
   setStatus,
   setItemsPerPage,
+  itemsPerPage,
+  page,
   totalPage,
   total,
   setPage,
-  page,
-  itemsPerPage,
 }) => {
   const { id } = useParams();
   const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
@@ -267,7 +267,7 @@ const StoragePage = ({
                       <td colSpan="6" className="p-4 text-center">
                         <p className="text-md font-semibold leading-[1.3rem] text-black_l">
                           Ningún elemento coincide con tu búsqueda, inténtalo de
-                          nuevo. <br /> Puedes encontrar a las Solicitudes
+                          nuevo. <br /> Puedes encontrar a las solicitudes
                           creadas aquí.
                         </p>
                         <img

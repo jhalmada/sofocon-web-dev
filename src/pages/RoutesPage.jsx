@@ -16,7 +16,6 @@ import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
-
 import disconnectedImg from "../assets/images/disconnected.svg";
 
 const SELLER_TAB = "sellers";
@@ -173,52 +172,53 @@ const RoutesPage = () => {
               <div className="flex justify-end">
                 <SearchInput placeholder="Buscar..." onChange={setSearch} />
               </div>
-              {sellerRoutesResponse.length === 0 ? (
-                <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
-                  <td colSpan="5" className="p-4 text-center">
-                    <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                      Ningún elemento coincide con tu búsqueda, inténtalo de
-                      nuevo. <br /> Puedes encontrar las rutas creadas aquí.
-                    </p>
-                    <img
-                      src={disconnectedImg}
-                      alt="Tabla vacía"
-                      className="mx-auto"
-                    />
-                  </td>
-                </tr>
-              ) : (
-                <table className="mt-2 w-full">
-                  <thead>
+
+              <table className="mt-2 w-full">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Nombre
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Zona
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Empresas
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Vendedores
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      <div className="flex flex-col items-center gap-2">
+                        <FilterSelect
+                          options={stateOptions}
+                          placeholder="Estado"
+                          onChange={handleStateFilterChange}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2 text-md font-semibold leading-[1.125rem]">
+                      Acción
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sellerRoutesResponse.length === 0 ? (
                     <tr>
-                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                        Nombre
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Zona
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Empresas
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Vendedores
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        <div className="flex flex-col items-center gap-2">
-                          <FilterSelect
-                            options={stateOptions}
-                            placeholder="Estado"
-                            onChange={handleStateFilterChange}
-                          />
-                        </div>
-                      </th>
-                      <th className="p-2 text-md font-semibold leading-[1.125rem]">
-                        Acción
-                      </th>
+                      <td colSpan="5" className="p-4 text-center">
+                        <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                          Ningún elemento coincide con tu búsqueda, inténtalo de
+                          nuevo. <br /> Puedes encontrar las rutas creadas aquí.
+                        </p>
+                        <img
+                          src={disconnectedImg}
+                          alt="Tabla vacía"
+                          className="mx-auto"
+                        />
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {sellerRoutesResponse.map((seller, index) => (
+                  ) : (
+                    sellerRoutesResponse.map((seller, index) => (
                       <RouteRow
                         id={seller.id}
                         key={index}
@@ -234,10 +234,10 @@ const RoutesPage = () => {
                         }}
                         onDeleteClick={() => openConfirmDeleteModal(seller.id)}
                       />
-                    ))}
-                  </tbody>
-                </table>
-              )}
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
             <div
               className={
