@@ -127,6 +127,7 @@ const RechargePage = () => {
     switch (state) {
       case "Solicitado":
         return "REQUEST";
+
       case "En preparación":
         return "PREPARATION";
       case "Para retirar":
@@ -152,6 +153,7 @@ const RechargePage = () => {
       setNewStatus("EGRESS");
     } else {
       setNewStatus(newStatus);
+      await changedOrder({ status: newStatus }, orderDetails.id, setModified);
     }
   };
 

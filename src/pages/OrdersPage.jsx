@@ -43,9 +43,21 @@ const OrdersPage = () => {
     getAllOrders,
   } = useOrders();
 
-  const [activeTab, setActiveTab] = useState(() => {
-    return sessionStorage.getItem("activeTab") || CLIENTS_ORDERS_TAB;
-  });
+  const navigationActive = (tab) => {
+    switch (tab) {
+      case CLIENTS_ORDERS_TAB:
+        return CLIENTS_ORDERS_TAB;
+      case DIRECT_ORDERS_TAB:
+        return DIRECT_ORDERS_TAB;
+      case BUDGET_TAB:
+        return BUDGET_TAB;
+      case STATUS_PANEL_TAB:
+        return STATUS_PANEL_TAB;
+    }
+  };
+  const [activeTab, setActiveTab] = useState(
+    navigationActive(sessionStorage.getItem("activeTab")),
+  );
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [orderId, setOrderId] = useState(null);
 
