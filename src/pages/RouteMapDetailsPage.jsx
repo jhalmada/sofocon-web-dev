@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
-import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
-import { useForm } from "react-hook-form";
 import RouteMapDetailsRow from "../components/RouteMapDetailsRow.jsx";
 import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
 import useUsers from "../hooks/users/use.users.js";
@@ -301,7 +299,7 @@ const RouteMapDetailsPage = () => {
 
         {activeTab === SELLERS_TAB && (
           <AddSellerRoutePage
-            arraySeller={userSellerResponse.result}
+            arraySeller={userSellerResponse?.result || []}
             itemsPerPage={itemsPerPage}
             page={page}
             setItemsPerPage={setItemsPerPage}

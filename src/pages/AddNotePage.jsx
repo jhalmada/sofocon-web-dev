@@ -9,6 +9,7 @@ import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import useAddNotes from "../hooks/notes/useAddNotes.js";
 import BackButton from "../components/buttons/BackButton.jsx";
 import Calendar from "../components/calendar/Calendar.jsx";
+import useGetOneCompany from "../hooks/companies/useGetOneCompany.js";
 const NOTES_TAB = "notes";
 const AddNotesPage = () => {
   const [noteId, setNoteId] = useState(null);
@@ -33,6 +34,7 @@ const AddNotesPage = () => {
   const navigate = useNavigate();
 
   const { postAddNotes, loading } = useAddNotes();
+  const { companyResponse } = useGetOneCompany(id);
 
   const {
     register,
@@ -109,7 +111,7 @@ const AddNotesPage = () => {
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            Nombre Empresa
+            {companyResponse.name}
           </h1>
         </div>
         <div className="flex items-center">

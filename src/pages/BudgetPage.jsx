@@ -1,6 +1,6 @@
 import Pagination from "../components/Pagination";
 import deleteIcon from "../assets/icons/trash3.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectItem } from "@nextui-org/react";
 import BudgetRow from "../components/BudgetRow";
 import downloadIcon from "../assets/icons/download.svg";

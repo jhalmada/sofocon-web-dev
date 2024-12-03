@@ -259,12 +259,18 @@ const NewSalePage = () => {
   };
 
   const handleProductDiscountInput = (e, index) => {
-    let value = e.target.value.slice(0, 2);
-    if (value === "" || isNaN(value)) {
-      value = 0;
+    let value = e.target.value;
+    if (value === "100") {
+      value = 100;
     } else {
-      value = parseFloat(value);
+      value = value.slice(0, 2);
+      if (value === "" || isNaN(value)) {
+        value = 0;
+      } else {
+        value = parseFloat(value);
+      }
     }
+
     setDiscount((prevDiscount) => {
       const newDiscount = [...prevDiscount];
       newDiscount[index] = value;
@@ -273,9 +279,15 @@ const NewSalePage = () => {
   };
 
   const handleDiscount2Input = (e) => {
-    const value = e.target.value.slice(0, 2);
+    let value = e.target.value;
+    if (value === "100") {
+      value = 100;
+    } else {
+      value = value.slice(0, 2);
+    }
     setDiscount2(value);
   };
+
   const truncateToTwoDecimals = (num) => {
     return Math.floor(num * 100) / 100;
   };
@@ -559,10 +571,12 @@ const NewSalePage = () => {
                           defaultValue={item.list[0].price}
                           value={
                             "$" +
-                            item.list[0].price *
+                            (
+                              item.list[0].price *
                               (quantity[item.id] || 1) *
                               (1 -
                                 (discount[index] ? discount[index] / 100 : 0))
+                            ).toFixed(2)
                           }
                           {...register(`productInOrder[${index}].fixedPrice`, {
                             value: item.list[0].price,

@@ -16,6 +16,8 @@ import StatusPanelPage from "./StatusPanelPage.jsx";
 import useOrders from "../hooks/orders/useOrders.js";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders.js";
 import pageLostImg from "../assets/images/pageLostOrders.svg";
+import useMetricsProduts from "../hooks/metrics/useGetMetricsProducts.js";
+import useMetricsOrders from "../hooks/metrics/useGetMetricsOrders.js";
 
 const CLIENTS_ORDERS_TAB = "ordenes-clientes";
 const DIRECT_ORDERS_TAB = "ordenes-directas";
@@ -23,8 +25,8 @@ const BUDGET_TAB = "presupuesto";
 const STATUS_PANEL_TAB = "panel-de-estado";
 
 const OrdersPage = () => {
-  const [orderId, setOrderId] = useState(null);
-
+  const { setYear } = useMetricsProduts();
+  const { year } = useMetricsOrders();
   const { deleteOrder } = useDeleteOrders();
   const {
     ordersResponse,
@@ -45,7 +47,21 @@ const OrdersPage = () => {
     return sessionStorage.getItem("activeTab") || CLIENTS_ORDERS_TAB;
   });
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [orderId, setOrderId] = useState(null);
 
+  const years = [
+    { label: "2024", value: 2024 },
+    { label: "2025", value: 2025 },
+    { label: "2026", value: 2026 },
+    { label: "2027", value: 2027 },
+    { label: "2028", value: 2028 },
+    { label: "2029", value: 2029 },
+    { label: "2030", value: 2030 },
+    { label: "2031", value: 2031 },
+    { label: "2032", value: 2032 },
+    { label: "2033", value: 2033 },
+    { label: "2034", value: 2034 },
+  ];
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -70,6 +86,9 @@ const OrdersPage = () => {
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${day}/${month}/${year}`;
+  };
+  const handleChangeYear = (value) => {
+    setYear(value);
   };
   const openConfirmDeleteModal = (id) => {
     setOrderId(id);
@@ -180,6 +199,12 @@ const OrdersPage = () => {
         <div className="flex items-center">
           <div className="flex">
             <h2
+              onClick={() => setActiveTab(STATUS_PANEL_TAB)}
+              className={`${activeTab === STATUS_PANEL_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-48 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
+            >
+              Panel de estados
+            </h2>
+            <h2
               onClick={() => setActiveTab(CLIENTS_ORDERS_TAB)}
               className={`w-48 cursor-pointer rounded-t-lg ${activeTab === CLIENTS_ORDERS_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
@@ -196,12 +221,6 @@ const OrdersPage = () => {
               className={`${activeTab === BUDGET_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-48 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Presupuestos
-            </h2>
-            <h2
-              onClick={() => setActiveTab(STATUS_PANEL_TAB)}
-              className={`${activeTab === STATUS_PANEL_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-48 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
-            >
-              Panel de estados
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
@@ -226,19 +245,35 @@ const OrdersPage = () => {
         {activeTab === CLIENTS_ORDERS_TAB && (
           <div className="flex h-full flex-grow flex-col overflow-auto rounded-tr-lg bg-white p-5">
             <div className="flex justify-between">
-              <div className="flex items-center gap-2">
-                <p className="ml-2 text-black_m">Período</p>
-                <Select
-                  className="w-52 rounded-lg border"
-                  placeholder="Selecciona un mes"
-                  onChange={handleMonthChange}
-                >
-                  {monthsOptions.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </Select>
+              <div className="flex space-x-2">
+                <div className="flex items-center gap-2">
+                  <p className="ml-2 text-black_m">Período</p>
+                  <Select
+                    className="w-52 rounded-lg border"
+                    placeholder="Selecciona un mes"
+                    onChange={handleMonthChange}
+                  >
+                    {monthsOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Select
+                    defaultSelectedKeys={[year.toString()]}
+                    labelPlacement="outside"
+                    className="w-52 rounded-lg border"
+                    onChange={(e) => handleChangeYear(e.target.value)}
+                  >
+                    {years.map((year) => (
+                      <SelectItem key={year.value} value={year.value}>
+                        {year.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </div>
               </div>
               <div>
                 <SearchInput placeholder="Buscar..." onChange={setSearch} />

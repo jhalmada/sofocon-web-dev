@@ -300,7 +300,7 @@ const DepositPage = () => {
         >
           <div>
             <span className="text-sm font-light leading-[1rem] text-black_b">
-              Fecha de venta
+              Fecha de egreso
             </span>
             <Calendar control={control} errors={errors} name="dateV" />
           </div>

@@ -34,8 +34,6 @@ const AddSellerRoutePage = ({
   const stateOptions = ["Activo", "Inactivo"];
   //Hooks
   const { userSellerResponse, setSearch } = useUsersSellers();
-  console.log(userSellerResponse);
-  console.log(arraySeller);
   const { changedSellerRoute } = usePutSellerRoute();
   const {
     register,
