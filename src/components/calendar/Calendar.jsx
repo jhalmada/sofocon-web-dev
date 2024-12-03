@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import { I18nProvider } from "@react-aria/i18n";
-import { DatePicker } from "@nextui-org/date-picker";
+import { DatePicker } from "@nextui-org/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 
 const Calendar = ({
@@ -19,7 +19,7 @@ const Calendar = ({
   return (
     <div className="flex flex-col">
       <label className="text-sm font-light text-black">{label}</label>
-      <I18nProvider locale="es-ES">
+      <I18nProvider locale="es-UR">
         <Controller
           name={name}
           control={control}
