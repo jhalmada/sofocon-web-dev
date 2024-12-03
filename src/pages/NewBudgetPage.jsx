@@ -23,12 +23,23 @@ import Calendar from "../components/calendar/Calendar.jsx";
 const NewBudgetPage = () => {
   const {
     register,
-    watch,
     handleSubmit,
     control,
     setValue,
     formState: { errors },
   } = useForm();
+  const { postAddOrders } = useAddOrders();
+  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
+  const { setStatus } = useOrders();
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+  const {
+    productsResponse,
+    setSearch: setSearchProducts,
+    setList,
+  } = useGetProducts();
+  const { priceListResponse } = useGetPriceList();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -47,10 +58,11 @@ const NewBudgetPage = () => {
   const [company, setCompany] = useState(null);
   const [seller, setSeller] = useState(null);
 
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const lastPathItem = pathSegments[pathSegments.length - 1];
   const total = subtotal
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
     : 0;
-
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -65,21 +77,6 @@ const NewBudgetPage = () => {
     "Noviembre",
     "Diciembre",
   ];
-  const { postAddOrders } = useAddOrders();
-  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
-  const { setStatus } = useOrders();
-  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
-  const { pathname } = useLocation();
-  const pathSegments = pathname.split("/").filter(Boolean);
-  const lastPathItem = pathSegments[pathSegments.length - 1];
-
-  const {
-    productsResponse,
-    setSearch: setSearchProducts,
-    setList,
-  } = useGetProducts();
-  const { priceListResponse } = useGetPriceList();
-  const navigate = useNavigate();
 
   const handleBudgetCreation = async (budgetData) => {
     const {

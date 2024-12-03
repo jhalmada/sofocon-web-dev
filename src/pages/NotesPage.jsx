@@ -16,8 +16,6 @@ import NotesRow from "../components/NotesRow.jsx";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import Calendar from "../components/calendar/Calendar.jsx";
 import useGetOneCompany from "../hooks/companies/useGetOneCompany.js";
-import axios from "axios";
-import { use } from "framer-motion/client";
 import { useForm } from "react-hook-form";
 
 const NOTES_TAB = "notes";
@@ -43,9 +41,10 @@ const NotesPage = () => {
   const [dateSelected, setDateSelected] = useState(false);
   const [reminderSelected, setReminderSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
+  const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
 
   const { id } = useParams();
-  const { companyResponse, isLoading } = useGetOneCompany(id);
+  const { companyResponse } = useGetOneCompany(id);
   console.log(companyResponse);
 
   const openModal = (noteId) => {
@@ -69,6 +68,7 @@ const NotesPage = () => {
     setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
+    setIsLimitModalOpen(false);
   };
 
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
@@ -90,6 +90,9 @@ const NotesPage = () => {
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
+  };
+  const handleLimitButtonClick = () => {
+    setIsLimitModalOpen(true);
   };
   const handleNoteCreation = async (noteData) => {
     try {
@@ -153,9 +156,8 @@ const NotesPage = () => {
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
-            {companyResponse.name} - Notas
+            {companyResponse.name}
           </h1>
-          <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
         <div className="flex items-center">
           <div className="flex">
@@ -169,9 +171,17 @@ const NotesPage = () => {
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded py-2">
             {activeTab === NOTES_TAB && (
               <div className="flex gap-[.6rem]">
-                <Link to={"agregar-nota"}>
-                  <Button text="Nueva Nota" icon={PlusIcon} />
-                </Link>
+                {notesResponse.length < 5 ? (
+                  <Link to={"agregar-nota"}>
+                    <Button text="Nueva Nota" icon={PlusIcon} />
+                  </Link>
+                ) : (
+                  <Button
+                    text="Nueva Nota"
+                    icon={PlusIcon}
+                    onClick={handleLimitButtonClick}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -302,6 +312,7 @@ const NotesPage = () => {
       >
         Los cambios fueron guardados exitosamente.
       </ReusableModal>
+
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
@@ -311,6 +322,16 @@ const NotesPage = () => {
         onAccept={() => handleConfirmDelete(noteId)}
       >
         Esta nota será eliminada de forma permanente. ¿Desea continuar?
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isLimitModalOpen}
+        onClose={closeModal}
+        title="Límite de notas alcanzado"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={closeModal}
+      >
+        Se alcanzó el límite de 5 notas, borra alguna para crear otra nota.
       </ReusableModal>
     </div>
   );

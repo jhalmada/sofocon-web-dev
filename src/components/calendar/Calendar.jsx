@@ -11,6 +11,7 @@ const Calendar = ({
   name,
   label = "",
   forward = true,
+  isRequired = true,
 }) => {
   const dateValue = today(getLocalTimeZone());
   const dateProps = forward ? { minValue: dateValue } : { maxValue: dateValue };
@@ -25,6 +26,7 @@ const Calendar = ({
           render={({ field }) => (
             <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
               <DatePicker
+                defaultValue={dateValue}
                 granularity="day"
                 {...dateProps}
                 className={`${errors[name] ? "text-red_e" : ""} ${errors[name] ? "border-red_e" : ""} rounded-lg border`}
@@ -40,14 +42,17 @@ const Calendar = ({
                     return "";
                   }
                 }}
+                locale="es-ES"
               />
             </div>
           )}
           rules={{
-            required: {
-              value: true,
-              message: "La fecha es obligatoria",
-            },
+            required: isRequired
+              ? {
+                  value: true,
+                  message: "La fecha es obligatoria",
+                }
+              : false,
           }}
         />
         <p className="font-roboto text-xs text-red_e">

@@ -2,7 +2,6 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
-import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import ChevronRightIcon from "../assets/icons/chevron-right.svg";
 import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
@@ -404,7 +403,7 @@ const RechargePage = () => {
         >
           <div>
             <span className="text-sm font-light leading-[1rem] text-black_b">
-              Fecha de venta
+              Fecha de egreso
             </span>
             <Calendar control={control} errors={errors} name="dateV" />
           </div>
