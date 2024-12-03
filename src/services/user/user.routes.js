@@ -1,0 +1,8 @@
+export const getUsers = "/user";
+export const postUsers = "/user";
+export const putUsers = "/user/one";
+export const deleteUsers = "/user";
+export const getUsersSeller = "/user/sellers";
+export const getUsersExcel = "user/xlsx";
+export const getUsersPdf = "user/pdf";
+export const putUsersPassword = "user/changePassword";
