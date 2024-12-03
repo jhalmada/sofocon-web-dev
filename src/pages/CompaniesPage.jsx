@@ -384,65 +384,66 @@ const CompaniesPage = () => {
                   />
                 )}
               </div>
-              {companiesResponse.length === 0 ? (
-                <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">
-                  <td colSpan="5" className="p-4 text-center">
-                    <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                      Ningún elemento coincide con tu búsqueda, inténtalo de
-                      nuevo. <br /> Puedes encontrar a las empresas creadas
-                      aquí.
-                    </p>
-                    <img
-                      src={pageLostImg}
-                      alt="Tabla vacía"
-                      className="mx-auto"
-                    />
-                  </td>
-                </tr>
-              ) : (
-                <table className="mt-2 w-full">
-                  <thead>
-                    <tr>
-                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                        Nombre
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Dirección
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Departamento
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Barrio
-                      </th>
 
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Vendedores
-                      </th>
+              <table className="mt-2 w-full">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Nombre
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Dirección
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Departamento
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Barrio
+                    </th>
 
-                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                        <div className="flex flex-col items-center gap-2">
-                          <FilterSelect
-                            options={visitOptions}
-                            placeholder="Próx. visita"
-                            onChange={handleVisitFilterChange}
-                          />
-                        </div>
-                      </th>
-                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                        <div className="flex flex-col items-center gap-2">
-                          <FilterSelect
-                            options={stateOptions}
-                            placeholder="Estado"
-                            onChange={handleStateFilterChange}
-                          />
-                        </div>
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Acción
-                      </th>
-                    </tr>
-                  </thead>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Vendedores
+                    </th>
+
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      <div className="flex flex-col items-center gap-2">
+                        <FilterSelect
+                          options={visitOptions}
+                          placeholder="Próx. visita"
+                          onChange={handleVisitFilterChange}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      <div className="flex flex-col items-center gap-2">
+                        <FilterSelect
+                          options={stateOptions}
+                          placeholder="Estado"
+                          onChange={handleStateFilterChange}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Acción
+                    </th>
+                  </tr>
+                </thead>
+                {companiesResponse.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="p-4 text-center">
+                      <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                        Ningún elemento coincide con tu búsqueda, inténtalo de
+                        nuevo. <br /> Puedes encontrar a las empresas creadas
+                        aquí.
+                      </p>
+                      <img
+                        src={pageLostImg}
+                        alt="Tabla vacía"
+                        className="mx-auto"
+                      />
+                    </td>
+                  </tr>
+                ) : (
                   <tbody>
                     {companiesResponse.map((companie, index) => (
                       <CompanieRow
@@ -453,7 +454,11 @@ const CompaniesPage = () => {
                         departament={companie.department}
                         neighborhood={companie.neighborhood}
                         sellers={"Vendedores"}
-                        nextVisits={formatDate(companie.nextVisit)}
+                        nextVisits={
+                          companie.nextVisit
+                            ? formatDate(companie.nextVisit)
+                            : "Sin fecha"
+                        }
                         state={companie.status}
                         editIconSrc={editIcon}
                         deleteIconSrc={deleteIcon}
@@ -471,8 +476,8 @@ const CompaniesPage = () => {
                       />
                     ))}
                   </tbody>
-                </table>
-              )}
+                )}
+              </table>
             </div>
 
             <div

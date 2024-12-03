@@ -166,14 +166,6 @@ const AddPriceListPage = () => {
                 label2={"Empresas"}
                 onChange={setSearchCompany}
                 setErrors={setError}
-                {...register("company", {
-                  required: {
-                    value: !isAllCompanies,
-                    message:
-                      "Debes seleccionar al menos una empresa o seleccionar todas las empresas",
-                  },
-                })}
-                msjError={!isAllCompanies && errors?.company?.message}
               />
             </div>
 

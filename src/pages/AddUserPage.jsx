@@ -148,8 +148,8 @@ const AddUserPage = () => {
               {...register("ci", {
                 required: "Este campo es obligatorio",
               })}
-              errorApi={errors.fullName}
-              msjError={errors.fullName ? errors.fullName.message : ""}
+              errorApi={errors.ci}
+              msjError={errors.ci ? errors.ci.message : ""}
             />
             <Input
               type={"text"}
