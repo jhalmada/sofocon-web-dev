@@ -61,6 +61,8 @@ const WorkshopPage = () => {
         return RECHARGE_TAB;
       case STORAGE_TAB:
         return STORAGE_TAB;
+      default:
+        return RECHARGE_TAB;
     }
   };
   const [activeTab, setActiveTab] = useState(

@@ -53,6 +53,8 @@ const OrdersPage = () => {
         return BUDGET_TAB;
       case STATUS_PANEL_TAB:
         return STATUS_PANEL_TAB;
+      default:
+        return CLIENTS_ORDERS_TAB;
     }
   };
   const [activeTab, setActiveTab] = useState(
@@ -164,9 +166,6 @@ const OrdersPage = () => {
 
   useEffect(() => {
     sessionStorage.setItem("activeTab", activeTab);
-  }, [activeTab]);
-
-  useEffect(() => {
     switch (activeTab) {
       case BUDGET_TAB:
         getAllOrders({ isDirect: false, isPreOrder: true, inOrders: false });
