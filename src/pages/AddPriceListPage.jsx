@@ -150,22 +150,36 @@ const AddPriceListPage = () => {
                   control={field}
                   msjError={errors.productos?.message}
                   clearErrors={clearErrors}
+                  onChange={setSearch}
                 />
               )}
             />
             <div>
-              <NextAutoComplete
-                array={companiesResponse.map((company) => ({
-                  id: company.id,
-                  name: company.name,
-                }))}
-                label={"Empresas"}
-                isDisabled={isAllCompanies}
-                setValue={setValue}
-                name={"company"}
-                label2={"Empresas"}
-                onChange={setSearchCompany}
-                setErrors={setError}
+              <Controller
+                name="company"
+                control={control}
+                rules={{
+                  required: isAllCompanies
+                    ? false
+                    : "debe seleccionar una empresa o todas",
+                }}
+                render={({ field }) => (
+                  <NextAutoComplete
+                    array={companiesResponse.map((company) => ({
+                      id: company.id,
+                      name: company.name,
+                    }))}
+                    label={"Empresas"}
+                    isDisabled={isAllCompanies}
+                    setValue={setValue}
+                    name={field.name}
+                    label2={"Empresas"}
+                    control={field}
+                    onChange={setSearchCompany}
+                    setErrors={setError}
+                    msjError={errors.company?.message}
+                  />
+                )}
               />
             </div>
 

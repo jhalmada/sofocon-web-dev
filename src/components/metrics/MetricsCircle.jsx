@@ -47,7 +47,7 @@ const MetricsCircle = ({ dataArray = [], width = 800 }) => {
     }
   };
   return (
-    <div className="relative">
+    <div className="relative flex flex-wrap">
       <PieChart width={width} height={200}>
         <Tooltip />
 

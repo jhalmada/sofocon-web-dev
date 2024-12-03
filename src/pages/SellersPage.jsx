@@ -35,10 +35,9 @@ const SellersPage = ({
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [stateFilter, setStateFilter] = useState("");
 
-  const stateOptions = ["Activo", "Inactivo"];
-  const [mnsError, setMnsError] = useState("");
+  console.log(userSellerResponse);
+
   //hooks
   const {
     register,
@@ -121,19 +120,6 @@ const SellersPage = ({
       name: item.name,
     }));
   };
-  const handleStateFilterChange = (value) => {
-    switch (value) {
-      case "Activo":
-        setIsActive(true);
-        break;
-      case "Inactivo":
-        setIsActive(false);
-        break;
-      default:
-        setIsActive(null);
-        break;
-    }
-  };
   return (
     <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div>
@@ -182,6 +168,7 @@ const SellersPage = ({
                   route={"Ruta"}
                   editIconSrc={editIcon}
                   deleteIconSrc={deleteIcon}
+                  routes={user.sellerRoute}
                   state={user.isActive}
                   onEditClick={() => {
                     openModal(user.id);
@@ -230,7 +217,6 @@ const SellersPage = ({
             label={"Telefono"}
             placeholder={"Escribe tu numero telefónico."}
             {...register("phone", {
-              required: "Este campo es obligatorio",
               pattern: {
                 value: /^[0-9]+$/, // Acepta solo números
                 message: "Solo se permiten números",

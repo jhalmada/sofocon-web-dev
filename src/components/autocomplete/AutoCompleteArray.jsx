@@ -15,6 +15,7 @@ const AutoCompleteArray = ({
   placeholder = "Buscar...",
   hidden = false,
   msjError,
+  onChange,
 }) => {
   // Estado para las opciones seleccionadas y sus valores
   const [selectedItems, setSelectedItems] = useState(array2 || []);
@@ -99,6 +100,7 @@ const AutoCompleteArray = ({
         selectedKey={""}
         placeholder={placeholder}
         startContent={<img src={search} alt="Buscar" />}
+        onInputChange={(e) => onChange(e)}
       >
         {array.map((item) => (
           <AutocompleteItem
