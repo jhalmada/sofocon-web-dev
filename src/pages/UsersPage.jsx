@@ -60,7 +60,6 @@ const UsersPage = () => {
   } = useUsersSellers();
   const { RolesResponse } = useRoles();
   const { deleteUser } = useDeleteUsers();
-  const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isExportSellersModalOpen, setIsExportSellersModalOpen] =
@@ -180,20 +179,27 @@ const UsersPage = () => {
       setRole(null);
     }
   };
-  const handleStateFilterChange = (value) => {
-    switch (value) {
-      case "Activo":
-        setIsActive(true);
-        break;
-      case "Inactivo":
-        setIsActive(false);
-        break;
+
+  const navegacionActive = (tabActive) => {
+    switch (tabActive) {
+      case "users":
+        return "users";
+      case "sellers":
+        return "sellers";
+      case "roles":
+        return "roles";
+
       default:
-        setIsActive(null);
+        return "users";
     }
   };
 
+  const [activeTab, setActiveTab] = useState(
+    navegacionActive(sessionStorage.getItem("activeTab")),
+  );
+
   useEffect(() => {
+    sessionStorage.setItem("activeTab", activeTab);
     if (activeTab === SELLERS_TAB || activeTab === ROLES_TAB) {
       setRole(null);
       setIsActive(null);
@@ -358,7 +364,7 @@ const UsersPage = () => {
         {activeTab === SELLERS_TAB && (
           <SellersPage
             openConfirmDeleteModal={openConfirmDeleteModal}
-            setSearch={setSearchSellers}
+            setSearchSellers={setSearchSellers}
             userSellerResponse={userSellerResponse}
             setItemsPerPage={setItemsPerPageSellers}
             totalPage={totalPageSellers}

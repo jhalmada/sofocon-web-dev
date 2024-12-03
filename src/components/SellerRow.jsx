@@ -1,3 +1,6 @@
+import { Tooltip } from "@nextui-org/react";
+import { p } from "framer-motion/client";
+
 const SellerRow = ({
   fullName,
   email,
@@ -7,7 +10,9 @@ const SellerRow = ({
   deleteIconSrc,
   onEditClick,
   onDeleteClick,
+  routes,
 }) => {
+  console.log(routes.map((ruta) => ruta.name));
   return (
     <tr className="border-b border-gray text-center">
       <td
@@ -29,10 +34,19 @@ const SellerRow = ({
         {contact}
       </td>
       <td
-        className="overflow-hidden text-ellipsis whitespace-nowrap py-6"
+        className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={route}
       >
-        {route}
+        <Tooltip
+          showArrow={true}
+          content={
+            routes.length > 0
+              ? routes.map((ruta) => <p>{ruta.name}</p>)
+              : "no tiene asignada"
+          }
+        >
+          rutas
+        </Tooltip>
       </td>
 
       <td className="py-6">
