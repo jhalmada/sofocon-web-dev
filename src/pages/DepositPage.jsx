@@ -118,6 +118,7 @@ const DepositPage = () => {
       setNewStatus("EGRESS");
     } else {
       setNewStatus(newStatus);
+      await changedOrder({ status: newStatus }, orderDetails.id, setModified);
     }
   };
   const translateStateToEnglish = (state) => {
