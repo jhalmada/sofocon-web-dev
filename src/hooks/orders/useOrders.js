@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { OrdersService } from "../../services/orders/orders.service";
 
 const useOrders = () => {
@@ -12,11 +12,15 @@ const useOrders = () => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState(null);
   const [entryDate, setEntryDate] = useState(null);
+  const [barCode, setBarCode] = useState(null);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [week, setWeek] = useState(null);
   const [orderType, setOrderType] = useState({
     isPreOrder: false,
     isDirect: false,
   });
-  const [barCode, setBarCode] = useState(null);
+
   const getAllOrders = useCallback(
     async ({ isPreOrder, isDirect, inOrders, recharge }) => {
       try {
@@ -33,18 +37,20 @@ const useOrders = () => {
           status,
           entryDate,
           barCode,
+          year,
+          month,
+          week,
         });
         setTotalPage(data.pagination.totalPages);
         setTotal(data.pagination.total);
         setOrdersResponse(data.result);
-        console.log("data de ordenes", data.result);
       } catch (e) {
         console.log(e);
       } finally {
         setLoading(false);
       }
     },
-    [entryDate, itemsPerPage, page, search, status, barCode],
+    [entryDate, itemsPerPage, page, search, status, barCode, year, month, week],
   );
 
   return {
@@ -55,6 +61,9 @@ const useOrders = () => {
     page,
     itemsPerPage,
     modified,
+    month,
+    year,
+    week,
     setPage,
     setModified,
     setItemsPerPage,
@@ -63,6 +72,9 @@ const useOrders = () => {
     setOrderType,
     setEntryDate,
     setBarCode,
+    setYear,
+    setMonth,
+    setWeek,
     getAllOrders,
   };
 };
