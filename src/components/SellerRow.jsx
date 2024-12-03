@@ -37,16 +37,18 @@ const SellerRow = ({
         className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap py-6"
         title={route}
       >
-        <Tooltip
+        {/* <Tooltip
           showArrow={true}
           content={
             routes.length > 0
               ? routes.map((ruta) => <p>{ruta.name}</p>)
               : "no tiene asignada"
           }
-        >
-          rutas
-        </Tooltip>
+        > */}
+        {routes.length > 0
+          ? routes.map((ruta, index) => <p key={index}>{ruta.name}</p>)
+          : "No tiene ruta asignada"}
+        {/* </Tooltip> */}
       </td>
 
       <td className="py-6">
