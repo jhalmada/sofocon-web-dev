@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import IconEye from "../assets/icons/IconEye.svg";
 import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
@@ -8,6 +8,7 @@ import { useState } from "react";
 import useChangedPassword from "../hooks/auth/useChangedPassword";
 
 const NewPasswordPage = () => {
+  const navigate = useNavigate();
   const [modalMensaje, setModalMensaje] = useState(false);
   const {
     register,
@@ -19,11 +20,13 @@ const NewPasswordPage = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { password } = data;
     if (data.password === data.password2) {
-      const respuesta = changedPassword({ password }, token);
-      console.log(respuesta);
+      const respuesta = await changedPassword({ password }, token);
+      if (respuesta === 200) {
+        navigate("/login/cambiar-contraseña");
+      }
     } else {
       setModalMensaje(true);
     }
@@ -82,11 +85,10 @@ const NewPasswordPage = () => {
         >
           <h4 className="uppercase">VOLVER</h4>
         </Link>
-        {/* <Link to="/login/cambiar-contraseña"> */}
+
         <button className="shadow-gray-500 mt-5 h-11 w-[13.25rem] rounded-[1.3rem] bg-[#E03030] font-roboto text-sm font-medium uppercase text-white shadow-md">
           CAMBIAR CONTRASEÑA
         </button>
-        {/* </Link> */}
       </div>
       <ReusableModal
         isOpen={modalMensaje}

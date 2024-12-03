@@ -2,7 +2,7 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import CardProducts from "../components/cards/CardProducts";
 import { Link } from "react-router-dom";
 import Pagination from "../components/Pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../components/buttons/Button";
 import uploadIcon from "../assets/icons/arrow-blue.svg";
 import plusIcon from "../assets/icons/plus.svg";
@@ -26,7 +26,20 @@ const PRICES_TAB = "prices";
 
 const ProductsPage = () => {
   //estados
-  const [activeTab, setActiveTab] = useState(INVENTORY_TAB);
+  const navegacionActive = (tabActive) => {
+    switch (tabActive) {
+      case INVENTORY_TAB:
+        return INVENTORY_TAB;
+      case PRICES_TAB:
+        return PRICES_TAB;
+      default:
+        return INVENTORY_TAB;
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState(
+    navegacionActive(sessionStorage.getItem("activeTab")),
+  );
   const [editModal, setEditModal] = useState(false);
   const [deletemodal, setDeleteModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
@@ -135,6 +148,9 @@ const ProductsPage = () => {
       setFileName("");
     }
   };
+  useEffect(() => {
+    sessionStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
