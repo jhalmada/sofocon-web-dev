@@ -44,6 +44,7 @@ const TableRole = () => {
     setValue,
     formState: { errors },
   } = useForm();
+  const [permisosSelected, setPermisosSelected] = useState([]);
 
   const { changedUser } = usePatchRoles();
 
@@ -63,6 +64,7 @@ const TableRole = () => {
 
   const openModal = (id) => {
     const roleEdit = RolesResponse.find((role) => role.id === id);
+    setPermisosSelected(roleEdit.permissions);
     console.log(roleEdit);
     if (roleEdit) {
       setValue("name", roleEdit.name);
@@ -211,6 +213,7 @@ const TableRole = () => {
             msjError={errors.name ? errors.name.message : ""}
           />
           <Select
+            defaultSelectedKeys={permisosSelected}
             labelPlacement="outside"
             label="Asignar permisos"
             selectionMode="multiple"
