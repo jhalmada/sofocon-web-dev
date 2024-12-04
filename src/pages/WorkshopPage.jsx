@@ -143,12 +143,6 @@ const WorkshopPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const handleAddProduct = async (data) => {
-    setConfirmModal(true);
-    const { productInOrder } = data;
-    setSelectedProduct(productInOrder);
-    await changedOrder({ productInOrder }, orderId);
-  };
 
   const openExportModal = () => {
     setIsExportModalOpen(true);

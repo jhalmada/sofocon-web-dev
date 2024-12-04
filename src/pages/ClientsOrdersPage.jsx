@@ -15,9 +15,6 @@ import useOrders from "../hooks/orders/useOrders";
 
 const ClientsOrdersPage = () => {
   const {
-    register,
-    handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
@@ -63,6 +60,7 @@ const ClientsOrdersPage = () => {
       console.error("Failed to download the file:", error);
     }
   };
+
   const discountPercent = orderDetails?.discountPercent || 0;
   const stateOptions = ["Para retirar", "Entregado"];
   const formatDate = (dateString) => {
