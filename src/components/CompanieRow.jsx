@@ -29,6 +29,7 @@ const CompanieRow = ({
   neighborhood,
   direction,
   sellers,
+  sellersIcon,
   nextVisits,
   state,
   editIconSrc,
@@ -38,6 +39,8 @@ const CompanieRow = ({
   onDeleteClick,
   onClick,
   id,
+  listPriceIcon,
+  onClickListPrice,
 }) => {
   const [icon, setIcon] = useState(null);
   const [msjIcon, setMsjIcon] = useState(null);
@@ -93,9 +96,6 @@ const CompanieRow = ({
       >
         {neighborhood}
       </td>
-      <td onClick={onClick} className="cursor-pointer py-6 underline">
-        {sellers}
-      </td>
 
       <td className="py-6">{nextVisits}</td>
 
@@ -104,6 +104,18 @@ const CompanieRow = ({
       </td>
       <td className="py-6">
         <div className="flex justify-center gap-4">
+          <img
+            src={listPriceIcon}
+            alt="list price icon"
+            className="h-5 w-5 cursor-pointer"
+            onClick={onClickListPrice}
+          />
+          <img
+            src={sellersIcon}
+            alt="seller icon"
+            className="h-5 w-5 cursor-pointer"
+            onClick={onClick}
+          />
           <Link to={`notas/${id}`}>
             <img
               src={notesIcon}
