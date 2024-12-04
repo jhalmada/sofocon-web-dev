@@ -51,7 +51,11 @@ const HomePage = () => {
   //hooks
   const datosGuardados = localStorage.getItem("SOFOCON_PERMISSIONS");
   const { socketConnected } = useSocket();
-  const [usersActives, setUsersActive] = useState([]);
+  const [usersActives, setUsersActive] = useState(
+    localStorage.getItem("usersActives")
+      ? JSON.parse(localStorage.getItem("usersActives"))
+      : [],
+  );
   const { metricsResponse } = useGetMetrics();
   const { metricsOrdersResponse, setMonth, month, year } = useMetricsOrders();
   const { metricsProductsResponse, setYear } = useMetricsProduts();
@@ -86,11 +90,11 @@ const HomePage = () => {
   };
 
   const handleSocketData = (data) => {
-    const { id, longitude, latitude, userInfo } = data;
+    const { id, longitude, latitude, userInfo, clientId } = data;
 
     // Buscamos el usuario existente o creamos uno nuevo
     const numberIndex = usersActives.findIndex((user) => user.id === id);
-    console.log(numberIndex);
+    console.log(data);
 
     if (numberIndex >= 0) {
       usersActives.splice(numberIndex, 1, {
@@ -98,6 +102,7 @@ const HomePage = () => {
         longitude,
         latitude,
         userInfo,
+        clientId,
       });
     } else {
       usersActives.splice(usersActives.length + 1, 0, {
@@ -105,8 +110,18 @@ const HomePage = () => {
         longitude,
         latitude,
         userInfo,
+        clientId,
       });
     }
+    localStorage.setItem("usersActives", JSON.stringify(usersActives));
+  };
+
+  const handleSocketDataDisconected = (data) => {
+    const { client } = data;
+    const array = JSON.parse(localStorage.getItem("usersActives"));
+    const newArray = array.filter((user) => user.clientId !== client);
+
+    localStorage.setItem("usersActives", JSON.stringify(newArray));
   };
 
   useEffect(() => {
@@ -114,6 +129,9 @@ const HomePage = () => {
     if (socket) {
       socket.on("user-location", (data) => {
         handleSocketData(data);
+      });
+      socket.on("user-disconnected", (data) => {
+        handleSocketDataDisconected(data);
       });
     }
   }, []);

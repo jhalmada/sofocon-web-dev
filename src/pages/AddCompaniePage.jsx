@@ -45,7 +45,7 @@ const direccionText = (address) => {
   };
 };
 
-const MapHandler = ({ place, marker, setValue }) => {
+const MapHandler = ({ place, marker, setValue, setDireccion }) => {
   const map = useMap();
 
   useEffect(() => {
@@ -56,17 +56,30 @@ const MapHandler = ({ place, marker, setValue }) => {
     }
 
     marker.position = place.geometry?.location;
-    setValue("address", direccionText(place.formatted_address).direccion);
-    setValue("neighborhood", direccionText(place.formatted_address).barrio);
+
+    setDireccion(place.formatted_address);
+    setValue(
+      "address",
+      place.formatted_address &&
+        direccionText(place.formatted_address).direccion,
+    );
+    setValue(
+      "neighborhood",
+      place.formatted_address && direccionText(place.formatted_address).barrio,
+    );
   }, [map, place, marker]);
   return null;
 };
 
-const PlaceAutocomplete = ({ onPlaceSelect }) => {
+const PlaceAutocomplete = ({
+  onPlaceSelect,
+  value = false,
+  setSelectManual,
+}) => {
   const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
   const inputRef = useRef(null);
   const places = useMapsLibrary("places");
-  const [name, setName] = useState("");
+  const [name, setName] = useState(value && value.length > 0 ? value : "");
 
   useEffect(() => {
     if (!places || !inputRef.current) return;
@@ -82,27 +95,29 @@ const PlaceAutocomplete = ({ onPlaceSelect }) => {
 
     placeAutocomplete.addListener("place_changed", () => {
       onPlaceSelect(placeAutocomplete.getPlace());
-      console.log(placeAutocomplete.getPlace());
+      setName(placeAutocomplete.getPlace().formatted_address);
+      setSelectManual(false);
     });
   }, [onPlaceSelect, placeAutocomplete]);
   return (
     <div className="autocomplete-container mb-4">
       <Input
+        value={name}
         ref={inputRef}
         placeholder="Ingrese una ubicacion para comenzar"
-        msjError={name.length === 0 ? "Este campo es requerido" : ""}
+        msjError={name && name.length === 0 ? "Este campo es requerido" : ""}
         onChange={(e) => setName(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault(); // Previene el comportamiento predeterminado del Enter
+          }
+        }}
       />
     </div>
   );
 };
 
 const AddCompaniePage = () => {
-  console.log(
-    direccionText(
-      "Magallanes 744, B1704FLD Ramos Mejía, Provincia de Buenos Aires, ",
-    ),
-  );
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [selectManual, setSelectManual] = useState(false);
   const [markerRef, marker] = useAdvancedMarkerRef();
@@ -143,6 +158,7 @@ const AddCompaniePage = () => {
   const [dateSelected, setDateSelected] = useState(false);
   const [reminderSelected, setReminderSelected] = useState(false);
   const [modalEditSave, setModalEditSave] = useState(false);
+  const [direccion, setDireccion] = useState("");
 
   const handleCompanyCreation = async (companyData) => {
     console.log("entra aqui");
@@ -254,8 +270,6 @@ const AddCompaniePage = () => {
     navigate("..");
     closeSaveConfirmationModal();
   };
-
-  const handleCancelClick = () => closeModal();
 
   //Para las notas
   const onSubmit2 = (data) => {
@@ -756,7 +770,11 @@ const AddCompaniePage = () => {
           width="w-[45.37rem]"
         >
           <div className="flex flex-col">
-            <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
+            <PlaceAutocomplete
+              onPlaceSelect={setSelectedPlace}
+              value={direccion}
+              setSelectManual={setSelectManual}
+            />
             <div>
               {" "}
               <Map
@@ -798,6 +816,7 @@ const AddCompaniePage = () => {
                 place={selectedPlace}
                 marker={marker}
                 setValue={setValue}
+                setDireccion={setDireccion}
               />
             </div>
           </div>
