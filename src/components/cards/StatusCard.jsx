@@ -16,14 +16,13 @@ const StatusCard = ({
   isToDeliver,
   discountTotal,
   paymentType,
-  handlePayOrder,
+
   charged,
 }) => {
   const { changedOrder } = usePutOrders();
 
   const [total, setTotal] = useState(0);
   const [isCharged, setIsCharged] = useState(charged);
-  const [orderDetails, setOrderDetails] = useState(null);
 
   const productArray = Array.isArray(productsList) ? productsList : [];
   const displayedProducts = productArray.slice(0, 2);
@@ -32,7 +31,6 @@ const StatusCard = ({
   const updateOrderState = async (status) => {
     setIsCharged(status);
     await changedOrder({ isCharged: status }, id);
-    handlePayOrder(id);
   };
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 
 const StatusPanelPage = () => {
-  const { ordersResponse, getAllOrders, setUser, setModified } = useOrders();
+  const { ordersResponse, getAllOrders, setUser } = useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const {
     control,
@@ -71,9 +71,7 @@ const StatusPanelPage = () => {
     }
   };
 
-  const handlePayOrder = () => {
-    setModified((prev) => !prev);
-  };
+
 
   useEffect(() => {
     getAllOrders({});
@@ -138,7 +136,7 @@ const StatusPanelPage = () => {
                     }
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-                    handlePayOrder={handlePayOrder}
+                
                     charged={order?.isCharged}
                   />
                 ))
@@ -175,7 +173,7 @@ const StatusPanelPage = () => {
                     bg="bg-red_b"
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-                    handlePayOrder={handlePayOrder}
+           
                     charged={order?.isCharged}
                   />
                 ))
@@ -211,7 +209,7 @@ const StatusPanelPage = () => {
                     bg="bg-yellow"
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-                    handlePayOrder={handlePayOrder}
+          
                     charged={order?.isCharged}
                   />
                 ))
@@ -245,7 +243,7 @@ const StatusPanelPage = () => {
                     bg="bg-blue_b"
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-                    handlePayOrder={handlePayOrder}
+          
                     charged={order?.isCharged}
                   />
                 ))
@@ -282,7 +280,7 @@ const StatusPanelPage = () => {
                     isToDeliver={true}
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-                    handlePayOrder={handlePayOrder}
+        
                     charged={order?.isCharged}
                   />
                 ))
