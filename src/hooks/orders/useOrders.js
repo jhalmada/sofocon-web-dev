@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { OrdersService } from "../../services/orders/orders.service";
 
 const useOrders = () => {
@@ -16,6 +16,7 @@ const useOrders = () => {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [week, setWeek] = useState(null);
+  const [user, setUser] = useState(null);
   const [orderType, setOrderType] = useState({
     isPreOrder: false,
     isDirect: false,
@@ -40,6 +41,7 @@ const useOrders = () => {
           year,
           month,
           week,
+          user,
         });
         setTotalPage(data.pagination.totalPages);
         setTotal(data.pagination.total);
@@ -50,7 +52,19 @@ const useOrders = () => {
         setLoading(false);
       }
     },
-    [entryDate, itemsPerPage, page, search, status, barCode, year, month, week],
+    [
+      entryDate,
+      itemsPerPage,
+      page,
+      search,
+      status,
+      barCode,
+      year,
+      month,
+      week,
+      user,
+      modified,
+    ],
   );
 
   return {
@@ -64,6 +78,7 @@ const useOrders = () => {
     month,
     year,
     week,
+    user,
     setPage,
     setModified,
     setItemsPerPage,
@@ -75,6 +90,7 @@ const useOrders = () => {
     setYear,
     setMonth,
     setWeek,
+    setUser,
     getAllOrders,
   };
 };

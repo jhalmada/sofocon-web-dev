@@ -171,7 +171,7 @@ const RechargeDataPage = () => {
                   <Input
                     label={"Código de barras"}
                     placeholder={itemDetails?.barCode}
-                    value={barCode || "..."}
+                    value={barCode || null}
                     {...register(`barCode`, {
                       required: "Este campo es obligatorio",
                     })}

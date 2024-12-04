@@ -300,7 +300,7 @@ const DepositPage = () => {
           onAccept={handleSubmit(onSubmitWithValidation)}
         >
           <div>
-            <span className="text-sm font-light leading-[1rem] text-black_b">
+            <span className="font-roboto text-sm leading-[1rem] text-black_b">
               Fecha de egreso
             </span>
             <Calendar control={control} errors={errors} name="dateV" />
