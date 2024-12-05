@@ -54,7 +54,7 @@ const CompleteSearchInput = ({
         {array.map((item) => (
           <AutocompleteItem
             key={item.id}
-            value={item.rut}
+            value={item.id}
             onClick={() => handleSelect(item)}
             endContent={selectedItem?.id === item.id && <p>Seleccionado</p>}
           >
