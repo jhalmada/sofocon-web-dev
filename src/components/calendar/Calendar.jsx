@@ -23,10 +23,10 @@ const Calendar = ({
         <Controller
           name={name}
           control={control}
+          defaultValue={dateValue}
           render={({ field }) => (
             <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
               <DatePicker
-                defaultValue={dateValue}
                 granularity="day"
                 {...dateProps}
                 className={`${errors[name] ? "text-red_e" : ""} ${errors[name] ? "border-red_e" : ""} rounded-lg border`}

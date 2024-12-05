@@ -43,6 +43,7 @@ const WorkshopPage = () => {
     month,
     year,
     itemsPerPage,
+    setModified,
     setYear,
     setMonth,
     setStatus,
@@ -143,7 +144,6 @@ const WorkshopPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-
   const openExportModal = () => {
     setIsExportModalOpen(true);
   };
@@ -174,7 +174,7 @@ const WorkshopPage = () => {
     closeModal();
   };
   const handleConfirmDelete = () => {
-    deleteOrder(orderId);
+    deleteOrder(orderId, setModified);
     closeConfirmDeleteModal();
   };
 
@@ -300,8 +300,7 @@ const WorkshopPage = () => {
                   <Select
                     placeholder="Selecciona un mes"
                     labelPlacement="outside"
-                    defaultSelectedKeys={[month.toString()]}
-                    className="w-[9.375rem] rounded-lg border"
+                    className="w-52 rounded-lg border"
                     onChange={(e) => handleChangeMonth(e.target.value)}
                   >
                     {months.map((month) => (
@@ -439,6 +438,7 @@ const WorkshopPage = () => {
             setYear={setYear}
             setMonth={setMonth}
             total={total}
+            setModified={setModified}
           />
         )}
       </div>

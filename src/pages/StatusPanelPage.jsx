@@ -6,7 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 
 const StatusPanelPage = () => {
-  const { ordersResponse, getAllOrders, setUser } = useOrders();
+  const { ordersResponse, getAllOrders, setUser, setInBoard, setItemsPerPage } =
+    useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const {
     control,
@@ -71,11 +72,16 @@ const StatusPanelPage = () => {
     }
   };
 
-
-
   useEffect(() => {
     getAllOrders({});
   }, [getAllOrders]);
+
+  useEffect(() => {
+    setInBoard(false);
+  }, [setInBoard]);
+  useEffect(() => {
+    setItemsPerPage(100);
+  }, []);
 
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
@@ -103,7 +109,7 @@ const StatusPanelPage = () => {
         </div>
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
           <p>Solicitado ({countOrdersByStatus("REQUEST")})</p>
-          <p>Preparación ({countOrdersByStatus("PREPARATION")})</p>
+          <p>En Preparación ({countOrdersByStatus("PREPARATION")})</p>
           <p>Para retirar ({countOrdersByStatus("READY_PICKUP")})</p>
           <p>Egreso ({countOrdersByStatus("EGRESS")})</p>
           <p>Entregado ({countOrdersByStatus("DELIVERED")})</p>
@@ -136,7 +142,6 @@ const StatusPanelPage = () => {
                     }
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-                
                     charged={order?.isCharged}
                   />
                 ))
@@ -173,7 +178,6 @@ const StatusPanelPage = () => {
                     bg="bg-red_b"
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-           
                     charged={order?.isCharged}
                   />
                 ))
@@ -209,7 +213,6 @@ const StatusPanelPage = () => {
                     bg="bg-yellow"
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-          
                     charged={order?.isCharged}
                   />
                 ))
@@ -243,7 +246,6 @@ const StatusPanelPage = () => {
                     bg="bg-blue_b"
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-          
                     charged={order?.isCharged}
                   />
                 ))
@@ -280,7 +282,6 @@ const StatusPanelPage = () => {
                     isToDeliver={true}
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-        
                     charged={order?.isCharged}
                   />
                 ))

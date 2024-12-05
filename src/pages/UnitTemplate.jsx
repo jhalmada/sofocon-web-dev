@@ -14,6 +14,7 @@ import {
   getOrderPdf,
 } from "../services/orders/orders.routes.js";
 import useGetUnitOrders from "../hooks/orders/useGetUnitOrders.js";
+import useOrders from "../hooks/orders/useOrders.js";
 const UnitTemplate = () => {
   const {
     orderUnitResponse,
@@ -24,8 +25,8 @@ const UnitTemplate = () => {
     setPage,
     page,
     itemsPerPage,
-    setSearch,
   } = useGetUnitOrders();
+  const { setSearch } = useOrders();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
