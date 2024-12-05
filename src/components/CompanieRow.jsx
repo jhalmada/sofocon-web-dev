@@ -2,7 +2,15 @@ import { Link } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
 import watchIcon2 from "../assets/icons/Frame 1.svg";
 import watchIcon3 from "../assets/icons/watch 3.svg";
+import puntosvertical from "../assets/icons/three-dots-vertical.svg";
 import { useEffect, useState } from "react";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react";
 const translateState = (state) => {
   switch (state) {
     case "POTENTIAL":
@@ -105,25 +113,6 @@ const CompanieRow = ({
       <td className="py-6">
         <div className="flex justify-center gap-4">
           <img
-            src={listPriceIcon}
-            alt="list price icon"
-            className="h-5 w-5 cursor-pointer"
-            onClick={onClickListPrice}
-          />
-          <img
-            src={sellersIcon}
-            alt="seller icon"
-            className="h-5 w-5 cursor-pointer"
-            onClick={onClick}
-          />
-          <Link to={`notas/${id}`}>
-            <img
-              src={notesIcon}
-              alt="notes icon"
-              className="h-5 w-5 cursor-pointer"
-            />
-          </Link>
-          <img
             src={editIconSrc}
             alt="Edit icon"
             className="h-5 w-5 cursor-pointer"
@@ -135,6 +124,43 @@ const CompanieRow = ({
             className="h-5 w-5 cursor-pointer"
             onClick={onDeleteClick}
           />
+          <Dropdown>
+            <DropdownTrigger>
+              <img src={puntosvertical} alt="ss" className="cursor-pointer" />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Static Actions">
+              <DropdownItem key="notes">
+                <Link to={`notas/${id}`} className="flex gap-3">
+                  <img
+                    src={notesIcon}
+                    alt="notes icon"
+                    className="h-5 w-5 cursor-pointer"
+                  />
+                  Notas
+                </Link>
+              </DropdownItem>
+              <DropdownItem key="sellers">
+                <div className="flex gap-3" onClick={onClick}>
+                  <img
+                    src={sellersIcon}
+                    alt="seller icon"
+                    className="h-5 w-5 cursor-pointer"
+                  />
+                  Vendedores
+                </div>
+              </DropdownItem>
+              <DropdownItem key="listPrice">
+                <div onClick={onClickListPrice} className="flex gap-3">
+                  <img
+                    src={listPriceIcon}
+                    alt="list price icon"
+                    className="h-5 w-5 cursor-pointer"
+                  />
+                  Lista de precios
+                </div>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </td>
     </tr>

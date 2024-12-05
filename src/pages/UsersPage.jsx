@@ -26,6 +26,8 @@ import BackButton from "../components/buttons/BackButton.jsx";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import notFoundImg from "../assets/images/notFound.svg";
+import SaveImg from "../assets/img/save.png";
+import deleteImg from "../assets/img/deleted.png";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
@@ -62,6 +64,7 @@ const UsersPage = () => {
   const { deleteUser } = useDeleteUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [isExportSellersModalOpen, setIsExportSellersModalOpen] =
     useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -115,9 +118,10 @@ const UsersPage = () => {
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = (setModified) => {
     deleteUser(userId, setModified);
     closeConfirmDeleteModal();
+    setConfirmDelete(true);
   };
   const handleCancelClick = () => openConfirmCancelModal();
   const handleConfirmCancel = () => {
@@ -402,8 +406,8 @@ const UsersPage = () => {
             {...register("ci", {
               required: "Este campo es obligatorio",
             })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
+            errorApi={errors.ci}
+            msjError={errors.ci ? errors.ci.message : ""}
           />
           <Input
             label={"Teléfono de contacto"}
@@ -411,8 +415,8 @@ const UsersPage = () => {
             {...register("phone", {
               required: "Este campo es obligatorio",
             })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
+            errorApi={errors.phone}
+            msjError={errors.phone ? errors.phone.message : ""}
           />
           <Input
             placeholder={"Escribe tu correo"}
@@ -596,7 +600,12 @@ const UsersPage = () => {
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
@@ -604,9 +613,25 @@ const UsersPage = () => {
         title="Eliminar usuario"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete(userId)}
+        onAccept={() => handleConfirmDelete(setModified)}
       >
         Este usuario será eliminado de forma permanente. ¿Desea continuar?
+      </ReusableModal>
+      {/*modal para elementos eliminados*/}
+      <ReusableModal
+        isOpen={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Usuario eliminado"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setConfirmDelete(false)}
+      >
+        <div className="flex flex-col items-center justify-center">
+          <img src={deleteImg} alt="delete" />
+          <p className="font-roboto text-sm font-light text-black">
+            El usuario fue eliminado correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );

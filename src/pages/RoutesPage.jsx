@@ -11,11 +11,13 @@ import PlusIcon from "../assets/icons/plus.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
+import SaveImg from "../assets/img/save.png";
+import deleteImg from "../assets/img/deleted.png";
 
 import disconnectedImg from "../assets/images/disconnected.svg";
 
@@ -41,6 +43,7 @@ const RoutesPage = () => {
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
 
   const stateOptions = ["Activo", "Inactivo"];
@@ -82,6 +85,7 @@ const RoutesPage = () => {
   const handleConfirmDelete = () => {
     deleteSellerRoute(routeId, setModified);
     closeConfirmDeleteModal();
+    setConfirmDelete(true);
   };
   const handleCancelClick = () => openConfirmCancelModal();
   const handleConfirmCancel = () => {
@@ -344,7 +348,12 @@ const RoutesPage = () => {
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
@@ -355,6 +364,21 @@ const RoutesPage = () => {
         onAccept={() => handleConfirmDelete(routeId)}
       >
         Esta ruta será eliminada de forma permanente. ¿Desea continuar?
+      </ReusableModal>
+      <ReusableModal
+        isOpen={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Ruta eliminada"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setConfirmDelete(false)}
+      >
+        <div className="flex flex-col items-center justify-center">
+          <img src={deleteImg} alt="delete" />
+          <p className="font-roboto text-sm font-light text-black">
+            La ruta fue eliminada correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );
