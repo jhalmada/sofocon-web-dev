@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 
 const StatusPanelPage = () => {
-  const { ordersResponse, getAllOrders, setUser } = useOrders();
+  const { ordersResponse, getAllOrders, setUser, setInBoard } = useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const {
     control,
@@ -71,11 +71,13 @@ const StatusPanelPage = () => {
     }
   };
 
-
-
   useEffect(() => {
     getAllOrders({});
   }, [getAllOrders]);
+
+  useEffect(() => {
+    setInBoard(false);
+  }, [setInBoard]);
 
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
@@ -136,7 +138,6 @@ const StatusPanelPage = () => {
                     }
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-                
                     charged={order?.isCharged}
                   />
                 ))
@@ -173,7 +174,6 @@ const StatusPanelPage = () => {
                     bg="bg-red_b"
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-           
                     charged={order?.isCharged}
                   />
                 ))
@@ -209,7 +209,6 @@ const StatusPanelPage = () => {
                     bg="bg-yellow"
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-          
                     charged={order?.isCharged}
                   />
                 ))
@@ -243,7 +242,6 @@ const StatusPanelPage = () => {
                     bg="bg-blue_b"
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-          
                     charged={order?.isCharged}
                   />
                 ))
@@ -280,7 +278,6 @@ const StatusPanelPage = () => {
                     isToDeliver={true}
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
-        
                     charged={order?.isCharged}
                   />
                 ))

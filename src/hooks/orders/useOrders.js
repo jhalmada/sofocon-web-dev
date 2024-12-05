@@ -14,9 +14,10 @@ const useOrders = () => {
   const [entryDate, setEntryDate] = useState(null);
   const [barCode, setBarCode] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [month, setMonth] = useState(null);
   const [week, setWeek] = useState(null);
   const [user, setUser] = useState(null);
+  const [inBoard, setInBoard] = useState(true);
   const [orderType, setOrderType] = useState({
     isPreOrder: false,
     isDirect: false,
@@ -42,6 +43,7 @@ const useOrders = () => {
           month,
           week,
           user,
+          inBoard,
         });
         setTotalPage(data.pagination.totalPages);
         setTotal(data.pagination.total);
@@ -64,6 +66,7 @@ const useOrders = () => {
       week,
       user,
       modified,
+      inBoard,
     ],
   );
 
@@ -79,6 +82,8 @@ const useOrders = () => {
     year,
     week,
     user,
+    inBoard,
+    setInBoard,
     setPage,
     setModified,
     setItemsPerPage,

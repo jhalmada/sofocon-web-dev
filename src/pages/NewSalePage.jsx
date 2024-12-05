@@ -20,6 +20,7 @@ import x from "../assets/icons/x.svg";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
 import useOrders from "../hooks/orders/useOrders.js";
 import Calendar from "../components/calendar/Calendar.jsx";
+import checkIcon from "../assets/images/checkOrder.svg";
 
 const NewSalePage = () => {
   const {
@@ -905,14 +906,19 @@ const NewSalePage = () => {
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
-          title="Orden creada"
+          title="ORDEN GENERADA"
           variant="confirmation"
           buttons={["accept"]}
           onAccept={closeSaveConfirmationModal}
         >
-          {deliveredValue
-            ? "La orden fue creada exitosamente y se encuentra en órdenes."
-            : "La orden fue creada exitosamente y se encuentra en taller."}
+          <div className="flex flex-col items-center">
+            <img src={checkIcon} alt="checkIcon" />
+            {deliveredValue ? (
+              <p>La orden fue creada exitosamente y se encuentra en órdenes.</p>
+            ) : (
+              <p>La orden fue creada exitosamente y se encuentra en taller.</p>
+            )}
+          </div>
         </ReusableModal>
         <ReusableModal
           isOpen={openScannerModal}

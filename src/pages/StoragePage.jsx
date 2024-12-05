@@ -18,6 +18,7 @@ import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import SearchInput from "../components/inputs/SearchInput";
 const StoragePage = ({
   ordersResponse,
+  setModified,
   setSearch,
   setYear,
   setMonth,
@@ -29,11 +30,10 @@ const StoragePage = ({
   total,
   setPage,
   year,
-  month,
 }) => {
   const { id } = useParams();
   const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
-  const { getOneOrder, setModified } = useGetOneOrder(id);
+  const { getOneOrder } = useGetOneOrder(id);
   const { deleteOrder } = useDeleteOrders();
   const {
     register,
@@ -228,8 +228,7 @@ const StoragePage = ({
             <Select
               placeholder="Selecciona un mes"
               labelPlacement="outside"
-              defaultSelectedKeys={[month.toString()]}
-              className="w-[9.375rem] rounded-lg border"
+              className="w-52 rounded-lg border"
               onChange={(e) => handleChangeMonth(e.target.value)}
             >
               {months.map((month) => (

@@ -16,7 +16,6 @@ const StatusCard = ({
   isToDeliver,
   discountTotal,
   paymentType,
-
   charged,
 }) => {
   const { changedOrder } = usePutOrders();
@@ -48,12 +47,12 @@ const StatusCard = ({
     );
   }, []);
 
+  useEffect(() => {
+    setIsCharged(charged);
+  }, [charged]);
+
   return (
     <div className="mt-2 flex h-auto min-h-[12rem] flex-col rounded-lg pb-2 shadow-br 2xl:min-h-[14rem]">
-      {/* <div>
-        <p>{"ischarged: " + isCharged}</p>
-      </div> */}
-
       <div
         className={`flex ${bg} relative justify-center space-x-1 rounded-tl-lg rounded-tr-lg p-2`}
       >
@@ -63,10 +62,10 @@ const StatusCard = ({
               radius="full"
               className="absolute right-2 top-2"
               size="sm"
+              isSelected={isCharged}
               checked={isCharged}
               onChange={() => {
-                const newIsCharged = !isCharged;
-                updateOrderState(newIsCharged);
+                updateOrderState(!isCharged);
               }}
             />
           </Tooltip>

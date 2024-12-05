@@ -19,6 +19,7 @@ import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
 import Calendar from "../components/calendar/Calendar.jsx";
+import checkIcon from "../assets/images/checkOrder.svg";
 
 const NewBudgetPage = () => {
   const {
@@ -149,6 +150,7 @@ const NewBudgetPage = () => {
 
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
+    navigate("/inicio/ordenes");
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
@@ -732,12 +734,15 @@ const NewBudgetPage = () => {
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
-          title="Presupuesto creado"
+          title="PRESUPUESTO GENERADO"
           variant="confirmation"
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          El presupuesto fue creado exitosamente.
+          <div className="flex flex-col items-center">
+            <img src={checkIcon} alt="checkIcon" />
+            <p> El presupuesto fue creado exitosamente.</p>
+          </div>
         </ReusableModal>
       </div>
     </div>
