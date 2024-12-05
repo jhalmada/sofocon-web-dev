@@ -6,7 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 
 const StatusPanelPage = () => {
-  const { ordersResponse, getAllOrders, setUser, setInBoard } = useOrders();
+  const { ordersResponse, getAllOrders, setUser, setInBoard, setItemsPerPage } =
+    useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const {
     control,
@@ -78,6 +79,9 @@ const StatusPanelPage = () => {
   useEffect(() => {
     setInBoard(false);
   }, [setInBoard]);
+  useEffect(() => {
+    setItemsPerPage(100);
+  }, []);
 
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
@@ -105,7 +109,7 @@ const StatusPanelPage = () => {
         </div>
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
           <p>Solicitado ({countOrdersByStatus("REQUEST")})</p>
-          <p>Preparación ({countOrdersByStatus("PREPARATION")})</p>
+          <p>En Preparación ({countOrdersByStatus("PREPARATION")})</p>
           <p>Para retirar ({countOrdersByStatus("READY_PICKUP")})</p>
           <p>Egreso ({countOrdersByStatus("EGRESS")})</p>
           <p>Entregado ({countOrdersByStatus("DELIVERED")})</p>
