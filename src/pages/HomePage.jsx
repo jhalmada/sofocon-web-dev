@@ -117,6 +117,7 @@ const HomePage = () => {
 
   const handleSocketDataDisconected = (data) => {
     const { client } = data;
+    console.log(data);
     const array = JSON.parse(localStorage.getItem("usersActives"));
     const newArray = array.filter((user) => user.clientId !== client);
     setUsersActive(newArray);

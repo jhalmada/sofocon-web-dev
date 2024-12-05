@@ -33,6 +33,8 @@ import FilterSelect from "../components/filters/FilterSelect.jsx";
 import pageLostImg from "../assets/images/pageLost.svg";
 import listPriceIcon from "../assets/icons/listPriceIcon.svg";
 import Calendar from "../components/calendar/Calendar.jsx";
+import SaveImg from "../assets/img/save.png";
+import deleteImg from "../assets/img/deleted.png";
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
@@ -87,6 +89,7 @@ const CompaniesPage = () => {
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [listPriceModal, setListPriceModal] = useState(false);
   const [listasPrecios, setListasPrecios] = useState([]);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
   const stateOptions = ["Frecuente", "Potencial", "De baja"];
@@ -168,6 +171,7 @@ const CompaniesPage = () => {
   const handleConfirmDelete = () => {
     deleteCompany(companyId, setModified);
     closeConfirmDeleteModal();
+    setConfirmDelete(true);
   };
 
   const handleCancelClick = () => openConfirmCancelModal();
@@ -534,6 +538,7 @@ const CompaniesPage = () => {
             changedCompany={changedCompany}
             setModified={setModified}
             setSaveConfirmationModalOpen={setSaveConfirmationModalOpen}
+            deleteCompany={deleteCompany}
           />
         )}
       </div>
@@ -931,7 +936,12 @@ const CompaniesPage = () => {
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
 
       <ReusableModal
@@ -943,6 +953,22 @@ const CompaniesPage = () => {
         onAccept={() => handleConfirmDelete(companyId)}
       >
         Esta empresa será eliminada de forma permanente. ¿Desea continuar?
+      </ReusableModal>
+      {/*modal para elementos eliminados*/}
+      <ReusableModal
+        isOpen={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Empresa Eliminada"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setConfirmDelete(false)}
+      >
+        <div className="flex flex-col items-center justify-center">
+          <img src={deleteImg} alt="delete" />
+          <p className="font-roboto text-sm font-light text-black">
+            La empresa fue eliminada correctamente.
+          </p>
+        </div>
       </ReusableModal>
       {/**modal para las listas de precios */}
       <ReusableModal
