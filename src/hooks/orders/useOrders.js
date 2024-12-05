@@ -12,11 +12,17 @@ const useOrders = () => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState(null);
   const [entryDate, setEntryDate] = useState(null);
+  const [barCode, setBarCode] = useState(null);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(null);
+  const [week, setWeek] = useState(null);
+  const [user, setUser] = useState(null);
+  const [inBoard, setInBoard] = useState(true);
   const [orderType, setOrderType] = useState({
     isPreOrder: false,
     isDirect: false,
   });
-  const [barCode, setBarCode] = useState(null);
+
   const getAllOrders = useCallback(
     async ({ isPreOrder, isDirect, inOrders, recharge }) => {
       try {
@@ -33,18 +39,35 @@ const useOrders = () => {
           status,
           entryDate,
           barCode,
+          year,
+          month,
+          week,
+          user,
+          inBoard,
         });
         setTotalPage(data.pagination.totalPages);
         setTotal(data.pagination.total);
         setOrdersResponse(data.result);
-        console.log("data de ordenes", data.result);
       } catch (e) {
         console.log(e);
       } finally {
         setLoading(false);
       }
     },
-    [entryDate, itemsPerPage, page, search, status, barCode],
+    [
+      entryDate,
+      itemsPerPage,
+      page,
+      search,
+      status,
+      barCode,
+      year,
+      month,
+      week,
+      user,
+      modified,
+      inBoard,
+    ],
   );
 
   return {
@@ -55,6 +78,12 @@ const useOrders = () => {
     page,
     itemsPerPage,
     modified,
+    month,
+    year,
+    week,
+    user,
+    inBoard,
+    setInBoard,
     setPage,
     setModified,
     setItemsPerPage,
@@ -63,6 +92,10 @@ const useOrders = () => {
     setOrderType,
     setEntryDate,
     setBarCode,
+    setYear,
+    setMonth,
+    setWeek,
+    setUser,
     getAllOrders,
   };
 };

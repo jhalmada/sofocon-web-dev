@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import { I18nProvider } from "@react-aria/i18n";
-import { DatePicker } from "@nextui-org/date-picker";
+import { DatePicker } from "@nextui-org/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 
 const Calendar = ({
@@ -11,6 +11,7 @@ const Calendar = ({
   name,
   label = "",
   forward = true,
+  isRequired = true,
 }) => {
   const dateValue = today(getLocalTimeZone());
   const dateProps = forward ? { minValue: dateValue } : { maxValue: dateValue };
@@ -18,10 +19,11 @@ const Calendar = ({
   return (
     <div className="flex flex-col">
       <label className="text-sm font-light text-black">{label}</label>
-      <I18nProvider locale="es-ES">
+      <I18nProvider locale="es-UR">
         <Controller
           name={name}
           control={control}
+          defaultValue={dateValue}
           render={({ field }) => (
             <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
               <DatePicker
@@ -40,14 +42,17 @@ const Calendar = ({
                     return "";
                   }
                 }}
+                locale="es-ES"
               />
             </div>
           )}
           rules={{
-            required: {
-              value: true,
-              message: "La fecha es obligatoria",
-            },
+            required: isRequired
+              ? {
+                  value: true,
+                  message: "La fecha es obligatoria",
+                }
+              : false,
           }}
         />
         <p className="font-roboto text-xs text-red_e">

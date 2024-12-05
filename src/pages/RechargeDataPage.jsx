@@ -12,6 +12,9 @@ import { Checkbox } from "@nextui-org/react";
 import useGetRemovalItem from "../hooks/orders/useGetRemovalItem";
 import usePatchRemovalItem from "../hooks/orders/usePatchRemovalItem";
 import Calendar from "../components/calendar/Calendar";
+import BarcodeReader from "../components/scan/BarcodeReader";
+import useOrders from "../hooks/orders/useOrders";
+
 function useQuery() {
   const { search } = useLocation();
 
@@ -31,12 +34,14 @@ const RechargeDataPage = () => {
 
   const { getOneItemRemoval } = useGetRemovalItem(id);
   const { patchOneItem } = usePatchRemovalItem(id);
+  const { barCode, setBarCode } = useOrders();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [itemDetails, setItemDetails] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
+  const [openScannerModal, setOpenScannerModal] = useState(false);
 
   const oneItem = async (id) => {
     const newdatos = await getOneItemRemoval(id);
@@ -86,6 +91,11 @@ const RechargeDataPage = () => {
     handleDetailsCreation({
       ...data,
     });
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setOpenScannerModal(false);
   };
 
   const closeSaveConfirmationModal = () => {
@@ -161,6 +171,7 @@ const RechargeDataPage = () => {
                   <Input
                     label={"Código de barras"}
                     placeholder={itemDetails?.barCode}
+                    value={barCode || null}
                     {...register(`barCode`, {
                       required: "Este campo es obligatorio",
                     })}
@@ -168,7 +179,10 @@ const RechargeDataPage = () => {
                   />
                 </div>
                 <div className="w-1/2">
-                  <div className="mt-[1.5rem] flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
+                  <div
+                    className="mt-[1.5rem] flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur"
+                    onClick={() => setOpenScannerModal(true)}
+                  >
                     <img src={barCodeIcon} alt="barCodeIcon" />
                   </div>
                 </div>
@@ -360,6 +374,22 @@ const RechargeDataPage = () => {
             />
           </div>
         </form>
+        <ReusableModal
+          isOpen={openScannerModal}
+          onClose={closeModal}
+          title="Código de barras"
+          handleCancelClick={closeModal}
+        >
+          <p className="text-sm leading-[1rem] text-black_m">
+            Escanea el código de barras del producto para localizar la orden de
+            compra donde se encuentra, o ingresa el código de manera manual.
+          </p>
+          <form className="space-y-4">
+            <div className="px-2">
+              <BarcodeReader onBarcodeChange={setBarCode} />
+            </div>
+          </form>
+        </ReusableModal>
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}

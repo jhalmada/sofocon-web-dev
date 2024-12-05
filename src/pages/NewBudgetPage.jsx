@@ -19,16 +19,28 @@ import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
 import Calendar from "../components/calendar/Calendar.jsx";
+import checkIcon from "../assets/images/checkOrder.svg";
 
 const NewBudgetPage = () => {
   const {
     register,
-    watch,
     handleSubmit,
     control,
     setValue,
     formState: { errors },
   } = useForm();
+  const { postAddOrders } = useAddOrders();
+  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
+  const { setStatus } = useOrders();
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+  const {
+    productsResponse,
+    setSearch: setSearchProducts,
+    setList,
+  } = useGetProducts();
+  const { priceListResponse } = useGetPriceList();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -47,10 +59,11 @@ const NewBudgetPage = () => {
   const [company, setCompany] = useState(null);
   const [seller, setSeller] = useState(null);
 
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const lastPathItem = pathSegments[pathSegments.length - 1];
   const total = subtotal
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
     : 0;
-
   const monthsOptions = [
     "Enero",
     "Febrero",
@@ -65,21 +78,6 @@ const NewBudgetPage = () => {
     "Noviembre",
     "Diciembre",
   ];
-  const { postAddOrders } = useAddOrders();
-  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
-  const { setStatus } = useOrders();
-  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
-  const { pathname } = useLocation();
-  const pathSegments = pathname.split("/").filter(Boolean);
-  const lastPathItem = pathSegments[pathSegments.length - 1];
-
-  const {
-    productsResponse,
-    setSearch: setSearchProducts,
-    setList,
-  } = useGetProducts();
-  const { priceListResponse } = useGetPriceList();
-  const navigate = useNavigate();
 
   const handleBudgetCreation = async (budgetData) => {
     const {
@@ -152,6 +150,7 @@ const NewBudgetPage = () => {
 
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
+    navigate("/inicio/ordenes");
   };
   const handleConfirmSaveClick = () => {
     closeSaveConfirmationModal();
@@ -221,12 +220,18 @@ const NewBudgetPage = () => {
   };
 
   const handleProductDiscountInput = (e, index) => {
-    let value = e.target.value.slice(0, 2);
-    if (value === "" || isNaN(value)) {
-      value = 0;
+    let value = e.target.value;
+    if (value === "100") {
+      value = 100;
     } else {
-      value = parseFloat(value);
+      value = value.slice(0, 2);
+      if (value === "" || isNaN(value)) {
+        value = 0;
+      } else {
+        value = parseFloat(value);
+      }
     }
+
     setDiscount((prevDiscount) => {
       const newDiscount = [...prevDiscount];
       newDiscount[index] = value;
@@ -235,7 +240,12 @@ const NewBudgetPage = () => {
   };
 
   const handleDiscount2Input = (e) => {
-    const value = e.target.value.slice(0, 2);
+    let value = e.target.value;
+    if (value === "100") {
+      value = 100;
+    } else {
+      value = value.slice(0, 2);
+    }
     setDiscount2(value);
   };
   const truncateToTwoDecimals = (num) => {
@@ -533,10 +543,12 @@ const NewBudgetPage = () => {
                           defaultValue={item.list[0].price}
                           value={
                             "$" +
-                            item.list[0].price *
+                            (
+                              item.list[0].price *
                               (quantity[item.id] || 1) *
                               (1 -
                                 (discount[index] ? discount[index] / 100 : 0))
+                            ).toFixed(2)
                           }
                           {...register(`productInOrder[${index}].fixedPrice`, {
                             value: item.list[0].price,
@@ -722,12 +734,15 @@ const NewBudgetPage = () => {
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
-          title="Presupuesto creado"
+          title="PRESUPUESTO GENERADO"
           variant="confirmation"
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          El presupuesto fue creado exitosamente.
+          <div className="flex flex-col items-center">
+            <img src={checkIcon} alt="checkIcon" />
+            <p> El presupuesto fue creado exitosamente.</p>
+          </div>
         </ReusableModal>
       </div>
     </div>

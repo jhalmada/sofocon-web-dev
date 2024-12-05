@@ -5,7 +5,7 @@ const useDeleteOrders = () => {
   const [isDeleted, setIsDeleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const deleteOrder = async (orderId, setModified = null) => {
+  const deleteOrder = async (orderId, setModified) => {
     try {
       setIsLoading(true);
       await OrdersService.deleteOrderApi(orderId);

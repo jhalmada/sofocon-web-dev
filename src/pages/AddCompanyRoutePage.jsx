@@ -10,6 +10,7 @@ import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import SearchInput from "../components/inputs/SearchInput";
 import SaveImg from "../assets/img/save.png";
+import disconnectedImg from "../assets/images/disconnected.svg";
 
 const AddCompanyRoutePage = ({
   setItemsPerPage,
@@ -88,13 +89,13 @@ const AddCompanyRoutePage = ({
   };
   const handleStateFilterChange = (value) => {
     switch (value) {
-      case "frecuente":
+      case "Frecuente":
         setStatus("FRECUENT");
         break;
-      case "potencial":
+      case "Potencial":
         setStatus("POTENTIAL");
         break;
-      case "de baja":
+      case "De baja":
         setStatus("UNSUBSCRIBED");
         break;
       default:
@@ -141,23 +142,43 @@ const AddCompanyRoutePage = ({
             </tr>
           </thead>
           <tbody>
-            {arrayCompanies.map((companie, index) => (
-              <RouteCompanieDetailsRow
-                key={index}
-                id={companie.id}
-                name={companie.name}
-                direction={companie.address}
-                nextVisits={formatDate(companie.nextVisit)}
-                state={companie.status}
-                notes={"Ver notas"}
-                deleteIconSrc={deleteIcon}
-                onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-              />
-            ))}
+            {arrayCompanies.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="p-4 text-center">
+                  <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                    Ningún elemento coincide con tu búsqueda, inténtalo de
+                    nuevo. <br /> Puedes encontrar las rutas creadas aquí.
+                  </p>
+                  <img
+                    src={disconnectedImg}
+                    alt="Tabla vacía"
+                    className="mx-auto"
+                  />
+                </td>
+              </tr>
+            ) : (
+              arrayCompanies.map((companie, index) => (
+                <RouteCompanieDetailsRow
+                  key={index}
+                  id={companie.id}
+                  name={companie.name}
+                  direction={companie.address}
+                  nextVisits={formatDate(companie.nextVisit)}
+                  state={companie.status}
+                  notes={"Ver notas"}
+                  deleteIconSrc={deleteIcon}
+                  onDeleteClick={() => openConfirmDeleteModal(companie.id)}
+                />
+              ))
+            )}
           </tbody>
         </table>
       </div>
-      <div className="flex justify-center p-6">
+      <div
+        className={
+          arrayCompanies.length === 0 ? "hidden" : `flex justify-center p-6`
+        }
+      >
         <Pagination
           pageIndex={setItemsPerPage}
           currentPage={page}
