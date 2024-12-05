@@ -1,4 +1,4 @@
-import LogoSofocon from "../assets/icons/LogoSofocon.png";
+import LogoSofocon from "../assets/icons/LogoSofocon.svg";
 import { Outlet } from "react-router-dom";
 
 const Login = () => {
