@@ -204,6 +204,7 @@ const UsersPage = () => {
               <table className="w-full">
                 <thead>
                   <tr>
+                    <th></th>
                     <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                       Nombre
                     </th>
@@ -220,6 +221,7 @@ const UsersPage = () => {
                   </tr>
                 </thead>
                 <tbody>
+                  {console.log(productsResponse)}
                   {productsResponse.map((product, index) => (
                     <InventaryRow
                       name={product.name}
@@ -232,6 +234,7 @@ const UsersPage = () => {
                         handleEdit(product.id, product.list);
                       }}
                       onDeleteClick={() => handleDelete(product.id)}
+                      picture={product.picture}
                     />
                   ))}
                 </tbody>

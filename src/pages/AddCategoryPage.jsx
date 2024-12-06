@@ -73,7 +73,9 @@ const AddCategoryPage = () => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
-    formData.append("file", file);
+    if (file) {
+      formData.append("file", file);
+    }
     const response = postAddCategory(formData);
     console.log(response);
     if (response) {
@@ -157,7 +159,7 @@ const AddCategoryPage = () => {
                 id="file"
                 type="file"
                 accept=".png, .jpg, .jpeg"
-                {...register("file", { required: "Este campo es obligatorio" })}
+                {...register("file")}
                 onChange={handleFileChange}
                 disabled={fileName.length > 0}
               />
