@@ -225,7 +225,7 @@ const DirectOrdersPage = ({
                           : "Sin fecha"
                       }
                       retirementDate={formatDate(order.workShopDateDeparture)}
-                      seller={order?.user?.userInfo?.fullName}
+                      seller={order?.user?.userInfo?.fullName || "Sin vendedor"}
                       state={order.status}
                       deleteIconSrc={deleteIcon}
                     />
