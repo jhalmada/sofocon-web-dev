@@ -35,6 +35,7 @@ const OrdersPage = () => {
     month,
     year,
     setModified,
+    setInBoard,
     setStatus,
     setEntryDate,
     setSearch,
@@ -180,6 +181,9 @@ const OrdersPage = () => {
         getAllOrders({ isPreOrder: false, isDirect: false });
     }
   }, [activeTab, getAllOrders]);
+  useEffect(() => {
+    setInBoard(false);
+  }, []);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -210,7 +214,7 @@ const OrdersPage = () => {
               onClick={() => setActiveTab(STATUS_PANEL_TAB)}
               className={`${activeTab === STATUS_PANEL_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-48 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Panel de estados
+              Panel de órdenes
             </h2>
             <h2
               onClick={() => setActiveTab(CLIENTS_ORDERS_TAB)}

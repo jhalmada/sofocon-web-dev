@@ -19,7 +19,7 @@ const ClientsOrdersPage = () => {
   } = useForm();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { setStatus, setPage } = useOrders();
+  const { setInBoard } = useOrders();
   const { getOneOrder, setModified } = useGetOneOrder(id);
   const { changedOrder, isLoading } = usePutOrders();
 
@@ -44,7 +44,7 @@ const ClientsOrdersPage = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error("La red respondió incorrectamente");
       }
 
       const blob = await response.blob();
@@ -57,7 +57,7 @@ const ClientsOrdersPage = () => {
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Failed to download the file:", error);
+      console.error("Falló al descargar el archivo:", error);
     }
   };
 
@@ -146,6 +146,7 @@ const ClientsOrdersPage = () => {
   };
 
   const updateOrderState = async (status) => {
+    console.log("status: ", status);
     setSelectedState(status);
     const updatedData = { status };
     if (status === "READY_PICKUP") {
@@ -171,6 +172,7 @@ const ClientsOrdersPage = () => {
   };
 
   const handleClose = () => {
+    setSelectedState(orderDetails?.status);
     setTempStatus(null);
     setConfirmationModalOpen(false);
     setIsModalOpen(false);
@@ -209,8 +211,12 @@ const ClientsOrdersPage = () => {
               className="mb-4 w-1/6 rounded-lg border"
               label="Estado"
               labelPlacement="outside"
-              placeholder={translateState(orderDetails?.status)}
-              value={translateState(stateOptions)}
+              placeholder={
+                !selectedState
+                  ? translateState(orderDetails?.status)
+                  : translateState(selectedState)
+              }
+              selectedKeys={selectedState ? [selectedState] : []}
               onChange={handleStateChange}
               disabled={isLoading}
             >
@@ -220,6 +226,7 @@ const ClientsOrdersPage = () => {
                 </SelectItem>
               ))}
             </Select>
+
             <ReusableModal
               isOpen={isModalOpen}
               onClose={handleClose}
@@ -337,64 +344,6 @@ const ClientsOrdersPage = () => {
                 </div>
               </div>
             ))}
-            {/* {orderDetails?.productInOrder?.map((order, index) =>
-              order.isRecharge ? (
-                <>
-                  <div className="bg-black_l p-4">
-                    <p className="text-center text-md">
-                      Recarga del producto
-                      <span className="ml-1 font-semibold uppercase">
-                        {order.product.name}
-                      </span>
-                    </p>
-                    <div className="flex space-x-2">
-                      <Input
-                        label="Código de barras"
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        disabled
-                        value={order.itemsRemoval[index].barCode}
-                      />
-                      <Input
-                        label="Matrícula"
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        disabled
-                        value={order.itemsRemoval[index].enrollment}
-                      />
-                    </div>
-                    <div className="flex space-x-2">
-                      <Input
-                        label="N° UNIT de fábrica"
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        disabled
-                        value={order.itemsRemoval[index].fabricUNIT}
-                      />
-                      <Input
-                        label="Fecha última carga"
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        disabled
-                        value={formatDate(order.itemsRemoval[index].lastDate)}
-                      />
-                      <Input
-                        label="N° UNIT de actual"
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        disabled
-                        value={order.itemsRemoval[index].numberUNIT}
-                      />
-                    </div>
-                  </div>
-                </>
-              ) : null,
-            )} */}
 
             <div className="flex space-x-2">
               <Input

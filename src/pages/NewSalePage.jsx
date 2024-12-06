@@ -221,8 +221,13 @@ const NewSalePage = () => {
       (selection) => selection.id !== id,
     );
 
+    // Asegúrate de actualizar las cantidades adecuadamente
+    const updatedQuantities = { ...quantity };
+    delete updatedQuantities[id]; // Elimina la cantidad del producto eliminado
+
     setValue(name, updatedSelectedItems);
     setAutocompleteResults(updatedSelectedItems);
+    setQuantity(updatedQuantities); // Actualiza el estado de las cantidades
   };
 
   const handleSelectionChange = (id, value) => {
@@ -397,7 +402,9 @@ const NewSalePage = () => {
                         name={"client"}
                         setValue={setValue}
                         onChange={setSearchCompanies}
-                        placeholder="Buscar empresa"
+                        placeholder={
+                          company ? company.name : "Buscar empresa..."
+                        }
                         onSelect={handleSelectCompany}
                         setRut={setRutValue}
                         {...field}
@@ -550,14 +557,16 @@ const NewSalePage = () => {
                       </div>
                       <div className="flex w-1/2 space-x-2">
                         <Input
-                          type="number"
+                          type={"number"}
                           label={"Cantidad"}
-                          defaultValue={1}
-                          minValue={1}
-                          placeholder={"Cant."}
-                          onInput={(e) =>
-                            handleQuantityChange(item.id, e.target.value)
-                          }
+                          value={quantity[item.id]}
+                          placeholder={"1"}
+                          onInput={(e) => {
+                            const value = e.target.value;
+                            if (/^\d*$/.test(value)) {
+                              handleQuantityChange(item.id, value);
+                            }
+                          }}
                           {...register(`productInOrder[${index}].amount`)}
                           msjError={
                             errors[`productInOrder[${index}].amount`]
@@ -914,9 +923,15 @@ const NewSalePage = () => {
           <div className="flex flex-col items-center">
             <img src={checkIcon} alt="checkIcon" />
             {deliveredValue ? (
-              <p>La orden fue creada exitosamente y se encuentra en órdenes.</p>
+              <p>
+                La orden fue creada exitosamente y se encuentra en órdenes como
+                Entregada.
+              </p>
             ) : (
-              <p>La orden fue creada exitosamente y se encuentra en taller.</p>
+              <p>
+                La orden fue creada exitosamente y se encuentra en taller como
+                Solicitada.
+              </p>
             )}
           </div>
         </ReusableModal>
