@@ -14,6 +14,8 @@ import pageLostImg from "../assets/images/pageLost.svg";
 import { useState } from "react";
 import SearchInput from "../components/inputs/SearchInput";
 import Calendar from "../components/calendar/Calendar";
+import SaveImg from "../assets/img/save.png";
+import deleteImg from "../assets/img/deleted.png";
 const CompetingPage = ({
   companiesResponse,
   setSearchCompanies,
@@ -27,6 +29,7 @@ const CompetingPage = ({
   changedCompany,
   setModified,
   setSaveConfirmationModalOpen,
+  deleteCompany,
 }) => {
   const [companyId, setCompanyId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +38,7 @@ const CompetingPage = ({
   const [stateFilter, setStateFilter] = useState("");
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [checkSelected, setCheckSelected] = useState("RUT");
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
   const stateOptions = ["Competencia"];
   const {
@@ -177,6 +181,12 @@ const CompetingPage = ({
           competenceName: competence ? competenceName : "",
         });
     }
+  };
+
+  const handleConfirmDelete = () => {
+    deleteCompany(companyId, setModified);
+    setConfirmDeleteModalOpen(false);
+    setConfirmDelete(true);
   };
 
   return (
@@ -514,6 +524,32 @@ const CompetingPage = ({
             />
           </div>
         </form>
+      </ReusableModal>
+      <ReusableModal
+        isOpen={isConfirmDeleteModalOpen}
+        onClose={() => setConfirmDeleteModalOpen(false)}
+        title="Eliminar Empresa"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={() => handleConfirmDelete(companyId)}
+      >
+        Esta empresa será eliminada de forma permanente. ¿Desea continuar?
+      </ReusableModal>
+      {/*modal para elementos eliminados*/}
+      <ReusableModal
+        isOpen={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Empresa Eliminada"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setConfirmDelete(false)}
+      >
+        <div className="flex flex-col items-center justify-center">
+          <img src={deleteImg} alt="delete" />
+          <p className="font-roboto text-sm font-light text-black">
+            La empresa fue eliminada correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );

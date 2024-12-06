@@ -9,6 +9,7 @@ import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import SearchInput from "../components/inputs/SearchInput";
+import SaveImg from "../assets/img/save.png";
 import disconnectedImg from "../assets/images/disconnected.svg";
 
 const AddCompanyRoutePage = ({

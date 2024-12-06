@@ -13,6 +13,8 @@ import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import usePutusers from "../hooks/users/usePutUsers";
 import notFoundImg from "../assets/images/notFound.svg";
 import SearchInput from "../components/inputs/SearchInput";
+import SaveImg from "../assets/img/save.png";
+import deleteImg from "../assets/img/deleted.png";
 
 const SellersPage = ({
   openConfirmDeleteModal,
@@ -322,7 +324,12 @@ const SellersPage = ({
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );

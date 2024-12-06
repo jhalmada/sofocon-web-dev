@@ -52,9 +52,7 @@ const HomePage = () => {
   const datosGuardados = localStorage.getItem("SOFOCON_PERMISSIONS");
   const { socketConnected } = useSocket();
   const [usersActives, setUsersActive] = useState(
-    localStorage.getItem("usersActives")
-      ? JSON.parse(localStorage.getItem("usersActives"))
-      : [],
+    JSON.parse(localStorage.getItem("usersActives")) || [],
   );
   const { metricsResponse } = useGetMetrics();
   const { metricsOrdersResponse, setMonth, month, year } = useMetricsOrders();
@@ -113,13 +111,16 @@ const HomePage = () => {
         clientId,
       });
     }
+    setUsersActive(usersActives);
     localStorage.setItem("usersActives", JSON.stringify(usersActives));
   };
 
   const handleSocketDataDisconected = (data) => {
     const { client } = data;
+    console.log(data);
     const array = JSON.parse(localStorage.getItem("usersActives"));
     const newArray = array.filter((user) => user.clientId !== client);
+    setUsersActive(newArray);
 
     localStorage.setItem("usersActives", JSON.stringify(newArray));
   };
@@ -130,7 +131,7 @@ const HomePage = () => {
       socket.on("user-location", (data) => {
         handleSocketData(data);
       });
-      socket.on("user-disconnected", (data) => {
+      socket.on("user-disconected", (data) => {
         handleSocketDataDisconected(data);
       });
     }
@@ -187,8 +188,8 @@ const HomePage = () => {
                   <div
                     style={{
                       position: "absolute",
-                      top: cursorPosition.y - 680, // Ajusta el div 10px debajo del cursor
-                      left: cursorPosition.x - 300, // Ajusta el div 10px a la derecha del cursor
+                      top: cursorPosition.y - 250, // Ajusta el div 10px debajo del cursor
+                      left: cursorPosition.x - 530, // Ajusta el div 10px a la derecha del cursor
                       background: "white",
                       padding: "10px",
                       borderRadius: "5px",

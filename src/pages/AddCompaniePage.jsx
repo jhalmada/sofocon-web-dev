@@ -12,6 +12,7 @@ import { Checkbox } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
 import Cards from "../components/cards/Cards";
+import SaveImg from "../assets/img/save.png";
 import {
   AdvancedMarker,
   Map,
@@ -667,7 +668,12 @@ const AddCompaniePage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          Los cambios fueron guardados exitosamente.
+          <div className="flex flex-col items-center justify-center">
+            <img src={SaveImg} alt="save" />
+            <p className="font-roboto text-sm font-light text-black">
+              Los cambios fueron guardados correctamente.
+            </p>
+          </div>
         </ReusableModal>
         {/* modal de Errores */}
         <ReusableModal

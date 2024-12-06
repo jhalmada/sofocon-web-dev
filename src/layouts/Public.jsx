@@ -3,8 +3,8 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import arrowIcon from "../assets/icons/arrow-left.svg";
-import LogoOpen from "../assets/icons/logo_open.svg";
-import LogoClose from "../assets/icons/logo_close.svg";
+import logoOpen from "../assets/icons/logo_open2.svg";
+import logoClose from "../assets/icons/logo_close2.svg";
 import gearIcon from "../assets/icons/gear.svg";
 import bellIcon from "../assets/icons/bell.svg";
 import avatarIcon from "../assets/icons/avatar.svg";
@@ -72,7 +72,7 @@ const Public = () => {
           <div>
             <div className="flex justify-center">
               <img
-                src={isOpen ? LogoOpen : LogoClose}
+                src={isOpen ? logoOpen : logoClose}
                 alt="Logo img"
                 className={`${isOpen ? "" : "h-20"} mt-2.5 cursor-pointer p-4`}
                 onClick={() => navigate("/inicio")}
