@@ -196,7 +196,7 @@ const BudgetPage = ({
                           ? formatDate(order.sellDate)
                           : "Sin fecha"
                       }
-                      seller={order?.user?.userInfo?.fullName}
+                      seller={order?.user?.userInfo?.fullName || "Sin vendedor"}
                       downloadIconSrc={downloadIcon}
                       deleteIconSrc={deleteIcon}
                       onEditClick={() => {

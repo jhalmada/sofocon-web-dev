@@ -57,7 +57,9 @@ const StatusCard = ({
         className={`flex ${bg} relative justify-center space-x-1 rounded-tl-lg rounded-tr-lg p-2`}
       >
         {isToDeliver && (
-          <Tooltip content="Marcar como cobrado">
+          <Tooltip
+            content={isCharged ? "Orden cobrada" : "Marcar como cobrado"}
+          >
             <Checkbox
               radius="full"
               className="absolute right-2 top-2"

@@ -14,11 +14,11 @@ import {
   getOrderPdf,
 } from "../services/orders/orders.routes.js";
 import useGetUnitOrders from "../hooks/orders/useGetUnitOrders.js";
-import useOrders from "../hooks/orders/useOrders.js";
 const UnitTemplate = () => {
   const {
     orderUnitResponse,
     setMonth,
+    setSearch,
     setItemsPerPage,
     totalPage,
     total,
@@ -26,7 +26,6 @@ const UnitTemplate = () => {
     page,
     itemsPerPage,
   } = useGetUnitOrders();
-  const { setSearch } = useOrders();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -212,7 +211,6 @@ const UnitTemplate = () => {
                 </tr>
               </thead>
               <tbody>
-                {console.log("respuesta de ordenes", orderUnitResponse)}
                 {orderUnitResponse.map((order, index) => (
                   <UnitTemplateRow
                     key={index}
@@ -220,26 +218,27 @@ const UnitTemplate = () => {
                     entryDate={
                       formatDate(
                         order?.productInOrder.order.workShopDateEntry,
-                      ) || "Sin fecha"
+                      ) || "Sin datos"
                     }
                     name={
-                      order?.productInOrder.order.client?.name || "Sin nombre"
+                      order?.productInOrder.order.client?.name || "Sin datos"
                     }
                     direction={
-                      order?.productInOrder.order.client?.address ||
-                      "Sin direccion"
+                      order?.productInOrder.order.client?.address || "Sin datos"
                     }
-                    type={order?.productInOrder.product?.type}
-                    color={order?.color}
-                    capacity={order?.productInOrder.product?.amount}
+                    type={order?.productInOrder.product?.type || "Sin datos"}
+                    color={order?.color || "Sin datos"}
+                    capacity={
+                      order?.productInOrder.product?.amount || "Sin datos"
+                    }
                     factory={order.fabricUNIT ? "Si" : "No"}
-                    current={order.numberUNIT}
-                    registration={order.enrollment}
+                    current={order.numberUNIT || "Sin datos"}
+                    registration={order.enrollment || "Sin datos"}
                     trial={
-                      order.testDate ? formatDate(order.testDate) : "Sin fecha"
+                      order.testDate ? formatDate(order.testDate) : "Sin datos"
                     }
-                    pressure={order?.pressure}
-                    exp={order?.expansion}
+                    pressure={order?.pressure || "Sin datos"}
+                    exp={order?.expansion || "Sin datos"}
                     discontinued={
                       order?.status === "DISABLED" ||
                       order?.status === "Inhabilitado"
