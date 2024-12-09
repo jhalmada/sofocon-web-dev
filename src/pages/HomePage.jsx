@@ -52,7 +52,7 @@ const HomePage = () => {
   const datosGuardados = localStorage.getItem("SOFOCON_PERMISSIONS");
   const { socketConnected } = useSocket();
   const [usersActives, setUsersActive] = useState(
-    JSON.parse(localStorage.getItem("usersActives")) || [],
+    JSON.parse(sessionStorage.getItem("usersActives")) || [],
   );
   const { metricsResponse } = useGetMetrics();
   const { metricsOrdersResponse, setMonth, month, year } = useMetricsOrders();
@@ -112,17 +112,17 @@ const HomePage = () => {
       });
     }
     setUsersActive(usersActives);
-    localStorage.setItem("usersActives", JSON.stringify(usersActives));
+    sessionStorage.setItem("usersActives", JSON.stringify(usersActives));
   };
 
   const handleSocketDataDisconected = (data) => {
     const { client } = data;
     console.log(data);
-    const array = JSON.parse(localStorage.getItem("usersActives"));
+    const array = JSON.parse(sessionStorage.getItem("usersActives"));
     const newArray = array.filter((user) => user.clientId !== client);
     setUsersActive(newArray);
 
-    localStorage.setItem("usersActives", JSON.stringify(newArray));
+    sessionStorage.setItem("usersActives", JSON.stringify(newArray));
   };
 
   useEffect(() => {
