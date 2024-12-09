@@ -106,7 +106,7 @@ const PlaceAutocomplete = ({
         value={name}
         ref={inputRef}
         placeholder="Ingrese una ubicacion para comenzar"
-        msjError={name && name.length === 0 ? "Este campo es requerido" : ""}
+        msjError={name.length < 3 ? "Este campo es requerido" : ""}
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -781,6 +781,7 @@ const AddCompaniePage = () => {
               value={direccion}
               setSelectManual={setSelectManual}
             />
+
             <div>
               {" "}
               <Map
