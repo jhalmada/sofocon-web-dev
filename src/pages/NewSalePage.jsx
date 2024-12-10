@@ -40,7 +40,11 @@ const NewSalePage = () => {
     setSearch: setSearchProducts,
     setList,
   } = useGetProducts();
-  const { priceListResponse } = useGetPriceList();
+  const {
+    priceListResponse,
+    setSearch: setSearchList,
+    setItemsPerPage,
+  } = useGetPriceList();
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,6 +63,9 @@ const NewSalePage = () => {
   const [isSaveConfirmationModalOpen, setIsSaveConfirmationModalOpen] =
     useState(false);
   const [deliveredValue, setDeliveredValue] = useState(false);
+  const [companies, setCompanies] = useState("");
+  const [sellers, setSellers] = useState("");
+  const [lists, setLists] = useState("");
 
   const [quantity, setQuantity] = useState({});
   const [subtotal, setSubtotal] = useState(0);
@@ -220,9 +227,12 @@ const NewSalePage = () => {
     const updatedSelectedItems = autocompleteResults.filter(
       (selection) => selection.id !== id,
     );
+    const updatedQuantities = { ...quantity };
+    delete updatedQuantities[id];
 
     setValue(name, updatedSelectedItems);
     setAutocompleteResults(updatedSelectedItems);
+    setQuantity(updatedQuantities);
   };
 
   const handleSelectionChange = (id, value) => {
@@ -246,12 +256,19 @@ const NewSalePage = () => {
       console.error("Tipo de pago no soportado: ", selectedValue);
     }
   };
-  const handleSelectionListChange = (value) => {
-    const selectedValue = value.anchorKey;
-    setList(selectedValue);
-    setValue("priceList", value);
-    setIsPriceListSelected(false);
+  const handleSelectionListChange = (item) => {
+    if (item) {
+      const selectedValue = item.id;
+      setList(selectedValue);
+      setValue("priceList", item);
+      setIsPriceListSelected(false);
+    } else {
+      setList(null);
+      setValue("priceList", null);
+      setIsPriceListSelected(false);
+    }
   };
+
   const handleQuantityChange = (itemId, value) => {
     setQuantity((prev) => ({
       ...prev,
@@ -310,6 +327,18 @@ const NewSalePage = () => {
       setNumChecks(parseInt(checkQuantity, 10));
     }
   }, [checkQuantity]);
+
+  useEffect(() => {
+    setSearchCompanies(companies);
+  }, [companies]);
+
+  useEffect(() => {
+    setSearchSellers(sellers);
+  }, [sellers]);
+
+  useEffect(() => {
+    setSearchList(lists);
+  }, [lists]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -397,7 +426,10 @@ const NewSalePage = () => {
                         name={"client"}
                         setValue={setValue}
                         onChange={setSearchCompanies}
-                        placeholder="Buscar empresa"
+                        companies={setCompanies}
+                        placeholder={
+                          company ? company.name : "Buscar empresa..."
+                        }
                         onSelect={handleSelectCompany}
                         setRut={setRutValue}
                         {...field}
@@ -462,6 +494,7 @@ const NewSalePage = () => {
                       setValue={setValue}
                       onChange={setSearchSellers}
                       onSelect={handleSelectSeller}
+                      sellers={setSellers}
                       setRUT={setRutValue}
                       placeholder="Buscar vendedores"
                       {...field}
@@ -475,29 +508,25 @@ const NewSalePage = () => {
             </div>
             <div className="mb-4 flex space-x-2">
               <div className="mt-4 w-1/2">
-                <label className="block text-sm font-light">
-                  Lista de precios
-                </label>
-                <Select
-                  placeholder="Elegir lista de precios..."
-                  className="rounded-lg border"
-                  {...register("priceList", {
-                    required: "Este campo es obligatorio",
-                  })}
-                  onSelectionChange={handleSelectionListChange}
-                >
-                  {console.log("lista:", priceListResponse)}
-                  {priceListResponse.map((option) => (
-                    <SelectItem key={option.id}>{option.name}</SelectItem>
-                  ))}
-                </Select>
+                <CompleteSearchInput
+                  label={"Lista de precios"}
+                  array={priceListResponse}
+                  name={"priceList"}
+                  setValue={setValue}
+                  onChange={setSearchList}
+                  lists={setLists}
+                  placeholder={"Buscar lista de precios..."}
+                  onSelect={handleSelectionListChange}
+                  setRut={setRutValue}
+                />
+
                 {errors.priceList && (
                   <p className="text-xs text-red_e">
                     {errors.priceList.message}
                   </p>
                 )}
               </div>
-              <div className="mt-3 w-1/2">
+              <div className="mt-4 w-1/2">
                 <Controller
                   name="products"
                   control={control}
@@ -550,14 +579,16 @@ const NewSalePage = () => {
                       </div>
                       <div className="flex w-1/2 space-x-2">
                         <Input
-                          type="number"
+                          type={"number"}
                           label={"Cantidad"}
-                          defaultValue={1}
-                          minValue={1}
-                          placeholder={"Cant."}
-                          onInput={(e) =>
-                            handleQuantityChange(item.id, e.target.value)
-                          }
+                          value={quantity[item.id]}
+                          placeholder={"1"}
+                          onInput={(e) => {
+                            const value = e.target.value;
+                            if (/^\d*$/.test(value)) {
+                              handleQuantityChange(item.id, value);
+                            }
+                          }}
                           {...register(`productInOrder[${index}].amount`)}
                           msjError={
                             errors[`productInOrder[${index}].amount`]
@@ -914,9 +945,15 @@ const NewSalePage = () => {
           <div className="flex flex-col items-center">
             <img src={checkIcon} alt="checkIcon" />
             {deliveredValue ? (
-              <p>La orden fue creada exitosamente y se encuentra en órdenes.</p>
+              <p>
+                La orden fue creada exitosamente y se encuentra en órdenes como
+                Entregada.
+              </p>
             ) : (
-              <p>La orden fue creada exitosamente y se encuentra en taller.</p>
+              <p>
+                La orden fue creada exitosamente y se encuentra en taller como
+                Solicitada.
+              </p>
             )}
           </div>
         </ReusableModal>

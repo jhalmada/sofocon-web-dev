@@ -12,6 +12,7 @@ import SearchInput from "../components/inputs/SearchInput";
 import disconnectedImg from "../assets/images/disconnected.svg";
 
 const AddSellerRoutePage = ({
+  setSearch,
   arraySeller,
   setItemsPerPage,
   page,
@@ -33,12 +34,10 @@ const AddSellerRoutePage = ({
 
   const stateOptions = ["Activo", "Inactivo"];
   //Hooks
-  const { userSellerResponse, setSearch } = useUsersSellers();
+  const { userSellerResponse } = useUsersSellers();
   const { changedSellerRoute } = usePutSellerRoute();
   const {
-    register,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
   } = useForm();

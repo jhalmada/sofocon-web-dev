@@ -38,7 +38,7 @@ const NewBudgetPage = () => {
     setSearch: setSearchProducts,
     setList,
   } = useGetProducts();
-  const { priceListResponse } = useGetPriceList();
+  const { priceListResponse, setSearch: setSearchList } = useGetPriceList();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -58,6 +58,9 @@ const NewBudgetPage = () => {
   const [isDirectValue, setIsDirectValue] = useState(false);
   const [company, setCompany] = useState(null);
   const [seller, setSeller] = useState(null);
+  const [companies, setCompanies] = useState("");
+  const [sellers, setSellers] = useState("");
+  const [lists, setLists] = useState("");
 
   const pathSegments = pathname.split("/").filter(Boolean);
   const lastPathItem = pathSegments[pathSegments.length - 1];
@@ -264,6 +267,18 @@ const NewBudgetPage = () => {
     setSubtotal(total);
   }, [autocompleteResults, quantity, discount]);
 
+  useEffect(() => {
+    setSearchCompanies(companies);
+  }, [companies]);
+
+  useEffect(() => {
+    setSearchSellers(sellers);
+  }, [sellers]);
+
+  useEffect(() => {
+    setSearchList(lists);
+  }, [lists]);
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
@@ -349,7 +364,10 @@ const NewBudgetPage = () => {
                         name={"client"}
                         setValue={setValue}
                         onChange={setSearchCompanies}
-                        placeholder="Buscar empresa"
+                        companies={setCompanies}
+                        placeholder={
+                          company ? company.name : "Buscar empresa..."
+                        }
                         onSelect={handleSelectCompany}
                         setRut={setRutValue}
                         {...field}
@@ -431,10 +449,12 @@ const NewBudgetPage = () => {
                       array={
                         transformData(userSellerResponse?.result || []) || []
                       }
-                      name={"user"}
+                      name={"user.name"}
                       setValue={setValue}
                       onChange={setSearchSellers}
                       onSelect={handleSelectSeller}
+                      sellers={setSellers}
+                      setRUT={setRutValue}
                       placeholder="Buscar vendedores"
                       {...field}
                     />
@@ -447,28 +467,24 @@ const NewBudgetPage = () => {
             </div>
             <div className="mb-4 flex space-x-2">
               <div className="mt-4 w-1/2">
-                <label className="block text-sm font-light">
-                  Lista de precios
-                </label>
-                <Select
-                  placeholder="Elegir lista de precios..."
-                  className="rounded-lg border"
-                  {...register("priceList", {
-                    required: "Este campo es obligatorio",
-                  })}
-                  onSelectionChange={handleSelectionListChange}
-                >
-                  {priceListResponse.map((option) => (
-                    <SelectItem key={option.id}>{option.name}</SelectItem>
-                  ))}
-                </Select>
+                <CompleteSearchInput
+                  label={"Lista de precios"}
+                  array={priceListResponse}
+                  name={"priceList"}
+                  setValue={setValue}
+                  onChange={setSearchList}
+                  lists={setLists}
+                  placeholder={"Buscar lista de precios..."}
+                  onSelect={handleSelectionListChange}
+                  setRut={setRutValue}
+                />
                 {errors.priceList && (
                   <p className="text-xs text-red_e">
                     {errors.priceList.message}
                   </p>
                 )}
               </div>
-              <div className="mt-3 w-1/2">
+              <div className="mt-4 w-1/2">
                 <Controller
                   name="products"
                   control={control}

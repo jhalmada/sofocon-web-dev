@@ -7,13 +7,16 @@ const CompleteSearchInput = ({
   label,
   name,
   setValue,
-  onChange,
   array2,
   placeholder = "Buscar...",
   isDisabled = false,
   onSelect,
+  companies,
+  sellers,
+  lists,
 }) => {
   const [selectedItem, setSelectedItem] = useState(array2 || []);
+  const [inputValue, setInputValue] = useState("");
 
   const handleSelect = (item) => {
     if (selectedItem?.id !== item.id) {
@@ -26,14 +29,21 @@ const CompleteSearchInput = ({
       onSelect(null);
     }
   };
-
   const handleInputChange = (e) => {
+    setInputValue(e);
     if (!e) {
       setSelectedItem(null);
       setValue(name, null);
       onSelect(null);
     }
-    onChange(e);
+
+    if (companies) {
+      companies(e);
+    } else if (sellers) {
+      sellers(e);
+    } else {
+      lists(e);
+    }
   };
 
   return (

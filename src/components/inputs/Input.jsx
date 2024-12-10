@@ -16,11 +16,12 @@ const Input = forwardRef(
       placeholderColor = "placeholder-gray-400",
       bg = "bg-transparent",
       width = "w-full",
-      width2 = "w-full",
       mb = "mb-3",
       fontWeight = "font-normal",
       onInput,
       hidden = false,
+      value,
+
       ...props
     },
     ref,
@@ -33,13 +34,12 @@ const Input = forwardRef(
 
     const handleChange = (e) => {
       const value = e.target.value;
-      // Solo permite números si el tipo es "number"
       if (type === "number") {
-        const numericValue = value.replace(/\D/g, ""); // Elimina cualquier caracter que no sea dígito
-        e.target.value = numericValue; // Establece el valor modificado
+        const numericValue = value.replace(/\D/g, "");
+        e.target.value = numericValue;
       }
       if (onChange) {
-        onChange(e); // Llama a onChange con el valor actualizado
+        onChange(e);
       }
     };
 
@@ -64,8 +64,8 @@ const Input = forwardRef(
             type={inputType === "number" ? "text" : inputType}
             title={placeholder}
             placeholder={placeholder}
-            inputMode={type === "number" ? "numeric" : undefined} // Ayuda a dispositivos móviles a solo permitir números
-            pattern={type === "number" ? "[0-9]*" : undefined} // Permite solo números en dispositivos compatibles
+            inputMode={type === "number" ? "numeric" : undefined}
+            pattern={type === "number" ? "[0-9]*" : undefined}
             className={`${placeholderColor} ${fontWeight} ${
               hidden ? "hidden" : ""
             } relative h-10 ${bg} w-full rounded-md ${border} p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${
@@ -73,8 +73,9 @@ const Input = forwardRef(
                 ? "border-red_e placeholder-red_e"
                 : "border-gray-300"
             }`}
-            onChange={handleChange} // Usar la función handleChange
+            onChange={handleChange}
             onInput={onInput}
+            value={value}
           />
           {type === "password" && (
             <span

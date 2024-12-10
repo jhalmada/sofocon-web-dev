@@ -16,6 +16,7 @@ import deleteIcon from "../assets/icons/trash3.svg";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import SearchInput from "../components/inputs/SearchInput";
+
 const StoragePage = ({
   ordersResponse,
   setModified,
@@ -59,11 +60,9 @@ const StoragePage = ({
   const [orderDetails, setOrderDetails] = useState(null);
 
   const stateOptions = [
-    "Solicitado",
+    "Ingreso a taller",
     "En preparación",
-    "Para retirar",
-    "Egreso",
-    "Entregado",
+    "Para retirar del taller",
   ];
   const years = [
     { label: "2024", value: 2024 },
@@ -166,10 +165,10 @@ const StoragePage = ({
   useEffect(() => {
     oneOrder(id);
   }, [id]);
-
+  console.log(orderDetails);
   const handleStateFilterChange = (value) => {
     switch (value) {
-      case "Solicitado":
+      case "Ingreso a taller":
         setStatus("REQUEST");
         setPage(0);
         break;
@@ -177,16 +176,8 @@ const StoragePage = ({
         setStatus("PREPARATION");
         setPage(0);
         break;
-      case "Para retirar":
+      case "Para retirar del taller":
         setStatus("READY_PICKUP");
-        setPage(0);
-        break;
-      case "Egreso":
-        setStatus("EGRESS");
-        setPage(0);
-        break;
-      case "Entregado":
-        setStatus("DELIVERED");
         setPage(0);
         break;
 

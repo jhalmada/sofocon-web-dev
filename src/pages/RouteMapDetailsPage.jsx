@@ -155,17 +155,13 @@ const RouteMapDetailsPage = () => {
     }
   }, [companySearchTerm, allCompanies]);
 
-  const openExportModal = (id) => {
+  const openExportModal = () => {
     setIsExportModalOpen(true);
   };
-  const openSellersExportModal = (id) => {
+  const openSellersExportModal = () => {
     setIsSellersExportModalOpen(true);
   };
 
-  //funciones
-  const onSubmits = (data) => {};
-
-  //funciones del modal de añadir vendedor
   //para cerrar el modal
   const closeModal = () => {
     setIsModalOpen(false);
@@ -301,6 +297,7 @@ const RouteMapDetailsPage = () => {
           <AddSellerRoutePage
             arraySeller={userSellerResponse?.result || []}
             itemsPerPage={itemsPerPage}
+            setSearch={setSearch}
             page={page}
             setItemsPerPage={setItemsPerPage}
             setPage={setPage}
@@ -321,6 +318,7 @@ const RouteMapDetailsPage = () => {
           <AddCompanyRoutePage
             page={pageCompanies}
             itemsPerPage={itemsPerPageCompanies}
+            setSearch={setCompanySearch}
             setPage={setPageCompanies}
             totalPage={totalPageCompanies}
             total={totalCompanies}
