@@ -137,6 +137,7 @@ const CompaniesPage = () => {
     if (companyToEdit) {
       const pos = { lat: companyToEdit.latitude, lng: companyToEdit.longitude };
       setPosiciones(pos);
+      setDireccion("");
 
       setValue("name", companyToEdit?.name || "");
       setValue("department", companyToEdit?.department || "");
