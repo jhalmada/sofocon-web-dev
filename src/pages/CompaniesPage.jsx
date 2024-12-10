@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
+import geoaltIcon from "../assets/icons/geo-alt.svg";
 import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -35,11 +36,29 @@ import listPriceIcon from "../assets/icons/listPriceIcon.svg";
 import Calendar from "../components/calendar/Calendar.jsx";
 import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
+import { PlaceAutocomplete, MapHandler } from "../hooks/Maps/funtionMaps";
+import {
+  AdvancedMarker,
+  Map,
+  Marker,
+  useAdvancedMarkerRef,
+} from "@vis.gl/react-google-maps";
+
+const coordenadasUruguay = {
+  lat: -34.901,
+  lng: -56.1698,
+};
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
 
 const CompaniesPage = () => {
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [selectManual, setSelectManual] = useState(false);
+  const [markerRef, marker] = useAdvancedMarkerRef();
+  const [direccion, setDireccion] = useState("");
+  const [posiciones, setPosiciones] = useState(null);
+
   const [companyId, setCompanyId] = useState(null);
   const { deleteCompany } = useDeleteCompanies();
   const {
@@ -90,6 +109,7 @@ const CompaniesPage = () => {
   const [listPriceModal, setListPriceModal] = useState(false);
   const [listasPrecios, setListasPrecios] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [modalMap, setModalMap] = useState(false);
 
   const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
   const stateOptions = ["Frecuente", "Potencial", "De baja"];
@@ -112,6 +132,9 @@ const CompaniesPage = () => {
       (company) => company.id === id,
     );
     if (companyToEdit) {
+      const pos = { lat: companyToEdit.latitude, lng: companyToEdit.longitude };
+      setPosiciones(pos);
+
       setValue("name", companyToEdit?.name || "");
       setValue("department", companyToEdit?.department || "");
       setValue("neighborhood", companyToEdit?.neighborhood || "");
@@ -234,6 +257,14 @@ const CompaniesPage = () => {
           nextVisit: newdata,
           rut: data.rut,
           competenceName: competence ? competenceName : "",
+          latitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lat()
+              : selectManual.lat,
+          longitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lng()
+              : selectManual.lng,
         });
         break;
       default:
@@ -248,6 +279,14 @@ const CompaniesPage = () => {
           nextVisit: formattedDate,
           ci: data.ci,
           competenceName: competence ? competenceName : "",
+          latitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lat()
+              : selectManual.lat,
+          longitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lng()
+              : selectManual.lng,
         });
     }
   };
@@ -259,14 +298,6 @@ const CompaniesPage = () => {
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${day}/${month}/${year}`;
-  };
-
-  //funcion para transformar los Arrays
-  const transformData = (array) => {
-    return array.map((item) => ({
-      id: item.id,
-      name: item.name,
-    }));
   };
 
   const submit = (data) => {
@@ -649,6 +680,15 @@ const CompaniesPage = () => {
               errorApi={errors.address}
               msjError={errors.address ? errors.address.message : ""}
             />
+            <div
+              onClick={() => setModalMap(true)}
+              className="mb-2 flex w-[8rem] cursor-pointer justify-center"
+            >
+              <img src={geoaltIcon} alt="geo Icon" />
+              <span className="text-xs leading-[.88rem] underline">
+                Marcar en el mapa
+              </span>
+            </div>
             <Input
               label={"Referente"}
               placeholder={"Escribe el nombre del referente..."}
@@ -793,7 +833,6 @@ const CompaniesPage = () => {
                 </Select>
                 <p className="mt-1 font-roboto text-xs text-red_e">
                   {errors.status ? errors.status.message : ""}
-                  {console.log(errors.status)}
                 </p>
               </>
             )}
@@ -936,7 +975,7 @@ const CompaniesPage = () => {
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex h-[14rem] flex-col items-center justify-center">
           <img src={SaveImg} alt="save" />
           <p className="font-roboto text-sm font-light text-black">
             Los cambios fueron guardados correctamente.
@@ -963,7 +1002,7 @@ const CompaniesPage = () => {
         buttons={["accept"]}
         onAccept={() => setConfirmDelete(false)}
       >
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex h-[14rem] flex-col items-center justify-center">
           <img src={deleteImg} alt="delete" />
           <p className="font-roboto text-sm font-light text-black">
             La empresa fue eliminada correctamente.
@@ -987,6 +1026,79 @@ const CompaniesPage = () => {
                 </p>
               ))
             : "No hay listas de precios asignadas"}
+        </div>
+      </ReusableModal>
+      {/**modal para el mapa */}
+
+      <ReusableModal
+        isOpen={modalMap}
+        onClose={() => setModalMap(false)}
+        title="Marcar ubicacion"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setModalMap(false)}
+        width="w-[45.37rem]"
+      >
+        <div className="flex flex-col">
+          <PlaceAutocomplete
+            onPlaceSelect={setSelectedPlace}
+            value={direccion}
+            setSelectManual={setSelectManual}
+          />
+
+          <div>
+            {" "}
+            <Map
+              style={{ height: "15rem" }}
+              mapId={"8c732c82e4ec29d9"}
+              defaultCenter={coordenadasUruguay}
+              defaultZoom={5}
+              gestureHandling={"greedy"}
+              center={selectManual === false ? null : selectManual}
+              disableDefaultUI={true}
+            >
+              <Marker
+                ref={markerRef}
+                draggable={true}
+                position={
+                  selectManual === false
+                    ? posiciones === null
+                      ? null
+                      : {
+                          lat: Number(posiciones.lat),
+                          lng: Number(posiciones.lng),
+                        }
+                    : selectManual
+                }
+                onDragEnd={(e) => {
+                  setSelectManual({
+                    lat: e.latLng.lat(),
+                    lng: e.latLng.lng(),
+                  }),
+                    console.log(e);
+                }}
+              />
+
+              <AdvancedMarker
+                className={`${selectManual === false ? "visible" : "invisible"}`}
+                ref={markerRef}
+                position={null}
+                draggable={true}
+                onDragEnd={(e) =>
+                  setSelectManual({
+                    lat: e.latLng.lat(),
+                    lng: e.latLng.lng(),
+                  })
+                }
+              />
+            </Map>
+            <MapHandler
+              place={selectedPlace}
+              marker={marker}
+              setValue={setValue}
+              setDireccion={setDireccion}
+            />
+          </div>
         </div>
       </ReusableModal>
     </div>

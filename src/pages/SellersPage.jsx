@@ -15,6 +15,7 @@ import notFoundImg from "../assets/images/notFound.svg";
 import SearchInput from "../components/inputs/SearchInput";
 import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
+import { a, i } from "framer-motion/client";
 
 const SellersPage = ({
   openConfirmDeleteModal,
@@ -30,6 +31,7 @@ const SellersPage = ({
   setIsActive,
 }) => {
   //estados
+  const [arraySelected, setArraySelected] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -71,8 +73,10 @@ const SellersPage = ({
   };
   const onSubmit = (data) => {
     const { phone, ci, fullName, email, role, route } = data;
+    console.log(route);
     handleUserCreation({
       email,
+      sellerRoute: route.map((ruta) => ({ id: ruta.id })),
       userInfo: {
         fullName,
         ci,
@@ -87,6 +91,7 @@ const SellersPage = ({
       (user) => user.id === id,
     );
     if (userToEdit) {
+      setArraySelected(userToEdit.sellerRoute);
       setValue("phone", userToEdit.userInfo?.phone || "");
       setValue("ci", userToEdit.userInfo?.ci || "");
       setValue("fullName", userToEdit.userInfo?.fullName || "");
@@ -278,6 +283,7 @@ const SellersPage = ({
 
           <div className="relative">
             <NextAutoComplete
+              array2={arraySelected || []}
               label2={"Rutas Asignadas"}
               array={transformData(sellerRoutesResponse || []) || []}
               name={"route"}
