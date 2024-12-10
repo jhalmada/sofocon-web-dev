@@ -15,7 +15,7 @@ import useUsers from "../hooks/users/use.users.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutUsers from "../hooks/users/usePutUsers.js";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import useRoles from "../hooks/roles/use.roles.js";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { permisos } from "../utils/permisons";
@@ -79,6 +79,9 @@ const UsersPage = () => {
     handleSubmit,
     setValue,
     formState: { errors },
+    reset,
+    clearErrors,
+    setError,
   } = useForm();
 
   const openModal = (id) => {
@@ -89,6 +92,7 @@ const UsersPage = () => {
       setValue("ci", userToEdit.userInfo.ci);
       setValue("phone", userToEdit.userInfo.phone);
       setValue("role", userToEdit?.role?.id || "");
+      setValue("state", userToEdit.isActive ? "Activo" : "Inactivo");
     }
     setIsModalOpen(true);
     setUserId(id);
@@ -174,6 +178,9 @@ const UsersPage = () => {
           },
         });
     }
+    clearErrors();
+    clearErrors("state");
+    setError("state", { type: "manual", message: "Error message" });
   };
   const handleRoleFilterChange = (value) => {
     const rolselect = RolesResponse.filter((rol) => rol.name === value);
@@ -435,13 +442,29 @@ const UsersPage = () => {
             errorApi={errors.email}
             msjError={errors.email ? errors.email.message : ""}
           />
-          <div className="space-y-4">
+          <div>
+            <label htmlFor="selectState">Estado</label>
+            <Select
+              className="rounded-lg border"
+              id="selectState"
+              {...register("state", {
+                required: "Debes seleccionar un estado",
+              })}
+              onSelectionChange={(value) => {
+                setValue("state", value);
+              }}
+            >
+              <SelectItem key={"Activo"}>Activo</SelectItem>
+              <SelectItem key={"Inactivo"}>Inactivo</SelectItem>
+            </Select>
+          </div>
+          <div className="">
             <Checkbox
               defaultSelected={checkSelected === "existente"}
               isSelected={checkSelected === "existente"}
               onClick={() => setCheckSelected("existente")}
               radius="full"
-              className="font-light"
+              className="mt-2 font-light"
               size="sm"
             >
               Asignar rol existente
@@ -466,7 +489,7 @@ const UsersPage = () => {
               radius="full"
               isSelected={checkSelected === "nuevo"}
               onClick={() => setCheckSelected("nuevo")}
-              className="font-light"
+              className="mt-2 font-light"
               size="sm"
             >
               Asignar nuevo rol
