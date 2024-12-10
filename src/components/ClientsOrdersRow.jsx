@@ -2,11 +2,11 @@ import { useNavigate } from "react-router-dom";
 const translateState = (state) => {
   switch (state) {
     case "REQUEST":
-      return "Solicitado";
+      return "Ingreso a taller";
     case "PREPARATION":
       return "En preparación";
     case "READY_PICKUP":
-      return "Para retirar";
+      return "Para retirar del taller";
     case "EGRESS":
       return "Egreso";
     case "DELIVERED":

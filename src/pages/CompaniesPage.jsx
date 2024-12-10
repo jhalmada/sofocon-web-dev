@@ -11,7 +11,7 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import CompanieRow from "../components/CompanieRow.jsx";
 import CompetingPage from "./CompetingPage.jsx";
 import notesIcon from "../assets/icons/sticky-fill.svg";
@@ -50,6 +50,9 @@ const CompaniesPage = () => {
     setPage,
     page,
     itemsPerPage,
+    nextVisit,
+    search,
+    status,
     setModified,
     setStatus,
     setNextVisit,
@@ -822,7 +825,11 @@ const CompaniesPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getClientsExcel}?search=${search}&competence=${competence}&nextvisit=${nextVisit}&status=${status}`}
+            download
+            target="_blank"
+          >
             <Button
               width="min-w-[14rem]"
               text="Descargar archivo Excel"
@@ -833,7 +840,11 @@ const CompaniesPage = () => {
             />
           </a>
 
-          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getClientsPdf}?competence=${competence}${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`}
+            download
+            target="_blank"
+          >
             <Button
               width="min-w-[14rem]"
               text="Descargar archivo PDF"

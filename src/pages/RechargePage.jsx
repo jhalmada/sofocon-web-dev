@@ -44,19 +44,19 @@ const RechargePage = () => {
     setOrderDetails(newdatos);
   };
   const stateOptions = [
-    "Solicitado",
+    "Ingreso a taller",
     "En preparación",
-    "Para retirar",
+    "Para retirar del taller",
     "Egreso",
   ];
   const translateState = (state) => {
     switch (state) {
       case "REQUEST":
-        return "Solicitado";
+        return "Ingreso a taller";
       case "PREPARATION":
         return "En preparación";
       case "READY_PICKUP":
-        return "Para retirar";
+        return "Para retirar del taller";
       case "EGRESS":
         return "Egreso";
       case "DELIVERED":
@@ -125,12 +125,12 @@ const RechargePage = () => {
   };
   const translateStateToEnglish = (state) => {
     switch (state) {
-      case "Solicitado":
+      case "Ingreso a taller":
         return "REQUEST";
 
       case "En preparación":
         return "PREPARATION";
-      case "Para retirar":
+      case "Para retirar del taller":
         return "READY_PICKUP";
       case "Egreso":
         return "EGRESS";

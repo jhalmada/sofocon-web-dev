@@ -45,7 +45,6 @@ const NotesPage = () => {
 
   const { id } = useParams();
   const { companyResponse } = useGetOneCompany(id);
-  console.log(companyResponse);
 
   const openModal = (noteId) => {
     const noteToEdit = notesResponse.find((note) => note.id === noteId);
@@ -57,7 +56,6 @@ const NotesPage = () => {
         setValue("dateV", parseAbsoluteToLocal(noteToEdit.date));
       }
       setReminderSelected(noteToEdit.isReminder);
-      setDateSelected(true);
     }
     setIsModalOpen(true);
     setNoteId(noteId);
@@ -206,18 +204,29 @@ const NotesPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {notesResponse.map((note, index) => (
-                  <NotesRow
-                    key={index}
-                    name={note.title}
-                    content={note.description}
-                    date={note.date ? formatDate(note.date) : "Sin fecha"}
-                    editIconSrc={editIcon}
-                    deleteIconSrc={deleteIcon}
-                    onEditClick={() => openModal(note.id)}
-                    onDeleteClick={() => openConfirmDeleteModal(note.id)}
-                  />
-                ))}
+                {notesResponse.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="p-2 text-center text-md font-semibold leading-[1.125rem]"
+                    >
+                      No hay notas
+                    </td>
+                  </tr>
+                ) : (
+                  notesResponse.map((note, index) => (
+                    <NotesRow
+                      key={index}
+                      name={note.title}
+                      content={note.description}
+                      date={note.date ? formatDate(note.date) : "Sin fecha"}
+                      editIconSrc={editIcon}
+                      deleteIconSrc={deleteIcon}
+                      onEditClick={() => openModal(note.id)}
+                      onDeleteClick={() => openConfirmDeleteModal(note.id)}
+                    />
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -270,11 +279,13 @@ const NotesPage = () => {
               </Checkbox>
               <div className="flex w-[18rem] flex-col">
                 <Calendar
+                  showValue={false}
                   control={control}
                   errors={errors}
                   setErrorDataPicker={setErrorDataPicker}
                   errorDataPicker={errorDataPicker}
                   name="dateV"
+                  isDisabled={!dateSelected}
                 />
               </div>
             </div>

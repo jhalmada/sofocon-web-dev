@@ -167,11 +167,13 @@ const AddNotesPage = () => {
               </Checkbox>
               <div className="flex w-[18rem] flex-col">
                 <Calendar
+                  showValue={false}
                   control={control}
                   errors={errors}
                   setErrorDataPicker={setErrorDataPicker}
                   errorDataPicker={errorDataPicker}
                   name="dateV"
+                  isDisabled={!dateSelected}
                 />
               </div>
             </div>

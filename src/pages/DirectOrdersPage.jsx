@@ -102,7 +102,7 @@ const DirectOrdersPage = ({
 
   const handleStateFilterChange = (value) => {
     switch (value) {
-      case "Para retirar":
+      case "Para retirar del taller":
         setStatus("READY_PICKUP");
         setPage(0);
         break;

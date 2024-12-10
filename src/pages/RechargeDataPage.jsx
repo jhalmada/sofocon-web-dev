@@ -260,7 +260,12 @@ const RechargeDataPage = () => {
                   <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                     Fecha ensayo
                   </span>
-                  <Calendar control={control} errors={errors} name="testDate" />
+                  <Calendar
+                    control={control}
+                    errors={errors}
+                    forward={false}
+                    name="testDate"
+                  />
                 </div>
               </span>
               <Input
