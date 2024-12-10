@@ -13,6 +13,7 @@ import SaveImg from "../assets/img/save.png";
 import disconnectedImg from "../assets/images/disconnected.svg";
 
 const AddCompanyRoutePage = ({
+  setSearch,
   setItemsPerPage,
   setPage,
   page,
@@ -31,18 +32,15 @@ const AddCompanyRoutePage = ({
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [companyId, setCompanyId] = useState(null);
-  const [stateFilter, setStateFilter] = useState("");
 
   const stateOptions = ["Frecuente", "Potencial", "De baja"];
   //hooks
-  const { companiesResponse, setSearch } = useCompanies();
+  const { companiesResponse } = useCompanies();
   console.log(companiesResponse);
   console.log(arrayCompanies);
   const { changedSellerRoute } = usePutSellerRoute();
   const {
-    register,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
   } = useForm();

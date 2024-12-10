@@ -62,7 +62,7 @@ const ClientsOrdersPage = () => {
   };
 
   const discountPercent = orderDetails?.discountPercent || 0;
-  const stateOptions = ["Para retirar", "Entregado"];
+  const stateOptions = ["Para retirar del taller", "Entregado"];
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -74,11 +74,11 @@ const ClientsOrdersPage = () => {
   const translateState = (state) => {
     switch (state) {
       case "REQUEST":
-        return "Solicitado";
+        return "Ingreso a taller";
       case "En preparación":
         return "PREPARATION";
       case "READY_PICKUP":
-        return "Para retirar";
+        return "Para retirar del taller";
       case "EGRESS":
         return "Egreso";
       case "DELIVERED":
@@ -120,11 +120,11 @@ const ClientsOrdersPage = () => {
   const handleStateChange = (e) => {
     const translateState = (state) => {
       switch (state) {
-        case "Solicitado":
+        case "Ingreso a taller":
           return "REQUEST";
         case "En preparación":
           return "PREPARATION";
-        case "Para retirar":
+        case "Para retirar del taller":
           setTempStatus("READY_PICKUP");
           setIsModalOpen(true);
           return null;
@@ -146,7 +146,6 @@ const ClientsOrdersPage = () => {
   };
 
   const updateOrderState = async (status) => {
-    console.log("status: ", status);
     setSelectedState(status);
     const updatedData = { status };
     if (status === "READY_PICKUP") {

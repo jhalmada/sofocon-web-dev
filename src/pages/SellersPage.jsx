@@ -38,8 +38,6 @@ const SellersPage = ({
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
 
-  console.log(userSellerResponse);
-
   //hooks
   const {
     register,

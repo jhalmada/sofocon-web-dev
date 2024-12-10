@@ -3,6 +3,12 @@ import { I18nProvider } from "@react-aria/i18n";
 import { DatePicker } from "@nextui-org/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 
+const getUserLocale = () => {
+  if (navigator.languages && navigator.languages.length) {
+    return navigator.languages[0];
+  }
+  return navigator.language || "en-US";
+};
 const Calendar = ({
   control,
   errors,
@@ -12,14 +18,16 @@ const Calendar = ({
   label = "",
   forward = true,
   isRequired = true,
+  showValue = true,
+  isDisabled = false,
 }) => {
-  const dateValue = today(getLocalTimeZone());
+  const dateValue = showValue ? today(getLocalTimeZone()) : null;
   const dateProps = forward ? { minValue: dateValue } : { maxValue: dateValue };
-
+  const userLocale = getUserLocale();
   return (
     <div className="flex flex-col">
       <label className="text-sm font-light text-black">{label}</label>
-      <I18nProvider locale="es-UR">
+      <I18nProvider locale={userLocale}>
         <Controller
           name={name}
           control={control}
@@ -27,6 +35,7 @@ const Calendar = ({
           render={({ field }) => (
             <div className="flex w-full flex-wrap gap-4 md:flex-nowrap">
               <DatePicker
+                isDisabled={isDisabled}
                 granularity="day"
                 {...dateProps}
                 className={`${errors[name] ? "text-red_e" : ""} ${errors[name] ? "border-red_e" : ""} rounded-lg border`}
@@ -42,7 +51,7 @@ const Calendar = ({
                     return "";
                   }
                 }}
-                locale="es-ES"
+                locale={userLocale === "es-ES" ? "es-AR" : "es-UR"}
               />
             </div>
           )}

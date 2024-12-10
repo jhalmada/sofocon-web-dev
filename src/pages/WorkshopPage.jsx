@@ -17,8 +17,7 @@ import useOrders from "../hooks/orders/useOrders.js";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
 import SaveImg from "../assets/img/save.png";
 import deleteIcon from "../assets/icons/trash3.svg";
-import usePutOrders from "../hooks/orders/usePutOrders";
-import { BASE_URL, SOFOCON_JWT_TOKEN } from "../utils/Constants";
+import { BASE_URL } from "../utils/Constants";
 import {
   getOrderExcel,
   getOrderPdf,
@@ -30,7 +29,6 @@ const RECHARGE_TAB = "recarga";
 const STORAGE_TAB = "deposito";
 
 const WorkshopPage = () => {
-  const { changedOrder } = usePutOrders();
   const { deleteOrder } = useDeleteOrders();
 
   const {
@@ -43,6 +41,7 @@ const WorkshopPage = () => {
     month,
     year,
     itemsPerPage,
+    downloadFile,
     setModified,
     setYear,
     setMonth,
@@ -78,15 +77,15 @@ const WorkshopPage = () => {
     useState(false);
   const [openScannerModal, setOpenScannerModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(
-    ordersResponse?.productInOrder,
-  );
+
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [orderId, setOrderId] = useState(null);
 
-  const accessToken = localStorage.getItem(SOFOCON_JWT_TOKEN);
-
-  const stateOptions = ["Solicitado", "En preparación", "Para retirar"];
+  const stateOptions = [
+    "Ingreso a taller",
+    "En preparación",
+    "Para retirar del taller",
+  ];
   const years = [
     { label: "2024", value: 2024 },
     { label: "2025", value: 2025 },
@@ -124,6 +123,32 @@ const WorkshopPage = () => {
     { label: "Noviembre", value: "11" },
     { label: "Diciembre", value: "12" },
   ];
+
+  const handleDownloadExcel = (isRecharge) => {
+    const url = `${BASE_URL}/${getOrderExcel}${isRecharge ? "?recharge=true" : ""}`;
+    downloadFile(
+      url,
+      `ordenes${isRecharge ? "-con recarga" : "-sin recarga"}.xlsx`,
+    );
+  };
+
+  const handleDownloadPdf = (isRecharge) => {
+    const url = `${BASE_URL}/${getOrderPdf}?${isRecharge ? "recharge=true" : ""}`;
+    console.log(
+      "Intentando descargar PDF de orden con ID:",
+      orderId,
+      "de:",
+      url,
+    );
+
+    downloadFile(
+      url,
+      `ordenes-${isRecharge ? "-con recarga" : "-sin recarga"}.pdf`,
+      isRecharge,
+    ).catch((error) => {
+      console.error("Error al descargar el archivo PDF:", error);
+    });
+  };
 
   const handleChangeMonth = (value) => {
     setMonth(value);
@@ -180,7 +205,7 @@ const WorkshopPage = () => {
 
   const handleStateFilterChange = (value) => {
     switch (value) {
-      case "Solicitado":
+      case "Ingreso a taller":
         setStatus("REQUEST");
         setPage(0);
         break;
@@ -188,7 +213,7 @@ const WorkshopPage = () => {
         setStatus("PREPARATION");
         setPage(0);
         break;
-      case "Para retirar":
+      case "Para retirar del taller":
         setStatus("READY_PICKUP");
         setPage(0);
         break;
@@ -475,6 +500,7 @@ const WorkshopPage = () => {
       >
         Esta orden será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
+
       <ReusableModal
         isOpen={isExportModalOpen}
         onClose={closeModal}
@@ -485,35 +511,25 @@ const WorkshopPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getOrderExcel}?recharge=true`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={() => handleDownloadExcel(true)}
+          />
 
-          <a
-            href={`${BASE_URL}/${getOrderPdf}?recharge=true`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={() => handleDownloadPdf(true)}
+          />
         </div>
       </ReusableModal>
       <ReusableModal
@@ -526,35 +542,25 @@ const WorkshopPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getOrderExcel}?recharge=false`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={() => handleDownloadExcel(false)}
+          />
 
-          <a
-            href={`${BASE_URL}/${getOrderPdf}?recharge=false`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={() => handleDownloadPdf(false)}
+          />
         </div>
       </ReusableModal>
       <ReusableModal

@@ -1,6 +1,6 @@
 import StatusCard from "../components/cards/StatusCard";
 import useOrders from "../hooks/orders/useOrders";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import { Controller, useForm } from "react-hook-form";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
@@ -9,15 +9,18 @@ const StatusPanelPage = () => {
   const { ordersResponse, getAllOrders, setUser, setInBoard, setItemsPerPage } =
     useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+
   const {
     control,
     setValue,
     formState: { errors },
   } = useForm();
 
+  const [sellers, setSellers] = useState("");
+
   const handleSelectSeller = (selectedSeller) => {
     if (selectedSeller) {
-      setUser(selectedSeller);
+      setUser(selectedSeller.id);
     } else {
       setUser(null);
     }
@@ -45,14 +48,14 @@ const StatusPanelPage = () => {
   };
   const translateStatus = (status) => {
     const statusTranslations = {
-      REQUEST: "Solicitado",
+      REQUEST: "Ingreso a taller",
       PREPARATION: "En preparación",
-      READY_PICKUP: "Para retirar",
+      READY_PICKUP: "Para retirar del taller",
       EGRESS: "Egreso",
       DELIVERED: "Entregado",
-      Solicitado: "REQUEST",
+      "Ingreso a taller": "REQUEST",
       "En preparación": "PREPARATION",
-      "Para retirar": "READY_PICKUP",
+      "Para retirar del taller": "READY_PICKUP",
       Egreso: "EGRESS",
       Entregado: "DELIVERED",
     };
@@ -83,6 +86,10 @@ const StatusPanelPage = () => {
     setItemsPerPage(100);
   }, []);
 
+  useEffect(() => {
+    setSearchSellers(sellers);
+  }, [sellers]);
+
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div>
@@ -98,6 +105,7 @@ const StatusPanelPage = () => {
                 setValue={setValue}
                 onChange={setSearchSellers}
                 onSelect={handleSelectSeller}
+                sellers={setSellers}
                 placeholder="Buscar vendedores"
                 {...field}
               />
@@ -108,9 +116,9 @@ const StatusPanelPage = () => {
           )}
         </div>
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
-          <p>Solicitado ({countOrdersByStatus("REQUEST")})</p>
+          <p>Ingreso a taller ({countOrdersByStatus("REQUEST")})</p>
           <p>En Preparación ({countOrdersByStatus("PREPARATION")})</p>
-          <p>Para retirar ({countOrdersByStatus("READY_PICKUP")})</p>
+          <p>Para retirar del taller ({countOrdersByStatus("READY_PICKUP")})</p>
           <p>Egreso ({countOrdersByStatus("EGRESS")})</p>
           <p>Entregado ({countOrdersByStatus("DELIVERED")})</p>
         </div>
@@ -118,7 +126,8 @@ const StatusPanelPage = () => {
           <div className="space-y-6 border-r-2 border-gray px-1 2xl:px-4">
             {ordersResponse.filter(
               (order) =>
-                order.status === "REQUEST" || order.status === "Solicitado",
+                order.status === "REQUEST" ||
+                order.status === "Ingreso a taller",
             ).length === 0 ? (
               <p className="mt-28 flex justify-center text-md font-semibold">
                 Sin resultados
@@ -127,7 +136,8 @@ const StatusPanelPage = () => {
               ordersResponse
                 .filter(
                   (order) =>
-                    order.status === "REQUEST" || order.status === "Solicitado",
+                    order.status === "REQUEST" ||
+                    order.status === "Ingreso a taller",
                 )
                 .map((order, index) => (
                   <StatusCard
@@ -187,7 +197,7 @@ const StatusPanelPage = () => {
             {ordersResponse.filter(
               (order) =>
                 order.status === "READY_PICKUP" ||
-                order.status === "Para retirar",
+                order.status === "Para retirar del taller",
             ).length === 0 ? (
               <p className="mt-28 flex justify-center text-md font-semibold">
                 Sin resultados
@@ -197,7 +207,7 @@ const StatusPanelPage = () => {
                 .filter(
                   (order) =>
                     order.status === "READY_PICKUP" ||
-                    order.status === "Para retirar",
+                    order.status === "Para retirar del taller",
                 )
                 .map((order, index) => (
                   <StatusCard

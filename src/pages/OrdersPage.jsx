@@ -137,7 +137,7 @@ const OrdersPage = () => {
 
   const handleStateFilterChange = (value) => {
     switch (value) {
-      case "Solicitado":
+      case "Ingreso a taller":
         setStatus("REQUEST");
         setPage(0);
         break;
@@ -145,7 +145,7 @@ const OrdersPage = () => {
         setStatus("PREPARATION");
         setPage(0);
         break;
-      case "Para retirar":
+      case "Para retirar del taller":
         setStatus("READY_PICKUP");
         setPage(0);
         break;
