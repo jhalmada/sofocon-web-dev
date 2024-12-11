@@ -40,11 +40,7 @@ const NewSalePage = () => {
     setSearch: setSearchProducts,
     setList,
   } = useGetProducts();
-  const {
-    priceListResponse,
-    setSearch: setSearchList,
-    setItemsPerPage,
-  } = useGetPriceList();
+  const { priceListResponse, setSearch: setSearchList } = useGetPriceList();
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,7 +50,6 @@ const NewSalePage = () => {
   const [company, setCompany] = useState(null);
   const [seller, setSeller] = useState(null);
   const [autocompleteResults, setAutocompleteResults] = useState([]);
-  const [name, setName] = useState("productInOrder");
   const [recharged, setRecharged] = useState({});
   const [selectedPayment, setSelectedPayment] = useState("Efectivo");
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
@@ -230,9 +225,22 @@ const NewSalePage = () => {
     const updatedQuantities = { ...quantity };
     delete updatedQuantities[id];
 
-    setValue(name, updatedSelectedItems);
+    setValue("products", updatedSelectedItems);
     setAutocompleteResults(updatedSelectedItems);
     setQuantity(updatedQuantities);
+
+    // Actualizar el subtotal y total
+    const newSubtotal = updatedSelectedItems.reduce((acc, item) => {
+      const itemQuantity = quantity[item.id] || 1;
+      const itemPrice = item.list[0].price;
+      const discountPercentage =
+        discount[updatedSelectedItems.indexOf(item)] || 0;
+      const discountedPrice = itemPrice * (1 - discountPercentage / 100);
+
+      return acc + discountedPrice * itemQuantity;
+    }, 0);
+
+    setSubtotal(newSubtotal);
   };
 
   const handleSelectionChange = (id, value) => {
