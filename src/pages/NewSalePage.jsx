@@ -963,12 +963,12 @@ const NewSalePage = () => {
             {deliveredValue ? (
               <p>
                 La orden fue creada exitosamente y se encuentra en órdenes como
-                Entregada.
+                <strong> Entregada</strong>.
               </p>
             ) : (
               <p>
                 La orden fue creada exitosamente y se encuentra en taller como
-                Solicitada.
+                <strong> Ingreso a taller</strong>.
               </p>
             )}
           </div>
