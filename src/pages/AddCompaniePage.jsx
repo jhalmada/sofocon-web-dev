@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
 import Cards from "../components/cards/Cards";
 import SaveImg from "../assets/img/save.png";
-import { PlaceAutocomplete, MapHandler } from "../hooks/Maps/FuntionMaps";
+import { PlaceAutocomplete, MapHandler } from "../hooks/Maps/funtionMaps";
 import {
   AdvancedMarker,
   Map,
