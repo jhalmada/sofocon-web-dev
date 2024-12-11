@@ -5,7 +5,7 @@ import Input from "../components/inputs/Input";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/react";
@@ -37,7 +37,6 @@ const AddCompaniePage = () => {
     register,
     handleSubmit,
     setValue,
-    setError,
     control,
     formState: { errors },
   } = useForm();
@@ -47,14 +46,12 @@ const AddCompaniePage = () => {
     register: register2,
     handleSubmit: handleSubmit2,
     setValue: setValue2,
-    setError: setError2,
     control: control2,
     formState: { errors: errors2 },
   } = useForm();
   const navigate = useNavigate();
   const { postAddCompany } = useAddCompany();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isMapModal, setIsMapModal] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [msjError, setMsjError] = useState("");

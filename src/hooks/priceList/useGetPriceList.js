@@ -10,6 +10,7 @@ const useGetPriceList = () => {
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [client, setClient] = useState(null);
 
   const getAllPriceList = async () => {
     try {
@@ -19,6 +20,7 @@ const useGetPriceList = () => {
         itemsPerPage,
         search,
         category,
+        client,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
@@ -45,6 +47,7 @@ const useGetPriceList = () => {
     modified,
     setSearch,
     setCategory,
+    setClient,
   };
 };
 
