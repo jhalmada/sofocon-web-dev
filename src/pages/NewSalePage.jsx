@@ -678,7 +678,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.barCode?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.barCode
+                                    ?.message || ""
+                                }
                               />
                               <span className="flex items-center">
                                 <div
@@ -704,7 +708,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.enrollment?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.enrollment
+                                    ?.message || ""
+                                }
                               />
                               <Input
                                 label={"N° UNIT de fábrica"}
@@ -716,7 +724,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.fabricUNIT?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.fabricUNIT
+                                    ?.message || ""
+                                }
                               />
                             </div>
                             <div className="flex w-full space-x-2">
@@ -742,7 +754,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.numberUNIT?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.numberUNIT
+                                    ?.message || ""
+                                }
                               />
                             </div>
                           </div>
@@ -880,7 +896,7 @@ const NewSalePage = () => {
               </div>
               <Input
                 label={"Compra autorizada por:"}
-                placeholder={"Nombre de la empresa"}
+                placeholder={"Nombre"}
                 {...register("clientAuthorize", {
                   required: "Este campo es obligatorio",
                   minLength: {
@@ -947,12 +963,12 @@ const NewSalePage = () => {
             {deliveredValue ? (
               <p>
                 La orden fue creada exitosamente y se encuentra en órdenes como
-                Entregada.
+                <strong> Entregada</strong>.
               </p>
             ) : (
               <p>
                 La orden fue creada exitosamente y se encuentra en taller como
-                Solicitada.
+                <strong> Ingreso a taller</strong>.
               </p>
             )}
           </div>

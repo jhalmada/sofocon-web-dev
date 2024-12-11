@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { OrdersService } from "../../services/orders/orders.service";
+import { SOFOCON_JWT_TOKEN } from "../../utils/Constants";
+import axios from "axios";
 
 const anhoActual = () => {
   const fechaActual = new Date();
@@ -21,6 +23,35 @@ const useGetUnitOrders = () => {
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState("");
 
+  const downloadFile = useCallback(async (url, fileName) => {
+    try {
+      setLoading(true);
+      console.log("Descargando archivo desde:", url);
+      const response = await axios.get(url, {
+        responseType: "blob",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(SOFOCON_JWT_TOKEN)}`,
+        },
+      });
+
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const urlObject = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = urlObject;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(urlObject);
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+    }
+  }, []);
   const getAllUnitOrders = async () => {
     try {
       setLoading(true);
@@ -61,6 +92,7 @@ const useGetUnitOrders = () => {
     setYear,
     setMonth,
     setSearch,
+    downloadFile,
   };
 };
 
