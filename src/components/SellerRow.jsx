@@ -12,7 +12,6 @@ const SellerRow = ({
   onDeleteClick,
   routes,
 }) => {
-  console.log(routes.map((ruta) => ruta.name));
   return (
     <tr className="border-b border-gray text-center">
       <td

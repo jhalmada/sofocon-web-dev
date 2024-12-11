@@ -56,7 +56,6 @@ const CompanieRow = ({
   useEffect(() => {
     const today = new Date();
     const visitDate = parseDate(nextVisits);
-    console.log(visitDate);
 
     const diffInDays = (visitDate, today) => {
       const msPerDay = 1000 * 60 * 60 * 24;
