@@ -47,7 +47,10 @@ const AddCompanyRoutePage = ({
 
   //funciones
   const onSubmit = (data) => {
-    const companies = data.empresas.map((company) => ({ client: company.id }));
+    const companies = data.empresas.map((company) => ({
+      client: company.id,
+      status: company?.clientInRoute[0].status || "AVAILABLE",
+    }));
     const newData = {
       clientInRoute: [...companies],
     };
@@ -197,9 +200,9 @@ const AddCompanyRoutePage = ({
         <div className="space-y-2">
           <form onSubmit={handleSubmit(onSubmit)}>
             <NextAutoComplete
-              array2={transformData(arrayCompanies) || []}
+              array2={arrayCompanies || []}
               label2={"Empresas asignadas"}
-              array={transformData(companiesResponse || []) || []}
+              array={companiesResponse || []}
               name={"empresas"}
               label={"Agregar Empresas"}
               setValue={setValue}
