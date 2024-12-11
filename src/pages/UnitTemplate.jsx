@@ -12,6 +12,7 @@ import { BASE_URL } from "../utils/Constants.js";
 import {
   getOrderExcel,
   getOrderPdf,
+  getUnitCsv,
 } from "../services/orders/orders.routes.js";
 import useGetUnitOrders from "../hooks/orders/useGetUnitOrders.js";
 const UnitTemplate = () => {
@@ -25,6 +26,7 @@ const UnitTemplate = () => {
     setPage,
     page,
     itemsPerPage,
+    downloadFile,
   } = useGetUnitOrders();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,6 +51,11 @@ const UnitTemplate = () => {
     { label: "Noviembre", value: "11" },
     { label: "Diciembre", value: "12" },
   ];
+
+  const handleDownloadCsv = () => {
+    const url = `${BASE_URL}/${getUnitCsv}`;
+    downloadFile(url, `planilla UNIT.csv`);
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -273,16 +280,15 @@ const UnitTemplate = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getOrderExcel}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadCsv}
+          />
 
           <a href={`${BASE_URL}/${getOrderPdf}`} download target="_blank">
             <Button

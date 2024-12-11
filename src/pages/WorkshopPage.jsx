@@ -133,21 +133,12 @@ const WorkshopPage = () => {
   };
 
   const handleDownloadPdf = (isRecharge) => {
-    const url = `${BASE_URL}/${getOrderPdf}?${isRecharge ? "recharge=true" : ""}`;
-    console.log(
-      "Intentando descargar PDF de orden con ID:",
-      orderId,
-      "de:",
-      url,
-    );
+    const url = `${BASE_URL}/${getOrderPdf}${isRecharge ? "?recharge=true" : ""}`;
 
     downloadFile(
       url,
       `ordenes-${isRecharge ? "-con recarga" : "-sin recarga"}.pdf`,
-      isRecharge,
-    ).catch((error) => {
-      console.error("Error al descargar el archivo PDF:", error);
-    });
+    );
   };
 
   const handleChangeMonth = (value) => {
