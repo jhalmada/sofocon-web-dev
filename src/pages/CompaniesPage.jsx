@@ -36,13 +36,15 @@ import listPriceIcon from "../assets/icons/listPriceIcon.svg";
 import Calendar from "../components/calendar/Calendar.jsx";
 import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
-import { PlaceAutocomplete, MapHandler } from "../hooks/Maps/funtionMaps";
+import { PlaceAutocomplete, MapHandler } from "../hooks/Maps/funtionMaps.jsx";
 import {
   AdvancedMarker,
   Map,
   Marker,
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
+import { isMatch } from "lodash";
+import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 
 const coordenadasUruguay = {
   lat: -34.901,
@@ -95,6 +97,7 @@ const CompaniesPage = () => {
   const [activeTab, setActiveTab] = useState(
     navegacionActive(sessionStorage.getItem("activeTab")),
   );
+  const { setClient, priceListResponse } = useGetPriceList();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isExportCompetingModalOpen, setIsExportCompetingModalOpen] =
@@ -113,6 +116,7 @@ const CompaniesPage = () => {
   const [listasPrecios, setListasPrecios] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [modalMap, setModalMap] = useState(false);
+  const [dataEdit, setDataEdit] = useState(null);
 
   const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
   const stateOptions = ["Frecuente", "Potencial", "De baja"];
@@ -124,6 +128,7 @@ const CompaniesPage = () => {
     control,
     reset,
     formState: { errors },
+    watch,
   } = useForm();
 
   const { handleSubmit: handleSubmit2, setValue: setValue2 } = useForm();
@@ -135,6 +140,7 @@ const CompaniesPage = () => {
       (company) => company.id === id,
     );
     if (companyToEdit) {
+      setDataEdit(companyToEdit);
       const pos = { lat: companyToEdit.latitude, lng: companyToEdit.longitude };
       setPosiciones(pos);
       setDireccion("");
@@ -147,6 +153,7 @@ const CompaniesPage = () => {
       setValue("phone", companyToEdit?.phone || "");
       setValue("rut", companyToEdit?.rut || "");
       setValue("status", companyToEdit?.status || "");
+      setValue("ci", companyToEdit?.ci || "");
       setValue(
         "nextVisit",
         parseAbsoluteToLocal(
@@ -201,7 +208,24 @@ const CompaniesPage = () => {
     setConfirmDelete(true);
   };
 
-  const handleCancelClick = () => openConfirmCancelModal();
+  const handleCancelClick = () => {
+    const data = watch();
+    const updatedData = {
+      ...data,
+      nextVisit: new Date(
+        data.nextVisit.year,
+        data.nextVisit.month - 1,
+        data.nextVisit.day,
+      ).toISOString(),
+    };
+
+    const hasChanges = !isMatch(dataEdit, updatedData);
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
+      closeModal();
+    }
+  };
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
@@ -362,6 +386,10 @@ const CompaniesPage = () => {
       setCompetence(false);
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    setClient(companyId);
+  }, [companyId]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -530,8 +558,7 @@ const CompaniesPage = () => {
                             setListUsers(companie.user);
                         }}
                         onClickListPrice={() => {
-                          setListPriceModal(true),
-                            setListasPrecios(companie.list);
+                          setListPriceModal(true), setCompanyId(companie.id);
                         }}
                       />
                     ))}
@@ -743,17 +770,13 @@ const CompaniesPage = () => {
                   type={"number"}
                   isSelected={checkSelected === "RUT"}
                   disabled={checkSelected !== "RUT"}
-                  placeholder={"Escribe los 12 caracteres del RUT..."}
+                  placeholder={"Escribe los caracteres del RUT..."}
                   {...register("rut", {
                     required:
                       checkSelected === "RUT" && "Este campo es requerido",
                     minLength: {
-                      value: 12,
-                      message: "Ingrese los 12 digitos de su RUT.",
-                    },
-                    maxLength: {
-                      value: 12,
-                      message: "Ingrese solo los 12 digitos de su RUT.",
+                      value: 2,
+                      message: "Ingrese minimo 2 digitos.",
                     },
                   })}
                   errorApi={checkSelected === "RUT" && errors.rut}
@@ -777,17 +800,13 @@ const CompaniesPage = () => {
                 <Input
                   type={"number"}
                   disabled={checkSelected !== "CI"}
-                  placeholder={"Escribe los 8 caracteres del CI..."}
+                  placeholder={"Escribe los caracteres del CI..."}
                   {...register("ci", {
                     required:
                       checkSelected === "CI" && "Este campo es requerido",
                     minLength: {
-                      value: 8,
-                      message: "Ingrese los 8 digitos de su CI.",
-                    },
-                    maxLength: {
-                      value: 8,
-                      message: "Ingrese solo los 8 digitos de su CI.",
+                      value: 2,
+                      message: "Ingrese minimo 2 digitos.",
                     },
                   })}
                   errorApi={checkSelected === "CI" && errors.ci}
@@ -1031,8 +1050,8 @@ const CompaniesPage = () => {
         onAccept={() => setListPriceModal(false)}
       >
         <div>
-          {listasPrecios.length > 0
-            ? listasPrecios.map((list, index) => (
+          {priceListResponse.length > 0
+            ? priceListResponse.map((list, index) => (
                 <p className="mt-0 text-base" key={index}>
                   {list.name}
                 </p>
