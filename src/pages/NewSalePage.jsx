@@ -72,7 +72,6 @@ const NewSalePage = () => {
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
     : 0;
 
-  //validacion en tiempo real react-hook-form
   const checkQuantity = watch("checkQuantity");
   const isDirectValue = watch("isDirect", false);
 
