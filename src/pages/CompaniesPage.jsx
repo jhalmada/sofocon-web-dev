@@ -97,7 +97,7 @@ const CompaniesPage = () => {
   const [activeTab, setActiveTab] = useState(
     navegacionActive(sessionStorage.getItem("activeTab")),
   );
-  const { setClient, priceListResponse } = useGetPriceList();
+  const { setClient, priceListResponse } = useGetPriceList(companyId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isExportCompetingModalOpen, setIsExportCompetingModalOpen] =
@@ -113,7 +113,7 @@ const CompaniesPage = () => {
   const [listUsers, setListUsers] = useState([]);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [listPriceModal, setListPriceModal] = useState(false);
-  const [listasPrecios, setListasPrecios] = useState([]);
+
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [modalMap, setModalMap] = useState(false);
   const [dataEdit, setDataEdit] = useState(null);
@@ -558,8 +558,9 @@ const CompaniesPage = () => {
                             setListUsers(companie.user);
                         }}
                         onClickListPrice={() => {
-                          setListPriceModal(true), setCompanyId(companie.id);
+                          setListPriceModal(true), setClient(companie.id);
                         }}
+                        onClick2={() => setCompanyId(companie.id)}
                       />
                     ))}
                   </tbody>
