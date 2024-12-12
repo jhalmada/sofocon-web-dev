@@ -1,21 +1,18 @@
 import Pagination from "../components/Pagination";
 import { useForm } from "react-hook-form";
-import x from "../assets/icons/x.svg";
-import cameraIcon from "../assets/icons/camera.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import StorageRow from "../components/StorageRow";
 import { Select, SelectItem } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
-import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete";
 import useGetProducts from "../hooks/products/useGetProducts";
-import Input from "../components/inputs/Input";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
 // import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import SearchInput from "../components/inputs/SearchInput";
+import SaveImg from "../assets/img/save.png";
 
 const StoragePage = ({
   ordersResponse,
@@ -363,7 +360,12 @@ const StoragePage = ({
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );

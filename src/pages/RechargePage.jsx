@@ -12,6 +12,7 @@ import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 import Calendar from "../components/calendar/Calendar";
+import SaveImg from "../assets/img/save.png";
 
 const RechargePage = () => {
   const {
@@ -386,7 +387,12 @@ const RechargePage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          Los cambios fueron guardados exitosamente.
+          <div className="flex h-[14rem] flex-col items-center justify-center">
+            <img src={SaveImg} alt="save" />
+            <p className="font-roboto text-sm font-light text-black">
+              Los cambios fueron guardados correctamente.
+            </p>
+          </div>
         </ReusableModal>
         {isModalOpen && (
           <ReusableModal

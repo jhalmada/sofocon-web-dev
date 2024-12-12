@@ -886,7 +886,7 @@ const CompaniesPage = () => {
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
           <a
-            href={`${BASE_URL}/${getClientsExcel}?search=${search}&competence=${competence}&nextvisit=${nextVisit}&status=${status}`}
+            href={`${BASE_URL}/${getClientsExcel}?competence=${competence}${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`}
             download
             target="_blank"
           >

@@ -14,6 +14,7 @@ import usePatchRemovalItem from "../hooks/orders/usePatchRemovalItem";
 import Calendar from "../components/calendar/Calendar";
 import BarcodeReader from "../components/scan/BarcodeReader";
 import useOrders from "../hooks/orders/useOrders";
+import SaveImg from "../assets/img/save.png";
 
 function useQuery() {
   const { search } = useLocation();
@@ -403,7 +404,12 @@ const RechargeDataPage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          Los cambios fueron guardados exitosamente.
+          <div className="flex h-[14rem] flex-col items-center justify-center">
+            <img src={SaveImg} alt="save" />
+            <p className="font-roboto text-sm font-light text-black">
+              Los cambios fueron guardados correctamente.
+            </p>
+          </div>
         </ReusableModal>
       </div>
     </div>
