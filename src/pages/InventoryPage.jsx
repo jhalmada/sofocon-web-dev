@@ -125,10 +125,6 @@ const UsersPage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("amount", data.amount);
-    // formData.append(
-    //   "category",
-    //   listCategory.map((category) => ({ id: category.id })),
-    // );
     if (file) {
       formData.append("file", file);
     }

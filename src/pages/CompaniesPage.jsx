@@ -744,8 +744,8 @@ const CompaniesPage = () => {
               placeholder={"Escribe el teléfono del contacto..."}
               {...register("phone", {
                 minLength: {
-                  value: 15,
-                  message: "Ingrese los 15 digitos de su numero.",
+                  value: 2,
+                  message: "debe ingresar minimo 2 caracteres.",
                 },
                 maxLength: {
                   value: 15,
