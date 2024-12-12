@@ -15,7 +15,7 @@ import notFoundImg from "../assets/images/notFound.svg";
 import SearchInput from "../components/inputs/SearchInput";
 import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
-import { a, i } from "framer-motion/client";
+import { isMatch } from "lodash";
 
 const SellersPage = ({
   openConfirmDeleteModal,
@@ -39,6 +39,7 @@ const SellersPage = ({
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [dataEdit, setDataEdit] = useState({});
 
   //hooks
   const {
@@ -46,6 +47,7 @@ const SellersPage = ({
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm();
   const { RolesResponse } = useRoles();
   const { changedUser } = usePutusers();
@@ -70,11 +72,10 @@ const SellersPage = ({
     }
   };
   const onSubmit = (data) => {
-    const { phone, ci, fullName, email, role, route } = data;
-    console.log(route);
+    const { phone, ci, fullName, email, role, sellerRoute } = data;
     handleUserCreation({
       email,
-      sellerRoute: route.map((ruta) => ({ id: ruta.id })),
+      sellerRoute: sellerRoute.map((ruta) => ({ id: ruta.id })),
       userInfo: {
         fullName,
         ci,
@@ -89,6 +90,7 @@ const SellersPage = ({
       (user) => user.id === id,
     );
     if (userToEdit) {
+      setDataEdit(userToEdit);
       setArraySelected(userToEdit.sellerRoute);
       setValue("phone", userToEdit.userInfo?.phone || "");
       setValue("ci", userToEdit.userInfo?.ci || "");
@@ -110,7 +112,24 @@ const SellersPage = ({
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-  const handleCancelClick = () => openConfirmCancelModal();
+  const handleCancelClick = () => {
+    const data = watch();
+    const newData = {
+      userInfo: { fullName: data.fullName, phone: data.phone, ci: data.ci },
+      email: data.email,
+      role: { id: data.role },
+      sellerRoute:
+        data.sellerRoute === undefined
+          ? dataEdit.sellerRoute
+          : data.sellerRoute,
+    };
+    const hasChanges = !isMatch(dataEdit, newData);
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
+      closeModal();
+    }
+  };
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const handleConfirmCancel = () => {
@@ -284,7 +303,7 @@ const SellersPage = ({
               array2={arraySelected || []}
               label2={"Rutas Asignadas"}
               array={transformData(sellerRoutesResponse || []) || []}
-              name={"route"}
+              name={"sellerRoute"}
               label={"Asignar Ruta"}
               setValue={setValue}
               onChange={setSearch}
@@ -328,7 +347,7 @@ const SellersPage = ({
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex h-[14rem] flex-col items-center justify-center">
           <img src={SaveImg} alt="save" />
           <p className="font-roboto text-sm font-light text-black">
             Los cambios fueron guardados correctamente.

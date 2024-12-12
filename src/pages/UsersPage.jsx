@@ -28,6 +28,7 @@ import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import notFoundImg from "../assets/images/notFound.svg";
 import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
+import { isMatch } from "lodash";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
@@ -73,6 +74,7 @@ const UsersPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const roleOptions = RolesResponse?.map((role) => role.name) || [];
+  const [dataEdit, setDataEdit] = useState(null);
   const stateOptions = ["Activo", "Inactivo"];
   const {
     register,
@@ -82,11 +84,13 @@ const UsersPage = () => {
     reset,
     clearErrors,
     setError,
+    watch,
   } = useForm();
 
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
     if (userToEdit) {
+      setDataEdit(userToEdit);
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
       setValue("ci", userToEdit.userInfo.ci);
@@ -127,7 +131,22 @@ const UsersPage = () => {
     closeConfirmDeleteModal();
     setConfirmDelete(true);
   };
-  const handleCancelClick = () => openConfirmCancelModal();
+  const handleCancelClick = () => {
+    const data = watch();
+    const dataNew = {
+      userInfo: { ci: data.ci, phone: data.phone, fullName: data.fullName },
+      email: data.email,
+      role: { id: data.role },
+      isActive: data.state === "Activo" ? true : false,
+    };
+    const hasChanges = !isMatch(dataEdit, dataNew);
+
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
+      closeModal();
+    }
+  };
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
@@ -623,7 +642,7 @@ const UsersPage = () => {
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex h-[14rem] flex-col items-center justify-center">
           <img src={SaveImg} alt="save" />
           <p className="font-roboto text-sm font-light text-black">
             Los cambios fueron guardados correctamente.
@@ -649,7 +668,7 @@ const UsersPage = () => {
         buttons={["accept"]}
         onAccept={() => setConfirmDelete(false)}
       >
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex h-[14rem] flex-col items-center justify-center">
           <img src={deleteImg} alt="delete" />
           <p className="font-roboto text-sm font-light text-black">
             El usuario fue eliminado correctamente.

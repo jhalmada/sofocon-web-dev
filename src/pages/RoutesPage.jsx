@@ -19,6 +19,8 @@ import FilterSelect from "../components/filters/FilterSelect.jsx";
 import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
 import disconnectedImg from "../assets/images/disconnected.svg";
+import { s } from "framer-motion/client";
+import { isMatch } from "lodash";
 
 const SELLER_TAB = "sellers";
 const RoutesPage = () => {
@@ -44,6 +46,7 @@ const RoutesPage = () => {
     useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [dataEdit, setDataEdit] = useState(null);
 
   const stateOptions = ["Activo", "Inactivo"];
   const {
@@ -51,12 +54,14 @@ const RoutesPage = () => {
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm();
   const openModal = (id) => {
     const sellerToEdit = sellerRoutesResponse.find(
       (seller) => seller.id === id,
     );
     if (sellerToEdit) {
+      setDataEdit(sellerToEdit);
       setValue("name", sellerToEdit.name);
       setValue("zone", sellerToEdit.zone);
       setValue("status", sellerToEdit.isActive);
@@ -86,7 +91,20 @@ const RoutesPage = () => {
     closeConfirmDeleteModal();
     setConfirmDelete(true);
   };
-  const handleCancelClick = () => openConfirmCancelModal();
+  const handleCancelClick = () => {
+    const data = watch();
+    const newData = {
+      ...dataEdit,
+      isActive: data.status === "true" ? true : false,
+    };
+    const hasChanges = !isMatch(dataEdit, newData);
+
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
+      closeModal();
+    }
+  };
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
@@ -348,7 +366,7 @@ const RoutesPage = () => {
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex h-[14rem] flex-col items-center justify-center">
           <img src={SaveImg} alt="save" />
           <p className="font-roboto text-sm font-light text-black">
             Los cambios fueron guardados correctamente.
@@ -373,7 +391,7 @@ const RoutesPage = () => {
         buttons={["accept"]}
         onAccept={() => setConfirmDelete(false)}
       >
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex h-[14rem] flex-col items-center justify-center">
           <img src={deleteImg} alt="delete" />
           <p className="font-roboto text-sm font-light text-black">
             La ruta fue eliminada correctamente.
