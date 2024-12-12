@@ -228,9 +228,8 @@ const NewSalePage = () => {
     setAutocompleteResults(updatedSelectedItems);
     setQuantity(updatedQuantities);
 
-    // Actualizar el subtotal y total
     const newSubtotal = updatedSelectedItems.reduce((acc, item) => {
-      const itemQuantity = quantity[item.id] || 1;
+      const itemQuantity = updatedQuantities[item.id] || 1;
       const itemPrice = item.list[0].price;
       const discountPercentage =
         discount[updatedSelectedItems.indexOf(item)] || 0;
@@ -550,6 +549,7 @@ const NewSalePage = () => {
                       setAutocompleteResults={setAutocompleteResults}
                       selectedItems={autocompleteResults}
                       isDisabled={isPriceListSelected}
+                      setQuantity={setQuantity}
                     />
                   )}
                 />
