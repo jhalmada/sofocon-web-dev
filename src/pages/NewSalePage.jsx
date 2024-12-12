@@ -965,7 +965,7 @@ const NewSalePage = () => {
           buttons={["accept"]}
           onAccept={closeSaveConfirmationModal}
         >
-          <div className="flex flex-col items-center">
+          <div className="flex h-[14rem] flex-col items-center">
             <img src={checkIcon} alt="checkIcon" />
             {deliveredValue ? (
               <p>
