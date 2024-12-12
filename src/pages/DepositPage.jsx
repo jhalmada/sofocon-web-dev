@@ -1,8 +1,6 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
-import Button from "../components/buttons/Button";
-import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -12,6 +10,7 @@ import usePutOrders from "../hooks/orders/usePutOrders";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import Calendar from "../components/calendar/Calendar";
+import SaveImg from "../assets/img/save.png";
 const DepositPage = () => {
   const {
     handleSubmit,
@@ -35,6 +34,7 @@ const DepositPage = () => {
   const [isConfirmModal, setIsConfirmModal] = useState(false);
   const [seller, setSeller] = useState(null);
   const [confirmStatus, setConfirmStatus] = useState(false);
+  const [sellers, setSellers] = useState("");
 
   const oneOrder = async (id) => {
     const newdatos = await getOneOrder(id);
@@ -314,10 +314,11 @@ const DepositPage = () => {
                 <CompleteSearchInput
                   label={"Vendedores"}
                   array={transformData(userSellerResponse?.result || []) || []}
-                  name={"user"}
+                  name={"user.name"}
                   setValue={setValue}
                   onChange={setSearchSellers}
                   onSelect={handleSelectSeller}
+                  sellers={setSellers}
                   placeholder="Buscar vendedores"
                   {...field}
                 />
@@ -336,7 +337,12 @@ const DepositPage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          Los cambios fueron guardados exitosamente.
+          <div className="flex h-[14rem] flex-col items-center justify-center">
+            <img src={SaveImg} alt="save" />
+            <p className="font-roboto text-sm font-light text-black">
+              Los cambios fueron guardados correctamente.
+            </p>
+          </div>
         </ReusableModal>
         {isModalOpen && (
           <ReusableModal

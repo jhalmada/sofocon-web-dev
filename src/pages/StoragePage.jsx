@@ -1,21 +1,18 @@
 import Pagination from "../components/Pagination";
 import { useForm } from "react-hook-form";
-import x from "../assets/icons/x.svg";
-import cameraIcon from "../assets/icons/camera.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import StorageRow from "../components/StorageRow";
 import { Select, SelectItem } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
-import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete";
 import useGetProducts from "../hooks/products/useGetProducts";
-import Input from "../components/inputs/Input";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
-import useGetOneOrder from "../hooks/orders/useGetOneOrder";
+// import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import SearchInput from "../components/inputs/SearchInput";
+import SaveImg from "../assets/img/save.png";
 
 const StoragePage = ({
   ordersResponse,
@@ -34,7 +31,7 @@ const StoragePage = ({
 }) => {
   const { id } = useParams();
   const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
-  const { getOneOrder } = useGetOneOrder(id);
+  // const { getOneOrder } = useGetOneOrder(id);
   const { deleteOrder } = useDeleteOrders();
   const {
     register,
@@ -155,17 +152,15 @@ const StoragePage = ({
     deleteOrder(orderId, setModified);
     closeConfirmDeleteModal();
   };
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-  const oneOrder = async (id) => {
-    const newdatos = await getOneOrder(id);
-    setOrderDetails(newdatos);
-  };
-  useEffect(() => {
-    oneOrder(id);
-  }, [id]);
-  console.log(orderDetails);
+
+  // const oneOrder = async (id) => {
+  //   const newdatos = await getOneOrder(id);
+  //   setOrderDetails(newdatos);
+  // };
+  // useEffect(() => {
+  //   oneOrder(id);
+  // }, [id]);
+
   const handleStateFilterChange = (value) => {
     switch (value) {
       case "Ingreso a taller":
@@ -338,168 +333,6 @@ const StoragePage = ({
       </>
 
       <ReusableModal
-        width="w-[30rem]"
-        isOpen={isModalOpen}
-        onClose={handleCancelClick}
-        title="Editar Orden"
-        onSubmit={handleSubmit(onSubmit)}
-        buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <div>
-              <ProductsAutocomplete
-                label={"Productos"}
-                array={productsResponse || []}
-                name={"products"}
-                setValue={setValue}
-                onChange={setSearchProducts}
-                placeholder="Buscar productos"
-                setAutocompleteResults={setAutocompleteResults}
-                selectedItems={autocompleteResults}
-              />
-              <p>{errors.products && errors.products.message}</p>
-            </div>
-            <div>
-              {autocompleteResults.length > 0 && (
-                <div>
-                  {autocompleteResults.map((item, index) => (
-                    <div className="flex w-full space-x-2" key={item.id}>
-                      <div className="w-1/2">
-                        <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg p-2 shadow-br">
-                          {item.name}
-                          <img
-                            src={x}
-                            alt="delete"
-                            className="mr-1 cursor-pointer"
-                            onClick={() => handleDeleteSelection(item.id)}
-                          />
-                        </span>
-                        <Input
-                          hidden={true}
-                          value={item.id}
-                          defaultValue={item.id}
-                          {...register(`productInOrder[${index}].product.id`, {
-                            value: item.id,
-                          })}
-                          disabled
-                        />
-                      </div>
-                      <div className="flex w-1/2 space-x-2">
-                        <Input
-                          type="number"
-                          label={"Cantidad"}
-                          defaultValue={1}
-                          minValue={1}
-                          placeholder={"Cant."}
-                          onInput={(e) =>
-                            handleQuantityChange(item.id, e.target.value)
-                          }
-                          {...register(`productInOrder[${index}].amount`)}
-                          msjError={
-                            errors[`productInOrder[${index}].amount`]
-                              ?.message || ""
-                          }
-                        />
-                        <div className="w-full">
-                          <label className="block text-sm font-light">
-                            Recarga
-                          </label>
-                          <Select
-                            defaultValue={false}
-                            className="rounded-lg border"
-                            placeholder={recharged[item.id] ? "Si" : "No"}
-                            {...register(`productInOrder[${index}].isRecharge`)}
-                            onSelectionChange={(value) =>
-                              handleSelectionChange(item.id, value)
-                            }
-                          >
-                            <SelectItem key={true}>Si</SelectItem>
-                            <SelectItem key={false}>No</SelectItem>
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {autocompleteResults.map((item) => {
-                    return (
-                      recharged[item.id] &&
-                      Array.from({ length: quantity[item.id] || 1 }).map(
-                        (_, index) => (
-                          <div
-                            key={`recharged-${item.id}-${index}`}
-                            className="mb-8 rounded-lg bg-gray p-4"
-                          >
-                            <p className="mb-4 text-center text-sm">
-                              Recarga del producto
-                              <span className="ml-1 font-semibold uppercase">
-                                {item.name}
-                              </span>
-                            </p>
-                            <div className="flex space-x-2">
-                              <Input
-                                label={"Código de barras"}
-                                placeholder={"..."}
-                                bg="bg-white"
-                                {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].barCode`,
-                                  {
-                                    required: "Este campo es obligatorio",
-                                  },
-                                )}
-                                msjError={errors.barCode?.message || ""}
-                              />
-                              <span className="flex items-center">
-                                <Link to={"/inicio"}>
-                                  <div className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur">
-                                    <img
-                                      src={cameraIcon}
-                                      alt=""
-                                      className="h-5 w-5"
-                                    />
-                                  </div>
-                                </Link>
-                              </span>
-                            </div>
-                            <div className="flex space-x-2">
-                              <Input
-                                label={"Matrícula"}
-                                placeholder={"X234234"}
-                                bg="bg-white"
-                                {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].enrollment`,
-                                  {
-                                    required: "Este campo es obligatorio",
-                                  },
-                                )}
-                                msjError={errors.enrollment?.message || ""}
-                              />
-                              <Input
-                                label={"N° UNIT de fábrica"}
-                                placeholder={"123455"}
-                                bg="bg-white"
-                                {...register(
-                                  `productInOrder[${index}].ItemsRemoval[${index}].factoryUnit`,
-                                  {
-                                    required: "Este campo es obligatorio",
-                                  },
-                                )}
-                                msjError={errors.factoryUnit?.message || ""}
-                              />
-                            </div>
-                          </div>
-                        ),
-                      )
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </form>
-      </ReusableModal>
-      <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
         onClose={closeConfirmDeleteModal}
         title="Eliminar orden"
@@ -527,7 +360,12 @@ const StoragePage = ({
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );

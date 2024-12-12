@@ -48,7 +48,6 @@ const NewBudgetPage = () => {
   const [rutValue, setRutValue] = useState("");
   const [phoneValue, setPhoneValue] = useState("");
   const [autocompleteResults, setAutocompleteResults] = useState([]);
-  const [name, setName] = useState("productInOrder");
   const [recharged, setRecharged] = useState(false);
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
   const [quantity, setQuantity] = useState({});
@@ -181,9 +180,25 @@ const NewBudgetPage = () => {
     const updatedSelectedItems = autocompleteResults.filter(
       (selection) => selection.id !== id,
     );
+    const updatedQuantities = { ...quantity };
+    delete updatedQuantities[id];
 
-    setValue(name, updatedSelectedItems);
+    setValue("products", updatedSelectedItems);
     setAutocompleteResults(updatedSelectedItems);
+    setQuantity(updatedQuantities);
+
+    // Actualizar el subtotal y total
+    const newSubtotal = updatedSelectedItems.reduce((acc, item) => {
+      const itemQuantity = quantity[item.id] || 1;
+      const itemPrice = item.list[0].price;
+      const discountPercentage =
+        discount[updatedSelectedItems.indexOf(item)] || 0;
+      const discountedPrice = itemPrice * (1 - discountPercentage / 100);
+
+      return acc + discountedPrice * itemQuantity;
+    }, 0);
+
+    setSubtotal(newSubtotal);
   };
   const handleSelectSeller = (selectedSeller) => {
     if (selectedSeller) {
@@ -208,11 +223,17 @@ const NewBudgetPage = () => {
     }
   };
 
-  const handleSelectionListChange = (value) => {
-    const selectedValue = value.anchorKey;
-    setList(selectedValue);
-    setValue("priceList", value);
-    setIsPriceListSelected(false);
+  const handleSelectionListChange = (item) => {
+    if (item) {
+      const selectedValue = item.id;
+      setList(selectedValue);
+      setValue("priceList", item);
+      setIsPriceListSelected(false);
+    } else {
+      setList(null);
+      setValue("priceList", null);
+      setIsPriceListSelected(false);
+    }
   };
 
   const handleQuantityChange = (itemId, value) => {
@@ -755,7 +776,7 @@ const NewBudgetPage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          <div className="flex flex-col items-center">
+          <div className="flex h-[14rem] flex-col items-center">
             <img src={checkIcon} alt="checkIcon" />
             <p> El presupuesto fue creado exitosamente.</p>
           </div>

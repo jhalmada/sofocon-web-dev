@@ -12,6 +12,7 @@ import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 import Calendar from "../components/calendar/Calendar";
+import SaveImg from "../assets/img/save.png";
 
 const RechargePage = () => {
   const {
@@ -36,8 +37,8 @@ const RechargePage = () => {
   const [isSaveConfirmationModalOpen, setIsSaveConfirmationModalOpen] =
     useState(false);
   const [confirmStatus, setConfirmStatus] = useState(false);
-
   const [newStatus, setNewStatus] = useState(null);
+  const [sellers, setSellers] = useState("");
 
   const oneOrder = async (id) => {
     const newdatos = await getOneOrder(id);
@@ -180,6 +181,11 @@ const RechargePage = () => {
   useEffect(() => {
     oneOrder(id);
   }, [id]);
+
+  useEffect(() => {
+    setSearchSellers(sellers);
+  }, [sellers]);
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
@@ -381,7 +387,12 @@ const RechargePage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          Los cambios fueron guardados exitosamente.
+          <div className="flex h-[14rem] flex-col items-center justify-center">
+            <img src={SaveImg} alt="save" />
+            <p className="font-roboto text-sm font-light text-black">
+              Los cambios fueron guardados correctamente.
+            </p>
+          </div>
         </ReusableModal>
         {isModalOpen && (
           <ReusableModal
@@ -422,6 +433,7 @@ const RechargePage = () => {
                   setValue={setValue}
                   onChange={setSearchSellers}
                   onSelect={handleSelectSeller}
+                  sellers={setSellers}
                   placeholder="Buscar vendedores"
                   {...field}
                 />

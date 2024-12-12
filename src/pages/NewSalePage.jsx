@@ -40,11 +40,7 @@ const NewSalePage = () => {
     setSearch: setSearchProducts,
     setList,
   } = useGetProducts();
-  const {
-    priceListResponse,
-    setSearch: setSearchList,
-    setItemsPerPage,
-  } = useGetPriceList();
+  const { priceListResponse, setSearch: setSearchList } = useGetPriceList();
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,7 +50,6 @@ const NewSalePage = () => {
   const [company, setCompany] = useState(null);
   const [seller, setSeller] = useState(null);
   const [autocompleteResults, setAutocompleteResults] = useState([]);
-  const [name, setName] = useState("productInOrder");
   const [recharged, setRecharged] = useState({});
   const [selectedPayment, setSelectedPayment] = useState("Efectivo");
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
@@ -77,7 +72,6 @@ const NewSalePage = () => {
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
     : 0;
 
-  //validacion en tiempo real react-hook-form
   const checkQuantity = watch("checkQuantity");
   const isDirectValue = watch("isDirect", false);
 
@@ -230,9 +224,21 @@ const NewSalePage = () => {
     const updatedQuantities = { ...quantity };
     delete updatedQuantities[id];
 
-    setValue(name, updatedSelectedItems);
+    setValue("products", updatedSelectedItems);
     setAutocompleteResults(updatedSelectedItems);
     setQuantity(updatedQuantities);
+
+    const newSubtotal = updatedSelectedItems.reduce((acc, item) => {
+      const itemQuantity = updatedQuantities[item.id] || 1;
+      const itemPrice = item.list[0].price;
+      const discountPercentage =
+        discount[updatedSelectedItems.indexOf(item)] || 0;
+      const discountedPrice = itemPrice * (1 - discountPercentage / 100);
+
+      return acc + discountedPrice * itemQuantity;
+    }, 0);
+
+    setSubtotal(newSubtotal);
   };
 
   const handleSelectionChange = (id, value) => {
@@ -543,6 +549,7 @@ const NewSalePage = () => {
                       setAutocompleteResults={setAutocompleteResults}
                       selectedItems={autocompleteResults}
                       isDisabled={isPriceListSelected}
+                      setQuantity={setQuantity}
                     />
                   )}
                 />
@@ -678,7 +685,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.barCode?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.barCode
+                                    ?.message || ""
+                                }
                               />
                               <span className="flex items-center">
                                 <div
@@ -704,7 +715,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.enrollment?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.enrollment
+                                    ?.message || ""
+                                }
                               />
                               <Input
                                 label={"N° UNIT de fábrica"}
@@ -716,7 +731,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.fabricUNIT?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.fabricUNIT
+                                    ?.message || ""
+                                }
                               />
                             </div>
                             <div className="flex w-full space-x-2">
@@ -742,7 +761,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.numberUNIT?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.numberUNIT
+                                    ?.message || ""
+                                }
                               />
                             </div>
                           </div>
@@ -880,7 +903,7 @@ const NewSalePage = () => {
               </div>
               <Input
                 label={"Compra autorizada por:"}
-                placeholder={"Nombre de la empresa"}
+                placeholder={"Nombre"}
                 {...register("clientAuthorize", {
                   required: "Este campo es obligatorio",
                   minLength: {
@@ -942,17 +965,17 @@ const NewSalePage = () => {
           buttons={["accept"]}
           onAccept={closeSaveConfirmationModal}
         >
-          <div className="flex flex-col items-center">
+          <div className="flex h-[14rem] flex-col items-center">
             <img src={checkIcon} alt="checkIcon" />
             {deliveredValue ? (
               <p>
                 La orden fue creada exitosamente y se encuentra en órdenes como
-                Entregada.
+                <strong> Entregada</strong>.
               </p>
             ) : (
               <p>
                 La orden fue creada exitosamente y se encuentra en taller como
-                Solicitada.
+                <strong> Ingreso a taller</strong>.
               </p>
             )}
           </div>
