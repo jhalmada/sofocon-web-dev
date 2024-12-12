@@ -94,10 +94,13 @@ const RoutesPage = () => {
   const handleCancelClick = () => {
     const data = watch();
     const newData = {
-      ...dataEdit,
+      name: data.name,
+      zone: data.zone,
       isActive: data.status === "true" ? true : false,
     };
     const hasChanges = !isMatch(dataEdit, newData);
+    console.log(dataEdit);
+    console.log(newData);
 
     if (hasChanges) {
       openConfirmCancelModal();

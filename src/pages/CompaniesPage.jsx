@@ -744,8 +744,8 @@ const CompaniesPage = () => {
               placeholder={"Escribe el teléfono del contacto..."}
               {...register("phone", {
                 minLength: {
-                  value: 15,
-                  message: "Ingrese los 15 digitos de su numero.",
+                  value: 2,
+                  message: "debe ingresar minimo 2 caracteres.",
                 },
                 maxLength: {
                   value: 15,
@@ -886,7 +886,7 @@ const CompaniesPage = () => {
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
           <a
-            href={`${BASE_URL}/${getClientsExcel}?search=${search}&competence=${competence}&nextvisit=${nextVisit}&status=${status}`}
+            href={`${BASE_URL}/${getClientsExcel}?competence=${competence}${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`}
             download
             target="_blank"
           >
