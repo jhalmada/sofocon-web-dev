@@ -11,7 +11,6 @@ import usePutOrders from "../hooks/orders/usePutOrders";
 import { BASE_URL, SOFOCON_JWT_TOKEN } from "../utils/Constants";
 import { getOrderPdf } from "../services/orders/orders.routes";
 import ReusableModal from "../components/modals/ReusableModal";
-import useOrders from "../hooks/orders/useOrders";
 
 const ClientsOrdersPage = () => {
   const {
@@ -19,7 +18,6 @@ const ClientsOrdersPage = () => {
   } = useForm();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { setInBoard } = useOrders();
   const { getOneOrder, setModified } = useGetOneOrder(id);
   const { changedOrder, isLoading } = usePutOrders();
 

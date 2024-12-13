@@ -106,7 +106,7 @@ const RechargePage = () => {
         {
           status: newStatus,
           user: data.user,
-          sellDate: formattedDate ? formattedDate : null,
+          // sellDate: formattedDate ? formattedDate : null,
           workShopDateDeparture: new Date().toISOString(),
         },
         orderDetails.id,
@@ -418,7 +418,12 @@ const RechargePage = () => {
             <span className="font-roboto text-sm leading-[1rem] text-black_b">
               Fecha de egreso
             </span>
-            <Calendar control={control} errors={errors} name="dateV" />
+            <Calendar
+              control={control}
+              errors={errors}
+              name="dateV"
+              isDisabled={true}
+            />
           </div>
           <div className="-mt-[.08rem]">
             <Controller

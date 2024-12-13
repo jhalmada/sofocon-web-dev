@@ -558,7 +558,7 @@ const NewSalePage = () => {
                 </p>
               </div>
             </div>
-
+            {console.log("autocompleteResults", autocompleteResults)}
             <div>
               {autocompleteResults.length > 0 && (
                 <div>
@@ -643,9 +643,14 @@ const NewSalePage = () => {
                           </label>
 
                           <Select
-                            defaultValue={false}
+                            isDisabled={true}
+                            defaultSelectedKeys={[
+                              item.isToRecharge === "true" ? true : false,
+                            ]}
                             className="rounded-lg border"
-                            placeholder={recharged[item.id] ? "Si" : "No"}
+                            placeholder={
+                              item.isToRecharge === "true" ? "Si" : "No"
+                            }
                             {...register(`productInOrder[${index}].isRecharge`)}
                             onSelectionChange={(value) =>
                               handleSelectionChange(item.id, value)
@@ -660,7 +665,7 @@ const NewSalePage = () => {
                   ))}
                   {autocompleteResults.map((item, index) => {
                     return (
-                      recharged[item.id] &&
+                      item.isToRecharge === "true" &&
                       Array.from({ length: quantity[item.id] || 1 }).map(
                         (_, indexRemoval) => (
                           <div
