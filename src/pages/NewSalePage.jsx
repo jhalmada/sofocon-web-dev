@@ -50,7 +50,6 @@ const NewSalePage = () => {
   const [company, setCompany] = useState(null);
   const [seller, setSeller] = useState(null);
   const [autocompleteResults, setAutocompleteResults] = useState([]);
-  const [recharged, setRecharged] = useState({});
   const [selectedPayment, setSelectedPayment] = useState("Efectivo");
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
   const [orderData, setOrderData] = useState(null);
@@ -67,6 +66,7 @@ const NewSalePage = () => {
   const [discount, setDiscount] = useState([]);
   const [discount2, setDiscount2] = useState("");
   const [numChecks, setNumChecks] = useState(0);
+  const [dataRecharge, setDataRecharge] = useState(false);
 
   const total = subtotal
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
@@ -113,21 +113,23 @@ const NewSalePage = () => {
         rut,
         user,
         productInOrder: productInOrder.map((product) => {
+          console.log(product);
           return {
             ...product,
-            isRecharge: product.isRecharge === "true",
-            itemsRemoval: product.isRecharge
-              ? product.itemsRemoval.map((item) => {
-                  return {
-                    ...item,
-                    lastDate: (item.lastDate = new Date(
-                      item.lastDate.year,
-                      item.lastDate.month - 1,
-                      item.lastDate.day,
-                    ).toISOString()),
-                  };
-                })
-              : [],
+            isRecharge: product.isRecharge,
+            itemsRemoval:
+              product.isRecharge === "true"
+                ? product.itemsRemoval.map((item) => {
+                    return {
+                      ...item,
+                      lastDate: (item.lastDate = new Date(
+                        item.lastDate.year,
+                        item.lastDate.month - 1,
+                        item.lastDate.day,
+                      ).toISOString()),
+                    };
+                  })
+                : [],
           };
         }),
         itemsRemoval,
@@ -241,13 +243,6 @@ const NewSalePage = () => {
     setSubtotal(newSubtotal);
   };
 
-  const handleSelectionChange = (id, value) => {
-    const selectedValue = value.anchorKey === "true";
-    setRecharged((prev) => ({
-      ...prev,
-      [id]: selectedValue,
-    }));
-  };
   const handleSelectionPaymentChange = (value) => {
     const selectedValue = value.anchorKey;
 
@@ -642,23 +637,20 @@ const NewSalePage = () => {
                             Recarga
                           </label>
 
-                          <Select
-                            isDisabled={true}
-                            defaultSelectedKeys={[
-                              item.isToRecharge === "true" ? true : false,
-                            ]}
-                            className="rounded-lg border"
-                            placeholder={
+                          <Input
+                            disabled={true}
+                            defaultValue={
                               item.isToRecharge === "true" ? "Si" : "No"
                             }
-                            {...register(`productInOrder[${index}].isRecharge`)}
-                            onSelectionChange={(value) =>
-                              handleSelectionChange(item.id, value)
-                            }
-                          >
-                            <SelectItem key={true}>Si</SelectItem>
-                            <SelectItem key={false}>No</SelectItem>
-                          </Select>
+                            value={item.isToRecharge === "true" ? "Si" : "No"}
+                            className="rounded-lg border"
+                            {...register(
+                              `productInOrder[${index}].isRecharge`,
+                              {
+                                value: item.isToRecharge,
+                              },
+                            )}
+                          ></Input>
                         </div>
                       </div>
                     </div>
@@ -970,7 +962,7 @@ const NewSalePage = () => {
           buttons={["accept"]}
           onAccept={closeSaveConfirmationModal}
         >
-          <div className="flex h-[14rem] flex-col items-center">
+          <div className="flex h-[16rem] flex-col items-center">
             <img src={checkIcon} alt="checkIcon" />
             {deliveredValue ? (
               <p>

@@ -573,7 +573,7 @@ const WorkshopPage = () => {
         buttons={["accept"]}
         onAccept={() => setConfirmModal(false)}
       >
-        <div className="flex h-[14rem] flex-col items-center justify-center">
+        <div className="flex h-[16rem] flex-col items-center justify-center">
           <img src={SaveImg} alt="save" />
           <p className="font-roboto text-sm font-light text-black">
             Los cambios fueron guardados correctamente.

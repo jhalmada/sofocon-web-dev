@@ -776,7 +776,7 @@ const NewBudgetPage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          <div className="flex h-[14rem] flex-col items-center">
+          <div className="flex h-[16rem] flex-col items-center">
             <img src={checkIcon} alt="checkIcon" />
             <p> El presupuesto fue creado exitosamente.</p>
           </div>
