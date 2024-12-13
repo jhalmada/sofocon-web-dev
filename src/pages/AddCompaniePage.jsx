@@ -384,8 +384,8 @@ const AddCompaniePage = () => {
               placeholder={"Escribe el teléfono del contacto..."}
               {...register("phone", {
                 minLength: {
-                  value: 8,
-                  message: "Debe ingresar minimo 8 digitos.",
+                  value: 2,
+                  message: "Debe ingresar minimo 1 digitos.",
                 },
                 maxLength: {
                   value: 15,

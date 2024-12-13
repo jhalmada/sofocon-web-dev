@@ -22,7 +22,7 @@ const NOTES_TAB = "notes";
 const NotesPage = () => {
   const { changedNote } = usePutNotes();
   const { deleteNote } = useDeleteNotes();
-  const { notesResponse, setModified, setClient, setSearch } = useNotes();
+  
   const {
     register,
     handleSubmit,
@@ -47,6 +47,7 @@ const NotesPage = () => {
 
   const { id } = useParams();
   const { companyResponse } = useGetOneCompany(id);
+  const { notesResponse, setModified, setClient, setSearch } = useNotes(id);
 
   const openModal = (noteId) => {
     const noteToEdit = notesResponse.find((note) => note.id === noteId);

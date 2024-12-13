@@ -11,6 +11,7 @@ const InventaryRow = ({
   onEditClick,
   onDeleteClick,
   picture,
+  isToRecharge,
 }) => {
   return (
     <tr className="border-b border-gray text-center">
@@ -24,6 +25,7 @@ const InventaryRow = ({
       <td className="py-6 text-left">{name}</td>
       <td className="py-6">{description}</td>
       <td className="py-6">{stock}</td>
+      <td className="py-6">{isToRecharge === "true" ? "Si" : "No"}</td>
       <td className="py-6">
         <div className="flex justify-center gap-4">
           <img
