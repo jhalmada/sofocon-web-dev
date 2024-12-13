@@ -87,7 +87,11 @@ const UnitTemplate = () => {
     closeModal();
   };
   const handleChangeMonth = (value) => {
-    setMonth(value);
+    if (value) {
+      setMonth(value);
+    } else {
+      setMonth(new Date().getMonth() + 1);
+    }
   };
   const openExportModal = () => {
     setIsExportModalOpen(true);
