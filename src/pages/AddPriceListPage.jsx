@@ -111,7 +111,7 @@ const AddPriceListPage = () => {
           </div>
         </div>
 
-        <div className="rounded-tr-lg bg-white px-7 pb-3 pt-7 shadow-t">
+        <div className="rounded-tr-lg bg-white px-7 pb-3 pt-7">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-2"

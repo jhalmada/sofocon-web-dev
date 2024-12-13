@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NotesService } from "../../services/notes/notes.service";
-const useNotes = () => {
+const useNotes = (id) => {
   const [notesResponse, setNotesResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -9,7 +9,7 @@ const useNotes = () => {
   const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
-  const [client, setClient] = useState(null);
+  const [client, setClient] = useState(id);
   const [nextVisit, setNextVisit] = useState(null);
   const getAllNotes = async () => {
     try {
