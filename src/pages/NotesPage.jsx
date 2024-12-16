@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Input from "../components/inputs/Input";
-import SearchInput from "../components/inputs/SearchInput";
 import PlusIcon from "../assets/icons/plus.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import useNotes from "../hooks/notes/useNotes.js";
@@ -17,18 +16,20 @@ import { parseAbsoluteToLocal } from "@internationalized/date";
 import Calendar from "../components/calendar/Calendar.jsx";
 import useGetOneCompany from "../hooks/companies/useGetOneCompany.js";
 import { useForm } from "react-hook-form";
+import { isMatch } from "lodash";
 
 const NOTES_TAB = "notes";
 const NotesPage = () => {
   const { changedNote } = usePutNotes();
   const { deleteNote } = useDeleteNotes();
-  const { notesResponse, setModified, setClient, setSearch } = useNotes();
+  
   const {
     register,
     handleSubmit,
     setValue,
     control,
     formState: { errors },
+    watch,
   } = useForm();
 
   const [noteId, setNoteId] = useState(null);
@@ -42,18 +43,20 @@ const NotesPage = () => {
   const [reminderSelected, setReminderSelected] = useState(false);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
+  const [dateOriginal, setDateOriginal] = useState(null);
 
   const { id } = useParams();
   const { companyResponse } = useGetOneCompany(id);
+  const { notesResponse, setModified, setClient, setSearch } = useNotes(id);
 
   const openModal = (noteId) => {
     const noteToEdit = notesResponse.find((note) => note.id === noteId);
     if (noteToEdit) {
+      setDateOriginal(noteToEdit);
       setValue("title", noteToEdit.title);
       setValue("description", noteToEdit.description);
-      setValue("date", noteToEdit.date);
       if (noteToEdit.date) {
-        setValue("dateV", parseAbsoluteToLocal(noteToEdit.date));
+        setValue("date", parseAbsoluteToLocal(noteToEdit.date));
       }
       setReminderSelected(noteToEdit.isReminder);
     }
@@ -84,7 +87,15 @@ const NotesPage = () => {
     deleteNote(noteId, setModified);
     closeConfirmDeleteModal();
   };
-  const handleCancelClick = () => openConfirmCancelModal();
+  const handleCancelClick = () => {
+    const datos = watch();
+    const hasChanges = !isMatch(dateOriginal, datos);
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
+      closeModal();
+    }
+  };
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
@@ -109,11 +120,11 @@ const NotesPage = () => {
     }
   };
   const onSubmit = (data) => {
-    const { title, description, dateV } = data;
+    const { title, description, date } = data;
     const newdata = new Date(
-      dateV?.year || 1,
-      dateV?.month - 1 || 1,
-      dateV?.day || 1,
+      date?.year || 1,
+      date?.month - 1 || 1,
+      date?.day || 1,
     );
     const formattedDate = newdata.toISOString();
     handleNoteCreation({
@@ -284,7 +295,7 @@ const NotesPage = () => {
                   errors={errors}
                   setErrorDataPicker={setErrorDataPicker}
                   errorDataPicker={errorDataPicker}
-                  name="dateV"
+                  name="date"
                   isDisabled={!dateSelected}
                 />
               </div>

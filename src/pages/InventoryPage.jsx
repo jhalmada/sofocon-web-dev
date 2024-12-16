@@ -22,6 +22,7 @@ import { Select, SelectItem } from "@nextui-org/select";
 import { BASE_URL, MEDIDA, TYPE_PRODUCTS } from "../utils/Constants.js";
 import notFoundImg from "../assets/images/notFound.svg";
 import { getProductsExcel } from "../services/products/products.routes.js";
+import { isMatch } from "lodash";
 
 const UsersPage = () => {
   //estados
@@ -37,6 +38,7 @@ const UsersPage = () => {
   const [confirmModal, setConfirmModal] = useState(false);
   const [FileAccept, setFileAccept] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [dataEdit, setDataEdit] = useState(null);
 
   //Hooks
 
@@ -67,6 +69,7 @@ const UsersPage = () => {
     setError,
     formState: { errors },
     clearErrors,
+    watch,
   } = useForm();
 
   //funciones
@@ -84,6 +87,8 @@ const UsersPage = () => {
     setProductId(id);
     const product = await productsResponse.find((product) => product.id === id);
     if (product) {
+      setFileName("");
+      setDataEdit(product);
       setValue("name", product.name);
       setValue("description", product.description);
       setValue("stock", product.stock);
@@ -125,10 +130,6 @@ const UsersPage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("amount", data.amount);
-    // formData.append(
-    //   "category",
-    //   listCategory.map((category) => ({ id: category.id })),
-    // );
     if (file) {
       formData.append("file", file);
     }
@@ -147,6 +148,18 @@ const UsersPage = () => {
   const handleSelectionChange = (e, name) => {
     setValue(name, e);
     clearErrors(name);
+  };
+
+  const cancelEdit = () => {
+    const data = watch();
+    data.picture = fileName.length > 0 ? fileName : dataEdit.picture;
+    delete data.file;
+    const comparacion = !isMatch(dataEdit, data);
+    if (comparacion) {
+      setIsConfirmCancelModalOpen(true);
+    } else {
+      setEditModal(false);
+    }
   };
 
   return (
@@ -214,6 +227,9 @@ const UsersPage = () => {
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                       Stock
                     </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      De Recarga
+                    </th>
 
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                       Acción
@@ -224,6 +240,7 @@ const UsersPage = () => {
                   {console.log(productsResponse)}
                   {productsResponse.map((product, index) => (
                     <InventaryRow
+                      isToRecharge={product.isToRecharge}
                       name={product.name}
                       key={index}
                       description={product.description}
@@ -272,7 +289,7 @@ const UsersPage = () => {
           buttons={["accept"]}
           onAccept={() => setConfirmDelete(false)}
         >
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex h-[14rem] flex-col items-center justify-center">
             <img src={deleteImg} alt="delete" />
             <p className="font-roboto text-sm font-light text-black">
               El elemento fue eliminado correctamente.
@@ -282,11 +299,11 @@ const UsersPage = () => {
         {/*modal para editar*/}
         <ReusableModal
           isOpen={editModal}
-          onClose={() => setIsConfirmCancelModalOpen(true)}
+          onClose={() => cancelEdit()}
           title="Editar Producto"
           onSubmit={handleSubmit(onSubmit)}
           buttons={["cancel", "save"]}
-          handleCancelClick={() => setIsConfirmCancelModalOpen(true)}
+          handleCancelClick={() => cancelEdit()}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
             <Input
@@ -416,35 +433,6 @@ const UsersPage = () => {
               })}
               msjError={errors.stock ? errors.stock.message : ""}
             />
-            {/* <NextAutoComplete
-              label={"Categoria"}
-              label2={"Categorias Seleccionadas"}
-              name={"category"}
-              setValue={setValue}
-              onChange={setSearchCategory}
-              array={categoryResponse.map((category) => ({
-                name: category.name,
-                id: category.id,
-              }))}
-              array2={listCategory.map((category) => ({
-                id: category.id,
-                name: category.name,
-              }))}
-            /> */}
-
-            {/* <AutoCompleteArray
-              label={"Lista de precios"}
-              array={priceListResponse.map((price) => ({
-                id: price.id,
-                name: price.name,
-              }))}
-              setValue={setValue}
-              name={"list"}
-              array2={listCategory[0].map((category) => ({
-                id: category?.list.id,
-                name: category?.list.name,
-              }))}
-            /> */}
 
             <div className="mt-4 min-w-40 max-w-60">
               <p
@@ -517,7 +505,7 @@ const UsersPage = () => {
           buttons={["accept"]}
           onAccept={() => setConfirmModal(false)}
         >
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex h-[14rem] flex-col items-center justify-center">
             <img src={SaveImg} alt="save" />
             <p className="font-roboto text-sm font-light text-black">
               Los cambios fueron guardados correctamente.

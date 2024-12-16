@@ -18,7 +18,7 @@ import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
 const CompetingPage = ({
   companiesResponse,
-  setSearchCompanies,
+  setSearch,
   setItemsPerPage,
   totalPage,
   total,
@@ -193,7 +193,7 @@ const CompetingPage = ({
     <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div>
         <div className="flex justify-end">
-          <SearchInput placeholder="Buscar...." onChange={setSearchCompanies} />
+          <SearchInput placeholder="Buscar...." onChange={setSearch} />
         </div>
         {companiesResponse.length === 0 ? (
           <tr className="flex min-h-[calc(100vh-18rem)] items-center justify-center">

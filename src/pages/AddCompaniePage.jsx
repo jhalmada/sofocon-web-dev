@@ -37,7 +37,6 @@ const AddCompaniePage = () => {
     register,
     handleSubmit,
     setValue,
-    setError,
     control,
     formState: { errors },
   } = useForm();
@@ -47,14 +46,12 @@ const AddCompaniePage = () => {
     register: register2,
     handleSubmit: handleSubmit2,
     setValue: setValue2,
-    setError: setError2,
     control: control2,
     formState: { errors: errors2 },
   } = useForm();
   const navigate = useNavigate();
   const { postAddCompany } = useAddCompany();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isMapModal, setIsMapModal] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [msjError, setMsjError] = useState("");
@@ -387,8 +384,8 @@ const AddCompaniePage = () => {
               placeholder={"Escribe el teléfono del contacto..."}
               {...register("phone", {
                 minLength: {
-                  value: 8,
-                  message: "Debe ingresar minimo 8 digitos.",
+                  value: 2,
+                  message: "Debe ingresar minimo 1 digitos.",
                 },
                 maxLength: {
                   value: 15,
@@ -569,7 +566,7 @@ const AddCompaniePage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex h-[14rem] flex-col items-center justify-center">
             <img src={SaveImg} alt="save" />
             <p className="font-roboto text-sm font-light text-black">
               Los cambios fueron guardados correctamente.

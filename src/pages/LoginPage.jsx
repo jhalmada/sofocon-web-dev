@@ -86,7 +86,7 @@ const LoginPage = () => {
         errorApi={error}
       />
 
-      <div className="flex flex-col items-center">
+      <div className="mt-5 flex flex-col items-center">
         <Button
           isLoading={loading}
           disabled={loading}

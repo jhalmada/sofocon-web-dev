@@ -28,6 +28,10 @@ const translatePermission = (permission) => {
       return "VENDEDORES";
     case "SECTION_WORKSHOP":
       return "TALLER";
+    case "SECTION_PRODUCTS":
+      return "PRODUCTOS";
+    case "SECTION_ORDERS":
+      return "ORDENES";
     default:
       return permission;
   }

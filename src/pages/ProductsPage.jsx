@@ -17,6 +17,7 @@ import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
 import PriceListPage from "./PriceListPage";
 import useGetPriceList from "../hooks/priceList/useGetPriceList";
+import { isMatch, set } from "lodash";
 
 const INVENTORY_TAB = "inventory";
 const PRICES_TAB = "prices";
@@ -47,6 +48,7 @@ const ProductsPage = () => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [FileAccept, setFileAccept] = useState(false);
+  const [dataEdit, setDataEdit] = useState(null);
 
   //hooks
   const {
@@ -83,6 +85,7 @@ const ProductsPage = () => {
     setValue,
     setError,
     formState: { errors },
+    watch,
   } = useForm();
   //funciones
 
@@ -117,8 +120,10 @@ const ProductsPage = () => {
       (category) => category.id === id,
     );
     if (categoryEdit) {
+      setDataEdit(categoryEdit);
       setValue("name", categoryEdit.name);
       setValue("description", categoryEdit.description);
+      setFileName("");
     }
     setIdCategory(id);
     setEditModal(true);
@@ -128,6 +133,21 @@ const ProductsPage = () => {
     setFile(null);
     setFileName("");
     setValue("file", null);
+  };
+
+  const cancelEdit = () => {
+    const data = watch();
+    const newData = {
+      name: data.name,
+      description: data.description,
+      picture: fileName.length > 0 ? fileName : dataEdit.picture,
+    };
+    const hasChanges = !isMatch(dataEdit, newData);
+    if (hasChanges) {
+      setIsConfirmCancelModalOpen(true);
+    } else {
+      setEditModal(false);
+    }
   };
 
   const onSubmit = (data) => {
@@ -256,11 +276,11 @@ const ProductsPage = () => {
         {/*modal para editar*/}
         <ReusableModal
           isOpen={editModal}
-          onClose={() => setIsConfirmCancelModalOpen(true)}
+          onClose={() => cancelEdit()}
           title="Editar Categoria"
           onSubmit={handleSubmit(onSubmit)}
           buttons={["cancel", "save"]}
-          handleCancelClick={() => setIsConfirmCancelModalOpen(true)}
+          handleCancelClick={() => cancelEdit()}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
             <Input
@@ -365,7 +385,7 @@ const ProductsPage = () => {
           buttons={["accept"]}
           onAccept={() => setConfirmModal(false)}
         >
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex h-[14rem] flex-col items-center justify-center">
             <img src={SaveImg} alt="save" />
             <p className="font-roboto text-sm font-light text-black">
               Los cambios fueron guardados correctamente.
@@ -395,7 +415,7 @@ const ProductsPage = () => {
           buttons={["accept"]}
           onAccept={() => setConfirmDelete(false)}
         >
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex h-[14rem] flex-col items-center justify-center">
             <img src={deleteImg} alt="delete" />
             <p className="font-roboto text-sm font-light text-black">
               El elemento fue eliminado correctamente.

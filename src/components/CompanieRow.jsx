@@ -49,6 +49,7 @@ const CompanieRow = ({
   id,
   listPriceIcon,
   onClickListPrice,
+  onClick2,
 }) => {
   const [icon, setIcon] = useState(null);
   const [msjIcon, setMsjIcon] = useState(null);
@@ -123,7 +124,7 @@ const CompanieRow = ({
             className="h-5 w-5 cursor-pointer"
             onClick={onDeleteClick}
           />
-          <Dropdown>
+          <Dropdown onClick={onClick2}>
             <DropdownTrigger>
               <img src={puntosvertical} alt="ss" className="cursor-pointer" />
             </DropdownTrigger>
