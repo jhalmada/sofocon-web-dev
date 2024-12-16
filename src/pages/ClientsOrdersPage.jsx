@@ -331,7 +331,9 @@ const ClientsOrdersPage = () => {
                     <Input
                       type="number"
                       label="Recarga"
-                      placeholder={order.isRecharge ? "Si" : "No"}
+                      placeholder={
+                        order?.product?.isToRecharge === "true" ? "Si" : "No"
+                      }
                       bg="bg-gray"
                       placeholderColor="placeholder-black_b"
                       border="none"

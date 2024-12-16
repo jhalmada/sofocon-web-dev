@@ -15,7 +15,7 @@ import useUsers from "../hooks/users/use.users.js";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import usePutUsers from "../hooks/users/usePutUsers.js";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import useRoles from "../hooks/roles/use.roles.js";
 import useDeleteUsers from "../hooks/users/useDeleteUsers.js";
 import { permisos } from "../utils/permisons";
@@ -42,6 +42,8 @@ const UsersPage = () => {
     total,
     setPage,
     page,
+    role,
+    search: searchUsers,
     itemsPerPage,
     setModified,
     setSearch,
@@ -57,6 +59,7 @@ const UsersPage = () => {
     setPage: setPageSellers,
     page: pageSellers,
     itemsPerPage: itemsPerPageSellers,
+    search: searchSellers,
     setModified: setModifiedSellers,
     setIsActive: setIsActiveSellers,
     setSearch: setSearchSellers,
@@ -75,13 +78,12 @@ const UsersPage = () => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const roleOptions = RolesResponse?.map((role) => role.name) || [];
   const [dataEdit, setDataEdit] = useState(null);
-  const stateOptions = ["Activo", "Inactivo"];
+
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
-    reset,
     clearErrors,
     setError,
     watch,
@@ -101,10 +103,10 @@ const UsersPage = () => {
     setIsModalOpen(true);
     setUserId(id);
   };
-  const openExportModal = (id) => {
+  const openExportModal = () => {
     setIsExportModalOpen(true);
   };
-  const openExportSellersModal = (id) => {
+  const openExportSellersModal = () => {
     setIsExportSellersModalOpen(true);
   };
   const closeModal = () => {
@@ -560,7 +562,11 @@ const UsersPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getUsersExcel}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getUsersExcel}?isSeller=false${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`}
+            download
+            target="_blank"
+          >
             <Button
               width="min-w-[14rem]"
               text="Descargar archivo Excel"
@@ -571,7 +577,11 @@ const UsersPage = () => {
             />
           </a>
 
-          <a href={`${BASE_URL}/${getUsersPdf}`} download target="_blank">
+          <a
+            href={`${BASE_URL}/${getUsersPdf}?isSeller=false${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`}
+            download
+            target="_blank"
+          >
             <Button
               width="min-w-[14rem]"
               text="Descargar archivo PDF"
@@ -594,7 +604,7 @@ const UsersPage = () => {
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
           <a
-            href={`${BASE_URL}/${getUsersExcel}?isSeller=true`}
+            href={`${BASE_URL}/${getUsersExcel}?isSeller=true${searchSellers ? `&search=${searchSellers}` : ""}`}
             download
             target="_blank"
           >
@@ -609,7 +619,7 @@ const UsersPage = () => {
           </a>
 
           <a
-            href={`${BASE_URL}/${getUsersPdf}?isSeller=true`}
+            href={`${BASE_URL}/${getUsersPdf}?isSeller=true${searchSellers ? `&search=${searchSellers}` : ""}`}
             download
             target="_blank"
           >

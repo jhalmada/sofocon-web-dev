@@ -26,7 +26,6 @@ const useUsersSellers = () => {
         setTotal(data.pagination.total);
         setUsersSellerResponse(data);
       }
-      
     } catch (e) {
       console.log(e);
     } finally {
@@ -45,6 +44,8 @@ const useUsersSellers = () => {
     total,
     setPage,
     page,
+    search,
+    isActive,
     itemsPerPage,
     setModified,
     modified,
