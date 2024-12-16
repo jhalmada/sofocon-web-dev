@@ -37,6 +37,8 @@ const RouteMapDetailsPage = () => {
     total,
     setPage,
     itemsPerPage,
+    isActive,
+    search: searchSellers,
     setModified,
     setSearch,
     setIsActive,
@@ -55,6 +57,8 @@ const RouteMapDetailsPage = () => {
     total: totalCompanies,
     setPage: setPageCompanies,
     page: pageCompanies,
+    search: searchCompanies,
+    status,
     itemsPerPage: itemsPerPageCompanies,
     setModified: setModifiedCompanies,
     setRoutes: setRoutesCompanies,
@@ -348,7 +352,7 @@ const RouteMapDetailsPage = () => {
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
           <a
-            href={`${BASE_URL}/${getUsersExcel}?isSeller=true&route=${id}`}
+            href={`${BASE_URL}/${getUsersExcel}?isSeller=true&route=${id}${searchSellers ? `&search=${searchSellers}` : ""}${isActive !== null ? `&isActive=${isActive}` : ""}`}
             download
             target="_blank"
           >
@@ -363,7 +367,7 @@ const RouteMapDetailsPage = () => {
           </a>
 
           <a
-            href={`${BASE_URL}/${getUsersPdf}/?isSeller=true&route=${id}`}
+            href={`${BASE_URL}/${getUsersPdf}?isSeller=true&route=${id}${searchSellers ? `&search=${searchSellers}` : ""}${isActive !== null ? `&isActive=${isActive}` : ""}`}
             download
             target="_blank"
           >
@@ -392,7 +396,7 @@ const RouteMapDetailsPage = () => {
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
           <a
-            href={`${BASE_URL}/${getClientsExcel}/?route=${id}`}
+            href={`${BASE_URL}/${getClientsExcel}?route=${id}${searchCompanies ? `&search=${searchCompanies}` : ""}${status ? `&status=${status}` : ""}`}
             download
             target="_blank"
           >
@@ -407,7 +411,7 @@ const RouteMapDetailsPage = () => {
           </a>
 
           <a
-            href={`${BASE_URL}/${getClientsPdf}/?route=${id}`}
+            href={`${BASE_URL}/${getClientsPdf}?route=${id}${searchCompanies ? `&search=${searchCompanies}` : ""}${status ? `&status=${status}` : ""}`}
             download
             target="_blank"
           >

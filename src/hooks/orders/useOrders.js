@@ -112,6 +112,8 @@ const useOrders = () => {
     page,
     itemsPerPage,
     modified,
+    status,
+    search,
     month,
     year,
     week,

@@ -290,9 +290,12 @@ const RechargePage = () => {
                     />
                   </div>
                 </div>
-                <div className="-mt-6 flex w-1/2 flex-col space-y-4 pl-2">
+                <div className="flex w-1/2 flex-col pl-2">
                   {order.itemsRemoval?.map((item, index) => (
-                    <div className="flex items-center space-x-2" key={index}>
+                    <div
+                      className="-mt-6 mb-6 flex items-center space-x-2"
+                      key={index}
+                    >
                       <Input
                         bg="bg-gray"
                         placeholderColor="placeholder-black_b"

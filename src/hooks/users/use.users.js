@@ -44,6 +44,8 @@ const useUsers = () => {
     setPage,
     page,
     itemsPerPage,
+    search,
+    role,
     setModified,
     modified,
     setSearch,

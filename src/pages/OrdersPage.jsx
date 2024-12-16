@@ -55,7 +55,7 @@ const OrdersPage = () => {
       case STATUS_PANEL_TAB:
         return STATUS_PANEL_TAB;
       default:
-        return CLIENTS_ORDERS_TAB;
+        return STATUS_PANEL_TAB;
     }
   };
   const [activeTab, setActiveTab] = useState(
