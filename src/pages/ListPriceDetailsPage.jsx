@@ -166,16 +166,6 @@ const ListPriceDetailsPage = () => {
             {activeTab === COMPANIES_TAB && (
               <div className="flex space-x-4">
                 <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                  onClick={() => openExportModal()}
-                />
-              </div>
-            )}
-            {activeTab === COMPANIES_TAB && (
-              <div className="flex space-x-4">
-                <Button
                   text="Agregar empresa"
                   icon={PlusIcon}
                   onClick={() => openModal()}
@@ -185,13 +175,6 @@ const ListPriceDetailsPage = () => {
 
             {activeTab === PRODUCTS_TAB && (
               <div className="flex space-x-4">
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                  onClick={() => openSellersExportModal()}
-                />
-
                 <Button
                   text="Agregar Producto"
                   icon={PlusIcon}

@@ -11,7 +11,9 @@ import { useParams } from "react-router-dom";
 import AutoCompleteListPrice from "../components/autocomplete/AutoCompleteListPrice";
 import Input from "../components/inputs/Input";
 import usePutProductInPriceList from "../hooks/priceList/usePutProductinPriceList";
-
+import SaveImg from "../assets/img/save.png";
+import deleteImg from "../assets/img/deleted.png";
+import { isMatch, set } from "lodash";
 const ProductsInListPricePage = ({
   arraySeller,
   setItemsPerPage,
@@ -24,8 +26,6 @@ const ProductsInListPricePage = ({
   closeModal,
   handleCancelClick,
   setModified,
-  idCompany,
-  nameCompany,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -34,11 +34,14 @@ const ProductsInListPricePage = ({
   const [productId, setProductId] = useState(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [editProduct, setEditProduct] = useState(null);
+  const [savedChanged, setSavedChanged] = useState(false);
 
   //Hooks
   const { productsResponse, setSearch } = useGetProducts();
   const { changedPriceList } = usePutPriceList();
   const [modalValidationProduct, setModalValidationProduct] = useState(false);
+  const [modalConfirmation, setModalConfirmation] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const {
     register,
     handleSubmit,
@@ -53,6 +56,7 @@ const ProductsInListPricePage = ({
     reset: reset2,
     setValue: setValue2,
     formState: { errors: errors2 },
+    watch,
   } = useForm();
   const { id } = useParams();
 
@@ -107,7 +111,6 @@ const ProductsInListPricePage = ({
     const newProducts = transformData(arraySeller).filter(
       (element) => element.id !== productId,
     );
-    console.log(newProducts);
     const PriceData = {
       product: newProducts.map((product) => ({
         product: product.id,
@@ -116,6 +119,7 @@ const ProductsInListPricePage = ({
     };
     changedPriceList(PriceData, id, setModified);
     setConfirmDeleteModalOpen(false);
+    setConfirmDelete(true);
   };
 
   const transformData = (array) => {
@@ -129,6 +133,7 @@ const ProductsInListPricePage = ({
   const handleEdit = (id) => {
     const product = arraySeller.find((product) => product.id === id);
     setValue2("price", product.list[0].price);
+    setValue2("name", product.name);
     setEditProduct(product);
     setEditModalOpen(true);
   };
@@ -141,6 +146,22 @@ const ProductsInListPricePage = ({
       setModified,
     );
     if (response) {
+      setEditModalOpen(false);
+      setModalConfirmation(true);
+    }
+  };
+
+  const cancelEdit = () => {
+    const datos = watch();
+    const datos2 = { ...datos, price: Number(datos.price) };
+    const newDatos = {
+      name: editProduct.name,
+      price: editProduct.list[0].price,
+    };
+    const response = !isMatch(datos2, newDatos);
+    if (response) {
+      setSavedChanged(true);
+    } else {
       setEditModalOpen(false);
     }
   };
@@ -239,7 +260,12 @@ const ProductsInListPricePage = ({
         buttons={["accept"]}
         onAccept={() => setSaveConfirmationModalOpen(false)}
       >
-        El producto fue agregado Exitosamente.
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
       <ReusableModal
         isOpen={modalValidationProduct}
@@ -254,25 +280,78 @@ const ProductsInListPricePage = ({
       {/*/Modal de edicion*/}
       <ReusableModal
         isOpen={isEditModalOpen}
-        onClose={() => setEditModalOpen(false)}
+        onClose={() => cancelEdit()}
         title="Editar Precio"
         buttons={["cancel", "save"]}
         onAccept={() => setEditModalOpen(false)}
         onSubmit={handleSubmit2(onSubmitEdit)}
+        handleCancelClick={() => cancelEdit()}
       >
         <form
-          className="flex items-center justify-between"
+          className="flex items-center justify-between gap-2"
           onSubmit={handleSubmit2(onSubmitEdit)}
         >
-          <p className="text-sm">{editProduct?.name}</p>
-
           <Input
+            label="Nombre"
+            disabled={true}
+            bg="bg-gray"
+            border="none"
+            type="number"
+            className="border-gray-300 mt-2 border p-2"
+            {...register2("name")}
+          />
+          <Input
+            label="Precio"
             width="w-[10rem]"
             type="number"
             className="border-gray-300 mt-2 border p-2"
             {...register2("price", { required: true })}
           />
         </form>
+      </ReusableModal>
+      {/*/Modal de confirmacion de guardado*/}
+      <ReusableModal
+        isOpen={modalConfirmation}
+        onClose={() => setModalConfirmation(false)}
+        title="Cambios guardados"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setModalConfirmation(false)}
+      >
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
+      </ReusableModal>
+      {/*/Modal de confirmacion de eliminacion*/}
+      <ReusableModal
+        isOpen={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Usuario eliminado"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setConfirmDelete(false)}
+      >
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={deleteImg} alt="delete" />
+          <p className="font-roboto text-sm font-light text-black">
+            El producto fue eliminado correctamente.
+          </p>
+        </div>
+      </ReusableModal>
+      <ReusableModal
+        isOpen={savedChanged}
+        onClose={() => setSavedChanged(false)}
+        title="Cambios sin guardar"
+        variant="confirmation"
+        buttons={["back", "accept"]}
+        onAccept={() => {
+          setSavedChanged(false), setEditModalOpen(false);
+        }}
+      >
+        Los cambios realizados no se guardarán. <br /> ¿Desea continuar?
       </ReusableModal>
     </div>
   );
