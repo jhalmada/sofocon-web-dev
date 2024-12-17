@@ -10,9 +10,8 @@ import useRoles from "../../hooks/roles/use.roles";
 import ReusableModal from "../modals/ReusableModal";
 import Input from "../inputs/Input";
 import notFoundImg from "../../assets/images/notFound.svg";
-import SearchInput from "../inputs/SearchInput";
-import SaveImg from "../../assets/img/save.png";
-import deleteImg from "../../assets/img/deleted.png";
+import SaveImg from "../../assets/img/save.svg";
+import deleteImg from "../../assets/img/deleted.svg";
 
 const translatePermission = (permission) => {
   switch (permission) {
