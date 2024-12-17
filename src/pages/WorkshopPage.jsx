@@ -127,7 +127,7 @@ const WorkshopPage = () => {
   ];
 
   const handleDownloadExcel = (isRecharge) => {
-    const url = `${BASE_URL}/${getOrderExcel}${isRecharge ? "?recharge=true" : ""}${status ? `&status=${status}` : ""}${search ? `&search=${search}` : ""}${month !== null ? `&month=${month}` : ""}${year !== null ? `&year=${year}` : ""}`;
+    const url = `${BASE_URL}/${getOrderExcel}${isRecharge ? "?recharge=true" : "?recharge=false"}${status ? `&status=${status}` : ""}${search ? `&search=${search}` : ""}${month !== null ? `&month=${month}` : ""}${year !== null ? `&year=${year}` : ""}`;
     downloadFile(
       url,
       `ordenes${isRecharge ? "-con recarga" : "-sin recarga"}.xlsx`,
@@ -135,7 +135,7 @@ const WorkshopPage = () => {
   };
 
   const handleDownloadPdf = (isRecharge) => {
-    const url = `${BASE_URL}/${getOrderPdf}${isRecharge ? "?recharge=true" : ""}${status ? `&status=${status}` : ""}${search ? `&search=${search}` : ""}${month !== null ? `&month=${month}` : ""}${year !== null ? `&year=${year}` : ""}`;
+    const url = `${BASE_URL}/${getOrderPdf}${isRecharge ? "?recharge=true" : "?recharge=false"}${status ? `&status=${status}` : ""}${search ? `&search=${search}` : ""}${month !== null ? `&month=${month}` : ""}${year !== null ? `&year=${year}` : ""}`;
 
     downloadFile(
       url,

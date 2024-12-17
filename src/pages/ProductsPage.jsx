@@ -17,7 +17,7 @@ import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
 import PriceListPage from "./PriceListPage";
 import useGetPriceList from "../hooks/priceList/useGetPriceList";
-import { isMatch, set } from "lodash";
+import { isMatch } from "lodash";
 
 const INVENTORY_TAB = "inventory";
 const PRICES_TAB = "prices";
