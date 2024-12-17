@@ -12,7 +12,7 @@ import deleteIcon from "../assets/icons/trash3.svg";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
 // import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import SearchInput from "../components/inputs/SearchInput";
-import SaveImg from "../assets/img/save.png";
+import SaveImg from "../assets/img/save.svg";
 
 const StoragePage = ({
   ordersResponse,

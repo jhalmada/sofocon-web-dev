@@ -15,7 +15,7 @@ import StoragePage from "./StoragePage.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
 import useOrders from "../hooks/orders/useOrders.js";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
-import SaveImg from "../assets/img/save.png";
+import SaveImg from "../assets/img/save.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import { BASE_URL } from "../utils/Constants";
 import {

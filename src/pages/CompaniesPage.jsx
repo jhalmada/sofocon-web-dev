@@ -34,8 +34,8 @@ import FilterSelect from "../components/filters/FilterSelect.jsx";
 import pageLostImg from "../assets/images/pageLost.svg";
 import listPriceIcon from "../assets/icons/listPriceIcon.svg";
 import Calendar from "../components/calendar/Calendar.jsx";
-import SaveImg from "../assets/img/save.png";
-import deleteImg from "../assets/img/deleted.png";
+import SaveImg from "../assets/img/save.svg";
+import deleteImg from "../assets/img/deleted.svg";
 import { PlaceAutocomplete, MapHandler } from "../hooks/Maps/funtionMaps.jsx";
 import {
   AdvancedMarker,

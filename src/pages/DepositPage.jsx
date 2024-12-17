@@ -10,7 +10,7 @@ import usePutOrders from "../hooks/orders/usePutOrders";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import Calendar from "../components/calendar/Calendar";
-import SaveImg from "../assets/img/save.png";
+import SaveImg from "../assets/img/save.svg";
 const DepositPage = () => {
   const {
     handleSubmit,
