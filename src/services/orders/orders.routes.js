@@ -7,4 +7,4 @@ export const getItems = "/orders/itemRemoval";
 export const getUnitOrders = "/orders/unit";
 export const getOrderExcel = "orders/xlsx";
 export const getOrderPdf = "orders/pdf";
-export const getUnitCsv = "orders/unit/csv";
+export const getUnitExcel = "orders/unit/xlsx";

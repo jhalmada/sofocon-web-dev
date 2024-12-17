@@ -65,6 +65,7 @@ const CompaniesPage = () => {
   const { deleteCompany } = useDeleteCompanies();
   const {
     companiesResponse,
+    downloadFile,
     setItemsPerPage,
     totalPage,
     total,
@@ -117,6 +118,27 @@ const CompaniesPage = () => {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [modalMap, setModalMap] = useState(false);
   const [dataEdit, setDataEdit] = useState(null);
+
+  const handleDownloadExcel1 = () => {
+    const url = `${BASE_URL}/${getClientsExcel}?competence=false${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`;
+    downloadFile(url, `Empresas.xlsx`);
+  };
+
+  const handleDownloadPdf1 = () => {
+    const url = `${BASE_URL}/${getClientsPdf}?competence=false${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`;
+
+    downloadFile(url, `Empresas.pdf`);
+  };
+  const handleDownloadExcel2 = () => {
+    const url = `${BASE_URL}/${getClientsExcel}?competence=true${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`;
+    downloadFile(url, `Empresas competencia.xlsx`);
+  };
+
+  const handleDownloadPdf2 = () => {
+    const url = `${BASE_URL}/${getClientsPdf}?competence=true${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`;
+
+    downloadFile(url, `Empresas competencia.pdf`);
+  };
 
   const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
   const stateOptions = ["Frecuente", "Potencial", "De baja"];
@@ -885,35 +907,25 @@ const CompaniesPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getClientsExcel}?competence=${competence}${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadExcel1}
+          />
 
-          <a
-            href={`${BASE_URL}/${getClientsPdf}?competence=${competence}${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadPdf1}
+          />
         </div>
       </ReusableModal>
       <ReusableModal
@@ -926,35 +938,25 @@ const CompaniesPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getClientsExcel}?competence=${competence}${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadExcel2}
+          />
 
-          <a
-            href={`${BASE_URL}/${getClientsPdf}?competence=${competence}${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadPdf2}
+          />
         </div>
       </ReusableModal>
 

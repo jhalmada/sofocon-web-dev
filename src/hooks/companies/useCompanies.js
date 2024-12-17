@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CompaniesService } from "../../services/companies/companies.service.js";
+import { SOFOCON_JWT_TOKEN } from "../../utils/Constants";
+import axios from "axios";
 const useCompanies = (id = null) => {
   const [companiesResponse, setCompaniesResponse] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -15,6 +17,35 @@ const useCompanies = (id = null) => {
   const [competence, setCompetence] = useState(false);
   const [list, setList] = useState(id);
 
+  const downloadFile = useCallback(async (url, fileName) => {
+    try {
+      setLoading(true);
+      console.log("Descargando archivo desde:", url);
+      const response = await axios.get(url, {
+        responseType: "blob",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(SOFOCON_JWT_TOKEN)}`,
+        },
+      });
+
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const urlObject = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = urlObject;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(urlObject);
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+    }
+  }, []);
   //la funcion principal
   const getAllCompanies = async () => {
     try {
@@ -76,6 +107,7 @@ const useCompanies = (id = null) => {
     setStatus,
     setCompetence,
     setList,
+    downloadFile,
   };
 };
 

@@ -9,15 +9,13 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import UnitTemplateRow from "../components/UnitTemplateRow.jsx";
 import { BASE_URL } from "../utils/Constants.js";
-import {
-  getOrderExcel,
-  getOrderPdf,
-  getUnitCsv,
-} from "../services/orders/orders.routes.js";
+import { getUnitExcel } from "../services/orders/orders.routes.js";
 import useGetUnitOrders from "../hooks/orders/useGetUnitOrders.js";
 const UnitTemplate = () => {
   const {
     orderUnitResponse,
+    search,
+    month,
     setMonth,
     setSearch,
     setItemsPerPage,
@@ -52,9 +50,15 @@ const UnitTemplate = () => {
     { label: "Diciembre", value: "12" },
   ];
 
-  const handleDownloadCsv = () => {
-    const url = `${BASE_URL}/${getUnitCsv}`;
-    downloadFile(url, `planilla UNIT.csv`);
+  const handleDownloadExcel = () => {
+    const url = `${BASE_URL}/${getUnitExcel}?search=${search}${month !== null ? `&month=${month}` : ""}`;
+    downloadFile(url, `Planilla UNIT.xlsx`);
+  };
+
+  const handleDownloadPdf = () => {
+    const url = `${BASE_URL}/${getUnitExcel}?search=${search}${month !== null ? `&month=${month}` : ""}`;
+
+    downloadFile(url, `Planilla UNIT.pdf`);
   };
 
   const formatDate = (dateString) => {
@@ -291,19 +295,18 @@ const UnitTemplate = () => {
             color={"cancel"}
             shadow="shadow-blur"
             iconPosition={"left"}
-            onClick={handleDownloadCsv}
+            onClick={handleDownloadExcel}
           />
 
-          <a href={`${BASE_URL}/${getOrderPdf}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadPdf}
+          />
         </div>
       </ReusableModal>
       <ReusableModal

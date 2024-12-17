@@ -87,6 +87,7 @@ const useGetUnitOrders = () => {
     total,
     setPage,
     page,
+    search,
     itemsPerPage,
     setOrder,
     setYear,
