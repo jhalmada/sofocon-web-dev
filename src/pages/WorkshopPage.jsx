@@ -287,7 +287,7 @@ const WorkshopPage = () => {
                   onClick={() => openExportModal()}
                 />
                 <Link to={"/inicio/taller/plantilla-unit"}>
-                  <Button text="Plantilla UNIT" icon={FileIcon} />
+                  <Button text="Planilla UNIT" icon={FileIcon} />
                 </Link>
 
                 <Button

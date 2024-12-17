@@ -49,8 +49,17 @@ const UsersPage = () => {
     setSearch,
     setIsActive,
     setRole,
+    downloadFile,
   } = useUsers();
-
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    clearErrors,
+    setError,
+    watch,
+  } = useForm();
   const {
     userSellerResponse,
     setItemsPerPage: setItemsPerPageSellers,
@@ -79,16 +88,26 @@ const UsersPage = () => {
   const roleOptions = RolesResponse?.map((role) => role.name) || [];
   const [dataEdit, setDataEdit] = useState(null);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-    clearErrors,
-    setError,
-    watch,
-  } = useForm();
+  const handleDownloadExcel1 = () => {
+    const url = `${BASE_URL}/${getUsersExcel}?isSeller=false${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`;
+    downloadFile(url, `Usuarios.xlsx`);
+  };
 
+  const handleDownloadPdf1 = () => {
+    const url = `${BASE_URL}/${getUsersPdf}?isSeller=false${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`;
+
+    downloadFile(url, `Usuarios.pdf`);
+  };
+  const handleDownloadExcel2 = () => {
+    const url = `${BASE_URL}/${getUsersExcel}?isSeller=true${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`;
+    downloadFile(url, `Vendedores.xlsx`);
+  };
+
+  const handleDownloadPdf2 = () => {
+    const url = `${BASE_URL}/${getUsersPdf}?isSeller=true${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`;
+
+    downloadFile(url, `Vendedores.pdf`);
+  };
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
     if (userToEdit) {
@@ -562,35 +581,25 @@ const UsersPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getUsersExcel}?isSeller=false${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadExcel1}
+          />
 
-          <a
-            href={`${BASE_URL}/${getUsersPdf}?isSeller=false${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadPdf1}
+          />
         </div>
       </ReusableModal>
       <ReusableModal
@@ -603,35 +612,25 @@ const UsersPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getUsersExcel}?isSeller=true${searchSellers ? `&search=${searchSellers}` : ""}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadExcel2}
+          />
 
-          <a
-            href={`${BASE_URL}/${getUsersPdf}?isSeller=true${searchSellers ? `&search=${searchSellers}` : ""}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadPdf2}
+          />
         </div>
       </ReusableModal>
       <ReusableModal
