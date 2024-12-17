@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { PriceListService } from "../../services/priceList/priceList.service.js";
 
-const usePutPriceList = () => {
+const usePutProductInPriceList = () => {
   const [isChanged, setIsChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const changedPriceList = async (priceListData, productId, setModified) => {
+  const changedProductInPriceList = async (
+    priceListData,
+    priceListId,
+    setModified,
+  ) => {
     try {
       setIsLoading(true);
-      await PriceListService.putPriceListApi(priceListData, productId);
+      await PriceListService.putProductinListApi(priceListData, priceListId);
       setModified((prev) => !prev);
       return true;
     } catch (error) {
@@ -18,7 +22,7 @@ const usePutPriceList = () => {
     }
   };
 
-  return { changedPriceList, isChanged, isLoading };
+  return { changedProductInPriceList, isChanged, isLoading };
 };
 
-export default usePutPriceList;
+export default usePutProductInPriceList;

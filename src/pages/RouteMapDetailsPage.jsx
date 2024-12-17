@@ -62,6 +62,7 @@ const RouteMapDetailsPage = () => {
     setStatus,
   } = useCompanies();
 
+
   const [activeTab, setActiveTab] = useState(MAP_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
