@@ -14,8 +14,8 @@ import pageLostImg from "../assets/images/pageLost.svg";
 import { useState } from "react";
 import SearchInput from "../components/inputs/SearchInput";
 import Calendar from "../components/calendar/Calendar";
-import SaveImg from "../assets/img/save.png";
-import deleteImg from "../assets/img/deleted.png";
+import SaveImg from "../assets/img/save.svg";
+import deleteImg from "../assets/img/deleted.svg";
 const CompetingPage = ({
   companiesResponse,
   setSearch,

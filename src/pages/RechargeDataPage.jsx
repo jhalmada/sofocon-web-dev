@@ -14,7 +14,7 @@ import usePatchRemovalItem from "../hooks/orders/usePatchRemovalItem";
 import Calendar from "../components/calendar/Calendar";
 import BarcodeReader from "../components/scan/BarcodeReader";
 import useOrders from "../hooks/orders/useOrders";
-import SaveImg from "../assets/img/save.png";
+import SaveImg from "../assets/img/save.svg";
 
 function useQuery() {
   const { search } = useLocation();

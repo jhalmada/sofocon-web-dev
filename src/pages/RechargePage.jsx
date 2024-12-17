@@ -12,7 +12,7 @@ import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 import Calendar from "../components/calendar/Calendar";
-import SaveImg from "../assets/img/save.png";
+import SaveImg from "../assets/img/save.svg";
 
 const RechargePage = () => {
   const {
