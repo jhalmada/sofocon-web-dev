@@ -1,19 +1,16 @@
-import useUsersSellers from "../hooks/users/useUsersSellers";
 import deleteIcon from "../assets/icons/trash3.svg";
-import RouteSellerDetailsRow from "../components/RouteSellerDetailsRow";
+import editIcon from "../assets/icons/pencil-square.svg";
 import Pagination from "../components/Pagination";
 import ReusableModal from "../components/modals/ReusableModal";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
-import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 import { useState } from "react";
-import FilterSelect from "../components/filters/FilterSelect";
-import { a } from "framer-motion/client";
 import ProductsinListRow from "../components/ProductsinListRow";
 import useGetProducts from "../hooks/products/useGetProducts";
-import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray";
 import usePutPriceList from "../hooks/priceList/usePutPriceList";
 import { useParams } from "react-router-dom";
+import AutoCompleteListPrice from "../components/autocomplete/AutoCompleteListPrice";
+import Input from "../components/inputs/Input";
+import usePutProductInPriceList from "../hooks/priceList/usePutProductinPriceList";
 
 const ProductsInListPricePage = ({
   arraySeller,
@@ -35,9 +32,13 @@ const ProductsInListPricePage = ({
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [productId, setProductId] = useState(null);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [editProduct, setEditProduct] = useState(null);
+
   //Hooks
   const { productsResponse, setSearch } = useGetProducts();
   const { changedPriceList } = usePutPriceList();
+  const [modalValidationProduct, setModalValidationProduct] = useState(false);
   const {
     register,
     handleSubmit,
@@ -46,13 +47,44 @@ const ProductsInListPricePage = ({
     formState: { errors },
   } = useForm();
 
+  const {
+    register: register2,
+    handleSubmit: handleSubmit2,
+    reset: reset2,
+    setValue: setValue2,
+    formState: { errors: errors2 },
+  } = useForm();
   const { id } = useParams();
 
+  const { changedProductInPriceList } = usePutProductInPriceList();
+
   //funciones
+  const validateInput = (array) => {
+    console.log(array);
+    const result = array.find((product) => product.value === "");
+    console.log(result);
+    return result ? false : true;
+  };
+
   const onSubmit = async (data) => {
+    console.log(data);
     const { products } = data;
+
+    const newArray2 = arraySeller.map((product) => ({
+      id: product.id,
+      name: product.name,
+      value: product.list[0].price,
+    }));
+
+    const newArray = [...newArray2, ...products];
+
+    const respuesta = validateInput(products);
+    if (!respuesta) {
+      setModalValidationProduct(true);
+      return;
+    }
     const PriceData = {
-      product: products.map((product) => ({
+      product: newArray.map((product) => ({
         product: product.id,
         price: product.value,
       })),
@@ -93,9 +125,29 @@ const ProductsInListPricePage = ({
       price: item.list[0].price,
     }));
   };
+
+  const handleEdit = (id) => {
+    const product = arraySeller.find((product) => product.id === id);
+    setValue2("price", product.list[0].price);
+    setEditProduct(product);
+    setEditModalOpen(true);
+  };
+
+  const onSubmitEdit = async (data) => {
+    const productData = { price: data.price };
+    const response = await changedProductInPriceList(
+      productData,
+      editProduct.list[0].id,
+      setModified,
+    );
+    if (response) {
+      setEditModalOpen(false);
+    }
+  };
+
   return (
     <div>
-      <div className="min-h-[calc(100vh-4.375rem)] overflow-auto rounded-tr-lg bg-white p-5">
+      <div className="flex min-h-[calc(90vh-4.375rem)] flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
         <table className="mt-2 w-full">
           <thead>
             <tr>
@@ -122,7 +174,9 @@ const ProductsInListPricePage = ({
                   price={seller?.list[0]?.price || 0}
                   category={seller?.category?.name || "Sin categoria"}
                   deleteIconSrc={deleteIcon}
+                  editIconSrc={editIcon}
                   onDeleteClick={() => openConfirmDeleteModal(seller.id)}
+                  onEditClick={() => handleEdit(seller.id)}
                 />
               ))}
           </tbody>
@@ -148,10 +202,11 @@ const ProductsInListPricePage = ({
       >
         <div className="space-y-2">
           <form onSubmit={handleSubmit(onSubmit)}>
-            <AutoCompleteArray
+            <AutoCompleteListPrice
               array2={arraySeller.map((seller) => ({
                 id: seller.id,
                 name: seller.name,
+                value: seller.list[0].price,
               }))}
               label={"Agregar Productos"}
               array={productsResponse.map((product) => ({
@@ -162,7 +217,6 @@ const ProductsInListPricePage = ({
               name={"products"}
               label2={"Productos"}
               onChange={setSearch}
-              hidden={true}
             />
           </form>
         </div>
@@ -186,6 +240,39 @@ const ProductsInListPricePage = ({
         onAccept={() => setSaveConfirmationModalOpen(false)}
       >
         El producto fue agregado Exitosamente.
+      </ReusableModal>
+      <ReusableModal
+        isOpen={modalValidationProduct}
+        onClose={() => setModalValidationProduct(false)}
+        title="Faltan Precios"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setModalValidationProduct(false)}
+      >
+        Porfavor asegurate de que todos los productos tengan un precio.
+      </ReusableModal>
+      {/*/Modal de edicion*/}
+      <ReusableModal
+        isOpen={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        title="Editar Precio"
+        buttons={["cancel", "save"]}
+        onAccept={() => setEditModalOpen(false)}
+        onSubmit={handleSubmit2(onSubmitEdit)}
+      >
+        <form
+          className="flex items-center justify-between"
+          onSubmit={handleSubmit2(onSubmitEdit)}
+        >
+          <p className="text-sm">{editProduct?.name}</p>
+
+          <Input
+            width="w-[10rem]"
+            type="number"
+            className="border-gray-300 mt-2 border p-2"
+            {...register2("price", { required: true })}
+          />
+        </form>
       </ReusableModal>
     </div>
   );

@@ -75,7 +75,7 @@ const SellersPage = ({
     const { phone, ci, fullName, email, role, sellerRoute } = data;
     handleUserCreation({
       email,
-      sellerRoute: sellerRoute.map((ruta) => ({ id: ruta.id })),
+      sellerRoute: sellerRoute && sellerRoute.map((ruta) => ({ id: ruta.id })),
       userInfo: {
         fullName,
         ci,

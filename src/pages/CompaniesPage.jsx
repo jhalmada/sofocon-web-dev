@@ -240,7 +240,8 @@ const CompaniesPage = () => {
         data.nextVisit.day,
       ).toISOString(),
     };
-
+    console.log(dataEdit);
+    console.log(updatedData);
     const hasChanges = !isMatch(dataEdit, updatedData);
     if (hasChanges) {
       openConfirmCancelModal();

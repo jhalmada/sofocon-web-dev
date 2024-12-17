@@ -11,7 +11,7 @@ const useCompanies = (id = null) => {
   const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
   const [route, setRoutes] = useState(null);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("barra");
   const [nextVisit, setNextVisit] = useState(null);
   const [status, setStatus] = useState(null);
   const [competence, setCompetence] = useState(false);

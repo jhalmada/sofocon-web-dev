@@ -6,7 +6,7 @@ import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
 import ReusableModal from "../components/modals/ReusableModal";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import SearchInput from "../components/inputs/SearchInput";
 import SaveImg from "../assets/img/save.png";
@@ -49,7 +49,7 @@ const AddCompanyRoutePage = ({
   const onSubmit = (data) => {
     const companies = data.empresas.map((company) => ({
       client: company.id,
-      status: company?.clientInRoute[0].status || "AVAILABLE",
+      status: company?.clientInRoute[0]?.status || "AVAILABLE",
     }));
     const newData = {
       clientInRoute: [...companies],
