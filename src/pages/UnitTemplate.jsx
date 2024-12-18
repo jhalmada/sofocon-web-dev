@@ -51,12 +51,12 @@ const UnitTemplate = () => {
   ];
 
   const handleDownloadExcel = () => {
-    const url = `${BASE_URL}/${getUnitExcel}?search=${search}${month !== null ? `&month=${month}` : ""}`;
+    const url = `${BASE_URL}/${getUnitExcel}?search=${search}&month=${month}&year=${new Date().getFullYear()}`;
     downloadFile(url, `Planilla UNIT.xlsx`);
   };
 
   const handleDownloadPdf = () => {
-    const url = `${BASE_URL}/${getUnitExcel}?search=${search}${month !== null ? `&month=${month}` : ""}`;
+    const url = `${BASE_URL}/${getUnitExcel}?search=${search}&month=${month}&year=${new Date().getFullYear()}`;
 
     downloadFile(url, `Planilla UNIT.pdf`);
   };
