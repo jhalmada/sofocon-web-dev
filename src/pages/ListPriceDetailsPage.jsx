@@ -134,17 +134,11 @@ const ListPriceDetailsPage = () => {
             </div>
           </Link>
         </div>
-        {/* <div className="flex justify-between">
+        <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             {name || "Nombre de la ruta"}
           </h1>
-          {activeTab === PRODUCTS_TAB && (
-            <SearchInput placeholder="Buscar..." onChange={setSearch} />
-          )}
-          {activeTab === COMPANIES_TAB && (
-            <SearchInput placeholder="Buscar..." onChange={setCompanySearch} />
-          )}
-        </div> */}
+        </div>
         <div className="flex items-center">
           <div className="flex">
             <h2
@@ -201,6 +195,7 @@ const ListPriceDetailsPage = () => {
             setModified={setModified}
             idCompany={id}
             nameCompany={datos?.name}
+            setSearch={setSearch}
           />
         )}
         {activeTab === COMPANIES_TAB && (
@@ -219,6 +214,7 @@ const ListPriceDetailsPage = () => {
             idCompany={id}
             nameCompany={datos?.name}
             setStatus={setStatus}
+            setSearch={setCompanySearch}
           />
         )}
       </div>

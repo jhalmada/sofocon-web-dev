@@ -172,7 +172,6 @@ const UsersPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Inventario
           </h1>
-          <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
         <div className="flex items-center">
           <div className="flex">
@@ -196,24 +195,13 @@ const UsersPage = () => {
             </div>
           </div>
         </div>
-        <div className="flex-grow overflow-auto rounded-tr-lg bg-white p-5">
-          {productsResponse.length === 0 ? (
-            <div className="flex justify-center">
-              <tr>
-                <td colSpan="5" className="p-4 text-center">
-                  <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                    Tu búsqueda no arrojó resultados. !Prueba algo distinto!.{" "}
-                  </p>
-                  <img
-                    src={notFoundImg}
-                    alt="Tabla vacía"
-                    className="mx-auto"
-                  />
-                </td>
-              </tr>
-            </div>
-          ) : (
-            <>
+        <div className="flex min-h-[78vh] flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+          <>
+            <div>
+              <div className="flex justify-end">
+                <SearchInput placeholder="Buscar..." onChange={setSearch} />
+              </div>
+
               <table className="w-full">
                 <thead>
                   <tr>
@@ -237,37 +225,54 @@ const UsersPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {console.log(productsResponse)}
-                  {productsResponse.map((product, index) => (
-                    <InventaryRow
-                      isToRecharge={product.isToRecharge}
-                      name={product.name}
-                      key={index}
-                      description={product.description}
-                      stock={product.stock}
-                      editIconSrc={editIcon}
-                      deleteIconSrc={deleteIcon}
-                      onEditClick={() => {
-                        handleEdit(product.id, product.list);
-                      }}
-                      onDeleteClick={() => handleDelete(product.id)}
-                      picture={product.picture}
-                    />
-                  ))}
+                  {productsResponse.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="p-4 text-center">
+                        <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                          Tu búsqueda no arrojó resultados. !Prueba algo
+                          distinto!.{" "}
+                        </p>
+                        <img
+                          src={notFoundImg}
+                          alt="Tabla vacía"
+                          className="mx-auto"
+                        />
+                      </td>
+                    </tr>
+                  ) : (
+                    <>
+                      {productsResponse.map((product, index) => (
+                        <InventaryRow
+                          isToRecharge={product.isToRecharge}
+                          name={product.name}
+                          key={index}
+                          description={product.description}
+                          stock={product.stock}
+                          editIconSrc={editIcon}
+                          deleteIconSrc={deleteIcon}
+                          onEditClick={() => {
+                            handleEdit(product.id, product.list);
+                          }}
+                          onDeleteClick={() => handleDelete(product.id)}
+                          picture={product.picture}
+                        />
+                      ))}
+                    </>
+                  )}
                 </tbody>
               </table>
-              <div className="flex justify-center p-6">
-                <Pagination
-                  pageIndex={setItemsPerPage}
-                  currentPage={page}
-                  totalPages={totalPage}
-                  onPageChange={setPage}
-                  itemPerPage={itemsPerPage}
-                  total={total}
-                />
-              </div>
-            </>
-          )}
+            </div>
+            <div className="flex justify-center p-6">
+              <Pagination
+                pageIndex={setItemsPerPage}
+                currentPage={page}
+                totalPages={totalPage}
+                onPageChange={setPage}
+                itemPerPage={itemsPerPage}
+                total={total}
+              />
+            </div>
+          </>
         </div>
         {/*modal para eliminar*/}
         <ReusableModal

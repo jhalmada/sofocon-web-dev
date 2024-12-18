@@ -9,6 +9,7 @@ import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import usePutPriceList from "../hooks/priceList/usePutPriceList";
+import SearchInput from "../components/inputs/SearchInput";
 
 const CompanyInListPricePage = ({
   setItemsPerPage,
@@ -25,12 +26,13 @@ const CompanyInListPricePage = ({
   setModified,
   nameCompany,
   setStatus,
+  setSearch,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [companyId, setCompanyId] = useState(null);
   //hooks
-  const { companiesResponse, setSearch } = useCompanies();
+  const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
   const { changedPriceList } = usePutPriceList();
   const {
     register,
@@ -75,9 +77,12 @@ const CompanyInListPricePage = ({
   };
 
   return (
-    <div className="min-h-[calc(100vh-4.375rem)] overflow-auto rounded-tr-lg bg-white p-5">
-      <table className={`mt-2 w-full text-center`}>
-        {total > 0 ? (
+    <div className="flex min-h-[calc(85vh-4.375rem)] flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+      <div>
+        <div className="flex justify-end">
+          <SearchInput placeholder="Buscar..." onChange={setSearch} />
+        </div>
+        <table className={`mt-2 w-full text-center`}>
           <thead>
             <tr>
               <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
@@ -88,35 +93,35 @@ const CompanyInListPricePage = ({
               </th>
             </tr>
           </thead>
-        ) : (
-          <h4 className="text-xl font-semibold">
-            Estan aignadas todas las empresas
-          </h4>
-        )}
-        <tbody>
-          {total > 0 &&
-            arrayCompanies.map((companie, index) => (
-              <tr className="border-b border-gray text-center" key={index}>
-                <td
-                  className="overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left"
-                  title={companie.name}
+
+          <tbody>
+            {total > 0 &&
+              arrayCompanies.map((companie, index) => (
+                <tr
+                  className="border-b border-gray py-6 text-center"
+                  key={index}
                 >
-                  {companie.name}
-                </td>
-                <td className="p-2">
-                  <div className="flex justify-center gap-4">
-                    <img
-                      src={deleteIcon}
-                      alt="Delete icon"
-                      className="h-5 w-5 cursor-pointer"
-                      onClick={() => openConfirmDeleteModal(companie.id)}
-                    />
-                  </div>
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+                  <td
+                    className="overflow-hidden text-ellipsis whitespace-nowrap p-2 py-6 text-left"
+                    title={companie.name}
+                  >
+                    {companie.name}
+                  </td>
+                  <td className="py-6">
+                    <div className="flex justify-center gap-4">
+                      <img
+                        src={deleteIcon}
+                        alt="Delete icon"
+                        className="h-5 w-5 cursor-pointer"
+                        onClick={() => openConfirmDeleteModal(companie.id)}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
       <div className="flex justify-center p-6">
         {total > 0 && (
           <Pagination
@@ -146,7 +151,7 @@ const CompanyInListPricePage = ({
               name={"empresas"}
               label={"Agregar Empresas"}
               setValue={setValue}
-              onChange={setSearch}
+              onChange={setSearchCompany}
             />
             <p>{errors.vendedores && errors.vendedores.message}</p>
           </form>
