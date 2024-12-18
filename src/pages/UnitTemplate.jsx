@@ -9,7 +9,7 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import UnitTemplateRow from "../components/UnitTemplateRow.jsx";
 import { BASE_URL } from "../utils/Constants.js";
-import { getUnitExcel } from "../services/orders/orders.routes.js";
+import { getUnitExcel, getUnitPdf } from "../services/orders/orders.routes.js";
 import useGetUnitOrders from "../hooks/orders/useGetUnitOrders.js";
 const UnitTemplate = () => {
   const {
@@ -56,7 +56,7 @@ const UnitTemplate = () => {
   };
 
   const handleDownloadPdf = () => {
-    const url = `${BASE_URL}/${getUnitExcel}?search=${search}&month=${month}&year=${new Date().getFullYear()}`;
+    const url = `${BASE_URL}/${getUnitPdf}?search=${search}&month=${month}&year=${new Date().getFullYear()}`;
 
     downloadFile(url, `Planilla UNIT.pdf`);
   };
