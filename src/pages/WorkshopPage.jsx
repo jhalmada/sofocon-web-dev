@@ -180,6 +180,7 @@ const WorkshopPage = () => {
     setOpenScannerModal(false);
     setIsExportCompetingModalOpen(false);
     setIsSellersModalOpen(false);
+    setBarCode(null);
   };
 
   const closeConfirmCancelModal = () => {
