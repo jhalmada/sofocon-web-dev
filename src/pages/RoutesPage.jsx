@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import RouteRow from "../components/RouteRow.jsx";
 import Button from "../components/buttons/Button.jsx";
@@ -19,7 +19,6 @@ import FilterSelect from "../components/filters/FilterSelect.jsx";
 import SaveImg from "../assets/img/save.svg";
 import deleteImg from "../assets/img/deleted.svg";
 import disconnectedImg from "../assets/images/disconnected.svg";
-import { s } from "framer-motion/client";
 import { isMatch } from "lodash";
 
 const SELLER_TAB = "sellers";
@@ -152,6 +151,10 @@ const RoutesPage = () => {
         setIsActive(null);
     }
   };
+
+  useEffect(() => {
+    sessionStorage.setItem("activeTab", SELLER_TAB);
+  }, []);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
       <div className="flex flex-grow flex-col p-6">
