@@ -191,13 +191,13 @@ const ProductsPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(INVENTORY_TAB)}
-              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === INVENTORY_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === INVENTORY_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} shadow-n p-4 text-center text-md font-medium leading-6`}
             >
               Inventario
             </h2>
             <h2
               onClick={() => setActiveTab(PRICES_TAB)}
-              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === PRICES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === PRICES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} shadow-n p-4 text-center text-md font-medium leading-6`}
             >
               Listas de precios
             </h2>
@@ -222,7 +222,7 @@ const ProductsPage = () => {
           )}
         </div>
 
-        <div className="flex min-h-[70vh] flex-col items-center justify-center rounded-tr-lg bg-white px-7 pb-3 pt-7 shadow-t">
+        <div className="flex min-h-[70vh] flex-col items-center justify-center rounded-tr-lg bg-white px-7 pb-3 pt-7">
           <div className="flex w-full justify-end">
             {activeTab === INVENTORY_TAB && (
               <SearchInput placeholder="Buscar..." onChange={setSearch} />
