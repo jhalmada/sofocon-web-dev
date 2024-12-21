@@ -356,7 +356,7 @@ const AddCompaniePage = () => {
               className="mb-2 flex w-[8rem] cursor-pointer justify-center"
             >
               <img src={geoaltIcon} alt="geo Icon" />
-              <span className="text-xs leading-[.88rem] underline">
+              <span className="mb-1 mt-2 text-xs leading-[.88rem] underline">
                 Marcar en el mapa
               </span>
             </div>
