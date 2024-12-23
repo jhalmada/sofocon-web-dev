@@ -85,6 +85,20 @@ const ClientsOrdersPage = () => {
         return state;
     }
   };
+
+  const translatePayMethod = (method) => {
+    switch (method) {
+      case "CASH":
+        return "Efectivo";
+      case "CREDIT":
+        return "Crédito";
+      case "CHECK":
+        return "Cheque";
+
+      default:
+        return method;
+    }
+  };
   const oneOrder = async (id) => {
     const newdatos = await getOneOrder(id);
     setOrderDetails(newdatos);
@@ -385,7 +399,7 @@ const ClientsOrdersPage = () => {
                 bg="bg-gray"
                 border="none"
                 label={"Forma de pago"}
-                placeholder={orderDetails?.paymentType}
+                placeholder={translatePayMethod(orderDetails?.paymentType)}
                 placeholderColor="placeholder-black_b"
                 disabled
               />

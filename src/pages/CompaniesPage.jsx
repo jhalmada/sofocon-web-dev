@@ -1076,10 +1076,13 @@ const CompaniesPage = () => {
         buttons={["accept"]}
         onAccept={() => setListPriceModal(false)}
       >
-        <div>
+        <div className="space-y-4">
           {priceListResponse.length > 0
             ? priceListResponse.map((list, index) => (
-                <p className="mt-0 text-base" key={index}>
+                <p
+                  className="mt-0 border-b-2 border-gray text-base"
+                  key={index}
+                >
                   {list.name}
                 </p>
               ))
