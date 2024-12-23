@@ -1,4 +1,6 @@
 import { Select, SelectItem } from "@nextui-org/select";
+import { IMAGE_BASE } from "../utils/Constants";
+import defaultIcon from "../assets/images/defaultIcono.png";
 
 const InventaryRow = ({
   name,
@@ -8,12 +10,22 @@ const InventaryRow = ({
   deleteIconSrc,
   onEditClick,
   onDeleteClick,
+  picture,
+  isToRecharge,
 }) => {
   return (
     <tr className="border-b border-gray text-center">
+      <td className="w-10">
+        <img
+          src={picture !== null ? `${IMAGE_BASE}${picture}` : defaultIcon}
+          alt={name}
+          className="h-8 w-8 rounded-full"
+        />
+      </td>
       <td className="py-6 text-left">{name}</td>
       <td className="py-6">{description}</td>
       <td className="py-6">{stock}</td>
+      <td className="py-6">{isToRecharge === "true" ? "Si" : "No"}</td>
       <td className="py-6">
         <div className="flex justify-center gap-4">
           <img

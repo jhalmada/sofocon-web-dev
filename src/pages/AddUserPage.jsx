@@ -212,8 +212,8 @@ const AddUserPage = () => {
                     hasNumber: (value) =>
                       /\d/.test(value) || "Debes incluir al menos un número",
                     hasLetter: (value) =>
-                      /[a-zA-Z]/.test(value) ||
-                      "Debes incluir al menos una letra",
+                      /[a-z]/.test(value) ||
+                      "Debes incluir al menos una letra minuscula",
                   },
                 })}
                 errorApi={errors.password}

@@ -16,7 +16,6 @@ const coordenadasUruguay = {
   lat: -33.2405,
   lng: -56.0128,
 };
-
 const months = [
   { label: "Enero", value: "01" },
   { label: "Febrero", value: "02" },
@@ -51,7 +50,9 @@ const HomePage = () => {
   //hooks
   const datosGuardados = localStorage.getItem("SOFOCON_PERMISSIONS");
   const { socketConnected } = useSocket();
-  const [usersActives, setUsersActive] = useState([]);
+  const [usersActives, setUsersActive] = useState(
+    JSON.parse(sessionStorage.getItem("usersActives")) || [], 
+  );
   const { metricsResponse } = useGetMetrics();
   const { metricsOrdersResponse, setMonth, month, year } = useMetricsOrders();
   const { metricsProductsResponse, setYear } = useMetricsProduts();
@@ -86,11 +87,11 @@ const HomePage = () => {
   };
 
   const handleSocketData = (data) => {
-    const { id, longitude, latitude, userInfo } = data;
+    const { id, longitude, latitude, userInfo, clientId } = data;
 
     // Buscamos el usuario existente o creamos uno nuevo
     const numberIndex = usersActives.findIndex((user) => user.id === id);
-    console.log(numberIndex);
+    console.log(data);
 
     if (numberIndex >= 0) {
       usersActives.splice(numberIndex, 1, {
@@ -98,6 +99,7 @@ const HomePage = () => {
         longitude,
         latitude,
         userInfo,
+        clientId,
       });
     } else {
       usersActives.splice(usersActives.length + 1, 0, {
@@ -105,15 +107,32 @@ const HomePage = () => {
         longitude,
         latitude,
         userInfo,
+        clientId,
       });
     }
+    setUsersActive(usersActives);
+    sessionStorage.setItem("usersActives", JSON.stringify(usersActives));
+  };
+
+  const handleSocketDataDisconected = (data) => {
+    const { client } = data;
+    console.log(data);
+    const array = JSON.parse(sessionStorage.getItem("usersActives"));
+    const newArray = array.filter((user) => user.clientId !== client);
+    setUsersActive(newArray);
+
+    sessionStorage.setItem("usersActives", JSON.stringify(newArray));
   };
 
   useEffect(() => {
     const socket = socketConnected();
     if (socket) {
+      console.log(socket);
       socket.on("user-location", (data) => {
         handleSocketData(data);
+      });
+      socket.on("user-disconected", (data) => {
+        handleSocketDataDisconected(data);
       });
     }
   }, []);
@@ -169,8 +188,8 @@ const HomePage = () => {
                   <div
                     style={{
                       position: "absolute",
-                      top: cursorPosition.y - 680, // Ajusta el div 10px debajo del cursor
-                      left: cursorPosition.x - 300, // Ajusta el div 10px a la derecha del cursor
+                      top: cursorPosition.y - 250, // Ajusta el div 10px debajo del cursor
+                      left: cursorPosition.x - 530, // Ajusta el div 10px a la derecha del cursor
                       background: "white",
                       padding: "10px",
                       borderRadius: "5px",

@@ -3,11 +3,9 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import arrowIcon from "../assets/icons/arrow-left.svg";
-import LogoOpen from "../assets/icons/logo_open.svg";
-import LogoClose from "../assets/icons/logo_close.svg";
-import gearIcon from "../assets/icons/gear.svg";
-import bellIcon from "../assets/icons/bell.svg";
-import avatarIcon from "../assets/icons/avatar.svg";
+import logoOpen from "../assets/icons/logo_open2.svg";
+import logoClose from "../assets/icons/logo_close2.svg";
+import logoutIcon from "../assets/icons/end.svg";
 import { menuItems } from "../utils/DataInfo";
 import {
   Dropdown,
@@ -72,7 +70,7 @@ const Public = () => {
           <div>
             <div className="flex justify-center">
               <img
-                src={isOpen ? LogoOpen : LogoClose}
+                src={isOpen ? logoOpen : logoClose}
                 alt="Logo img"
                 className={`${isOpen ? "" : "h-20"} mt-2.5 cursor-pointer p-4`}
                 onClick={() => navigate("/inicio")}
@@ -123,21 +121,23 @@ const Public = () => {
         <div className="flex flex-1 flex-col overflow-auto">
           <nav className="flex h-[4.375rem] items-center justify-between bg-white p-6">
             <Breadcrumbs />
-            <div className="flex items-center gap-9">
-              <img src={gearIcon} alt="Gear icon" className="h-6 w-6" />
-              <img src={bellIcon} alt="Bell icon" className="h-6 w-6" />
+            <div className="flex items-center gap-6">
               <Dropdown>
                 <DropdownTrigger className="cursor-pointer">
-                  <img src={avatarIcon} alt="Avatar icon" className="h-7 w-7" />
+                  <img
+                    src={logoutIcon}
+                    alt="Logout icon"
+                    className="mr-5 h-6 w-6"
+                  />
                 </DropdownTrigger>
-                <DropdownMenu aria-label="Static Actions">
+                <DropdownMenu aria-label="Static Actions ">
                   <DropdownItem
                     key="log out"
                     className="text-danger"
                     color="danger"
                     onClick={() => logout()}
                   >
-                    Cerrar Sesion
+                    <p className="text-center"> Cerrar Sesion</p>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>

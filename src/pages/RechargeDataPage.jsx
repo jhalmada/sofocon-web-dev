@@ -14,6 +14,7 @@ import usePatchRemovalItem from "../hooks/orders/usePatchRemovalItem";
 import Calendar from "../components/calendar/Calendar";
 import BarcodeReader from "../components/scan/BarcodeReader";
 import useOrders from "../hooks/orders/useOrders";
+import SaveImg from "../assets/img/save.svg";
 
 function useQuery() {
   const { search } = useLocation();
@@ -171,7 +172,7 @@ const RechargeDataPage = () => {
                   <Input
                     label={"Código de barras"}
                     placeholder={itemDetails?.barCode}
-                    value={barCode || "..."}
+                    value={barCode || null}
                     {...register(`barCode`, {
                       required: "Este campo es obligatorio",
                     })}
@@ -260,7 +261,12 @@ const RechargeDataPage = () => {
                   <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
                     Fecha ensayo
                   </span>
-                  <Calendar control={control} errors={errors} name="testDate" />
+                  <Calendar
+                    control={control}
+                    errors={errors}
+                    forward={false}
+                    name="testDate"
+                  />
                 </div>
               </span>
               <Input
@@ -398,7 +404,12 @@ const RechargeDataPage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          Los cambios fueron guardados exitosamente.
+          <div className="flex h-[16rem] flex-col items-center justify-center">
+            <img src={SaveImg} alt="save" />
+            <p className="font-roboto text-sm font-light text-black">
+              Los cambios fueron guardados correctamente.
+            </p>
+          </div>
         </ReusableModal>
       </div>
     </div>

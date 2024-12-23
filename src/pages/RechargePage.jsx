@@ -12,6 +12,7 @@ import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 import Calendar from "../components/calendar/Calendar";
+import SaveImg from "../assets/img/save.svg";
 
 const RechargePage = () => {
   const {
@@ -22,12 +23,11 @@ const RechargePage = () => {
   } = useForm();
   const navigate = useNavigate();
   const { id } = useParams();
-
-  const [mnsError, setMnsError] = useState("");
   const { changedOrder, isLoading } = usePutOrders();
   const { getOneOrder, setModified } = useGetOneOrder(id);
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
 
+  const [mnsError, setMnsError] = useState("");
   const [orderDetails, setOrderDetails] = useState(null);
   const [selectedState, setSelectedState] = useState(orderDetails?.status);
   const [isConfirmModal, setIsConfirmModal] = useState(false);
@@ -36,27 +36,27 @@ const RechargePage = () => {
   const [isSaveConfirmationModalOpen, setIsSaveConfirmationModalOpen] =
     useState(false);
   const [confirmStatus, setConfirmStatus] = useState(false);
-
   const [newStatus, setNewStatus] = useState(null);
+  const [sellers, setSellers] = useState("");
 
   const oneOrder = async (id) => {
     const newdatos = await getOneOrder(id);
     setOrderDetails(newdatos);
   };
   const stateOptions = [
-    "Solicitado",
+    "Ingreso a taller",
     "En preparación",
-    "Para retirar",
+    "Para retirar del taller",
     "Egreso",
   ];
   const translateState = (state) => {
     switch (state) {
       case "REQUEST":
-        return "Solicitado";
+        return "Ingreso a taller";
       case "PREPARATION":
         return "En preparación";
       case "READY_PICKUP":
-        return "Para retirar";
+        return "Para retirar del taller";
       case "EGRESS":
         return "Egreso";
       case "DELIVERED":
@@ -93,19 +93,11 @@ const RechargePage = () => {
   };
 
   const onSubmit = async (data) => {
-    const newdata = new Date(
-      data.dateV?.year || 1,
-      data.dateV?.month - 1 || 1,
-      data.dateV?.day || 1,
-    );
-    const formattedDate = newdata.toISOString();
-
     if (newStatus === "EGRESS") {
       await changedOrder(
         {
           status: newStatus,
           user: data.user,
-          sellDate: formattedDate ? formattedDate : null,
           workShopDateDeparture: new Date().toISOString(),
         },
         orderDetails.id,
@@ -114,22 +106,26 @@ const RechargePage = () => {
     } else {
       await changedOrder({ status: newStatus }, orderDetails.id, setModified);
     }
+
+    handleCloseModal();
   };
   const onSubmitWithValidation = (data) => {
     if (Object.keys(errors).length === 0 || Object.keys(errors).length === 1) {
       setConfirmStatus(true);
-      handleCloseModal();
+
       onSubmit(data);
     }
+
     setConfirmStatus(true);
   };
   const translateStateToEnglish = (state) => {
     switch (state) {
-      case "Solicitado":
+      case "Ingreso a taller":
         return "REQUEST";
+
       case "En preparación":
         return "PREPARATION";
-      case "Para retirar":
+      case "Para retirar del taller":
         return "READY_PICKUP";
       case "Egreso":
         return "EGRESS";
@@ -152,6 +148,7 @@ const RechargePage = () => {
       setNewStatus("EGRESS");
     } else {
       setNewStatus(newStatus);
+      await changedOrder({ status: newStatus }, orderDetails.id, setModified);
     }
   };
 
@@ -178,6 +175,11 @@ const RechargePage = () => {
   useEffect(() => {
     oneOrder(id);
   }, [id]);
+
+  useEffect(() => {
+    setSearchSellers(sellers);
+  }, [sellers]);
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
@@ -288,9 +290,12 @@ const RechargePage = () => {
                     />
                   </div>
                 </div>
-                <div className="-mt-6 flex w-1/2 flex-col space-y-4 pl-2">
+                <div className="flex w-1/2 flex-col pl-2">
                   {order.itemsRemoval?.map((item, index) => (
-                    <div className="flex items-center space-x-2" key={index}>
+                    <div
+                      className="-mt-6 mb-6 flex items-center space-x-2"
+                      key={index}
+                    >
                       <Input
                         bg="bg-gray"
                         placeholderColor="placeholder-black_b"
@@ -379,7 +384,12 @@ const RechargePage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          Los cambios fueron guardados exitosamente.
+          <div className="flex h-[16rem] flex-col items-center justify-center">
+            <img src={SaveImg} alt="save" />
+            <p className="font-roboto text-sm font-light text-black">
+              Los cambios fueron guardados correctamente.
+            </p>
+          </div>
         </ReusableModal>
         {isModalOpen && (
           <ReusableModal
@@ -402,10 +412,15 @@ const RechargePage = () => {
           onAccept={handleSubmit(onSubmitWithValidation)}
         >
           <div>
-            <span className="text-sm font-light leading-[1rem] text-black_b">
+            <span className="font-roboto text-sm leading-[1rem] text-black_b">
               Fecha de egreso
             </span>
-            <Calendar control={control} errors={errors} name="dateV" />
+            <Calendar
+              control={control}
+              errors={errors}
+              name="dateV"
+              isDisabled={true}
+            />
           </div>
           <div className="-mt-[.08rem]">
             <Controller
@@ -420,6 +435,7 @@ const RechargePage = () => {
                   setValue={setValue}
                   onChange={setSearchSellers}
                   onSelect={handleSelectSeller}
+                  sellers={setSellers}
                   placeholder="Buscar vendedores"
                   {...field}
                 />

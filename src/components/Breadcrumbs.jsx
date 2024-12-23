@@ -28,15 +28,11 @@ const Breadcrumbs = () => {
       <ol className="list-reset flex items-center space-x-2 text-xs">
         {breadcrumbs.map((breadcrumb, index) => (
           <li key={index} className="flex items-center gap-1.5">
-            <Link
-              to={breadcrumb.path}
-              className="flex items-center font-medium capitalize leading-[.875rem] text-black underline"
-            >
-              {index === 0 ? (
-                <img src={HouseDoorIcon} alt="Home" className="mr-1 h-4 w-4" />
-              ) : null}
-              {index === 0 ? "Inicio" : breadcrumb.name}
-            </Link>
+            {index === 0 ? (
+              <img src={HouseDoorIcon} alt="Home" className="mr-1 h-4 w-4" />
+            ) : null}
+            {index === 0 ? "Inicio" : breadcrumb.name}
+
             {index < breadcrumbs.length - 1 && <span>/</span>}
           </li>
         ))}

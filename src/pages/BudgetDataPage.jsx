@@ -58,9 +58,9 @@ const BudgetDataPage = () => {
     }
   };
   const stateOptions = [
-    "Solicitado",
+    "Ingreso a taller",
     "En preparación",
-    "Para retirar",
+    "Para retirar del taller",
     "Egreso",
   ];
   const formatDate = (dateString) => {

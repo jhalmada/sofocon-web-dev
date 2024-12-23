@@ -6,12 +6,14 @@ import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
 import ReusableModal from "../components/modals/ReusableModal";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import SearchInput from "../components/inputs/SearchInput";
+import SaveImg from "../assets/img/save.svg";
 import disconnectedImg from "../assets/images/disconnected.svg";
 
 const AddCompanyRoutePage = ({
+  setSearch,
   setItemsPerPage,
   setPage,
   page,
@@ -30,25 +32,25 @@ const AddCompanyRoutePage = ({
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [companyId, setCompanyId] = useState(null);
-  const [stateFilter, setStateFilter] = useState("");
 
   const stateOptions = ["Frecuente", "Potencial", "De baja"];
   //hooks
-  const { companiesResponse, setSearch } = useCompanies();
+  const { companiesResponse } = useCompanies();
   console.log(companiesResponse);
   console.log(arrayCompanies);
   const { changedSellerRoute } = usePutSellerRoute();
   const {
-    register,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
   } = useForm();
 
   //funciones
   const onSubmit = (data) => {
-    const companies = data.empresas.map((company) => ({ client: company.id }));
+    const companies = data.empresas.map((company) => ({
+      client: company.id,
+      status: company?.clientInRoute[0]?.status || "AVAILABLE",
+    }));
     const newData = {
       clientInRoute: [...companies],
     };
@@ -198,9 +200,9 @@ const AddCompanyRoutePage = ({
         <div className="space-y-2">
           <form onSubmit={handleSubmit(onSubmit)}>
             <NextAutoComplete
-              array2={transformData(arrayCompanies) || []}
+              array2={arrayCompanies || []}
               label2={"Empresas asignadas"}
-              array={transformData(companiesResponse || []) || []}
+              array={companiesResponse || []}
               name={"empresas"}
               label={"Agregar Empresas"}
               setValue={setValue}

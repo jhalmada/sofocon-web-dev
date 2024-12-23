@@ -9,8 +9,9 @@ const useChangedPassword = () => {
   const changedPassword = async (userData, token) => {
     try {
       setIsLoading(true);
-      await UserService.putUserApiPassword(userData, token);
-      return true;
+      const response = await UserService.putUserApiPassword(userData, token);
+
+      return response.status;
     } catch (error) {
       console.error("Error al cambiar la contraseña: ", error);
     } finally {

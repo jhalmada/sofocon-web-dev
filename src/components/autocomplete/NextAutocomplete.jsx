@@ -46,6 +46,41 @@ const NextAutoComplete = ({
 
   return (
     <div className="mb-1">
+      <label className="mt-3 block font-roboto text-sm">{label}</label>
+      <Autocomplete
+        isDisabled={isDisabled}
+        disabledKeys={selectedItems.map((item) => item.id)}
+        className="w-full rounded-lg border"
+        selectedKey={""}
+        placeholder={placeholder}
+        startContent={<img src={search}></img>}
+        onInputChange={(e) => onChange(e)}
+        popoverProps={{
+          placement: "top-start",
+          modifiers: [
+            {
+              name: "offset",
+              options: {
+                offset: [0, 8],
+              },
+            },
+          ],
+        }}
+      >
+        {array.map((item) => (
+          <AutocompleteItem
+            key={item.id}
+            value={item.id}
+            onClick={() => handleSelect(item)}
+            endContent={selectedItems.includes(item) && <p>Seleccionado</p>}
+          >
+            {item.name}
+          </AutocompleteItem>
+        ))}
+      </Autocomplete>
+      {msjError.length > 0 && (
+        <p className="font-roboto text-xs text-red_e">{msjError}</p>
+      )}
       {!hidden && !isDisabled && (
         <div className="flex w-full flex-wrap">
           {selectedItems.length > 0 && (
@@ -66,30 +101,6 @@ const NextAutoComplete = ({
             </span>
           ))}
         </div>
-      )}
-      <label className="mt-3 block font-roboto text-sm">{label}</label>
-      <Autocomplete
-        isDisabled={isDisabled}
-        disabledKeys={selectedItems.map((item) => item.id)}
-        className="w-full rounded-lg border"
-        selectedKey={""}
-        placeholder={placeholder}
-        startContent={<img src={search}></img>}
-        onInputChange={(e) => onChange(e)}
-      >
-        {array.map((item) => (
-          <AutocompleteItem
-            key={item.id}
-            value={item.id}
-            onClick={() => handleSelect(item)}
-            endContent={selectedItems.includes(item) && <p>Seleccionado</p>}
-          >
-            {item.name}
-          </AutocompleteItem>
-        ))}
-      </Autocomplete>
-      {msjError.length > 0 && (
-        <p className="font-roboto text-xs text-red_e">{msjError}</p>
       )}
     </div>
   );

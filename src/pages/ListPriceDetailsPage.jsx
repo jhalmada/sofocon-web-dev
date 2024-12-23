@@ -4,26 +4,18 @@ import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
-import FilterRightIcon from "../assets/icons/filter-right.svg";
-import ChevronDownIcon from "../assets/icons/chevron-down.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 import { useForm } from "react-hook-form";
-import RouteMapDetailsRow from "../components/RouteMapDetailsRow.jsx";
 import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
-import useUsers from "../hooks/users/use.users.js";
 import { BASE_URL } from "../utils/Constants.js";
 import {
   getClientsExcel,
   getClientsPdf,
 } from "../services/companies/companies.routes.js";
-import useUsersSellers from "../hooks/users/useUsersSellers.js";
-import AddSellerRoutePage from "./AddSellerRoutePage.jsx";
-import AddCompanyRoutePage from "./AddCompanyRoutePage.jsx";
 import { getUsersExcel, getUsersPdf } from "../services/user/user.routes.js";
-import disconnectedImg from "../assets/images/disconnected.svg";
 import useGetProducts from "../hooks/products/useGetProducts.js";
 import ProductsInListPricePage from "./ProductsInListPricePage.jsx";
 import CompanyInListPricePage from "./CompanyInListPricePage.jsx";
@@ -77,13 +69,6 @@ const ListPriceDetailsPage = () => {
   const [isSellersExportModalOpen, setIsSellersExportModalOpen] =
     useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
-
   const openModal = (id) => {
     setIsModalOpen(true);
   };
@@ -97,10 +82,7 @@ const ListPriceDetailsPage = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-  const openConfirmDeleteModal = (id) => {
-    setCompanyId(id);
-    setConfirmDeleteModalOpen(true);
-  };
+
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
   const handleConfirmDelete = () => {
@@ -113,10 +95,6 @@ const ListPriceDetailsPage = () => {
     closeModal();
   };
 
-  const handleUserCreation = async (userData) => {};
-
-  const onSubmit = (data) => {};
-
   const openExportModal = (id) => {
     setIsExportModalOpen(true);
   };
@@ -125,7 +103,6 @@ const ListPriceDetailsPage = () => {
   };
 
   //funciones
-  const onSubmits = (data) => {};
 
   //funciones del modal de añadir vendedor
   //para cerrar el modal
@@ -161,12 +138,6 @@ const ListPriceDetailsPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             {name || "Nombre de la ruta"}
           </h1>
-          {activeTab === PRODUCTS_TAB && (
-            <SearchInput placeholder="Buscar..." onChange={setSearch} />
-          )}
-          {activeTab === COMPANIES_TAB && (
-            <SearchInput placeholder="Buscar..." onChange={setCompanySearch} />
-          )}
         </div>
         <div className="flex items-center">
           <div className="flex">
@@ -189,16 +160,6 @@ const ListPriceDetailsPage = () => {
             {activeTab === COMPANIES_TAB && (
               <div className="flex space-x-4">
                 <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                  onClick={() => openExportModal()}
-                />
-              </div>
-            )}
-            {activeTab === COMPANIES_TAB && (
-              <div className="flex space-x-4">
-                <Button
                   text="Agregar empresa"
                   icon={PlusIcon}
                   onClick={() => openModal()}
@@ -208,13 +169,6 @@ const ListPriceDetailsPage = () => {
 
             {activeTab === PRODUCTS_TAB && (
               <div className="flex space-x-4">
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                  onClick={() => openSellersExportModal()}
-                />
-
                 <Button
                   text="Agregar Producto"
                   icon={PlusIcon}
@@ -241,6 +195,7 @@ const ListPriceDetailsPage = () => {
             setModified={setModified}
             idCompany={id}
             nameCompany={datos?.name}
+            setSearch={setSearch}
           />
         )}
         {activeTab === COMPANIES_TAB && (
@@ -259,6 +214,7 @@ const ListPriceDetailsPage = () => {
             idCompany={id}
             nameCompany={datos?.name}
             setStatus={setStatus}
+            setSearch={setCompanySearch}
           />
         )}
       </div>
@@ -381,7 +337,7 @@ const ListPriceDetailsPage = () => {
         buttons={["back", "accept"]}
         onAccept={() => handleConfirmDelete(companyId)}
       >
-        Este usuario será eliminado de forma permanente. ¿Desea continuar?
+        Este producto sera eliminado de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

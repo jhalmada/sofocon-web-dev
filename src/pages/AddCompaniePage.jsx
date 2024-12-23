@@ -5,20 +5,20 @@ import Input from "../components/inputs/Input";
 import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Checkbox } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import useAddCompany from "../hooks/companies/useAddCompanies";
 import Cards from "../components/cards/Cards";
+import SaveImg from "../assets/img/save.svg";
+import { PlaceAutocomplete, MapHandler } from "../hooks/Maps/funtionMaps";
 import {
   AdvancedMarker,
   Map,
   Marker,
   useAdvancedMarkerRef,
-  useMap,
-  useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import Calendar from "../components/calendar/Calendar";
 
@@ -26,83 +26,8 @@ const coordenadasUruguay = {
   lat: -34.901,
   lng: -56.1698,
 };
-const direccionText = (address) => {
-  const parts = address.split(","); // Divide la dirección por comas
-
-  if (parts.length < 2) {
-    return { error: "La dirección no está en el formato esperado" };
-  }
-
-  const direccion = parts[0].trim(); // Primer parte como dirección
-
-  // Extraemos el barrio de la segunda parte
-  const barrioParts = parts[1].trim().split(" ");
-  const barrio = barrioParts.slice(1).join(" ").trim(); // Ignora el código postal y toma el resto
-
-  return {
-    direccion,
-    barrio,
-  };
-};
-
-const MapHandler = ({ place, marker, setValue }) => {
-  const map = useMap();
-
-  useEffect(() => {
-    if (!map || !place || !marker) return;
-
-    if (place.geometry?.viewport) {
-      map.fitBounds(place.geometry?.viewport);
-    }
-
-    marker.position = place.geometry?.location;
-    setValue("address", direccionText(place.formatted_address).direccion);
-    setValue("neighborhood", direccionText(place.formatted_address).barrio);
-  }, [map, place, marker]);
-  return null;
-};
-
-const PlaceAutocomplete = ({ onPlaceSelect }) => {
-  const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
-  const inputRef = useRef(null);
-  const places = useMapsLibrary("places");
-  const [name, setName] = useState("");
-
-  useEffect(() => {
-    if (!places || !inputRef.current) return;
-
-    const options = {
-      fields: ["geometry", "name", "formatted_address"],
-    };
-
-    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
-  }, [places]);
-  useEffect(() => {
-    if (!placeAutocomplete) return;
-
-    placeAutocomplete.addListener("place_changed", () => {
-      onPlaceSelect(placeAutocomplete.getPlace());
-      console.log(placeAutocomplete.getPlace());
-    });
-  }, [onPlaceSelect, placeAutocomplete]);
-  return (
-    <div className="autocomplete-container mb-4">
-      <Input
-        ref={inputRef}
-        placeholder="Ingrese una ubicacion para comenzar"
-        msjError={name.length === 0 ? "Este campo es requerido" : ""}
-        onChange={(e) => setName(e.target.value)}
-      />
-    </div>
-  );
-};
 
 const AddCompaniePage = () => {
-  console.log(
-    direccionText(
-      "Magallanes 744, B1704FLD Ramos Mejía, Provincia de Buenos Aires, ",
-    ),
-  );
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [selectManual, setSelectManual] = useState(false);
   const [markerRef, marker] = useAdvancedMarkerRef();
@@ -112,7 +37,6 @@ const AddCompaniePage = () => {
     register,
     handleSubmit,
     setValue,
-    setError,
     control,
     formState: { errors },
   } = useForm();
@@ -122,14 +46,12 @@ const AddCompaniePage = () => {
     register: register2,
     handleSubmit: handleSubmit2,
     setValue: setValue2,
-    setError: setError2,
     control: control2,
     formState: { errors: errors2 },
   } = useForm();
   const navigate = useNavigate();
   const { postAddCompany } = useAddCompany();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isMapModal, setIsMapModal] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [msjError, setMsjError] = useState("");
@@ -143,6 +65,7 @@ const AddCompaniePage = () => {
   const [dateSelected, setDateSelected] = useState(false);
   const [reminderSelected, setReminderSelected] = useState(false);
   const [modalEditSave, setModalEditSave] = useState(false);
+  const [direccion, setDireccion] = useState("");
 
   const handleCompanyCreation = async (companyData) => {
     console.log("entra aqui");
@@ -230,14 +153,6 @@ const AddCompaniePage = () => {
     }
   };
 
-  //funciones para abrir y cerrar el modal de mapa
-  const openModalMap = () => {
-    setIsMapModal(true);
-  };
-  const closeModalMap = () => {
-    setIsMapModal(false);
-  };
-
   const closeModal = () => {
     setIsModalOpen(false);
     //setConfirmCancelModalOpen(false);
@@ -254,8 +169,6 @@ const AddCompaniePage = () => {
     navigate("..");
     closeSaveConfirmationModal();
   };
-
-  const handleCancelClick = () => closeModal();
 
   //Para las notas
   const onSubmit2 = (data) => {
@@ -443,23 +356,23 @@ const AddCompaniePage = () => {
               className="mb-2 flex w-[8rem] cursor-pointer justify-center"
             >
               <img src={geoaltIcon} alt="geo Icon" />
-              <span className="text-xs leading-[.88rem] underline">
+              <span className="mb-1 mt-2 text-xs leading-[.88rem] underline">
                 Marcar en el mapa
               </span>
             </div>
 
             <Input
-              label={"Referente"}
-              placeholder={"Escribe el nombre del referente..."}
+              label={"Otros datos"}
+              placeholder={"Escribe..."}
               {...register("managerName", {
                 required: "Este campo es requerido",
                 minLength: {
                   value: 2,
-                  message: "El nombre debe contener al menos 2 caracteres.",
+                  message: "El campo debe contener al menos 2 caracteres.",
                 },
                 maxLength: {
                   value: 50,
-                  message: "El nombre no puede exceder los 50 caracteres.",
+                  message: "El campo no puede exceder los 50 caracteres.",
                 },
               })}
               errorApi={errors.managerName}
@@ -471,8 +384,8 @@ const AddCompaniePage = () => {
               placeholder={"Escribe el teléfono del contacto..."}
               {...register("phone", {
                 minLength: {
-                  value: 8,
-                  message: "Debe ingresar minimo 8 digitos.",
+                  value: 2,
+                  message: "Debe ingresar minimo 1 digitos.",
                 },
                 maxLength: {
                   value: 15,
@@ -653,7 +566,12 @@ const AddCompaniePage = () => {
           buttons={["accept"]}
           onAccept={handleConfirmSaveClick}
         >
-          Los cambios fueron guardados exitosamente.
+          <div className="flex h-[14rem] flex-col items-center justify-center">
+            <img src={SaveImg} alt="save" />
+            <p className="font-roboto text-sm font-light text-black">
+              Los cambios fueron guardados correctamente.
+            </p>
+          </div>
         </ReusableModal>
         {/* modal de Errores */}
         <ReusableModal
@@ -756,7 +674,12 @@ const AddCompaniePage = () => {
           width="w-[45.37rem]"
         >
           <div className="flex flex-col">
-            <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
+            <PlaceAutocomplete
+              onPlaceSelect={setSelectedPlace}
+              value={direccion}
+              setSelectManual={setSelectManual}
+            />
+
             <div>
               {" "}
               <Map
@@ -798,6 +721,7 @@ const AddCompaniePage = () => {
                 place={selectedPlace}
                 marker={marker}
                 setValue={setValue}
+                setDireccion={setDireccion}
               />
             </div>
           </div>

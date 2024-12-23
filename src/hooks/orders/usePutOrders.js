@@ -4,6 +4,7 @@ import { OrdersService } from "../../services/orders/orders.service";
 const usePutOrders = () => {
   const [isChanged, setIsChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [modified, setModified] = useState(false);
 
   const changedOrder = async (orderData, orderId, setModified) => {
     console.log("orderdata hook", orderData);
@@ -20,7 +21,7 @@ const usePutOrders = () => {
     }
   };
 
-  return { changedOrder, isChanged, isLoading };
+  return { changedOrder, isChanged, isLoading, modified, setModified };
 };
 
 export default usePutOrders;

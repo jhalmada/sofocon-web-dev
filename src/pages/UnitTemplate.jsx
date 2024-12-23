@@ -9,22 +9,22 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import UnitTemplateRow from "../components/UnitTemplateRow.jsx";
 import { BASE_URL } from "../utils/Constants.js";
-import {
-  getOrderExcel,
-  getOrderPdf,
-} from "../services/orders/orders.routes.js";
+import { getUnitExcel, getUnitPdf } from "../services/orders/orders.routes.js";
 import useGetUnitOrders from "../hooks/orders/useGetUnitOrders.js";
 const UnitTemplate = () => {
   const {
     orderUnitResponse,
+    search,
+    month,
     setMonth,
+    setSearch,
     setItemsPerPage,
     totalPage,
     total,
     setPage,
     page,
     itemsPerPage,
-    setSearch,
+    downloadFile,
   } = useGetUnitOrders();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,6 +49,17 @@ const UnitTemplate = () => {
     { label: "Noviembre", value: "11" },
     { label: "Diciembre", value: "12" },
   ];
+
+  const handleDownloadExcel = () => {
+    const url = `${BASE_URL}/${getUnitExcel}?search=${search}&month=${month}&year=${new Date().getFullYear()}`;
+    downloadFile(url, `Planilla UNIT.xlsx`);
+  };
+
+  const handleDownloadPdf = () => {
+    const url = `${BASE_URL}/${getUnitPdf}?search=${search}&month=${month}&year=${new Date().getFullYear()}`;
+
+    downloadFile(url, `Planilla UNIT.pdf`);
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -80,7 +91,11 @@ const UnitTemplate = () => {
     closeModal();
   };
   const handleChangeMonth = (value) => {
-    setMonth(value);
+    if (value) {
+      setMonth(value);
+    } else {
+      setMonth(new Date().getMonth() + 1);
+    }
   };
   const openExportModal = () => {
     setIsExportModalOpen(true);
@@ -211,7 +226,6 @@ const UnitTemplate = () => {
                 </tr>
               </thead>
               <tbody>
-                {console.log("respuesta de ordenes", orderUnitResponse)}
                 {orderUnitResponse.map((order, index) => (
                   <UnitTemplateRow
                     key={index}
@@ -219,26 +233,27 @@ const UnitTemplate = () => {
                     entryDate={
                       formatDate(
                         order?.productInOrder.order.workShopDateEntry,
-                      ) || "Sin fecha"
+                      ) || "Sin datos"
                     }
                     name={
-                      order?.productInOrder.order.client?.name || "Sin nombre"
+                      order?.productInOrder.order.client?.name || "Sin datos"
                     }
                     direction={
-                      order?.productInOrder.order.client?.address ||
-                      "Sin direccion"
+                      order?.productInOrder.order.client?.address || "Sin datos"
                     }
-                    type={order?.productInOrder.product?.type}
-                    color={order?.color}
-                    capacity={order?.productInOrder.product?.amount}
+                    type={order?.productInOrder.product?.type || "Sin datos"}
+                    color={order?.color || "Sin datos"}
+                    capacity={
+                      order?.productInOrder.product?.amount || "Sin datos"
+                    }
                     factory={order.fabricUNIT ? "Si" : "No"}
-                    current={order.numberUNIT}
-                    registration={order.enrollment}
+                    current={order.numberUNIT || "Sin datos"}
+                    registration={order.enrollment || "Sin datos"}
                     trial={
-                      order.testDate ? formatDate(order.testDate) : "Sin fecha"
+                      order.testDate ? formatDate(order.testDate) : "Sin datos"
                     }
-                    pressure={order?.pressure}
-                    exp={order?.expansion}
+                    pressure={order?.pressure || "Sin datos"}
+                    exp={order?.expansion || "Sin datos"}
                     discontinued={
                       order?.status === "DISABLED" ||
                       order?.status === "Inhabilitado"
@@ -273,27 +288,25 @@ const UnitTemplate = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getOrderExcel}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadExcel}
+          />
 
-          <a href={`${BASE_URL}/${getOrderPdf}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadPdf}
+          />
         </div>
       </ReusableModal>
       <ReusableModal

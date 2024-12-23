@@ -35,6 +35,7 @@ const OrdersPage = () => {
     month,
     year,
     setModified,
+    setInBoard,
     setStatus,
     setEntryDate,
     setSearch,
@@ -43,9 +44,23 @@ const OrdersPage = () => {
     getAllOrders,
   } = useOrders();
 
-  const [activeTab, setActiveTab] = useState(() => {
-    return sessionStorage.getItem("activeTab") || CLIENTS_ORDERS_TAB;
-  });
+  const navigationActive = (tab) => {
+    switch (tab) {
+      case CLIENTS_ORDERS_TAB:
+        return CLIENTS_ORDERS_TAB;
+      case DIRECT_ORDERS_TAB:
+        return DIRECT_ORDERS_TAB;
+      case BUDGET_TAB:
+        return BUDGET_TAB;
+      case STATUS_PANEL_TAB:
+        return STATUS_PANEL_TAB;
+      default:
+        return STATUS_PANEL_TAB;
+    }
+  };
+  const [activeTab, setActiveTab] = useState(
+    navigationActive(sessionStorage.getItem("activeTab")),
+  );
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [orderId, setOrderId] = useState(null);
 
@@ -122,7 +137,7 @@ const OrdersPage = () => {
 
   const handleStateFilterChange = (value) => {
     switch (value) {
-      case "Solicitado":
+      case "Ingreso a taller":
         setStatus("REQUEST");
         setPage(0);
         break;
@@ -130,7 +145,7 @@ const OrdersPage = () => {
         setStatus("PREPARATION");
         setPage(0);
         break;
-      case "Para retirar":
+      case "Para retirar del taller":
         setStatus("READY_PICKUP");
         setPage(0);
         break;
@@ -152,9 +167,6 @@ const OrdersPage = () => {
 
   useEffect(() => {
     sessionStorage.setItem("activeTab", activeTab);
-  }, [activeTab]);
-
-  useEffect(() => {
     switch (activeTab) {
       case BUDGET_TAB:
         getAllOrders({ isDirect: false, isPreOrder: true, inOrders: false });
@@ -169,6 +181,9 @@ const OrdersPage = () => {
         getAllOrders({ isPreOrder: false, isDirect: false });
     }
   }, [activeTab, getAllOrders]);
+  useEffect(() => {
+    setInBoard(false);
+  }, []);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -199,7 +214,7 @@ const OrdersPage = () => {
               onClick={() => setActiveTab(STATUS_PANEL_TAB)}
               className={`${activeTab === STATUS_PANEL_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-48 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
-              Panel de estados
+              Panel de órdenes
             </h2>
             <h2
               onClick={() => setActiveTab(CLIENTS_ORDERS_TAB)}
@@ -248,8 +263,7 @@ const OrdersPage = () => {
                   <Select
                     placeholder="Selecciona un mes"
                     labelPlacement="outside"
-                    defaultSelectedKeys={[month.toString()]}
-                    className="w-[9.375rem] rounded-lg border"
+                    className="w-52 rounded-lg border"
                     onChange={(e) => handleChangeMonth(e.target.value)}
                   >
                     {months.map((month) => (
@@ -346,7 +360,9 @@ const OrdersPage = () => {
                             retirementDate={formatDate(
                               order.workShopDateDeparture,
                             )}
-                            seller={order?.user?.userInfo?.fullName}
+                            seller={
+                              order?.user?.userInfo?.fullName || "Sin vendedor"
+                            }
                             state={order.status}
                             deleteIconSrc={deleteIcon}
                             onDeleteClick={() =>

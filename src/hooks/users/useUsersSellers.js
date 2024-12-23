@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { UserService } from "../../services/user/user.service.js";
+import { SOFOCON_JWT_TOKEN } from "../../utils/Constants";
+import axios from "axios";
 const useUsersSellers = () => {
   const [userSellerResponse, setUsersSellerResponse] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -11,6 +13,36 @@ const useUsersSellers = () => {
   const [search, setSearch] = useState("");
   const [route, setRoute] = useState(null);
   const [isActive, setIsActive] = useState(null);
+
+  const downloadFile = useCallback(async (url, fileName) => {
+    try {
+      setLoading(true);
+      console.log("Descargando archivo desde:", url);
+      const response = await axios.get(url, {
+        responseType: "blob",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(SOFOCON_JWT_TOKEN)}`,
+        },
+      });
+
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const urlObject = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = urlObject;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(urlObject);
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+    }
+  }, []);
   const getUsersSellers = async () => {
     try {
       setLoading(true);
@@ -26,7 +58,6 @@ const useUsersSellers = () => {
         setTotal(data.pagination.total);
         setUsersSellerResponse(data);
       }
-      
     } catch (e) {
       console.log(e);
     } finally {
@@ -45,12 +76,15 @@ const useUsersSellers = () => {
     total,
     setPage,
     page,
+    search,
+    isActive,
     itemsPerPage,
     setModified,
     modified,
     setSearch,
     setRoute,
     setIsActive,
+    downloadFile,
   };
 };
 
