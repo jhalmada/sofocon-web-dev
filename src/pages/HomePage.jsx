@@ -16,7 +16,6 @@ const coordenadasUruguay = {
   lat: -33.2405,
   lng: -56.0128,
 };
-
 const months = [
   { label: "Enero", value: "01" },
   { label: "Febrero", value: "02" },
@@ -52,7 +51,7 @@ const HomePage = () => {
   const datosGuardados = localStorage.getItem("SOFOCON_PERMISSIONS");
   const { socketConnected } = useSocket();
   const [usersActives, setUsersActive] = useState(
-    JSON.parse(sessionStorage.getItem("usersActives")) || [],
+    JSON.parse(sessionStorage.getItem("usersActives")) || [], 
   );
   const { metricsResponse } = useGetMetrics();
   const { metricsOrdersResponse, setMonth, month, year } = useMetricsOrders();
