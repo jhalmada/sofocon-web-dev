@@ -357,13 +357,13 @@ const CompaniesPage = () => {
 
   const submit = (data) => {
     const user = data.sellers?.map((seller) => ({ id: seller.id }));
-    if (data.sellers.length > 0) {
+    
       const datos = addUsersCompany({ user }, companyId, setModified);
       if (datos) {
         setIsSellersModalOpen(false);
-        setValue2("sellers", []);
+        setValue2("sellers");
       }
-    }
+    
     setSaveConfirmationModalOpen(true);
   };
 
