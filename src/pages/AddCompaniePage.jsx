@@ -362,17 +362,17 @@ const AddCompaniePage = () => {
             </div>
 
             <Input
-              label={"Referente"}
-              placeholder={"Escribe el nombre del referente..."}
+              label={"Otros datos"}
+              placeholder={"Escribe..."}
               {...register("managerName", {
                 required: "Este campo es requerido",
                 minLength: {
                   value: 2,
-                  message: "El nombre debe contener al menos 2 caracteres.",
+                  message: "El campo debe contener al menos 2 caracteres.",
                 },
                 maxLength: {
                   value: 50,
-                  message: "El nombre no puede exceder los 50 caracteres.",
+                  message: "El campo no puede exceder los 50 caracteres.",
                 },
               })}
               errorApi={errors.managerName}
