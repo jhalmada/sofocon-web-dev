@@ -254,6 +254,7 @@ const CompaniesPage = () => {
     }
   };
   const handleConfirmCancel = () => {
+    setValue2("sellers");
     closeConfirmCancelModal();
     closeModal();
   };
@@ -357,21 +358,19 @@ const CompaniesPage = () => {
 
   const submit = (data) => {
     const user = data.sellers?.map((seller) => ({ id: seller.id }));
-    
-      const datos = addUsersCompany({ user }, companyId, setModified);
-      if (datos) {
-        setIsSellersModalOpen(false);
-        setValue2("sellers");
-      }
-    
+
+    const datos = addUsersCompany({ user }, companyId, setModified);
+    if (datos) {
+      setIsSellersModalOpen(false);
+      setValue2("sellers");
+    }
+
     setSaveConfirmationModalOpen(true);
   };
 
   const handleCancelSeller = () => {
     const data = watch2();
     const hasChanges = !isMatch(listUsers, data.sellers);
-    console.log("estos son los que tenia", listUsers);
-    console.log("este es el array nuevo", data.sellers);
     if (hasChanges) {
       openConfirmCancelModal();
     } else {
