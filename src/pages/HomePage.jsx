@@ -127,6 +127,7 @@ const HomePage = () => {
   useEffect(() => {
     const socket = socketConnected();
     if (socket) {
+      console.log(socket);
       socket.on("user-location", (data) => {
         handleSocketData(data);
       });

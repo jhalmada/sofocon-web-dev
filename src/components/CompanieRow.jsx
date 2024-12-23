@@ -50,6 +50,8 @@ const CompanieRow = ({
   listPriceIcon,
   onClickListPrice,
   onClick2,
+  sellersSS,
+  setListUsers,
 }) => {
   const [icon, setIcon] = useState(null);
   const [msjIcon, setMsjIcon] = useState(null);
@@ -140,7 +142,12 @@ const CompanieRow = ({
                 </Link>
               </DropdownItem>
               <DropdownItem key="sellers">
-                <div className="flex gap-3" onClick={onClick}>
+                <div
+                  className="flex gap-3"
+                  onClick={() => {
+                    onClick(), setListUsers(sellersSS);
+                  }}
+                >
                   <img
                     src={sellersIcon}
                     alt="seller icon"

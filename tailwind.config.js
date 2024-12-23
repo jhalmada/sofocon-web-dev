@@ -52,6 +52,7 @@ export default {
         blur: "3px 5px 10px rgba(0, 0, 0, 0.3)",
         lg: "0px 16px 24px 2px rgba(0, 0, 0, 0.14)",
         card: "2px 3px 8px 2px rgba(0, 0, 0, 0.3)",
+        n: "1px -2px 2px rgba(0, 0, 0, 0.2)",
       },
       fontFamily: {
         roboto: ['"Roboto Flex"', "sans-serif"],

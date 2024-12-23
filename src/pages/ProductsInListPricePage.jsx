@@ -14,6 +14,7 @@ import usePutProductInPriceList from "../hooks/priceList/usePutProductinPriceLis
 import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
 import { isMatch, set } from "lodash";
+import SearchInput from "../components/inputs/SearchInput";
 const ProductsInListPricePage = ({
   arraySeller,
   setItemsPerPage,
@@ -26,6 +27,7 @@ const ProductsInListPricePage = ({
   closeModal,
   handleCancelClick,
   setModified,
+  setSearch,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -37,7 +39,7 @@ const ProductsInListPricePage = ({
   const [savedChanged, setSavedChanged] = useState(false);
 
   //Hooks
-  const { productsResponse, setSearch } = useGetProducts();
+  const { productsResponse, setSearch: setSearchProduct } = useGetProducts();
   const { changedPriceList } = usePutPriceList();
   const [modalValidationProduct, setModalValidationProduct] = useState(false);
   const [modalConfirmation, setModalConfirmation] = useState(false);
@@ -169,39 +171,45 @@ const ProductsInListPricePage = ({
   return (
     <div>
       <div className="flex min-h-[calc(90vh-4.375rem)] flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
-        <table className="mt-2 w-full">
-          <thead>
-            <tr>
-              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                Producto
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Precio
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Categoria
-              </th>
-              <th className="p-2 text-md font-semibold leading-[1.125rem]">
-                Acción
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {arraySeller.length > 0 &&
-              arraySeller?.map((seller) => (
-                <ProductsinListRow
-                  key={seller?.id || 0}
-                  name={seller?.name || "Sin nombre"}
-                  price={seller?.list[0]?.price || 0}
-                  category={seller?.category?.name || "Sin categoria"}
-                  deleteIconSrc={deleteIcon}
-                  editIconSrc={editIcon}
-                  onDeleteClick={() => openConfirmDeleteModal(seller.id)}
-                  onEditClick={() => handleEdit(seller.id)}
-                />
-              ))}
-          </tbody>
-        </table>
+        <div>
+          <div className="flex justify-end">
+            <SearchInput placeholder="Buscar..." onChange={setSearch} />
+          </div>
+
+          <table className="mt-2 w-full">
+            <thead>
+              <tr>
+                <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                  Producto
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Precio
+                </th>
+                <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                  Categoria
+                </th>
+                <th className="p-2 text-md font-semibold leading-[1.125rem]">
+                  Acción
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {arraySeller.length > 0 &&
+                arraySeller?.map((seller) => (
+                  <ProductsinListRow
+                    key={seller?.id || 0}
+                    name={seller?.name || "Sin nombre"}
+                    price={seller?.list[0]?.price || 0}
+                    category={seller?.category?.name || "Sin categoria"}
+                    deleteIconSrc={deleteIcon}
+                    editIconSrc={editIcon}
+                    onDeleteClick={() => openConfirmDeleteModal(seller.id)}
+                    onEditClick={() => handleEdit(seller.id)}
+                  />
+                ))}
+            </tbody>
+          </table>
+        </div>
         <div className="flex justify-center p-6">
           <Pagination
             pageIndex={setItemsPerPage}
@@ -237,7 +245,7 @@ const ProductsInListPricePage = ({
               setValue={setValue}
               name={"products"}
               label2={"Productos"}
-              onChange={setSearch}
+              onChange={setSearchProduct}
             />
           </form>
         </div>

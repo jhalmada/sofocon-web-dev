@@ -354,7 +354,7 @@ const AddProductPage = () => {
             buttons={["accept"]}
             onAccept={() => handleAccept()}
           >
-            El producto fue agregado Exitosamente.
+            El producto fue agregado exitosamente.
           </ReusableModal>
           {/*modal para los archivos */}
           <ReusableModal

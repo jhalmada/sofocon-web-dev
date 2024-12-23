@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchIcon from "../../assets/icons/search.svg";
 import XlgIcon from "../../assets/icons/x-lg.svg";
 
@@ -9,7 +9,10 @@ const SearchInput = ({
   onChange = () => {},
 }) => {
   const [search, setSearch] = useState("");
-  onChange(search);
+
+  useEffect(() => {
+    onChange(search);
+  }, [search]);
   return (
     <div className={`${border} ${rounded} relative flex min-w-[22rem]`}>
       <input

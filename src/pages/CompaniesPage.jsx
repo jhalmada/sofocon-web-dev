@@ -153,7 +153,11 @@ const CompaniesPage = () => {
     watch,
   } = useForm();
 
-  const { handleSubmit: handleSubmit2, setValue: setValue2 } = useForm();
+  const {
+    handleSubmit: handleSubmit2,
+    setValue: setValue2,
+    watch: watch2,
+  } = useForm();
   const { userSellerResponse, setSearch } = useUsersSellers();
   const { addUsersCompany } = useUserCompany();
   const openModal = (id) => {
@@ -352,9 +356,25 @@ const CompaniesPage = () => {
   };
 
   const submit = (data) => {
-    const user = data.sellers.map((seller) => ({ id: seller.id }));
-    const datos = addUsersCompany({ user }, companyId, setModified);
-    if (datos) {
+    const user = data.sellers?.map((seller) => ({ id: seller.id }));
+    if (data.sellers.length > 0) {
+      const datos = addUsersCompany({ user }, companyId, setModified);
+      if (datos) {
+        setIsSellersModalOpen(false);
+        setValue2("sellers", []);
+      }
+    }
+    setSaveConfirmationModalOpen(true);
+  };
+
+  const handleCancelSeller = () => {
+    const data = watch2();
+    const hasChanges = !isMatch(listUsers, data.sellers);
+    console.log("estos son los que tenia", listUsers);
+    console.log("este es el array nuevo", data.sellers);
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
       setIsSellersModalOpen(false);
     }
   };
@@ -551,40 +571,43 @@ const CompaniesPage = () => {
                 ) : (
                   <tbody>
                     {companiesResponse.map((companie, index) => (
-                      <CompanieRow
-                        key={index}
-                        id={companie.id}
-                        name={companie.name}
-                        direction={companie.address}
-                        departament={companie.department}
-                        neighborhood={companie.neighborhood}
-                        sellers={"Vendedores"}
-                        nextVisits={
-                          companie.nextVisit
-                            ? formatDate(companie.nextVisit)
-                            : "Sin fecha"
-                        }
-                        state={companie.status}
-                        editIconSrc={editIcon}
-                        deleteIconSrc={deleteIcon}
-                        notesIcon={notesIcon}
-                        onEditClick={() => openModal(companie.id)}
-                        onDeleteClick={() =>
-                          openConfirmDeleteModal(companie.id)
-                        }
-                        sellersIcon={sellerIcons}
-                        listPriceIcon={listPriceIcon}
-                        onClick={() => {
-                          openSellersModal(companie.id),
-                            setCompetenceName(companie.name),
-                            setCompanyId(companie.id),
-                            setListUsers(companie.user);
-                        }}
-                        onClickListPrice={() => {
-                          setListPriceModal(true), setClient(companie.id);
-                        }}
-                        onClick2={() => setCompanyId(companie.id)}
-                      />
+                      <>
+                        <CompanieRow
+                          key={index}
+                          id={companie.id}
+                          name={companie.name}
+                          direction={companie.address}
+                          departament={companie.department}
+                          neighborhood={companie.neighborhood}
+                          sellers={"Vendedores"}
+                          nextVisits={
+                            companie.nextVisit
+                              ? formatDate(companie.nextVisit)
+                              : "Sin fecha"
+                          }
+                          state={companie.status}
+                          editIconSrc={editIcon}
+                          deleteIconSrc={deleteIcon}
+                          notesIcon={notesIcon}
+                          onEditClick={() => openModal(companie.id)}
+                          onDeleteClick={() =>
+                            openConfirmDeleteModal(companie.id)
+                          }
+                          sellersIcon={sellerIcons}
+                          listPriceIcon={listPriceIcon}
+                          sellersSS={companie.user}
+                          setListUsers={setListUsers}
+                          onClick={() => {
+                            openSellersModal(companie.id),
+                              setCompetenceName(companie.name),
+                              setCompanyId(companie.id);
+                          }}
+                          onClickListPrice={() => {
+                            setListPriceModal(true), setClient(companie.id);
+                          }}
+                          onClick2={() => setCompanyId(companie.id)}
+                        />
+                      </>
                     ))}
                   </tbody>
                 )}
@@ -740,7 +763,7 @@ const CompaniesPage = () => {
               className="mb-2 flex w-[8rem] cursor-pointer justify-center"
             >
               <img src={geoaltIcon} alt="geo Icon" />
-              <span className="text-xs leading-[.88rem] underline">
+              <span className="mb-1 mt-2 text-xs leading-[.88rem] underline">
                 Marcar en el mapa
               </span>
             </div>
@@ -963,11 +986,11 @@ const CompaniesPage = () => {
 
       <ReusableModal
         isOpen={isSellersModalOpen}
-        onClose={handleCancelClick}
+        onClose={handleCancelSeller}
         title={competenceName}
         onSubmit={handleSubmit2(submit)}
         buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
+        handleCancelClick={handleCancelSeller}
       >
         <form onSubmit={handleSubmit2(submit)}>
           <NextAutoComplete
