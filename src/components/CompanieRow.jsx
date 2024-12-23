@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
 import watchIcon2 from "../assets/icons/Frame 1.svg";
 import watchIcon3 from "../assets/icons/watch 3.svg";
@@ -55,6 +55,11 @@ const CompanieRow = ({
 }) => {
   const [icon, setIcon] = useState(null);
   const [msjIcon, setMsjIcon] = useState(null);
+  const navigate = useNavigate();
+
+  const handleNote = (id) => {
+    navigate(`/inicio/empresas/notas/${id}`);
+  };
 
   useEffect(() => {
     const today = new Date();
@@ -131,23 +136,23 @@ const CompanieRow = ({
               <img src={puntosvertical} alt="ss" className="cursor-pointer" />
             </DropdownTrigger>
             <DropdownMenu aria-label="Static Actions">
-              <DropdownItem key="notes">
-                <Link to={`notas/${id}`} className="flex gap-3">
+              <DropdownItem key="notes" onClick={() => handleNote(id)}>
+                <div className="flex gap-3">
                   <img
                     src={notesIcon}
                     alt="notes icon"
                     className="h-5 w-5 cursor-pointer"
                   />
                   Notas
-                </Link>
+                </div>
               </DropdownItem>
-              <DropdownItem key="sellers">
-                <div
-                  className="flex gap-3"
-                  onClick={() => {
-                    onClick(), setListUsers(sellersSS);
-                  }}
-                >
+              <DropdownItem
+                key="sellers"
+                onClick={() => {
+                  onClick(), setListUsers(sellersSS);
+                }}
+              >
+                <div className="flex gap-3">
                   <img
                     src={sellersIcon}
                     alt="seller icon"
@@ -156,8 +161,8 @@ const CompanieRow = ({
                   Vendedores
                 </div>
               </DropdownItem>
-              <DropdownItem key="listPrice">
-                <div onClick={onClickListPrice} className="flex gap-3">
+              <DropdownItem key="listPrice" onClick={onClickListPrice}>
+                <div className="flex gap-3">
                   <img
                     src={listPriceIcon}
                     alt="list price icon"
