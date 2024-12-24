@@ -180,20 +180,6 @@ const AddRoutePage = () => {
               />
             </div>
 
-            <div className="mb-2 flex flex-col items-start">
-              <span className="text-gray-700 block text-sm font-light">
-                Asignar nuevo vendedor
-              </span>
-              <Link to={"agregar-usuario"}>
-                <Button
-                  text="Nuevo vendedor"
-                  icon={PlusFillIcon}
-                  iconPosition={"left"}
-                  width="w-50"
-                  color={"cancel"}
-                />
-              </Link>
-            </div>
             <div className="mb-4 space-y-2">
               <NextAutoComplete
                 label2={"Empresas Asignadas"}
@@ -203,20 +189,6 @@ const AddRoutePage = () => {
                 setValue={setValue}
                 onChange={setSearchCompany}
               />
-            </div>
-            <div className="mb-2 flex flex-col items-start">
-              <span className="text-gray-700 block text-sm font-light">
-                Asignar nueva empresa
-              </span>
-              <Link to={"agregar-empresa"}>
-                <Button
-                  text="Nueva Empresa"
-                  icon={PlusFillIcon}
-                  iconPosition={"left"}
-                  width="w-50"
-                  color={"cancel"}
-                />
-              </Link>
             </div>
           </div>
           <div className="flex w-full justify-end py-6">
