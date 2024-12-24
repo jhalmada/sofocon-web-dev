@@ -28,6 +28,7 @@ const AddCompanyRoutePage = ({
   setModified,
   nameCompany,
   setStatus,
+  companyModified,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -35,7 +36,7 @@ const AddCompanyRoutePage = ({
 
   const stateOptions = ["Frecuente", "Potencial", "De baja"];
   //hooks
-  const { companiesResponse } = useCompanies();
+  const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
   console.log(companiesResponse);
   console.log(arrayCompanies);
   const { changedSellerRoute } = usePutSellerRoute();
@@ -56,6 +57,7 @@ const AddCompanyRoutePage = ({
     };
     changedSellerRoute(newData, idCompany, setModified);
     closeModal();
+    companyModified((prev) => !prev);
   };
   const openConfirmDeleteModal = (id) => {
     setCompanyId(id);
@@ -71,6 +73,7 @@ const AddCompanyRoutePage = ({
     };
     changedSellerRoute(newData, idCompany, setModified);
     setConfirmDeleteModalOpen(false);
+    companyModified((prev) => !prev);
   };
 
   //funcion para transformar los Arrays
@@ -206,9 +209,9 @@ const AddCompanyRoutePage = ({
               name={"empresas"}
               label={"Agregar Empresas"}
               setValue={setValue}
-              onChange={setSearch}
+              onChange={setSearchCompany}
             />
-            <p>{errors.vendedores && errors.vendedores.message}</p>
+            <p>{errors.empresas && errors.empresas.message}</p>
           </form>
         </div>
       </ReusableModal>
