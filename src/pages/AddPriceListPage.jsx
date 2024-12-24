@@ -161,7 +161,7 @@ const AddPriceListPage = () => {
                 rules={{
                   required: isAllCompanies
                     ? false
-                    : "debe seleccionar una empresa o todas",
+                    : "Debe seleccionar una empresa o todas",
                 }}
                 render={({ field }) => (
                   <NextAutoComplete

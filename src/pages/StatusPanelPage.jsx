@@ -43,7 +43,9 @@ const StatusPanelPage = () => {
   const countOrdersByStatus = (status) => {
     const translatedStatus = translateStatus(status);
     return ordersResponse.filter(
-      (order) => order.status === status || order.status === translatedStatus,
+      (order) =>
+        (order.status === status && !order.isPreOrder) ||
+        (order.status === translatedStatus && !order.isPreOrder),
     ).length;
   };
   const translateStatus = (status) => {
@@ -117,7 +119,7 @@ const StatusPanelPage = () => {
         </div>
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
           <p>Ingreso a taller ({countOrdersByStatus("REQUEST")})</p>
-          <p>En Preparación ({countOrdersByStatus("PREPARATION")})</p>
+          <p>En preparación ({countOrdersByStatus("PREPARATION")})</p>
           <p>Para retirar del taller ({countOrdersByStatus("READY_PICKUP")})</p>
           <p>Egreso ({countOrdersByStatus("EGRESS")})</p>
           <p>Entregado ({countOrdersByStatus("DELIVERED")})</p>
@@ -126,8 +128,8 @@ const StatusPanelPage = () => {
           <div className="space-y-6 border-r-2 border-gray px-1 2xl:px-4">
             {ordersResponse.filter(
               (order) =>
-                order.status === "REQUEST" ||
-                order.status === "Ingreso a taller",
+                (order.status === "REQUEST" && !order.isPreOrder) ||
+                (order.status === "Ingreso a taller" && !order.isPreOrder),
             ).length === 0 ? (
               <p className="mt-28 flex justify-center text-md font-semibold">
                 Sin resultados
@@ -136,8 +138,8 @@ const StatusPanelPage = () => {
               ordersResponse
                 .filter(
                   (order) =>
-                    order.status === "REQUEST" ||
-                    order.status === "Ingreso a taller",
+                    (order.status === "REQUEST" && !order.isPreOrder) ||
+                    (order.status === "Ingreso a taller" && !order.isPreOrder),
                 )
                 .map((order, index) => (
                   <StatusCard

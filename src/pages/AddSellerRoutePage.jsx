@@ -27,6 +27,7 @@ const AddSellerRoutePage = ({
   idCompany,
   nameCompany,
   setIsActive,
+  companyModified,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -34,7 +35,7 @@ const AddSellerRoutePage = ({
 
   const stateOptions = ["Activo", "Inactivo"];
   //Hooks
-  const { userSellerResponse } = useUsersSellers();
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const { changedSellerRoute } = usePutSellerRoute();
   const {
     handleSubmit,
@@ -49,6 +50,7 @@ const AddSellerRoutePage = ({
       user: [...sellers],
     };
     changedSellerRoute(newData, idCompany, setModified);
+    companyModified((prev) => !prev);
     closeModal();
   };
 
@@ -65,6 +67,7 @@ const AddSellerRoutePage = ({
       user: [...newArray],
     };
     changedSellerRoute(newData, idCompany, setModified);
+    companyModified((prev) => !prev);
     setConfirmDeleteModalOpen(false);
   };
 
@@ -180,7 +183,7 @@ const AddSellerRoutePage = ({
               name={"vendedores"}
               label={"Agregar Vendedores"}
               setValue={setValue}
-              onChange={setSearch}
+              onChange={setSearchSellers}
             />
             <p>{errors.vendedores && errors.vendedores.message}</p>
           </form>
