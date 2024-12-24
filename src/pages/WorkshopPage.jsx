@@ -406,10 +406,7 @@ const WorkshopPage = () => {
                           id={order.id}
                           name={order?.client?.name || "Sin nombre"}
                           orderId={order.orderId}
-                          entryData={
-                            formatDate(order.workShopDateEntry) ||
-                            "Aún sin preparar"
-                          }
+                          entryData={formatDate(order.workShopDateEntry)}
                           seller={
                             order?.user?.userInfo?.fullName || "Sin asignar"
                           }

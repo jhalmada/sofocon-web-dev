@@ -67,7 +67,6 @@ const RouteMapDetailsPage = () => {
     setStatus,
   } = useCompanies();
 
-
   const [activeTab, setActiveTab] = useState(MAP_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -77,6 +76,14 @@ const RouteMapDetailsPage = () => {
   const [isSellersExportModalOpen, setIsSellersExportModalOpen] =
     useState(false);
   const [nameCompany, setNameCompany] = useState("");
+  const [allCompanies, setAllCompanies] = useState(companiesResponse || []);
+  const [assignedCompanies, setAssignedCompanies] = useState([]);
+  const [filteredCompanies, setFilteredCompanies] = useState(allCompanies);
+  const [companySearchTerm, setCompanySearchTerm] = useState("");
+  const [allSellers, setAllSellers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredSellers, setFilteredSellers] = useState(allSellers);
+  const [companyModified, setCompanyModified] = useState(false);
 
   const oneRute = async (id) => {
     const newdatos = await getOneSellerRoute(id);
@@ -88,20 +95,11 @@ const RouteMapDetailsPage = () => {
 
   useEffect(() => {
     oneRute(id);
-  }, []);
-
-  const [allSellers, setAllSellers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredSellers, setFilteredSellers] = useState(allSellers);
+  }, [companyModified]);
 
   useEffect(() => {
     setAllSellers(usersResponse);
   }, [usersResponse]);
-
-  const [allCompanies, setAllCompanies] = useState(companiesResponse || []);
-  const [assignedCompanies, setAssignedCompanies] = useState([]);
-  const [filteredCompanies, setFilteredCompanies] = useState(allCompanies);
-  const [companySearchTerm, setCompanySearchTerm] = useState("");
 
   const handleDownloadSellersExcel = () => {
     const url = `${BASE_URL}/${getUsersExcel}?isSeller=true&route=${id}${searchSellers ? `&search=${searchSellers}` : ""}${isActive !== null ? `&isActive=${isActive}` : ""}`;
@@ -299,14 +297,15 @@ const RouteMapDetailsPage = () => {
                   </th>
                 </tr>
               </thead>
+              {console.log("datos", datos?.totalClients)}
               <tbody>
                 <RouteMapDetailsRow
                   id={datos?.id}
                   name={datos?.name || "Nombre de la ruta"}
                   zone={datos?.zone || "zona de la ruta"}
-                  companies={datos?.totalClients || "cargando"}
-                  sellers={datos?.totalSeller || "cargando"}
-                  state={datos?.isActive || "cargando"}
+                  companies={datos?.totalClients || "0"}
+                  sellers={datos?.totalSeller || "0"}
+                  state={datos?.isActive || "Sin estado"}
                   array={companiesResponse}
                 />
               </tbody>
@@ -333,6 +332,7 @@ const RouteMapDetailsPage = () => {
             idCompany={id}
             nameCompany={datos?.name}
             setIsActive={setIsActive}
+            companyModified={setCompanyModified}
           />
         )}
         {activeTab === COMPANIES_TAB && (
@@ -352,6 +352,7 @@ const RouteMapDetailsPage = () => {
             idCompany={id}
             nameCompany={datos?.name}
             setStatus={setStatus}
+            companyModified={setCompanyModified}
           />
         )}
       </div>
