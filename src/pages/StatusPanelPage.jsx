@@ -117,7 +117,7 @@ const StatusPanelPage = () => {
         </div>
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
           <p>Ingreso a taller ({countOrdersByStatus("REQUEST")})</p>
-          <p>En Preparación ({countOrdersByStatus("PREPARATION")})</p>
+          <p>En preparación ({countOrdersByStatus("PREPARATION")})</p>
           <p>Para retirar del taller ({countOrdersByStatus("READY_PICKUP")})</p>
           <p>Egreso ({countOrdersByStatus("EGRESS")})</p>
           <p>Entregado ({countOrdersByStatus("DELIVERED")})</p>

@@ -67,7 +67,6 @@ const RouteMapDetailsPage = () => {
     setStatus,
   } = useCompanies();
 
-
   const [activeTab, setActiveTab] = useState(MAP_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -88,7 +87,7 @@ const RouteMapDetailsPage = () => {
 
   useEffect(() => {
     oneRute(id);
-  }, []);
+  }, [id, datos]);
 
   const [allSellers, setAllSellers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -299,6 +298,7 @@ const RouteMapDetailsPage = () => {
                   </th>
                 </tr>
               </thead>
+              {console.log("datos", datos?.totalClients)}
               <tbody>
                 <RouteMapDetailsRow
                   id={datos?.id}
