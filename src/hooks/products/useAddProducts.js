@@ -10,7 +10,7 @@ const useAddProducts = () => {
       const { data } = await ProductsService.postAddProductsApi(productsData);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     } finally {
       setLoading(false);

@@ -25,7 +25,7 @@ const useNotes = (id) => {
       setTotal(data.pagination.total);
       setNotesResponse(data.result);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

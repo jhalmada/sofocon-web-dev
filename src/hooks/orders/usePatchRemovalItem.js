@@ -13,7 +13,7 @@ const usePatchRemovalItem = (id) => {
       const { data } = await OrdersService.patchOneItemApi(id, body);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

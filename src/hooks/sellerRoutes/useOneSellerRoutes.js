@@ -6,7 +6,7 @@ const useOneSellerRoutes = () => {
   const [modified, setModified] = useState(false);
   const [id, setId] = useState(0);
 
-  //la funcion principal
+
   const getOneSellerRoute = async (routeId) => {
     try {
       setLoading(true);
@@ -14,7 +14,7 @@ const useOneSellerRoutes = () => {
       const { data } = await sellerRoutesService.getOneSellerRouteApi(routeId);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

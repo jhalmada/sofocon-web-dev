@@ -1,18 +1,13 @@
-import { useState } from "react";
 import { io } from "socket.io-client";
 
 export const useSocket = () => {
-  const [socket, setSocket] = useState(null);
-
   const socketConnected = () => {
     let newSocket;
 
     try {
       newSocket = io("https://sofocon.api.novexisconsulting.xyz");
 
-      newSocket.on("connect", () => {
-        console.log("Conectado al servidor de Socket.IO");
-      });
+      newSocket.on("connect", () => {});
 
       newSocket.on("error", (err) => {
         console.error("Error en la conexión:", err.message);

@@ -59,7 +59,7 @@ const Public = () => {
   }
 
   const permisos = formatearArrayLocalStorage();
-  console.log(permisos);
+
 
   return (
     <div className="flex h-screen flex-col font-roboto">

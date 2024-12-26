@@ -26,7 +26,7 @@ const useGetProducts = (id = null, idCat = null) => {
       setTotal(data.pagination.total);
       setProductsResponse(data.result);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

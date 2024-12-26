@@ -7,7 +7,7 @@ const usePutOrders = () => {
   const [modified, setModified] = useState(false);
 
   const changedOrder = async (orderData, orderId, setModified) => {
-    console.log("orderdata hook", orderData);
+
     try {
       setIsLoading(true);
       await OrdersService.putOrderApi(orderData, orderId);
