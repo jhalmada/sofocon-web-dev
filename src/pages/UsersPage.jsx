@@ -68,7 +68,6 @@ const UsersPage = () => {
     setPage: setPageSellers,
     page: pageSellers,
     itemsPerPage: itemsPerPageSellers,
-    search: searchSellers,
     setModified: setModifiedSellers,
     setIsActive: setIsActiveSellers,
     setSearch: setSearchSellers,
@@ -87,6 +86,22 @@ const UsersPage = () => {
   const [checkSelected, setCheckSelected] = useState("existente");
   const roleOptions = RolesResponse?.map((role) => role.name) || [];
   const [dataEdit, setDataEdit] = useState(null);
+
+  const navigationActive = (tab) => {
+    switch (tab) {
+      case USER_TAB:
+        return USER_TAB;
+      case SELLERS_TAB:
+        return SELLERS_TAB;
+      case ROLES_TAB:
+        return ROLES_TAB;
+      default:
+        return USER_TAB;
+    }
+  };
+  const [activeTab, setActiveTab] = useState(
+    navigationActive(sessionStorage.getItem("activeTab")),
+  );
 
   const handleDownloadExcel1 = () => {
     const url = `${BASE_URL}/${getUsersExcel}?isSeller=false${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`;
@@ -230,24 +245,6 @@ const UsersPage = () => {
       setRole(null);
     }
   };
-
-  const navegacionActive = (tabActive) => {
-    switch (tabActive) {
-      case "users":
-        return "users";
-      case "sellers":
-        return "sellers";
-      case "roles":
-        return "roles";
-
-      default:
-        return "users";
-    }
-  };
-
-  const [activeTab, setActiveTab] = useState(
-    navegacionActive(sessionStorage.getItem("activeTab")),
-  );
 
   useEffect(() => {
     sessionStorage.setItem("activeTab", activeTab);

@@ -1,5 +1,4 @@
-import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
@@ -11,7 +10,7 @@ import ReusableModal from "../components/modals/ReusableModal";
 import { useForm } from "react-hook-form";
 import BackButton from "../components/buttons/BackButton";
 const AddRolePage = () => {
-  const { postAddRoles, loading, idRol } = useAddroles();
+  const { postAddRoles } = useAddroles();
   const navigate = useNavigate();
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);

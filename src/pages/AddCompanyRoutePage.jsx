@@ -6,10 +6,9 @@ import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
 import ReusableModal from "../components/modals/ReusableModal";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import SearchInput from "../components/inputs/SearchInput";
-import SaveImg from "../assets/img/save.svg";
 import disconnectedImg from "../assets/images/disconnected.svg";
 
 const AddCompanyRoutePage = ({
@@ -30,21 +29,18 @@ const AddCompanyRoutePage = ({
   setStatus,
   companyModified,
 }) => {
-  //estados
-  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [companyId, setCompanyId] = useState(null);
-
-  const stateOptions = ["Frecuente", "Potencial", "De baja"];
-  //hooks
-  const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
-  console.log(companiesResponse);
-  console.log(arrayCompanies);
   const { changedSellerRoute } = usePutSellerRoute();
+  const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
   const {
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
+  //estados
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [companyId, setCompanyId] = useState(null);
+
+  const stateOptions = ["Frecuente", "Potencial", "De baja"];
 
   //funciones
   const onSubmit = (data) => {

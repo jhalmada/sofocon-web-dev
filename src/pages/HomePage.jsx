@@ -46,18 +46,16 @@ const years = [
 ];
 
 const HomePage = () => {
-  //estados
-  //hooks
   const datosGuardados = localStorage.getItem("SOFOCON_PERMISSIONS");
   const { socketConnected } = useSocket();
   const [usersActives, setUsersActive] = useState(
-    JSON.parse(sessionStorage.getItem("usersActives")) || [], 
+    JSON.parse(sessionStorage.getItem("usersActives")) || [],
   );
   const { metricsResponse } = useGetMetrics();
   const { metricsOrdersResponse, setMonth, month, year } = useMetricsOrders();
   const { metricsProductsResponse, setYear } = useMetricsProduts();
   const { sellerBestResponse, setMonth: setMonthCircle } = useGetSellerBest();
-  //funciones
+
   const keys = metricsResponse ? Object.keys(metricsResponse) : [];
 
   const [selectedMarker, setSelectedMarker] = useState(false);
@@ -69,11 +67,9 @@ const HomePage = () => {
   };
 
   const handleChangeMonth = (value) => {
-    console.log(value);
     setMonth(value);
   };
   const handleChangeMonthCircle = (value) => {
-    console.log(value);
     setMonthCircle(value);
   };
 
@@ -91,7 +87,6 @@ const HomePage = () => {
 
     // Buscamos el usuario existente o creamos uno nuevo
     const numberIndex = usersActives.findIndex((user) => user.id === id);
-    console.log(data);
 
     if (numberIndex >= 0) {
       usersActives.splice(numberIndex, 1, {
@@ -116,7 +111,6 @@ const HomePage = () => {
 
   const handleSocketDataDisconected = (data) => {
     const { client } = data;
-    console.log(data);
     const array = JSON.parse(sessionStorage.getItem("usersActives"));
     const newArray = array.filter((user) => user.clientId !== client);
     setUsersActive(newArray);
@@ -127,7 +121,6 @@ const HomePage = () => {
   useEffect(() => {
     const socket = socketConnected();
     if (socket) {
-      console.log(socket);
       socket.on("user-location", (data) => {
         handleSocketData(data);
       });

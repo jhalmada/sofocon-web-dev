@@ -27,14 +27,12 @@ const LoginPage = () => {
       const loginResult = await onLogin(data);
 
       if (!loginResult) {
-        // Mostrar mensaje de error
         setIsModalOpen(true);
       } else {
         navigate(HOME_ROUTE);
       }
     } catch (error) {
       console.error(error);
-      // Mostrar mensaje de error
       alert("Ocurrió un error durante el inicio de sesión");
     }
   };
@@ -58,7 +56,7 @@ const LoginPage = () => {
               /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
             message: "Formato de email incorrecto",
           },
-        })} // Add this line
+        })}
         errorApi={errors.email}
         msjError={errors.email ? errors.email.message : ""}
       />

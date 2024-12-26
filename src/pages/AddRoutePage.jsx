@@ -1,16 +1,13 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
-import PlusFillIcon from "../assets/icons/plus-fill.svg";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import { useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { useForm } from "react-hook-form";
-import useUsers from "../hooks/users/use.users";
 import useCompanies from "../hooks/companies/useCompanies";
 import AddSellersRoutes from "../hooks/sellerRoutes/useAddSellerRoutes";
-import SearchInput from "../components/inputs/SearchInput";
 import BackButton from "../components/buttons/BackButton";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import useUsersSellers from "../hooks/users/useUsersSellers";
@@ -28,7 +25,7 @@ const AddRoutePage = () => {
   const [isMapModal, setIsMapModal] = useState(false);
   const [msjError, setMsjError] = useState("");
   const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
-  const { postAddSellersRoutes, loading } = AddSellersRoutes();
+  const { postAddSellersRoutes } = AddSellersRoutes();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
@@ -66,9 +63,7 @@ const AddRoutePage = () => {
 
     handleSellerCreation(newData);
   };
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSaveConfirmationModalOpen(false);

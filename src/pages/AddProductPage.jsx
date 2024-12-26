@@ -4,7 +4,7 @@ import Input from "../components/inputs/Input";
 import uploadIcon from "../assets/icons/arrow-blue.svg";
 import Button from "../components/buttons/Button";
 import arrowRigthIcon from "../assets/icons/arrow-right.svg";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 import useAddProducts from "../hooks/products/useAddProducts";
 import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray";
@@ -15,7 +15,6 @@ import useGetPriceList from "../hooks/priceList/useGetPriceList";
 import { Checkbox } from "@nextui-org/react";
 
 const AddProductPage = () => {
-  //estados
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -24,9 +23,7 @@ const AddProductPage = () => {
   const [isToRecharge, setIsToRecharge] = useState(false);
   const [modalValidationProduct, setModalValidationProduct] = useState(false);
 
-  //Hooks
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -41,17 +38,13 @@ const AddProductPage = () => {
 
   const { id } = useParams();
 
-  //Funciones
   const validateInput = (array) => {
-    console.log(array);
     const result = array.find((product) => product.value === "");
-    console.log(result);
     return result ? false : true;
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log(file);
     if (file) {
       const validTypes = ["image/png", "image/jpg", "image/jpeg"];
       if (!validTypes.includes(file.type)) {
@@ -100,7 +93,6 @@ const AddProductPage = () => {
     if (response) {
       setSaveConfirmationModalOpen(true);
     }
-    console.log(file);
   };
 
   const handleAccept = () => {

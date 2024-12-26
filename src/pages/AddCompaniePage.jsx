@@ -72,11 +72,8 @@ const AddCompaniePage = () => {
   const [direccion, setDireccion] = useState("");
 
   const handleCompanyCreation = async (companyData) => {
-    console.log("entra aqui");
     try {
       const newCompany = await postAddCompany(companyData);
-      console.log(newCompany);
-      console.log("Empresa creada exitosamente");
       if (newCompany) {
         setSaveConfirmationModalOpen(true);
       } else {
@@ -105,8 +102,7 @@ const AddCompaniePage = () => {
       nextVisit.month - 1,
       nextVisit.day,
     );
-    console.log(newdata);
-    //formate la fecha para que sea aceptada por el back
+
     const formattedDate = newdata.toISOString();
     switch (checkSelected) {
       case "RUT":
@@ -159,9 +155,7 @@ const AddCompaniePage = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    //setConfirmCancelModalOpen(false);
     setSaveConfirmationModalOpen(false);
-    //setConfirmDeleteModalOpen(false);
   };
 
   const closeSaveConfirmationModal = () => {
@@ -491,7 +485,6 @@ const AddCompaniePage = () => {
                 </Select>
                 <p className="mt-1 font-roboto text-xs text-red_e">
                   {errors.status ? errors.status.message : ""}
-                  {console.log(errors.status)}
                 </p>
               </>
             ) : (
@@ -709,8 +702,7 @@ const AddCompaniePage = () => {
                     setSelectManual({
                       lat: e.latLng.lat(),
                       lng: e.latLng.lng(),
-                    }),
-                      console.log(e);
+                    });
                   }}
                 />
 

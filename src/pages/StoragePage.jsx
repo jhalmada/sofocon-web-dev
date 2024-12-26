@@ -5,12 +5,9 @@ import FilterSelect from "../components/filters/FilterSelect";
 import StorageRow from "../components/StorageRow";
 import { Select, SelectItem } from "@nextui-org/react";
 import ReusableModal from "../components/modals/ReusableModal";
-import useGetProducts from "../hooks/products/useGetProducts";
-import { useParams } from "react-router-dom";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders";
-// import useGetOneOrder from "../hooks/orders/useGetOneOrder";
 import SearchInput from "../components/inputs/SearchInput";
 import SaveImg from "../assets/img/save.svg";
 
@@ -29,20 +26,11 @@ const StoragePage = ({
   setPage,
   year,
 }) => {
-  const { id } = useParams();
-  const { productsResponse, setSearch: setSearchProducts } = useGetProducts();
-  // const { getOneOrder } = useGetOneOrder(id);
   const { deleteOrder } = useDeleteOrders();
   const {
-    register,
-    handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm();
 
-  const [autocompleteResults, setAutocompleteResults] = useState([]);
-  const [quantity, setQuantity] = useState({});
-  const [recharged, setRecharged] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isExportCompetingModalOpen, setIsExportCompetingModalOpen] =
@@ -54,7 +42,6 @@ const StoragePage = ({
   const [openScannerModal, setOpenScannerModal] = useState(false);
   const [orderId, setOrderId] = useState(null);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [orderDetails, setOrderDetails] = useState(null);
 
   const stateOptions = [
     "Ingreso a taller",
@@ -140,10 +127,6 @@ const StoragePage = ({
     setConfirmDeleteModalOpen(true);
   };
 
-  const handleCancelClick = () => {
-    openConfirmCancelModal();
-    setOpenScannerModal(false);
-  };
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
@@ -152,14 +135,6 @@ const StoragePage = ({
     deleteOrder(orderId, setModified);
     closeConfirmDeleteModal();
   };
-
-  // const oneOrder = async (id) => {
-  //   const newdatos = await getOneOrder(id);
-  //   setOrderDetails(newdatos);
-  // };
-  // useEffect(() => {
-  //   oneOrder(id);
-  // }, [id]);
 
   const handleStateFilterChange = (value) => {
     switch (value) {
@@ -181,28 +156,6 @@ const StoragePage = ({
         setPage(0);
         break;
     }
-  };
-
-  const handleSelectionChange = (id, value) => {
-    const selectedValue = value.anchorKey === "true";
-    setRecharged((prev) => ({
-      ...prev,
-      [id]: selectedValue,
-    }));
-  };
-  const handleQuantityChange = (itemId, value) => {
-    setQuantity((prev) => ({
-      ...prev,
-      [itemId]: value,
-    }));
-  };
-  const handleDeleteSelection = (id) => {
-    const updatedSelectedItems = autocompleteResults.filter(
-      (selection) => selection.id !== id,
-    );
-
-    setValue(name, updatedSelectedItems);
-    setAutocompleteResults(updatedSelectedItems);
   };
 
   return (
