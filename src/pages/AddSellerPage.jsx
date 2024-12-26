@@ -148,6 +148,7 @@ const AddSellerPage = () => {
               msjError={errors.ci ? errors.ci.message : ""}
             />
             <Input
+              type="number"
               label={"Teléfono de contacto"}
               placeholder={"123456789"}
               {...register("phone", {
