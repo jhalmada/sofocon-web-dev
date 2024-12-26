@@ -1,12 +1,10 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import Input from "../components/inputs/Input";
-import uploadIcon from "../assets/icons/upload.svg";
 import Button from "../components/buttons/Button";
 import arrowRigthIcon from "../assets/icons/arrow-right.svg";
-import { Controller, set, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
-import useAddProducts from "../hooks/products/useAddProducts";
 import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray";
 import ReusableModal from "../components/modals/ReusableModal";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
@@ -25,11 +23,8 @@ const AddPriceListPage = () => {
 
   //Hooks
   const { productsResponse, setSearch } = useGetProducts();
-
   const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
-
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -39,15 +34,10 @@ const AddPriceListPage = () => {
     control,
     formState: { errors },
   } = useForm();
-
   const { postAddPriceList } = useAddPriceList();
 
-  //Funciones
-
   const validateInput = (array) => {
-    console.log(array);
     const result = array.find((product) => product.value === "");
-    console.log(result);
     return result ? false : true;
   };
 

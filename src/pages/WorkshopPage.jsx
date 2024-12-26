@@ -382,7 +382,7 @@ const WorkshopPage = () => {
                       </th>
                     </tr>
                   </thead>
-                  {console.log("orders", ordersResponse)}
+
                   <tbody>
                     {ordersResponse.length === 0 ? (
                       <tr>

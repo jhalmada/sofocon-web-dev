@@ -12,7 +12,7 @@ const useGetRemovalItem = (id) => {
       const { data } = await OrdersService.getOneItemApi(id);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

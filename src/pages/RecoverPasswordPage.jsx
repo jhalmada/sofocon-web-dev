@@ -14,13 +14,12 @@ const RecoverPasswordPage = () => {
     formState: { errors },
   } = useForm();
 
-  const { postRecoveryPassword, loading } = useRecovery();
+  const { postRecoveryPassword } = useRecovery();
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     const { email } = data;
     const respuesta = await postRecoveryPassword({ email });
-    console.log(respuesta);
     if (respuesta.response) {
       setModalMensaje(true);
     } else {

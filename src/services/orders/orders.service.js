@@ -21,7 +21,7 @@ export class OrdersService {
     await axios.post(ordersRoutes.postOrders, orderData);
 
   static putOrderApi = async (orderData, orderId) => {
-    console.log("respuestaaaa", orderData);
+
     return await axios.put(`${ordersRoutes.putOrders}/${orderId}`, orderData);
   };
 

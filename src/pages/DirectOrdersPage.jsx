@@ -19,7 +19,6 @@ const DirectOrdersPage = ({
   page,
   itemsPerPage,
   year,
-  month,
   setModified,
   setStatus,
   setMonth,
@@ -87,10 +86,6 @@ const DirectOrdersPage = ({
     const day = String(date.getDate()).padStart(2, "0");
 
     return `${day}/${month}/${year}`;
-  };
-  const openConfirmDeleteModal = (id) => {
-    setOrderId(id);
-    setConfirmDeleteModalOpen(true);
   };
 
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);

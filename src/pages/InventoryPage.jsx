@@ -25,7 +25,6 @@ import { getProductsExcel } from "../services/products/products.routes.js";
 import { isMatch } from "lodash";
 
 const UsersPage = () => {
-  //estados
   const [productId, setProductId] = useState(null);
   const [deletemodal, setDeleteModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -39,8 +38,6 @@ const UsersPage = () => {
   const [FileAccept, setFileAccept] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [dataEdit, setDataEdit] = useState(null);
-
-  //Hooks
 
   const { id, name } = useParams();
   const idCat = id;
@@ -72,7 +69,6 @@ const UsersPage = () => {
     watch,
   } = useForm();
 
-  //funciones
   const handleDelete = (id) => {
     setProductId(id);
     setDeleteModal(true);
@@ -102,7 +98,6 @@ const UsersPage = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log(file);
     if (file) {
       const validTypes = ["image/png", "image/jpg", "image/jpeg"];
       if (!validTypes.includes(file.type)) {

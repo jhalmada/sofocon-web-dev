@@ -13,7 +13,7 @@ import Input from "../components/inputs/Input";
 import usePutProductInPriceList from "../hooks/priceList/usePutProductinPriceList";
 import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
-import { isMatch, set } from "lodash";
+import { isMatch } from "lodash";
 import SearchInput from "../components/inputs/SearchInput";
 const ProductsInListPricePage = ({
   arraySeller,
@@ -29,7 +29,6 @@ const ProductsInListPricePage = ({
   setModified,
   setSearch,
 }) => {
-  //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
@@ -38,16 +37,13 @@ const ProductsInListPricePage = ({
   const [editProduct, setEditProduct] = useState(null);
   const [savedChanged, setSavedChanged] = useState(false);
 
-  //Hooks
   const { productsResponse, setSearch: setSearchProduct } = useGetProducts();
   const { changedPriceList } = usePutPriceList();
   const [modalValidationProduct, setModalValidationProduct] = useState(false);
   const [modalConfirmation, setModalConfirmation] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const {
-    register,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
   } = useForm();
@@ -55,7 +51,7 @@ const ProductsInListPricePage = ({
   const {
     register: register2,
     handleSubmit: handleSubmit2,
-    reset: reset2,
+
     setValue: setValue2,
     formState: { errors: errors2 },
     watch,
@@ -64,16 +60,12 @@ const ProductsInListPricePage = ({
 
   const { changedProductInPriceList } = usePutProductInPriceList();
 
-  //funciones
   const validateInput = (array) => {
-    console.log(array);
     const result = array.find((product) => product.value === "");
-    console.log(result);
     return result ? false : true;
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     const { products } = data;
 
     const newArray2 = arraySeller.map((product) => ({

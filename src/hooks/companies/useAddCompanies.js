@@ -10,7 +10,7 @@ const useAddCompany = () => {
       const { data } = await CompaniesService.postAddCompaniesApi(userData);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     } finally {
       setLoading(false);

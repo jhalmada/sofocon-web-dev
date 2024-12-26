@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
-import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
-import { useForm } from "react-hook-form";
 import useOneSellerRoutes from "../hooks/sellerRoutes/useOneSellerRoutes.js";
 import { BASE_URL } from "../utils/Constants.js";
 import {
@@ -29,7 +27,6 @@ const ListPriceDetailsPage = () => {
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const {
     productsResponse,
-    setList,
     setItemsPerPage,
     page,
     totalPage,
@@ -41,8 +38,6 @@ const ListPriceDetailsPage = () => {
   } = useGetProducts(id);
 
   const [companyId, setCompanyId] = useState(null);
-
-  const { getOneSellerRoute } = useOneSellerRoutes();
   const [datos, setDatos] = useState(null);
 
   const { deleteCompany } = useDeleteCompanies();
@@ -57,7 +52,6 @@ const ListPriceDetailsPage = () => {
     setModified: setModifiedCompanies,
     setSearch: setCompanySearch,
     setStatus,
-    setList: setListCompanies,
   } = useCompanies(id);
 
   const [activeTab, setActiveTab] = useState(PRODUCTS_TAB);
@@ -69,11 +63,11 @@ const ListPriceDetailsPage = () => {
   const [isSellersExportModalOpen, setIsSellersExportModalOpen] =
     useState(false);
 
-  const openModal = (id) => {
+  const openModal = () => {
     setIsModalOpen(true);
   };
 
-  const openSellersModal = (id) => {
+  const openSellersModal = () => {
     setIsSellersModalOpen(true);
   };
 
@@ -95,17 +89,6 @@ const ListPriceDetailsPage = () => {
     closeModal();
   };
 
-  const openExportModal = (id) => {
-    setIsExportModalOpen(true);
-  };
-  const openSellersExportModal = (id) => {
-    setIsSellersExportModalOpen(true);
-  };
-
-  //funciones
-
-  //funciones del modal de añadir vendedor
-  //para cerrar el modal
   const closeModal = () => {
     setIsModalOpen(false);
     setIsExportModalOpen(false);
@@ -115,9 +98,9 @@ const ListPriceDetailsPage = () => {
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-  //para el boton de cancelar
+
   const handleCancelClick = () => openConfirmCancelModal();
-  //para la confirmacion de cancelar
+
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">

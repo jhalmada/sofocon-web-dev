@@ -10,7 +10,7 @@ const AddUsers = () => {
       const { data } = await UserService.postAddUsersApi(userData);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     } finally {
       setLoading(false);

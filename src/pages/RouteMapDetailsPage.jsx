@@ -77,7 +77,6 @@ const RouteMapDetailsPage = () => {
     useState(false);
   const [nameCompany, setNameCompany] = useState("");
   const [allCompanies, setAllCompanies] = useState(companiesResponse || []);
-  const [assignedCompanies, setAssignedCompanies] = useState([]);
   const [filteredCompanies, setFilteredCompanies] = useState(allCompanies);
   const [companySearchTerm, setCompanySearchTerm] = useState("");
   const [allSellers, setAllSellers] = useState([]);
@@ -181,7 +180,6 @@ const RouteMapDetailsPage = () => {
     setIsSellersExportModalOpen(true);
   };
 
-  //para cerrar el modal
   const closeModal = () => {
     setIsModalOpen(false);
     setIsExportModalOpen(false);
@@ -191,9 +189,9 @@ const RouteMapDetailsPage = () => {
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-  //para el boton de cancelar
+
   const handleCancelClick = () => openConfirmCancelModal();
-  //para la confirmacion de cancelar
+
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
@@ -297,7 +295,7 @@ const RouteMapDetailsPage = () => {
                   </th>
                 </tr>
               </thead>
-              {console.log("datos", datos?.totalClients)}
+
               <tbody>
                 <RouteMapDetailsRow
                   id={datos?.id}

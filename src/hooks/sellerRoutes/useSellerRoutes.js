@@ -25,7 +25,7 @@ const useSellerRoutes = () => {
       setTotal(data.pagination.total);
       setSellerRouteResponse(data.result);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

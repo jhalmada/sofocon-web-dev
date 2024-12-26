@@ -22,7 +22,7 @@ const AddUserPage = () => {
   } = useForm();
   const navigate = useNavigate();
   const { RolesResponse } = useRoles();
-  const { postAddUsers, loading } = AddUsers();
+  const { postAddUsers } = AddUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);

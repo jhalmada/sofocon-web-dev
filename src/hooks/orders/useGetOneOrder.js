@@ -12,7 +12,7 @@ const useGetOneOrder = (id) => {
       const { data } = await OrdersService.getOneOrderApi(id);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

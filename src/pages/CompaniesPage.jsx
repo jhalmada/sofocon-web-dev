@@ -244,8 +244,7 @@ const CompaniesPage = () => {
         data.nextVisit.day,
       ).toISOString(),
     };
-    console.log(dataEdit);
-    console.log(updatedData);
+
     const hasChanges = !isMatch(dataEdit, updatedData);
     if (hasChanges) {
       openConfirmCancelModal();
@@ -280,7 +279,6 @@ const CompaniesPage = () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     const {
       nextVisit,
       name,
@@ -298,7 +296,6 @@ const CompaniesPage = () => {
       nextVisit.day,
     );
 
-    //formate la fecha para que sea aceptada por el back
     const formattedDate = newdata.toISOString();
     switch (checkSelected) {
       case "RUT":
@@ -378,7 +375,6 @@ const CompaniesPage = () => {
     }
   };
   const handleVisitFilterChange = (value) => {
-    console.log(value);
     switch (value) {
       case "< 1 mes":
         setNextVisit(1);
@@ -883,7 +879,6 @@ const CompaniesPage = () => {
                 </Select>
                 <p className="mt-1 font-roboto text-xs text-red_e">
                   {errors.status ? errors.status.message : ""}
-                  {console.log(errors.status)}
                 </p>
               </>
             ) : (
@@ -1134,8 +1129,7 @@ const CompaniesPage = () => {
                   setSelectManual({
                     lat: e.latLng.lat(),
                     lng: e.latLng.lng(),
-                  }),
-                    console.log(e);
+                  });
                 }}
               />
 
