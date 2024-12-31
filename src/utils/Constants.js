@@ -1,4 +1,4 @@
-export const BASE_URL = "https://sofocon.api.novexisconsulting.xyz/api";
+export const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 //rutas de la aplicacion
 export const HOME_ROUTE = "/inicio";
