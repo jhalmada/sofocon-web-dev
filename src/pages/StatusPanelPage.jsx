@@ -1,25 +1,31 @@
-import { Select, SelectItem } from "@nextui-org/react";
 import StatusCard from "../components/cards/StatusCard";
 import useOrders from "../hooks/orders/useOrders";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import useUsersSellers from "../hooks/users/useUsersSellers";
+import { Controller, useForm } from "react-hook-form";
+import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 
 const StatusPanelPage = () => {
-  const { ordersResponse, getAllOrders, setEntryDate, setPage } = useOrders();
+  const { ordersResponse, getAllOrders, setUser, setInBoard, setItemsPerPage } =
+    useOrders();
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
 
-  const monthsOptions = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
-  ];
+  const {
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm();
+
+  const [sellers, setSellers] = useState("");
+
+  const handleSelectSeller = (selectedSeller) => {
+    if (selectedSeller) {
+      setUser(selectedSeller.id);
+    } else {
+      setUser(null);
+    }
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -28,76 +34,102 @@ const StatusPanelPage = () => {
 
     return `${day}/${month}/${year}`;
   };
+  const transformData = (array) => {
+    return array.map((item) => ({
+      id: item.id,
+      name: item.userInfo.fullName,
+    }));
+  };
   const countOrdersByStatus = (status) => {
+    const translatedStatus = translateStatus(status);
     return ordersResponse.filter(
       (order) =>
-        order.status === status || order.status === translateStatus(status),
+        (order.status === status && !order.isPreOrder) ||
+        (order.status === translatedStatus && !order.isPreOrder),
     ).length;
   };
   const translateStatus = (status) => {
     const statusTranslations = {
-      REQUEST: "Solicitado",
+      REQUEST: "Ingreso a taller",
       PREPARATION: "En preparación",
-      READY_PICKUP: "Para retirar",
+      READY_PICKUP: "Para retirar del taller",
       EGRESS: "Egreso",
       DELIVERED: "Entregado",
+      "Ingreso a taller": "REQUEST",
+      "En preparación": "PREPARATION",
+      "Para retirar del taller": "READY_PICKUP",
+      Egreso: "EGRESS",
+      Entregado: "DELIVERED",
     };
     return statusTranslations[status] || status;
   };
-  const handleMonthChange = (e) => {
-    const monthMap = {
-      Enero: "01",
-      Febrero: "02",
-      Marzo: "03",
-      Abril: "04",
-      Mayo: "05",
-      Junio: "06",
-      Julio: "07",
-      Agosto: "08",
-      Septiembre: "09",
-      Octubre: "10",
-      Noviembre: "11",
-      Diciembre: "12",
-    };
 
-    const selectedMonth = monthMap[e.target.value] || "";
-    setEntryDate(selectedMonth ? `${selectedMonth}` : "");
-    setPage(0);
+  const translatePaymentStatus = (state) => {
+    switch (state) {
+      case "CASH":
+        return "Efectivo";
+      case "CREDIT":
+        return "Crédito";
+      case "CHECK":
+        return "Cheque";
+      default:
+        return state;
+    }
   };
 
   useEffect(() => {
     getAllOrders({});
   }, [getAllOrders]);
 
+  useEffect(() => {
+    setInBoard(false);
+  }, [setInBoard]);
+  useEffect(() => {
+    setItemsPerPage(100);
+  }, []);
+
+  useEffect(() => {
+    setSearchSellers(sellers);
+  }, [sellers]);
+
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div>
-        <div className="flex items-center gap-2">
-          <p className="ml-2 text-black_m">Período</p>
-          <Select
-            className="w-52 rounded-lg border"
-            placeholder="Selecciona un mes"
-            onChange={handleMonthChange}
-          >
-            {monthsOptions.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </Select>
+        <div className="flex w-[22rem] items-center gap-2">
+          <Controller
+            name="user"
+            control={control}
+            rules={{ required: "Este campo es obligatorio" }}
+            render={({ field }) => (
+              <CompleteSearchInput
+                array={transformData(userSellerResponse?.result || []) || []}
+                name={"user.name"}
+                setValue={setValue}
+                onChange={setSearchSellers}
+                onSelect={handleSelectSeller}
+                sellers={setSellers}
+                placeholder="Buscar vendedores"
+                {...field}
+              />
+            )}
+          />
+          {errors.user && (
+            <p className="text-xs text-red_e">{errors.user.message}</p>
+          )}
         </div>
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
-          <p>Solicitado ({countOrdersByStatus("REQUEST")})</p>
-          <p>Preparación ({countOrdersByStatus("PREPARATION")})</p>
-          <p>Para retirar ({countOrdersByStatus("READY_PICKUP")})</p>
+          <p>Ingreso a taller ({countOrdersByStatus("REQUEST")})</p>
+          <p>En preparación ({countOrdersByStatus("PREPARATION")})</p>
+          <p>Para retirar del taller ({countOrdersByStatus("READY_PICKUP")})</p>
           <p>Egreso ({countOrdersByStatus("EGRESS")})</p>
           <p>Entregado ({countOrdersByStatus("DELIVERED")})</p>
         </div>
         <div className="grid grid-cols-5">
-          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
+          <div className="space-y-6 border-r-2 border-gray px-1 2xl:px-4">
             {ordersResponse.filter(
               (order) =>
-                order.status === "REQUEST" || order.status === "Solicitado",
+                (order.status === "REQUEST" && !order.isPreOrder) ||
+                (order.status === "Ingreso a taller" && !order.isPreOrder),
             ).length === 0 ? (
               <p className="mt-28 flex justify-center text-md font-semibold">
                 Sin resultados
@@ -106,28 +138,29 @@ const StatusPanelPage = () => {
               ordersResponse
                 .filter(
                   (order) =>
-                    order.status === "REQUEST" || order.status === "Solicitado",
+                    (order.status === "REQUEST" && !order.isPreOrder) ||
+                    (order.status === "Ingreso a taller" && !order.isPreOrder),
                 )
                 .map((order, index) => (
                   <StatusCard
+                    id={order.id}
                     key={index}
                     clientName={order?.client?.name}
                     orderId={"ID: " + order?.orderId}
-                    productsList={
-                      order?.productInOrder?.map(
-                        (productInOrder) => productInOrder?.product?.name,
-                      ) || []
-                    }
+                    productsList={order?.productInOrder || []}
                     date={formatDate(order?.sellDate)}
                     sellerName={
                       order?.user?.userInfo?.fullName || "Sin vendedor"
                     }
+                    discountTotal={order?.discountPercent || 0}
+                    paymentType={translatePaymentStatus(order?.paymentType)}
+                    charged={order?.isCharged}
                   />
                 ))
             )}
           </div>
 
-          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
+          <div className="space-y-6 border-r-2 border-gray px-1 2xl:px-4">
             {ordersResponse.filter(
               (order) =>
                 order.status === "PREPARATION" ||
@@ -145,28 +178,28 @@ const StatusPanelPage = () => {
                 )
                 .map((order, index) => (
                   <StatusCard
+                    id={order.id}
                     key={index}
                     clientName={order?.client?.name}
                     orderId={"ID: " + order?.orderId}
-                    productsList={
-                      order?.productInOrder?.map(
-                        (productInOrder) => productInOrder?.product?.name,
-                      ) || []
-                    }
+                    productsList={order?.productInOrder || []}
                     date={formatDate(order?.sellDate)}
                     sellerName={
                       order?.user?.userInfo?.fullName || "Sin vendedor"
                     }
                     bg="bg-red_b"
+                    discountTotal={order?.discountPercent || 0}
+                    paymentType={translatePaymentStatus(order?.paymentType)}
+                    charged={order?.isCharged}
                   />
                 ))
             )}
           </div>
-          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
+          <div className="space-y-6 border-r-2 border-gray px-1 2xl:px-4">
             {ordersResponse.filter(
               (order) =>
                 order.status === "READY_PICKUP" ||
-                order.status === "Para retirar",
+                order.status === "Para retirar del taller",
             ).length === 0 ? (
               <p className="mt-28 flex justify-center text-md font-semibold">
                 Sin resultados
@@ -176,29 +209,29 @@ const StatusPanelPage = () => {
                 .filter(
                   (order) =>
                     order.status === "READY_PICKUP" ||
-                    order.status === "Para retirar",
+                    order.status === "Para retirar del taller",
                 )
                 .map((order, index) => (
                   <StatusCard
+                    id={order.id}
                     key={index}
                     clientName={order?.client?.name}
                     orderId={"ID: " + order?.orderId}
-                    productsList={
-                      order?.productInOrder?.map(
-                        (productInOrder) => productInOrder?.product?.name,
-                      ) || []
-                    }
+                    productsList={order?.productInOrder || []}
                     date={formatDate(order?.sellDate)}
                     sellerName={
                       order?.user?.userInfo?.fullName || "Sin vendedor"
                     }
                     bg="bg-yellow"
+                    discountTotal={order?.discountPercent || 0}
+                    paymentType={translatePaymentStatus(order?.paymentType)}
+                    charged={order?.isCharged}
                   />
                 ))
             )}
           </div>
 
-          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
+          <div className="space-y-6 border-r-2 border-gray px-1 2xl:px-4">
             {ordersResponse.filter(
               (order) => order.status === "EGRESS" || order.status === "Egreso",
             ).length === 0 ? (
@@ -213,25 +246,25 @@ const StatusPanelPage = () => {
                 )
                 .map((order, index) => (
                   <StatusCard
+                    id={order.id}
                     key={index}
                     clientName={order?.client?.name}
                     orderId={"ID: " + order?.orderId}
-                    productsList={
-                      order?.productInOrder?.map(
-                        (productInOrder) => productInOrder?.product?.name,
-                      ) || []
-                    }
+                    productsList={order?.productInOrder || []}
                     date={formatDate(order?.sellDate)}
                     sellerName={
                       order?.user?.userInfo?.fullName || "Sin vendedor"
                     }
                     bg="bg-blue_b"
+                    discountTotal={order?.discountPercent || 0}
+                    paymentType={translatePaymentStatus(order?.paymentType)}
+                    charged={order?.isCharged}
                   />
                 ))
             )}
           </div>
 
-          <div className="space-y-6 border-r-2 border-gray px-2 2xl:px-4">
+          <div className="space-y-6 border-r-2 border-gray px-1 2xl:px-4">
             {ordersResponse.filter(
               (order) =>
                 order.status === "DELIVERED" || order.status === "Entregado",
@@ -248,19 +281,20 @@ const StatusPanelPage = () => {
                 )
                 .map((order, index) => (
                   <StatusCard
+                    id={order.id}
                     key={index}
                     clientName={order?.client?.name}
                     orderId={"ID: " + order?.orderId}
-                    productsList={
-                      order?.productInOrder?.map(
-                        (productInOrder) => productInOrder?.product?.name,
-                      ) || []
-                    }
+                    productsList={order?.productInOrder || []}
                     date={formatDate(order?.sellDate)}
                     sellerName={
                       order?.user?.userInfo?.fullName || "Sin vendedor"
                     }
                     bg="bg-green"
+                    isToDeliver={true}
+                    discountTotal={order?.discountPercent || 0}
+                    paymentType={translatePaymentStatus(order?.paymentType)}
+                    charged={order?.isCharged}
                   />
                 ))
             )}

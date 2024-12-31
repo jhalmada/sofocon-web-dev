@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import RouteRow from "../components/RouteRow.jsx";
 import Button from "../components/buttons/Button.jsx";
@@ -16,9 +16,12 @@ import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
+import SaveImg from "../assets/img/save.svg";
+import deleteImg from "../assets/img/deleted.svg";
 import disconnectedImg from "../assets/images/disconnected.svg";
+import { isMatch } from "lodash";
 
-const SELLER_TAB = "sellers";
+const SELLERSMAP_TAB = "sellersmap";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
   const { deleteSellerRoute } = useDeleteSellerRoute();
@@ -35,12 +38,14 @@ const RoutesPage = () => {
     setIsActive,
     setSearch,
   } = useSellerRoutes();
-  const [activeTab, setActiveTab] = useState(SELLER_TAB);
+  const [activeTab, setActiveTab] = useState(SELLERSMAP_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [dataEdit, setDataEdit] = useState(null);
 
   const stateOptions = ["Activo", "Inactivo"];
   const {
@@ -48,12 +53,14 @@ const RoutesPage = () => {
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm();
   const openModal = (id) => {
     const sellerToEdit = sellerRoutesResponse.find(
       (seller) => seller.id === id,
     );
     if (sellerToEdit) {
+      setDataEdit(sellerToEdit);
       setValue("name", sellerToEdit.name);
       setValue("zone", sellerToEdit.zone);
       setValue("status", sellerToEdit.isActive);
@@ -81,8 +88,23 @@ const RoutesPage = () => {
   const handleConfirmDelete = () => {
     deleteSellerRoute(routeId, setModified);
     closeConfirmDeleteModal();
+    setConfirmDelete(true);
   };
-  const handleCancelClick = () => openConfirmCancelModal();
+  const handleCancelClick = () => {
+    const data = watch();
+    const newData = {
+      name: data.name,
+      zone: data.zone,
+      isActive: data.status === "true" ? true : false,
+    };
+    const hasChanges = !isMatch(dataEdit, newData);
+
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
+      closeModal();
+    }
+  };
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
@@ -127,6 +149,10 @@ const RoutesPage = () => {
         setIsActive(null);
     }
   };
+
+  useEffect(() => {
+    sessionStorage.setItem("activeTab", SELLERSMAP_TAB);
+  }, [activeTab]);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
       <div className="flex flex-grow flex-col p-6">
@@ -150,14 +176,14 @@ const RoutesPage = () => {
         <div className="flex items-center">
           <div className="flex">
             <h2
-              onClick={() => setActiveTab(SELLER_TAB)}
-              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === SELLER_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              onClick={() => setActiveTab(SELLERSMAP_TAB)}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERSMAP_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listado
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
-            {activeTab === SELLER_TAB && (
+            {activeTab === SELLERSMAP_TAB && (
               <div className="flex space-x-4">
                 <Link to={"agregar-ruta"}>
                   <Button text="Nueva ruta" icon={PlusIcon} />
@@ -166,7 +192,7 @@ const RoutesPage = () => {
             )}
           </div>
         </div>
-        {activeTab === SELLER_TAB && (
+        {activeTab === SELLERSMAP_TAB && (
           <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
             <div>
               <div className="flex justify-end">
@@ -344,7 +370,12 @@ const RoutesPage = () => {
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
@@ -355,6 +386,21 @@ const RoutesPage = () => {
         onAccept={() => handleConfirmDelete(routeId)}
       >
         Esta ruta será eliminada de forma permanente. ¿Desea continuar?
+      </ReusableModal>
+      <ReusableModal
+        isOpen={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Ruta eliminada"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setConfirmDelete(false)}
+      >
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={deleteImg} alt="delete" />
+          <p className="font-roboto text-sm font-light text-black">
+            La ruta fue eliminada correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );

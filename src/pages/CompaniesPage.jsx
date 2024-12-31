@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
+import geoaltIcon from "../assets/icons/geo-alt.svg";
 import Pagination from "../components/Pagination";
 import Input from "../components/inputs/Input";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -20,6 +21,7 @@ import useCompanies from "../hooks/companies/useCompanies.js";
 import useDeleteCompanies from "../hooks/companies/useDeleteCompanies.js";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import usePutCompany from "../hooks/companies/usePutCompanies.js";
+import sellerIcons from "../assets/icons/sellerIcon.svg";
 import { BASE_URL } from "../utils/Constants.js";
 import {
   getClientsExcel,
@@ -30,22 +32,49 @@ import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import useUserCompany from "../hooks/companies/useUsersCompany.js";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import pageLostImg from "../assets/images/pageLost.svg";
+import listPriceIcon from "../assets/icons/listPriceIcon.svg";
 import Calendar from "../components/calendar/Calendar.jsx";
+import SaveImg from "../assets/img/save.svg";
+import deleteImg from "../assets/img/deleted.svg";
+import { PlaceAutocomplete, MapHandler } from "../hooks/Maps/funtionMaps.jsx";
+import {
+  AdvancedMarker,
+  Map,
+  Marker,
+  useAdvancedMarkerRef,
+} from "@vis.gl/react-google-maps";
+import { isMatch } from "lodash";
+import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
+
+const coordenadasUruguay = {
+  lat: -34.901,
+  lng: -56.1698,
+};
 
 const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
 
 const CompaniesPage = () => {
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [selectManual, setSelectManual] = useState(false);
+  const [markerRef, marker] = useAdvancedMarkerRef();
+  const [direccion, setDireccion] = useState("");
+  const [posiciones, setPosiciones] = useState(null);
+
   const [companyId, setCompanyId] = useState(null);
   const { deleteCompany } = useDeleteCompanies();
   const {
     companiesResponse,
+    downloadFile,
     setItemsPerPage,
     totalPage,
     total,
     setPage,
     page,
     itemsPerPage,
+    nextVisit,
+    search,
+    status,
     setModified,
     setStatus,
     setNextVisit,
@@ -54,7 +83,22 @@ const CompaniesPage = () => {
   } = useCompanies();
 
   const { changedCompany } = usePutCompany();
-  const [activeTab, setActiveTab] = useState(COMPANIE_TAB);
+
+  const navegacionActive = (tabActive) => {
+    switch (tabActive) {
+      case COMPANIE_TAB:
+        return COMPANIE_TAB;
+      case COMPETING_TAB:
+        return COMPETING_TAB;
+      default:
+        return COMPANIE_TAB;
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState(
+    navegacionActive(sessionStorage.getItem("activeTab")),
+  );
+  const { setClient, priceListResponse } = useGetPriceList(companyId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isExportCompetingModalOpen, setIsExportCompetingModalOpen] =
@@ -69,8 +113,34 @@ const CompaniesPage = () => {
   const [competenceName, setCompetenceName] = useState("");
   const [listUsers, setListUsers] = useState([]);
   const [errorDataPicker, setErrorDataPicker] = useState(false);
+  const [listPriceModal, setListPriceModal] = useState(false);
 
-  const visitOptions = ["< 1 mes", "< 2 meses", "> 2 meses"];
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [modalMap, setModalMap] = useState(false);
+  const [dataEdit, setDataEdit] = useState(null);
+
+  const handleDownloadExcel1 = () => {
+    const url = `${BASE_URL}/${getClientsExcel}?competence=false${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`;
+    downloadFile(url, `Empresas.xlsx`);
+  };
+
+  const handleDownloadPdf1 = () => {
+    const url = `${BASE_URL}/${getClientsPdf}?competence=false${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`;
+
+    downloadFile(url, `Empresas.pdf`);
+  };
+  const handleDownloadExcel2 = () => {
+    const url = `${BASE_URL}/${getClientsExcel}?competence=true${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`;
+    downloadFile(url, `Empresas competencia.xlsx`);
+  };
+
+  const handleDownloadPdf2 = () => {
+    const url = `${BASE_URL}/${getClientsPdf}?competence=true${search ? `&search=${search}` : ""}${nextVisit ? `&nextvisit=${nextVisit}` : ""}${status ? `&status=${status}` : ""}`;
+
+    downloadFile(url, `Empresas competencia.pdf`);
+  };
+
+  const visitOptions = ["- 1 mes", "- 2 meses", "+ 2 meses"];
   const stateOptions = ["Frecuente", "Potencial", "De baja"];
   const {
     clearErrors,
@@ -80,9 +150,14 @@ const CompaniesPage = () => {
     control,
     reset,
     formState: { errors },
+    watch,
   } = useForm();
 
-  const { handleSubmit: handleSubmit2, setValue: setValue2 } = useForm();
+  const {
+    handleSubmit: handleSubmit2,
+    setValue: setValue2,
+    watch: watch2,
+  } = useForm();
   const { userSellerResponse, setSearch } = useUsersSellers();
   const { addUsersCompany } = useUserCompany();
   const openModal = (id) => {
@@ -91,6 +166,11 @@ const CompaniesPage = () => {
       (company) => company.id === id,
     );
     if (companyToEdit) {
+      setDataEdit(companyToEdit);
+      const pos = { lat: companyToEdit.latitude, lng: companyToEdit.longitude };
+      setPosiciones(pos);
+      setDireccion("");
+
       setValue("name", companyToEdit?.name || "");
       setValue("department", companyToEdit?.department || "");
       setValue("neighborhood", companyToEdit?.neighborhood || "");
@@ -99,6 +179,7 @@ const CompaniesPage = () => {
       setValue("phone", companyToEdit?.phone || "");
       setValue("rut", companyToEdit?.rut || "");
       setValue("status", companyToEdit?.status || "");
+      setValue("ci", companyToEdit?.ci || "");
       setValue(
         "nextVisit",
         parseAbsoluteToLocal(
@@ -150,10 +231,29 @@ const CompaniesPage = () => {
   const handleConfirmDelete = () => {
     deleteCompany(companyId, setModified);
     closeConfirmDeleteModal();
+    setConfirmDelete(true);
   };
 
-  const handleCancelClick = () => openConfirmCancelModal();
+  const handleCancelClick = () => {
+    const data = watch();
+    const updatedData = {
+      ...data,
+      nextVisit: new Date(
+        data.nextVisit.year,
+        data.nextVisit.month - 1,
+        data.nextVisit.day,
+      ).toISOString(),
+    };
+
+    const hasChanges = !isMatch(dataEdit, updatedData);
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
+      closeModal();
+    }
+  };
   const handleConfirmCancel = () => {
+    setValue2("sellers");
     closeConfirmCancelModal();
     closeModal();
   };
@@ -179,7 +279,6 @@ const CompaniesPage = () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     const {
       nextVisit,
       name,
@@ -197,7 +296,6 @@ const CompaniesPage = () => {
       nextVisit.day,
     );
 
-    //formate la fecha para que sea aceptada por el back
     const formattedDate = newdata.toISOString();
     switch (checkSelected) {
       case "RUT":
@@ -212,6 +310,14 @@ const CompaniesPage = () => {
           nextVisit: newdata,
           rut: data.rut,
           competenceName: competence ? competenceName : "",
+          latitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lat()
+              : selectManual.lat,
+          longitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lng()
+              : selectManual.lng,
         });
         break;
       default:
@@ -226,6 +332,14 @@ const CompaniesPage = () => {
           nextVisit: formattedDate,
           ci: data.ci,
           competenceName: competence ? competenceName : "",
+          latitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lat()
+              : selectManual.lat,
+          longitude:
+            selectManual === false
+              ? selectedPlace?.geometry?.location.lng()
+              : selectManual.lng,
         });
     }
   };
@@ -239,23 +353,28 @@ const CompaniesPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-  //funcion para transformar los Arrays
-  const transformData = (array) => {
-    return array.map((item) => ({
-      id: item.id,
-      name: item.name,
-    }));
-  };
-
   const submit = (data) => {
-    const user = data.sellers.map((seller) => ({ id: seller.id }));
+    const user = data.sellers?.map((seller) => ({ id: seller.id }));
+
     const datos = addUsersCompany({ user }, companyId, setModified);
     if (datos) {
+      setIsSellersModalOpen(false);
+      setValue2("sellers");
+    }
+
+    setSaveConfirmationModalOpen(true);
+  };
+
+  const handleCancelSeller = () => {
+    const data = watch2();
+    const hasChanges = !isMatch(listUsers, data.sellers);
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
       setIsSellersModalOpen(false);
     }
   };
   const handleVisitFilterChange = (value) => {
-    console.log(value);
     switch (value) {
       case "< 1 mes":
         setNextVisit(1);
@@ -296,6 +415,7 @@ const CompaniesPage = () => {
     }
   };
   useEffect(() => {
+    sessionStorage.setItem("activeTab", activeTab);
     if (activeTab === COMPETING_TAB) {
       setStatus("");
       setNextVisit(null);
@@ -304,6 +424,10 @@ const CompaniesPage = () => {
       setCompetence(false);
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    setClient(companyId);
+  }, [companyId]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -401,10 +525,6 @@ const CompaniesPage = () => {
                       Barrio
                     </th>
 
-                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                      Vendedores
-                    </th>
-
                     <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                       <div className="flex flex-col items-center gap-2">
                         <FilterSelect
@@ -446,34 +566,43 @@ const CompaniesPage = () => {
                 ) : (
                   <tbody>
                     {companiesResponse.map((companie, index) => (
-                      <CompanieRow
-                        key={index}
-                        id={companie.id}
-                        name={companie.name}
-                        direction={companie.address}
-                        departament={companie.department}
-                        neighborhood={companie.neighborhood}
-                        sellers={"Vendedores"}
-                        nextVisits={
-                          companie.nextVisit
-                            ? formatDate(companie.nextVisit)
-                            : "Sin fecha"
-                        }
-                        state={companie.status}
-                        editIconSrc={editIcon}
-                        deleteIconSrc={deleteIcon}
-                        notesIcon={notesIcon}
-                        onEditClick={() => openModal(companie.id)}
-                        onDeleteClick={() =>
-                          openConfirmDeleteModal(companie.id)
-                        }
-                        onClick={() => {
-                          openSellersModal(companie.id),
-                            setCompetenceName(companie.name),
-                            setCompanyId(companie.id),
-                            setListUsers(companie.user);
-                        }}
-                      />
+                      <>
+                        <CompanieRow
+                          key={index}
+                          id={companie.id}
+                          name={companie.name}
+                          direction={companie.address}
+                          departament={companie.department}
+                          neighborhood={companie.neighborhood}
+                          sellers={"Vendedores"}
+                          nextVisits={
+                            companie.nextVisit
+                              ? formatDate(companie.nextVisit)
+                              : "Sin fecha"
+                          }
+                          state={companie.status}
+                          editIconSrc={editIcon}
+                          deleteIconSrc={deleteIcon}
+                          notesIcon={notesIcon}
+                          onEditClick={() => openModal(companie.id)}
+                          onDeleteClick={() =>
+                            openConfirmDeleteModal(companie.id)
+                          }
+                          sellersIcon={sellerIcons}
+                          listPriceIcon={listPriceIcon}
+                          sellersSS={companie.user}
+                          setListUsers={setListUsers}
+                          onClick={() => {
+                            openSellersModal(companie.id),
+                              setCompetenceName(companie.name),
+                              setCompanyId(companie.id);
+                          }}
+                          onClickListPrice={() => {
+                            setListPriceModal(true), setClient(companie.id);
+                          }}
+                          onClick2={() => setCompanyId(companie.id)}
+                        />
+                      </>
                     ))}
                   </tbody>
                 )}
@@ -513,6 +642,7 @@ const CompaniesPage = () => {
             changedCompany={changedCompany}
             setModified={setModified}
             setSaveConfirmationModalOpen={setSaveConfirmationModalOpen}
+            deleteCompany={deleteCompany}
           />
         )}
       </div>
@@ -623,18 +753,27 @@ const CompaniesPage = () => {
               errorApi={errors.address}
               msjError={errors.address ? errors.address.message : ""}
             />
+            <div
+              onClick={() => setModalMap(true)}
+              className="mb-2 flex w-[8rem] cursor-pointer justify-center"
+            >
+              <img src={geoaltIcon} alt="geo Icon" />
+              <span className="mb-1 mt-2 text-xs leading-[.88rem] underline">
+                Marcar en el mapa
+              </span>
+            </div>
             <Input
-              label={"Referente"}
-              placeholder={"Escribe el nombre del referente..."}
+              label={"Otros datos"}
+              placeholder={"Escribe..."}
               {...register("managerName", {
                 required: "Este campo es requerido",
                 minLength: {
                   value: 2,
-                  message: "El nombre debe contener al menos 2 caracteres.",
+                  message: "El campo debe contener al menos 2 caracteres.",
                 },
                 maxLength: {
                   value: 50,
-                  message: "El nombre no puede exceder los 50 caracteres.",
+                  message: "El campo no puede exceder los 50 caracteres.",
                 },
               })}
               errorApi={errors.managerName}
@@ -645,10 +784,9 @@ const CompaniesPage = () => {
               label={"Contacto"}
               placeholder={"Escribe el teléfono del contacto..."}
               {...register("phone", {
-                required: "Este campo es requerido",
                 minLength: {
-                  value: 15,
-                  message: "Ingrese los 15 digitos de su numero.",
+                  value: 2,
+                  message: "debe ingresar minimo 2 caracteres.",
                 },
                 maxLength: {
                   value: 15,
@@ -674,17 +812,13 @@ const CompaniesPage = () => {
                   type={"number"}
                   isSelected={checkSelected === "RUT"}
                   disabled={checkSelected !== "RUT"}
-                  placeholder={"Escribe los 12 caracteres del RUT..."}
+                  placeholder={"Escribe los caracteres del RUT..."}
                   {...register("rut", {
                     required:
                       checkSelected === "RUT" && "Este campo es requerido",
                     minLength: {
-                      value: 12,
-                      message: "Ingrese los 12 digitos de su RUT.",
-                    },
-                    maxLength: {
-                      value: 12,
-                      message: "Ingrese solo los 12 digitos de su RUT.",
+                      value: 2,
+                      message: "Ingrese minimo 2 digitos.",
                     },
                   })}
                   errorApi={checkSelected === "RUT" && errors.rut}
@@ -708,17 +842,13 @@ const CompaniesPage = () => {
                 <Input
                   type={"number"}
                   disabled={checkSelected !== "CI"}
-                  placeholder={"Escribe los 8 caracteres del CI..."}
+                  placeholder={"Escribe los caracteres del CI..."}
                   {...register("ci", {
                     required:
                       checkSelected === "CI" && "Este campo es requerido",
                     minLength: {
-                      value: 8,
-                      message: "Ingrese los 8 digitos de su CI.",
-                    },
-                    maxLength: {
-                      value: 8,
-                      message: "Ingrese solo los 8 digitos de su CI.",
+                      value: 2,
+                      message: "Ingrese minimo 2 digitos.",
                     },
                   })}
                   errorApi={checkSelected === "CI" && errors.ci}
@@ -749,7 +879,6 @@ const CompaniesPage = () => {
                 </Select>
                 <p className="mt-1 font-roboto text-xs text-red_e">
                   {errors.status ? errors.status.message : ""}
-                  {console.log(errors.status)}
                 </p>
               </>
             ) : (
@@ -768,7 +897,6 @@ const CompaniesPage = () => {
                 </Select>
                 <p className="mt-1 font-roboto text-xs text-red_e">
                   {errors.status ? errors.status.message : ""}
-                  {console.log(errors.status)}
                 </p>
               </>
             )}
@@ -797,27 +925,25 @@ const CompaniesPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getClientsExcel}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadExcel1}
+          />
 
-          <a href={`${BASE_URL}/${getClientsPdf}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadPdf1}
+          />
         </div>
       </ReusableModal>
       <ReusableModal
@@ -830,45 +956,35 @@ const CompaniesPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getClientsExcel}?competence=false`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadExcel2}
+          />
 
-          <a
-            href={`${BASE_URL}/${getClientsPdf}?competence=false`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadPdf2}
+          />
         </div>
       </ReusableModal>
 
       <ReusableModal
         isOpen={isSellersModalOpen}
-        onClose={handleCancelClick}
+        onClose={handleCancelSeller}
         title={competenceName}
         onSubmit={handleSubmit2(submit)}
         buttons={["cancel", "save"]}
-        handleCancelClick={handleCancelClick}
+        handleCancelClick={handleCancelSeller}
       >
         <form onSubmit={handleSubmit2(submit)}>
           <NextAutoComplete
@@ -911,7 +1027,12 @@ const CompaniesPage = () => {
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
 
       <ReusableModal
@@ -923,6 +1044,116 @@ const CompaniesPage = () => {
         onAccept={() => handleConfirmDelete(companyId)}
       >
         Esta empresa será eliminada de forma permanente. ¿Desea continuar?
+      </ReusableModal>
+      {/*modal para elementos eliminados*/}
+      <ReusableModal
+        isOpen={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Empresa Eliminada"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setConfirmDelete(false)}
+      >
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={deleteImg} alt="delete" />
+          <p className="font-roboto text-sm font-light text-black">
+            La empresa fue eliminada correctamente.
+          </p>
+        </div>
+      </ReusableModal>
+      {/**modal para las listas de precios */}
+      <ReusableModal
+        isOpen={listPriceModal}
+        onClose={() => setListPriceModal(false)}
+        title="Listas de precios asignadas"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setListPriceModal(false)}
+      >
+        <div className="space-y-4">
+          {priceListResponse.length > 0
+            ? priceListResponse.map((list, index) => (
+                <p
+                  className="mt-0 border-b-2 border-gray text-base"
+                  key={index}
+                >
+                  {list.name}
+                </p>
+              ))
+            : "No hay listas de precios asignadas"}
+        </div>
+      </ReusableModal>
+      {/**modal para el mapa */}
+
+      <ReusableModal
+        isOpen={modalMap}
+        onClose={() => setModalMap(false)}
+        title="Marcar ubicacion"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setModalMap(false)}
+        width="w-[45.37rem]"
+      >
+        <div className="flex flex-col">
+          <PlaceAutocomplete
+            onPlaceSelect={setSelectedPlace}
+            value={direccion}
+            setSelectManual={setSelectManual}
+          />
+
+          <div>
+            {" "}
+            <Map
+              style={{ height: "15rem" }}
+              mapId={"8c732c82e4ec29d9"}
+              defaultCenter={coordenadasUruguay}
+              defaultZoom={5}
+              gestureHandling={"greedy"}
+              center={selectManual === false ? null : selectManual}
+              disableDefaultUI={true}
+            >
+              <Marker
+                ref={markerRef}
+                draggable={true}
+                position={
+                  selectManual === false
+                    ? posiciones === null
+                      ? null
+                      : {
+                          lat: Number(posiciones.lat),
+                          lng: Number(posiciones.lng),
+                        }
+                    : selectManual
+                }
+                onDragEnd={(e) => {
+                  setSelectManual({
+                    lat: e.latLng.lat(),
+                    lng: e.latLng.lng(),
+                  });
+                }}
+              />
+
+              <AdvancedMarker
+                className={`${selectManual === false ? "visible" : "invisible"}`}
+                ref={markerRef}
+                position={null}
+                draggable={true}
+                onDragEnd={(e) =>
+                  setSelectManual({
+                    lat: e.latLng.lat(),
+                    lng: e.latLng.lng(),
+                  })
+                }
+              />
+            </Map>
+            <MapHandler
+              place={selectedPlace}
+              marker={marker}
+              setValue={setValue}
+              setDireccion={setDireccion}
+            />
+          </div>
+        </div>
       </ReusableModal>
     </div>
   );

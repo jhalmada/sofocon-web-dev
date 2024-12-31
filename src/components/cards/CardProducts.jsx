@@ -25,20 +25,16 @@ const CardProducts = ({
       <div
         className="h-[6.5rem] w-[100%] cursor-pointer rounded-[0.63rem]"
         onClick={() => handleClick()}
+        style={{
+          backgroundImage:
+            img !== null
+              ? `url(${IMAGE_BASE}${img})`
+              : `url(${defaultCategory})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
-        {img !== null ? (
-          <img
-            src={`${IMAGE_BASE}${img}`}
-            alt="imagen"
-            className="h-[6.5rem] w-[100%] rounded-[0.63rem]"
-          />
-        ) : (
-          <img
-            src={defaultCategory}
-            alt="imagen"
-            className="h-[6.5rem] w-[100%] rounded-[0.63rem]"
-          />
-        )}
+        {/* Contenido del div */}
       </div>
       <div className="flex justify-end gap-2">
         <img

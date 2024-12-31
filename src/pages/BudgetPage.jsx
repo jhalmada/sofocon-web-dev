@@ -1,6 +1,6 @@
 import Pagination from "../components/Pagination";
 import deleteIcon from "../assets/icons/trash3.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Select, SelectItem } from "@nextui-org/react";
 import BudgetRow from "../components/BudgetRow";
 import downloadIcon from "../assets/icons/download.svg";
@@ -110,8 +110,7 @@ const BudgetPage = ({
             <Select
               placeholder="Selecciona un mes"
               labelPlacement="outside"
-              defaultSelectedKeys={[month.toString()]}
-              className="w-[9.375rem] rounded-lg border"
+              className="w-52 rounded-lg border"
               onChange={(e) => handleChangeMonth(e.target.value)}
             >
               {months.map((month) => (
@@ -197,7 +196,7 @@ const BudgetPage = ({
                           ? formatDate(order.sellDate)
                           : "Sin fecha"
                       }
-                      seller={order?.user?.userInfo?.fullName}
+                      seller={order?.user?.userInfo?.fullName || "Sin vendedor"}
                       downloadIconSrc={downloadIcon}
                       deleteIconSrc={deleteIcon}
                       onEditClick={() => {

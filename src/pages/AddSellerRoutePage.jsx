@@ -12,6 +12,7 @@ import SearchInput from "../components/inputs/SearchInput";
 import disconnectedImg from "../assets/images/disconnected.svg";
 
 const AddSellerRoutePage = ({
+  setSearch,
   arraySeller,
   setItemsPerPage,
   page,
@@ -26,6 +27,7 @@ const AddSellerRoutePage = ({
   idCompany,
   nameCompany,
   setIsActive,
+  companyModified,
 }) => {
   //estados
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
@@ -33,12 +35,10 @@ const AddSellerRoutePage = ({
 
   const stateOptions = ["Activo", "Inactivo"];
   //Hooks
-  const { userSellerResponse, setSearch } = useUsersSellers();
+  const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const { changedSellerRoute } = usePutSellerRoute();
   const {
-    register,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
   } = useForm();
@@ -50,6 +50,7 @@ const AddSellerRoutePage = ({
       user: [...sellers],
     };
     changedSellerRoute(newData, idCompany, setModified);
+    companyModified((prev) => !prev);
     closeModal();
   };
 
@@ -66,10 +67,10 @@ const AddSellerRoutePage = ({
       user: [...newArray],
     };
     changedSellerRoute(newData, idCompany, setModified);
+    companyModified((prev) => !prev);
     setConfirmDeleteModalOpen(false);
   };
 
-  //funcion para transformar los Arrays
   const transformData = (array) => {
     return array.map((item) => ({
       id: item.id,
@@ -181,7 +182,7 @@ const AddSellerRoutePage = ({
               name={"vendedores"}
               label={"Agregar Vendedores"}
               setValue={setValue}
-              onChange={setSearch}
+              onChange={setSearchSellers}
             />
             <p>{errors.vendedores && errors.vendedores.message}</p>
           </form>

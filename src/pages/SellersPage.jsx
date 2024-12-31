@@ -13,6 +13,8 @@ import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import usePutusers from "../hooks/users/usePutUsers";
 import notFoundImg from "../assets/images/notFound.svg";
 import SearchInput from "../components/inputs/SearchInput";
+import SaveImg from "../assets/img/save.svg";
+import { isMatch } from "lodash";
 
 const SellersPage = ({
   openConfirmDeleteModal,
@@ -25,9 +27,8 @@ const SellersPage = ({
   page,
   itemsPerPage,
   setModified,
-  setIsActive,
 }) => {
-  //estados
+  const [arraySelected, setArraySelected] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -35,23 +36,19 @@ const SellersPage = ({
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [stateFilter, setStateFilter] = useState("");
+  const [dataEdit, setDataEdit] = useState({});
 
-  const stateOptions = ["Activo", "Inactivo"];
-  const [mnsError, setMnsError] = useState("");
-  //hooks
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm();
   const { RolesResponse } = useRoles();
   const { changedUser } = usePutusers();
 
   const { sellerRoutesResponse, setSearch } = useSellerRoutes();
-
-  //funciones
 
   const handleUserCreation = async (userData) => {
     try {
@@ -69,9 +66,10 @@ const SellersPage = ({
     }
   };
   const onSubmit = (data) => {
-    const { phone, ci, fullName, email, role, route } = data;
+    const { phone, ci, fullName, email, role, sellerRoute } = data;
     handleUserCreation({
       email,
+      sellerRoute: sellerRoute && sellerRoute.map((ruta) => ({ id: ruta.id })),
       userInfo: {
         fullName,
         ci,
@@ -86,6 +84,8 @@ const SellersPage = ({
       (user) => user.id === id,
     );
     if (userToEdit) {
+      setDataEdit(userToEdit);
+      setArraySelected(userToEdit.sellerRoute);
       setValue("phone", userToEdit.userInfo?.phone || "");
       setValue("ci", userToEdit.userInfo?.ci || "");
       setValue("fullName", userToEdit.userInfo?.fullName || "");
@@ -106,7 +106,24 @@ const SellersPage = ({
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-  const handleCancelClick = () => openConfirmCancelModal();
+  const handleCancelClick = () => {
+    const data = watch();
+    const newData = {
+      userInfo: { fullName: data.fullName, phone: data.phone, ci: data.ci },
+      email: data.email,
+      role: { id: data.role },
+      sellerRoute:
+        data.sellerRoute === undefined
+          ? dataEdit.sellerRoute
+          : data.sellerRoute,
+    };
+    const hasChanges = !isMatch(dataEdit, newData);
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
+      closeModal();
+    }
+  };
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
   const handleConfirmCancel = () => {
@@ -114,25 +131,11 @@ const SellersPage = ({
     closeModal();
   };
 
-  //funcion para transformar los Arrays
   const transformData = (array) => {
     return array.map((item) => ({
       id: item.id,
       name: item.name,
     }));
-  };
-  const handleStateFilterChange = (value) => {
-    switch (value) {
-      case "Activo":
-        setIsActive(true);
-        break;
-      case "Inactivo":
-        setIsActive(false);
-        break;
-      default:
-        setIsActive(null);
-        break;
-    }
   };
   return (
     <div className="flex h-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
@@ -182,6 +185,7 @@ const SellersPage = ({
                   route={"Ruta"}
                   editIconSrc={editIcon}
                   deleteIconSrc={deleteIcon}
+                  routes={user.sellerRoute}
                   state={user.isActive}
                   onEditClick={() => {
                     openModal(user.id);
@@ -230,7 +234,6 @@ const SellersPage = ({
             label={"Telefono"}
             placeholder={"Escribe tu numero telefónico."}
             {...register("phone", {
-              required: "Este campo es obligatorio",
               pattern: {
                 value: /^[0-9]+$/, // Acepta solo números
                 message: "Solo se permiten números",
@@ -290,9 +293,10 @@ const SellersPage = ({
 
           <div className="relative">
             <NextAutoComplete
+              array2={arraySelected || []}
               label2={"Rutas Asignadas"}
               array={transformData(sellerRoutesResponse || []) || []}
-              name={"route"}
+              name={"sellerRoute"}
               label={"Asignar Ruta"}
               setValue={setValue}
               onChange={setSearch}
@@ -336,7 +340,12 @@ const SellersPage = ({
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );

@@ -1,8 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
 import watchIcon2 from "../assets/icons/Frame 1.svg";
 import watchIcon3 from "../assets/icons/watch 3.svg";
+import puntosvertical from "../assets/icons/three-dots-vertical.svg";
 import { useEffect, useState } from "react";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react";
 const translateState = (state) => {
   switch (state) {
     case "POTENTIAL":
@@ -29,6 +37,7 @@ const CompanieRow = ({
   neighborhood,
   direction,
   sellers,
+  sellersIcon,
   nextVisits,
   state,
   editIconSrc,
@@ -38,14 +47,23 @@ const CompanieRow = ({
   onDeleteClick,
   onClick,
   id,
+  listPriceIcon,
+  onClickListPrice,
+  onClick2,
+  sellersSS,
+  setListUsers,
 }) => {
   const [icon, setIcon] = useState(null);
   const [msjIcon, setMsjIcon] = useState(null);
+  const navigate = useNavigate();
+
+  const handleNote = (id) => {
+    navigate(`/inicio/empresas/notas/${id}`);
+  };
 
   useEffect(() => {
     const today = new Date();
     const visitDate = parseDate(nextVisits);
-    console.log(visitDate);
 
     const diffInDays = (visitDate, today) => {
       const msPerDay = 1000 * 60 * 60 * 24;
@@ -93,9 +111,6 @@ const CompanieRow = ({
       >
         {neighborhood}
       </td>
-      <td onClick={onClick} className="cursor-pointer py-6 underline">
-        {sellers}
-      </td>
 
       <td className="py-6">{nextVisits}</td>
 
@@ -104,13 +119,6 @@ const CompanieRow = ({
       </td>
       <td className="py-6">
         <div className="flex justify-center gap-4">
-          <Link to={`notas/${id}`}>
-            <img
-              src={notesIcon}
-              alt="notes icon"
-              className="h-5 w-5 cursor-pointer"
-            />
-          </Link>
           <img
             src={editIconSrc}
             alt="Edit icon"
@@ -123,6 +131,48 @@ const CompanieRow = ({
             className="h-5 w-5 cursor-pointer"
             onClick={onDeleteClick}
           />
+          <Dropdown onClick={onClick2}>
+            <DropdownTrigger>
+              <img src={puntosvertical} alt="ss" className="cursor-pointer" />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Static Actions">
+              <DropdownItem key="notes" onClick={() => handleNote(id)}>
+                <div className="flex gap-3">
+                  <img
+                    src={notesIcon}
+                    alt="notes icon"
+                    className="h-5 w-5 cursor-pointer"
+                  />
+                  Notas
+                </div>
+              </DropdownItem>
+              <DropdownItem
+                key="sellers"
+                onClick={() => {
+                  onClick(), setListUsers(sellersSS);
+                }}
+              >
+                <div className="flex gap-3">
+                  <img
+                    src={sellersIcon}
+                    alt="seller icon"
+                    className="h-5 w-5 cursor-pointer"
+                  />
+                  Vendedores
+                </div>
+              </DropdownItem>
+              <DropdownItem key="listPrice" onClick={onClickListPrice}>
+                <div className="flex gap-3">
+                  <img
+                    src={listPriceIcon}
+                    alt="list price icon"
+                    className="h-5 w-5 cursor-pointer"
+                  />
+                  Lista de precios
+                </div>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </td>
     </tr>

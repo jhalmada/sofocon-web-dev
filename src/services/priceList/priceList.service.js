@@ -13,4 +13,7 @@ export class PriceListService {
 
   static deletePriceListApi = async (priceListId) =>
     await axios.delete(`${priceList.deletePriceList}/${priceListId}`);
+
+  static putProductinListApi = async (productData, productId) =>
+    await axios.put(`${priceList.putProductinList}/${productId}`, productData);
 }

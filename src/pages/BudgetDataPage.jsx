@@ -1,5 +1,5 @@
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import { useEffect, useState } from "react";
@@ -11,17 +11,11 @@ import { getOrderPdf } from "../services/orders/orders.routes";
 
 const BudgetDataPage = () => {
   const {
-    register,
-    handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm();
-  const navigate = useNavigate();
+
   const { id } = useParams();
   const { getOneOrder } = useGetOneOrder(id);
-
-  const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
-    useState(false);
 
   const [orderDetails, setOrderDetails] = useState(null);
   const [subTotal, setSubTotal] = useState(0);
@@ -57,12 +51,7 @@ const BudgetDataPage = () => {
       console.error("Failed to download the file:", error);
     }
   };
-  const stateOptions = [
-    "Solicitado",
-    "En preparación",
-    "Para retirar",
-    "Egreso",
-  ];
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();

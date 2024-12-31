@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchIcon from "../../assets/icons/search.svg";
 import XlgIcon from "../../assets/icons/x-lg.svg";
 
 const SearchInput = ({
   placeholder,
-  border = "border border-gray_b",
+  border = "border border-black_l",
   rounded = "rounded-[2rem]",
   onChange = () => {},
 }) => {
   const [search, setSearch] = useState("");
-  onChange(search);
+
+  useEffect(() => {
+    onChange(search);
+  }, [search]);
   return (
     <div className={`${border} ${rounded} relative flex min-w-[22rem]`}>
       <input
@@ -19,7 +22,7 @@ const SearchInput = ({
           setSearch(e.target.value);
         }}
         placeholder={placeholder || "Buscar..."}
-        className={`h-10 w-full min-w-64 bg-white pl-10 pr-10 outline-none ${rounded}`}
+        className={`h-auto min-h-10 w-full min-w-64 bg-white pl-10 pr-10 outline-none ${rounded}`}
         required
       />
       <img

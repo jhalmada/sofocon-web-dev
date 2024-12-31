@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import uploadIcon from "../assets/icons/arrow-blue.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Input from "../components/inputs/Input.jsx";
 import BackButton from "../components/buttons/BackButton.jsx";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import useAddCategory from "../hooks/category/useAddCategory.js";
 import { useNavigate } from "react-router-dom";
 const NOTES_TAB = "notes";
@@ -25,7 +25,6 @@ const AddCategoryPage = () => {
     register,
     handleSubmit,
     setValue,
-    control,
     setError,
     formState: { errors },
   } = useForm();
@@ -73,9 +72,10 @@ const AddCategoryPage = () => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
-    formData.append("file", file);
+    if (file) {
+      formData.append("file", file);
+    }
     const response = postAddCategory(formData);
-    console.log(response);
     if (response) {
       openSaveConfirmationModal();
     }
@@ -157,7 +157,7 @@ const AddCategoryPage = () => {
                 id="file"
                 type="file"
                 accept=".png, .jpg, .jpeg"
-                {...register("file", { required: "Este campo es obligatorio" })}
+                {...register("file")}
                 onChange={handleFileChange}
                 disabled={fileName.length > 0}
               />

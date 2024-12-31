@@ -11,7 +11,7 @@ const AddSellersRoutes = () => {
         await sellerRoutesService.postAddSellerRoutesApi(routeData);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     } finally {
       setLoading(false);

@@ -2,7 +2,7 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import CardProducts from "../components/cards/CardProducts";
 import { Link } from "react-router-dom";
 import Pagination from "../components/Pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../components/buttons/Button";
 import uploadIcon from "../assets/icons/arrow-blue.svg";
 import plusIcon from "../assets/icons/plus.svg";
@@ -17,13 +17,26 @@ import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
 import PriceListPage from "./PriceListPage";
 import useGetPriceList from "../hooks/priceList/useGetPriceList";
+import { isMatch } from "lodash";
 
 const INVENTORY_TAB = "inventory";
 const PRICES_TAB = "prices";
 
 const ProductsPage = () => {
-  //estados
-  const [activeTab, setActiveTab] = useState(INVENTORY_TAB);
+  const navegacionActive = (tabActive) => {
+    switch (tabActive) {
+      case INVENTORY_TAB:
+        return INVENTORY_TAB;
+      case PRICES_TAB:
+        return PRICES_TAB;
+      default:
+        return INVENTORY_TAB;
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState(
+    navegacionActive(sessionStorage.getItem("activeTab")),
+  );
   const [editModal, setEditModal] = useState(false);
   const [deletemodal, setDeleteModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
@@ -34,8 +47,8 @@ const ProductsPage = () => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [FileAccept, setFileAccept] = useState(false);
+  const [dataEdit, setDataEdit] = useState(null);
 
-  //hooks
   const {
     categoryResponse,
     itemsPerPage,
@@ -70,8 +83,8 @@ const ProductsPage = () => {
     setValue,
     setError,
     formState: { errors },
+    watch,
   } = useForm();
-  //funciones
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -104,8 +117,10 @@ const ProductsPage = () => {
       (category) => category.id === id,
     );
     if (categoryEdit) {
+      setDataEdit(categoryEdit);
       setValue("name", categoryEdit.name);
       setValue("description", categoryEdit.description);
+      setFileName("");
     }
     setIdCategory(id);
     setEditModal(true);
@@ -115,6 +130,21 @@ const ProductsPage = () => {
     setFile(null);
     setFileName("");
     setValue("file", null);
+  };
+
+  const cancelEdit = () => {
+    const data = watch();
+    const newData = {
+      name: data.name,
+      description: data.description,
+      picture: fileName.length > 0 ? fileName : dataEdit.picture,
+    };
+    const hasChanges = !isMatch(dataEdit, newData);
+    if (hasChanges) {
+      setIsConfirmCancelModalOpen(true);
+    } else {
+      setEditModal(false);
+    }
   };
 
   const onSubmit = (data) => {
@@ -131,6 +161,9 @@ const ProductsPage = () => {
       setFileName("");
     }
   };
+  useEffect(() => {
+    sessionStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
   return (
     <div className="flex h-full flex-col justify-between bg-gray">
       <div className="flex-grow p-6">
@@ -155,13 +188,13 @@ const ProductsPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(INVENTORY_TAB)}
-              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === INVENTORY_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === INVENTORY_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-n`}
             >
               Inventario
             </h2>
             <h2
               onClick={() => setActiveTab(PRICES_TAB)}
-              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === PRICES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === PRICES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-n`}
             >
               Listas de precios
             </h2>
@@ -186,7 +219,7 @@ const ProductsPage = () => {
           )}
         </div>
 
-        <div className="flex min-h-[70vh] flex-col items-center justify-center rounded-tr-lg bg-white px-7 pb-3 pt-7 shadow-t">
+        <div className="flex min-h-[70vh] flex-col items-center justify-center rounded-tr-lg bg-white px-7 pb-3 pt-7">
           <div className="flex w-full justify-end">
             {activeTab === INVENTORY_TAB && (
               <SearchInput placeholder="Buscar..." onChange={setSearch} />
@@ -240,11 +273,11 @@ const ProductsPage = () => {
         {/*modal para editar*/}
         <ReusableModal
           isOpen={editModal}
-          onClose={() => setIsConfirmCancelModalOpen(true)}
+          onClose={() => cancelEdit()}
           title="Editar Categoria"
           onSubmit={handleSubmit(onSubmit)}
           buttons={["cancel", "save"]}
-          handleCancelClick={() => setIsConfirmCancelModalOpen(true)}
+          handleCancelClick={() => cancelEdit()}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
             <Input
@@ -349,7 +382,7 @@ const ProductsPage = () => {
           buttons={["accept"]}
           onAccept={() => setConfirmModal(false)}
         >
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex h-[14rem] flex-col items-center justify-center">
             <img src={SaveImg} alt="save" />
             <p className="font-roboto text-sm font-light text-black">
               Los cambios fueron guardados correctamente.
@@ -379,7 +412,7 @@ const ProductsPage = () => {
           buttons={["accept"]}
           onAccept={() => setConfirmDelete(false)}
         >
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex h-[14rem] flex-col items-center justify-center">
             <img src={deleteImg} alt="delete" />
             <p className="font-roboto text-sm font-light text-black">
               El elemento fue eliminado correctamente.

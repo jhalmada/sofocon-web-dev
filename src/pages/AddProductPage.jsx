@@ -4,7 +4,7 @@ import Input from "../components/inputs/Input";
 import uploadIcon from "../assets/icons/arrow-blue.svg";
 import Button from "../components/buttons/Button";
 import arrowRigthIcon from "../assets/icons/arrow-right.svg";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 import useAddProducts from "../hooks/products/useAddProducts";
 import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray";
@@ -15,17 +15,15 @@ import useGetPriceList from "../hooks/priceList/useGetPriceList";
 import { Checkbox } from "@nextui-org/react";
 
 const AddProductPage = () => {
-  //estados
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [FileAccept, setFileAccept] = useState(false);
   const [isToRecharge, setIsToRecharge] = useState(false);
+  const [modalValidationProduct, setModalValidationProduct] = useState(false);
 
-  //Hooks
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -40,11 +38,13 @@ const AddProductPage = () => {
 
   const { id } = useParams();
 
-  //Funciones
+  const validateInput = (array) => {
+    const result = array.find((product) => product.value === "");
+    return result ? false : true;
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log(file);
     if (file) {
       const validTypes = ["image/png", "image/jpg", "image/jpeg"];
       if (!validTypes.includes(file.type)) {
@@ -66,6 +66,11 @@ const AddProductPage = () => {
 
   const onSubmit = async (data) => {
     const { list } = data;
+    const respuesta = validateInput(list);
+    if (!respuesta) {
+      setModalValidationProduct(true);
+      return;
+    }
     const formData = new FormData();
     formData.append("category", id);
     formData.append("type", data.type);
@@ -88,7 +93,6 @@ const AddProductPage = () => {
     if (response) {
       setSaveConfirmationModalOpen(true);
     }
-    console.log(file);
   };
 
   const handleAccept = () => {
@@ -131,7 +135,7 @@ const AddProductPage = () => {
           </div>
         </div>
 
-        <div className="rounded-tr-lg bg-white px-7 pb-3 pt-7 shadow-t">
+        <div className="rounded-tr-lg bg-white px-7 pb-3 pt-7">
           <form onSubmit={handleSubmit(onSubmit)}>
             <Input
               placeholder={"Escribir..."}
@@ -342,7 +346,7 @@ const AddProductPage = () => {
             buttons={["accept"]}
             onAccept={() => handleAccept()}
           >
-            El producto fue agregado Exitosamente.
+            El producto fue agregado exitosamente.
           </ReusableModal>
           {/*modal para los archivos */}
           <ReusableModal
@@ -354,6 +358,16 @@ const AddProductPage = () => {
             onAccept={() => setFileAccept(false)}
           >
             Solo se aceptan archivos PNG o JPG.
+          </ReusableModal>
+          <ReusableModal
+            isOpen={modalValidationProduct}
+            onClose={() => setModalValidationProduct(false)}
+            title="Faltan Precios"
+            variant="confirmation"
+            buttons={["accept"]}
+            onAccept={() => setModalValidationProduct(false)}
+          >
+            Porfavor ingresa el precio al producto en las listas seleccionadas.
           </ReusableModal>
         </div>
       </div>

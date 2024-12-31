@@ -5,7 +5,7 @@ import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Pagination from "../components/Pagination.jsx";
 import Input from "../components/inputs/Input.jsx";
 import uploadIcon from "../assets/icons/arrow-blue.svg";
-import SaveImg from "../assets/img/save.png";
+import SaveImg from "../assets/img/save.svg";
 import SearchInput from "../components/inputs/SearchInput.jsx";
 import PlusIcon from "../assets/icons/plus.svg";
 import DownloadIcon from "../assets/icons/download.svg";
@@ -16,15 +16,15 @@ import BackButton from "../components/buttons/BackButton.jsx";
 import useGetProducts from "../hooks/products/useGetProducts.js";
 import InventaryRow from "../components/InventaryRow.jsx";
 import useDeleteProduct from "../hooks/products/useDeleteProducts.js";
-import deleteImg from "../assets/img/deleted.png";
+import deleteImg from "../assets/img/deleted.svg";
 import usePutProduct from "../hooks/products/usePutProducts.js";
 import { Select, SelectItem } from "@nextui-org/select";
 import { BASE_URL, MEDIDA, TYPE_PRODUCTS } from "../utils/Constants.js";
 import notFoundImg from "../assets/images/notFound.svg";
 import { getProductsExcel } from "../services/products/products.routes.js";
+import { isMatch } from "lodash";
 
 const UsersPage = () => {
-  //estados
   const [productId, setProductId] = useState(null);
   const [deletemodal, setDeleteModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -37,8 +37,7 @@ const UsersPage = () => {
   const [confirmModal, setConfirmModal] = useState(false);
   const [FileAccept, setFileAccept] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-
-  //Hooks
+  const [dataEdit, setDataEdit] = useState(null);
 
   const { id, name } = useParams();
   const idCat = id;
@@ -67,9 +66,9 @@ const UsersPage = () => {
     setError,
     formState: { errors },
     clearErrors,
+    watch,
   } = useForm();
 
-  //funciones
   const handleDelete = (id) => {
     setProductId(id);
     setDeleteModal(true);
@@ -84,6 +83,8 @@ const UsersPage = () => {
     setProductId(id);
     const product = await productsResponse.find((product) => product.id === id);
     if (product) {
+      setFileName("");
+      setDataEdit(product);
       setValue("name", product.name);
       setValue("description", product.description);
       setValue("stock", product.stock);
@@ -97,7 +98,6 @@ const UsersPage = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log(file);
     if (file) {
       const validTypes = ["image/png", "image/jpg", "image/jpeg"];
       if (!validTypes.includes(file.type)) {
@@ -125,10 +125,6 @@ const UsersPage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("amount", data.amount);
-    // formData.append(
-    //   "category",
-    //   listCategory.map((category) => ({ id: category.id })),
-    // );
     if (file) {
       formData.append("file", file);
     }
@@ -149,6 +145,18 @@ const UsersPage = () => {
     clearErrors(name);
   };
 
+  const cancelEdit = () => {
+    const data = watch();
+    data.picture = fileName.length > 0 ? fileName : dataEdit.picture;
+    delete data.file;
+    const comparacion = !isMatch(dataEdit, data);
+    if (comparacion) {
+      setIsConfirmCancelModalOpen(true);
+    } else {
+      setEditModal(false);
+    }
+  };
+
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex flex-grow flex-col p-6">
@@ -159,7 +167,6 @@ const UsersPage = () => {
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
             Inventario
           </h1>
-          <SearchInput placeholder="Buscar..." onChange={setSearch} />
         </div>
         <div className="flex items-center">
           <div className="flex">
@@ -183,27 +190,17 @@ const UsersPage = () => {
             </div>
           </div>
         </div>
-        <div className="flex-grow overflow-auto rounded-tr-lg bg-white p-5">
-          {productsResponse.length === 0 ? (
-            <div className="flex justify-center">
-              <tr>
-                <td colSpan="5" className="p-4 text-center">
-                  <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                    Tu búsqueda no arrojó resultados. !Prueba algo distinto!.{" "}
-                  </p>
-                  <img
-                    src={notFoundImg}
-                    alt="Tabla vacía"
-                    className="mx-auto"
-                  />
-                </td>
-              </tr>
-            </div>
-          ) : (
-            <>
+        <div className="flex min-h-[78vh] flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
+          <>
+            <div>
+              <div className="flex justify-end">
+                <SearchInput placeholder="Buscar..." onChange={setSearch} />
+              </div>
+
               <table className="w-full">
                 <thead>
                   <tr>
+                    <th></th>
                     <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                       Nombre
                     </th>
@@ -213,6 +210,9 @@ const UsersPage = () => {
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                       Stock
                     </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      De Recarga
+                    </th>
 
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                       Acción
@@ -220,34 +220,54 @@ const UsersPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {productsResponse.map((product, index) => (
-                    <InventaryRow
-                      name={product.name}
-                      key={index}
-                      description={product.description}
-                      stock={product.stock}
-                      editIconSrc={editIcon}
-                      deleteIconSrc={deleteIcon}
-                      onEditClick={() => {
-                        handleEdit(product.id, product.list);
-                      }}
-                      onDeleteClick={() => handleDelete(product.id)}
-                    />
-                  ))}
+                  {productsResponse.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="p-4 text-center">
+                        <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                          Tu búsqueda no arrojó resultados. !Prueba algo
+                          distinto!.{" "}
+                        </p>
+                        <img
+                          src={notFoundImg}
+                          alt="Tabla vacía"
+                          className="mx-auto"
+                        />
+                      </td>
+                    </tr>
+                  ) : (
+                    <>
+                      {productsResponse.map((product, index) => (
+                        <InventaryRow
+                          isToRecharge={product.isToRecharge}
+                          name={product.name}
+                          key={index}
+                          description={product.description}
+                          stock={product.stock}
+                          editIconSrc={editIcon}
+                          deleteIconSrc={deleteIcon}
+                          onEditClick={() => {
+                            handleEdit(product.id, product.list);
+                          }}
+                          onDeleteClick={() => handleDelete(product.id)}
+                          picture={product.picture}
+                        />
+                      ))}
+                    </>
+                  )}
                 </tbody>
               </table>
-              <div className="flex justify-center p-6">
-                <Pagination
-                  pageIndex={setItemsPerPage}
-                  currentPage={page}
-                  totalPages={totalPage}
-                  onPageChange={setPage}
-                  itemPerPage={itemsPerPage}
-                  total={total}
-                />
-              </div>
-            </>
-          )}
+            </div>
+            <div className="flex justify-center p-6">
+              <Pagination
+                pageIndex={setItemsPerPage}
+                currentPage={page}
+                totalPages={totalPage}
+                onPageChange={setPage}
+                itemPerPage={itemsPerPage}
+                total={total}
+              />
+            </div>
+          </>
         </div>
         {/*modal para eliminar*/}
         <ReusableModal
@@ -269,7 +289,7 @@ const UsersPage = () => {
           buttons={["accept"]}
           onAccept={() => setConfirmDelete(false)}
         >
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex h-[14rem] flex-col items-center justify-center">
             <img src={deleteImg} alt="delete" />
             <p className="font-roboto text-sm font-light text-black">
               El elemento fue eliminado correctamente.
@@ -279,11 +299,11 @@ const UsersPage = () => {
         {/*modal para editar*/}
         <ReusableModal
           isOpen={editModal}
-          onClose={() => setIsConfirmCancelModalOpen(true)}
+          onClose={() => cancelEdit()}
           title="Editar Producto"
           onSubmit={handleSubmit(onSubmit)}
           buttons={["cancel", "save"]}
-          handleCancelClick={() => setIsConfirmCancelModalOpen(true)}
+          handleCancelClick={() => cancelEdit()}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
             <Input
@@ -413,35 +433,6 @@ const UsersPage = () => {
               })}
               msjError={errors.stock ? errors.stock.message : ""}
             />
-            {/* <NextAutoComplete
-              label={"Categoria"}
-              label2={"Categorias Seleccionadas"}
-              name={"category"}
-              setValue={setValue}
-              onChange={setSearchCategory}
-              array={categoryResponse.map((category) => ({
-                name: category.name,
-                id: category.id,
-              }))}
-              array2={listCategory.map((category) => ({
-                id: category.id,
-                name: category.name,
-              }))}
-            /> */}
-
-            {/* <AutoCompleteArray
-              label={"Lista de precios"}
-              array={priceListResponse.map((price) => ({
-                id: price.id,
-                name: price.name,
-              }))}
-              setValue={setValue}
-              name={"list"}
-              array2={listCategory[0].map((category) => ({
-                id: category?.list.id,
-                name: category?.list.name,
-              }))}
-            /> */}
 
             <div className="mt-4 min-w-40 max-w-60">
               <p
@@ -514,7 +505,7 @@ const UsersPage = () => {
           buttons={["accept"]}
           onAccept={() => setConfirmModal(false)}
         >
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex h-[14rem] flex-col items-center justify-center">
             <img src={SaveImg} alt="save" />
             <p className="font-roboto text-sm font-light text-black">
               Los cambios fueron guardados correctamente.

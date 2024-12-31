@@ -20,6 +20,7 @@ import x from "../assets/icons/x.svg";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
 import useOrders from "../hooks/orders/useOrders.js";
 import Calendar from "../components/calendar/Calendar.jsx";
+import checkIcon from "../assets/images/checkOrder.svg";
 
 const NewSalePage = () => {
   const {
@@ -39,7 +40,7 @@ const NewSalePage = () => {
     setSearch: setSearchProducts,
     setList,
   } = useGetProducts();
-  const { priceListResponse } = useGetPriceList();
+  const { priceListResponse, setSearch: setSearchList } = useGetPriceList();
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,8 +50,6 @@ const NewSalePage = () => {
   const [company, setCompany] = useState(null);
   const [seller, setSeller] = useState(null);
   const [autocompleteResults, setAutocompleteResults] = useState([]);
-  const [name, setName] = useState("productInOrder");
-  const [recharged, setRecharged] = useState({});
   const [selectedPayment, setSelectedPayment] = useState("Efectivo");
   const [isPriceListSelected, setIsPriceListSelected] = useState(true);
   const [orderData, setOrderData] = useState(null);
@@ -58,6 +57,9 @@ const NewSalePage = () => {
   const [isSaveConfirmationModalOpen, setIsSaveConfirmationModalOpen] =
     useState(false);
   const [deliveredValue, setDeliveredValue] = useState(false);
+  const [companies, setCompanies] = useState("");
+  const [sellers, setSellers] = useState("");
+  const [lists, setLists] = useState("");
 
   const [quantity, setQuantity] = useState({});
   const [subtotal, setSubtotal] = useState(0);
@@ -69,7 +71,6 @@ const NewSalePage = () => {
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
     : 0;
 
-  //validacion en tiempo real react-hook-form
   const checkQuantity = watch("checkQuantity");
   const isDirectValue = watch("isDirect", false);
 
@@ -113,19 +114,20 @@ const NewSalePage = () => {
         productInOrder: productInOrder.map((product) => {
           return {
             ...product,
-            isRecharge: product.isRecharge === "true",
-            itemsRemoval: product.isRecharge
-              ? product.itemsRemoval.map((item) => {
-                  return {
-                    ...item,
-                    lastDate: (item.lastDate = new Date(
-                      item.lastDate.year,
-                      item.lastDate.month - 1,
-                      item.lastDate.day,
-                    ).toISOString()),
-                  };
-                })
-              : [],
+            isRecharge: product.isRecharge,
+            itemsRemoval:
+              product.isRecharge === "true"
+                ? product.itemsRemoval.map((item) => {
+                    return {
+                      ...item,
+                      lastDate: (item.lastDate = new Date(
+                        item.lastDate.year,
+                        item.lastDate.month - 1,
+                        item.lastDate.day,
+                      ).toISOString()),
+                    };
+                  })
+                : [],
           };
         }),
         itemsRemoval,
@@ -219,18 +221,26 @@ const NewSalePage = () => {
     const updatedSelectedItems = autocompleteResults.filter(
       (selection) => selection.id !== id,
     );
+    const updatedQuantities = { ...quantity };
+    delete updatedQuantities[id];
 
-    setValue(name, updatedSelectedItems);
+    setValue("products", updatedSelectedItems);
     setAutocompleteResults(updatedSelectedItems);
+    setQuantity(updatedQuantities);
+
+    const newSubtotal = updatedSelectedItems.reduce((acc, item) => {
+      const itemQuantity = updatedQuantities[item.id] || 1;
+      const itemPrice = item.list[0].price;
+      const discountPercentage =
+        discount[updatedSelectedItems.indexOf(item)] || 0;
+      const discountedPrice = itemPrice * (1 - discountPercentage / 100);
+
+      return acc + discountedPrice * itemQuantity;
+    }, 0);
+
+    setSubtotal(newSubtotal);
   };
 
-  const handleSelectionChange = (id, value) => {
-    const selectedValue = value.anchorKey === "true";
-    setRecharged((prev) => ({
-      ...prev,
-      [id]: selectedValue,
-    }));
-  };
   const handleSelectionPaymentChange = (value) => {
     const selectedValue = value.anchorKey;
 
@@ -245,12 +255,19 @@ const NewSalePage = () => {
       console.error("Tipo de pago no soportado: ", selectedValue);
     }
   };
-  const handleSelectionListChange = (value) => {
-    const selectedValue = value.anchorKey;
-    setList(selectedValue);
-    setValue("priceList", value);
-    setIsPriceListSelected(false);
+  const handleSelectionListChange = (item) => {
+    if (item) {
+      const selectedValue = item.id;
+      setList(selectedValue);
+      setValue("priceList", item);
+      setIsPriceListSelected(false);
+    } else {
+      setList(null);
+      setValue("priceList", null);
+      setIsPriceListSelected(false);
+    }
   };
+
   const handleQuantityChange = (itemId, value) => {
     setQuantity((prev) => ({
       ...prev,
@@ -309,6 +326,18 @@ const NewSalePage = () => {
       setNumChecks(parseInt(checkQuantity, 10));
     }
   }, [checkQuantity]);
+
+  useEffect(() => {
+    setSearchCompanies(companies);
+  }, [companies]);
+
+  useEffect(() => {
+    setSearchSellers(sellers);
+  }, [sellers]);
+
+  useEffect(() => {
+    setSearchList(lists);
+  }, [lists]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -396,7 +425,10 @@ const NewSalePage = () => {
                         name={"client"}
                         setValue={setValue}
                         onChange={setSearchCompanies}
-                        placeholder="Buscar empresa"
+                        companies={setCompanies}
+                        placeholder={
+                          company ? company.name : "Buscar empresa..."
+                        }
                         onSelect={handleSelectCompany}
                         setRut={setRutValue}
                         {...field}
@@ -461,6 +493,7 @@ const NewSalePage = () => {
                       setValue={setValue}
                       onChange={setSearchSellers}
                       onSelect={handleSelectSeller}
+                      sellers={setSellers}
                       setRUT={setRutValue}
                       placeholder="Buscar vendedores"
                       {...field}
@@ -474,29 +507,25 @@ const NewSalePage = () => {
             </div>
             <div className="mb-4 flex space-x-2">
               <div className="mt-4 w-1/2">
-                <label className="block text-sm font-light">
-                  Lista de precios
-                </label>
-                <Select
-                  placeholder="Elegir lista de precios..."
-                  className="rounded-lg border"
-                  {...register("priceList", {
-                    required: "Este campo es obligatorio",
-                  })}
-                  onSelectionChange={handleSelectionListChange}
-                >
-                  {console.log("lista:", priceListResponse)}
-                  {priceListResponse.map((option) => (
-                    <SelectItem key={option.id}>{option.name}</SelectItem>
-                  ))}
-                </Select>
+                <CompleteSearchInput
+                  label={"Lista de precios"}
+                  array={priceListResponse}
+                  name={"priceList"}
+                  setValue={setValue}
+                  onChange={setSearchList}
+                  lists={setLists}
+                  placeholder={"Buscar lista de precios..."}
+                  onSelect={handleSelectionListChange}
+                  setRut={setRutValue}
+                />
+
                 {errors.priceList && (
                   <p className="text-xs text-red_e">
                     {errors.priceList.message}
                   </p>
                 )}
               </div>
-              <div className="mt-3 w-1/2">
+              <div className="mt-4 w-1/2">
                 <Controller
                   name="products"
                   control={control}
@@ -513,6 +542,7 @@ const NewSalePage = () => {
                       setAutocompleteResults={setAutocompleteResults}
                       selectedItems={autocompleteResults}
                       isDisabled={isPriceListSelected}
+                      setQuantity={setQuantity}
                     />
                   )}
                 />
@@ -521,7 +551,6 @@ const NewSalePage = () => {
                 </p>
               </div>
             </div>
-
             <div>
               {autocompleteResults.length > 0 && (
                 <div>
@@ -549,14 +578,16 @@ const NewSalePage = () => {
                       </div>
                       <div className="flex w-1/2 space-x-2">
                         <Input
-                          type="number"
+                          type={"number"}
                           label={"Cantidad"}
-                          defaultValue={1}
-                          minValue={1}
-                          placeholder={"Cant."}
-                          onInput={(e) =>
-                            handleQuantityChange(item.id, e.target.value)
-                          }
+                          value={quantity[item.id]}
+                          placeholder={"1"}
+                          onInput={(e) => {
+                            const value = e.target.value;
+                            if (/^\d*$/.test(value)) {
+                              handleQuantityChange(item.id, value);
+                            }
+                          }}
                           {...register(`productInOrder[${index}].amount`)}
                           msjError={
                             errors[`productInOrder[${index}].amount`]
@@ -603,25 +634,27 @@ const NewSalePage = () => {
                             Recarga
                           </label>
 
-                          <Select
-                            defaultValue={false}
-                            className="rounded-lg border"
-                            placeholder={recharged[item.id] ? "Si" : "No"}
-                            {...register(`productInOrder[${index}].isRecharge`)}
-                            onSelectionChange={(value) =>
-                              handleSelectionChange(item.id, value)
+                          <Input
+                            disabled={true}
+                            defaultValue={
+                              item.isToRecharge === "true" ? "Si" : "No"
                             }
-                          >
-                            <SelectItem key={true}>Si</SelectItem>
-                            <SelectItem key={false}>No</SelectItem>
-                          </Select>
+                            value={item.isToRecharge === "true" ? "Si" : "No"}
+                            className="rounded-lg border"
+                            {...register(
+                              `productInOrder[${index}].isRecharge`,
+                              {
+                                value: item.isToRecharge,
+                              },
+                            )}
+                          ></Input>
                         </div>
                       </div>
                     </div>
                   ))}
                   {autocompleteResults.map((item, index) => {
                     return (
-                      recharged[item.id] &&
+                      item.isToRecharge === "true" &&
                       Array.from({ length: quantity[item.id] || 1 }).map(
                         (_, indexRemoval) => (
                           <div
@@ -638,7 +671,7 @@ const NewSalePage = () => {
                               <Input
                                 label={"Código de barras"}
                                 placeholder={"..."}
-                                value={barCode || "..."}
+                                value={barCode || null}
                                 bg="bg-white"
                                 {...register(
                                   `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
@@ -646,7 +679,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.barCode?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.barCode
+                                    ?.message || ""
+                                }
                               />
                               <span className="flex items-center">
                                 <div
@@ -672,7 +709,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.enrollment?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.enrollment
+                                    ?.message || ""
+                                }
                               />
                               <Input
                                 label={"N° UNIT de fábrica"}
@@ -684,7 +725,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.fabricUNIT?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.fabricUNIT
+                                    ?.message || ""
+                                }
                               />
                             </div>
                             <div className="flex w-full space-x-2">
@@ -710,7 +755,11 @@ const NewSalePage = () => {
                                     required: "Este campo es obligatorio",
                                   },
                                 )}
-                                msjError={errors.numberUNIT?.message || ""}
+                                msjError={
+                                  errors?.productInOrder?.[index]
+                                    ?.itemsRemoval?.[indexRemoval]?.numberUNIT
+                                    ?.message || ""
+                                }
                               />
                             </div>
                           </div>
@@ -848,7 +897,7 @@ const NewSalePage = () => {
               </div>
               <Input
                 label={"Compra autorizada por:"}
-                placeholder={"Nombre de la empresa"}
+                placeholder={"Nombre"}
                 {...register("clientAuthorize", {
                   required: "Este campo es obligatorio",
                   minLength: {
@@ -905,14 +954,25 @@ const NewSalePage = () => {
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
-          title="Orden creada"
+          title="ORDEN GENERADA"
           variant="confirmation"
           buttons={["accept"]}
           onAccept={closeSaveConfirmationModal}
         >
-          {deliveredValue
-            ? "La orden fue creada exitosamente y se encuentra en órdenes."
-            : "La orden fue creada exitosamente y se encuentra en taller."}
+          <div className="flex h-[16rem] flex-col items-center">
+            <img src={checkIcon} alt="checkIcon" />
+            {deliveredValue ? (
+              <p>
+                La orden fue creada exitosamente y se encuentra en órdenes como
+                <strong> Entregada</strong>.
+              </p>
+            ) : (
+              <p>
+                La orden fue creada exitosamente y se encuentra en taller como
+                <strong> Ingreso a taller</strong>.
+              </p>
+            )}
+          </div>
         </ReusableModal>
         <ReusableModal
           isOpen={openScannerModal}

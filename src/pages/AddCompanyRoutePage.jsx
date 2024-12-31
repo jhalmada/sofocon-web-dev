@@ -12,6 +12,7 @@ import SearchInput from "../components/inputs/SearchInput";
 import disconnectedImg from "../assets/images/disconnected.svg";
 
 const AddCompanyRoutePage = ({
+  setSearch,
   setItemsPerPage,
   setPage,
   page,
@@ -26,34 +27,33 @@ const AddCompanyRoutePage = ({
   setModified,
   nameCompany,
   setStatus,
+  companyModified,
 }) => {
-  //estados
-  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
-  const [companyId, setCompanyId] = useState(null);
-  const [stateFilter, setStateFilter] = useState("");
-
-  const stateOptions = ["Frecuente", "Potencial", "De baja"];
-  //hooks
-  const { companiesResponse, setSearch } = useCompanies();
-  console.log(companiesResponse);
-  console.log(arrayCompanies);
   const { changedSellerRoute } = usePutSellerRoute();
+  const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
   const {
-    register,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
   } = useForm();
+  //estados
+  const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+  const [companyId, setCompanyId] = useState(null);
+
+  const stateOptions = ["Frecuente", "Potencial", "De baja"];
 
   //funciones
   const onSubmit = (data) => {
-    const companies = data.empresas.map((company) => ({ client: company.id }));
+    const companies = data.empresas.map((company) => ({
+      client: company.id,
+      status: company?.clientInRoute[0]?.status || "AVAILABLE",
+    }));
     const newData = {
       clientInRoute: [...companies],
     };
     changedSellerRoute(newData, idCompany, setModified);
     closeModal();
+    companyModified((prev) => !prev);
   };
   const openConfirmDeleteModal = (id) => {
     setCompanyId(id);
@@ -69,6 +69,7 @@ const AddCompanyRoutePage = ({
     };
     changedSellerRoute(newData, idCompany, setModified);
     setConfirmDeleteModalOpen(false);
+    companyModified((prev) => !prev);
   };
 
   //funcion para transformar los Arrays
@@ -198,15 +199,15 @@ const AddCompanyRoutePage = ({
         <div className="space-y-2">
           <form onSubmit={handleSubmit(onSubmit)}>
             <NextAutoComplete
-              array2={transformData(arrayCompanies) || []}
+              array2={arrayCompanies || []}
               label2={"Empresas asignadas"}
-              array={transformData(companiesResponse || []) || []}
+              array={companiesResponse || []}
               name={"empresas"}
               label={"Agregar Empresas"}
               setValue={setValue}
-              onChange={setSearch}
+              onChange={setSearchCompany}
             />
-            <p>{errors.vendedores && errors.vendedores.message}</p>
+            <p>{errors.empresas && errors.empresas.message}</p>
           </form>
         </div>
       </ReusableModal>

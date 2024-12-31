@@ -26,7 +26,7 @@ const useMetricsOrders = () => {
       });
       setMetricsOrderResponse(data);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

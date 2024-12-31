@@ -10,7 +10,8 @@ import useRoles from "../../hooks/roles/use.roles";
 import ReusableModal from "../modals/ReusableModal";
 import Input from "../inputs/Input";
 import notFoundImg from "../../assets/images/notFound.svg";
-import SearchInput from "../inputs/SearchInput";
+import SaveImg from "../../assets/img/save.svg";
+import deleteImg from "../../assets/img/deleted.svg";
 
 const translatePermission = (permission) => {
   switch (permission) {
@@ -26,6 +27,10 @@ const translatePermission = (permission) => {
       return "VENDEDORES";
     case "SECTION_WORKSHOP":
       return "TALLER";
+    case "SECTION_PRODUCTS":
+      return "PRODUCTOS";
+    case "SECTION_ORDERS":
+      return "ORDENES";
     default:
       return permission;
   }
@@ -44,26 +49,28 @@ const TableRole = () => {
     setValue,
     formState: { errors },
   } = useForm();
+  const [permisosSelected, setPermisosSelected] = useState([]);
 
   const { changedUser } = usePatchRoles();
 
   const { deleteUser } = useDeleteRoles();
   const [roleId, setRoleId] = useState("");
-  const [rolePage, setRolePage] = useState(5);
   const { RolesResponse, setRolModified } = useRoles();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalButtons, setModalButtons] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const startIndex = currentPage * rolePage;
+
+  
   const paginatedRoles = RolesResponse ? RolesResponse : [];
 
   const openModal = (id) => {
     const roleEdit = RolesResponse.find((role) => role.id === id);
-    console.log(roleEdit);
+    setPermisosSelected(roleEdit.permissions);
+   
     if (roleEdit) {
       setValue("name", roleEdit.name);
     }
@@ -118,6 +125,7 @@ const TableRole = () => {
     deleteUser(id, setRolModified);
     closeConfirmCancelModal();
     closeModal();
+    setConfirmDelete(true);
   };
 
   const handleConfirmSaveClick = () => {
@@ -126,7 +134,6 @@ const TableRole = () => {
   };
 
   const onChangesPermissions = (e) => {
-    console.log(e.target.value);
     setValue("permissions", e.target.value);
   };
 
@@ -211,6 +218,7 @@ const TableRole = () => {
             msjError={errors.name ? errors.name.message : ""}
           />
           <Select
+            defaultSelectedKeys={permisosSelected}
             labelPlacement="outside"
             label="Asignar permisos"
             selectionMode="multiple"
@@ -252,7 +260,28 @@ const TableRole = () => {
         buttons={["accept"]}
         onAccept={handleConfirmSaveClick}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
+      </ReusableModal>
+      {/*modal para elementos eliminados*/}
+      <ReusableModal
+        isOpen={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Rol eliminado"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setConfirmDelete(false)}
+      >
+        <div className="flex flex-col items-center justify-center">
+          <img src={deleteImg} alt="delete" />
+          <p className="font-roboto text-sm font-light text-black">
+            El rol fue eliminado correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );

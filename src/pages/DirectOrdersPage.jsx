@@ -19,7 +19,6 @@ const DirectOrdersPage = ({
   page,
   itemsPerPage,
   year,
-  month,
   setModified,
   setStatus,
   setMonth,
@@ -88,10 +87,6 @@ const DirectOrdersPage = ({
 
     return `${day}/${month}/${year}`;
   };
-  const openConfirmDeleteModal = (id) => {
-    setOrderId(id);
-    setConfirmDeleteModalOpen(true);
-  };
 
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
 
@@ -102,7 +97,7 @@ const DirectOrdersPage = ({
 
   const handleStateFilterChange = (value) => {
     switch (value) {
-      case "Para retirar":
+      case "Para retirar del taller":
         setStatus("READY_PICKUP");
         setPage(0);
         break;
@@ -130,8 +125,7 @@ const DirectOrdersPage = ({
             <Select
               placeholder="Selecciona un mes"
               labelPlacement="outside"
-              defaultSelectedKeys={[month.toString()]}
-              className="w-[9.375rem] rounded-lg border"
+              className="w-52 rounded-lg border"
               onChange={(e) => handleChangeMonth(e.target.value)}
             >
               {months.map((month) => (
@@ -226,7 +220,7 @@ const DirectOrdersPage = ({
                           : "Sin fecha"
                       }
                       retirementDate={formatDate(order.workShopDateDeparture)}
-                      seller={order?.user?.userInfo?.fullName}
+                      seller={order?.user?.userInfo?.fullName || "Sin vendedor"}
                       state={order.status}
                       deleteIconSrc={deleteIcon}
                     />

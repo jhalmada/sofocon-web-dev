@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { UserService } from "../../services/user/user.service.js";
+import { SOFOCON_JWT_TOKEN } from "../../utils/Constants";
+import axios from "axios";
 const useUsers = () => {
   const [usersResponse, setUsersResponse] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -11,6 +13,36 @@ const useUsers = () => {
   const [search, setSearch] = useState("");
   const [isActive, setIsActive] = useState(null);
   const [role, setRole] = useState(null);
+
+  const downloadFile = useCallback(async (url, fileName) => {
+    try {
+      setLoading(true);
+    
+      const response = await axios.get(url, {
+        responseType: "blob",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(SOFOCON_JWT_TOKEN)}`,
+        },
+      });
+
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const urlObject = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = urlObject;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(urlObject);
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+    }
+  }, []);
   const getAllUsers = async () => {
     try {
       setLoading(true);
@@ -26,7 +58,7 @@ const useUsers = () => {
 
       setUsersResponse(data.result);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -44,11 +76,14 @@ const useUsers = () => {
     setPage,
     page,
     itemsPerPage,
+    search,
+    role,
     setModified,
     modified,
     setSearch,
     setIsActive,
     setRole,
+    downloadFile,
   };
 };
 

@@ -1,12 +1,10 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import Input from "../components/inputs/Input";
-import uploadIcon from "../assets/icons/upload.svg";
 import Button from "../components/buttons/Button";
 import arrowRigthIcon from "../assets/icons/arrow-right.svg";
-import { Controller, set, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
-import useAddProducts from "../hooks/products/useAddProducts";
 import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray";
 import ReusableModal from "../components/modals/ReusableModal";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
@@ -25,11 +23,8 @@ const AddPriceListPage = () => {
 
   //Hooks
   const { productsResponse, setSearch } = useGetProducts();
-
   const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
-
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -39,15 +34,10 @@ const AddPriceListPage = () => {
     control,
     formState: { errors },
   } = useForm();
-
   const { postAddPriceList } = useAddPriceList();
 
-  //Funciones
-
   const validateInput = (array) => {
-    console.log(array);
     const result = array.find((product) => product.value === "");
-    console.log(result);
     return result ? false : true;
   };
 
@@ -111,7 +101,7 @@ const AddPriceListPage = () => {
           </div>
         </div>
 
-        <div className="rounded-tr-lg bg-white px-7 pb-3 pt-7 shadow-t">
+        <div className="rounded-tr-lg bg-white px-7 pb-3 pt-7">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-2"
@@ -150,22 +140,36 @@ const AddPriceListPage = () => {
                   control={field}
                   msjError={errors.productos?.message}
                   clearErrors={clearErrors}
+                  onChange={setSearch}
                 />
               )}
             />
             <div>
-              <NextAutoComplete
-                array={companiesResponse.map((company) => ({
-                  id: company.id,
-                  name: company.name,
-                }))}
-                label={"Empresas"}
-                isDisabled={isAllCompanies}
-                setValue={setValue}
-                name={"company"}
-                label2={"Empresas"}
-                onChange={setSearchCompany}
-                setErrors={setError}
+              <Controller
+                name="company"
+                control={control}
+                rules={{
+                  required: isAllCompanies
+                    ? false
+                    : "Debe seleccionar una empresa o todas",
+                }}
+                render={({ field }) => (
+                  <NextAutoComplete
+                    array={companiesResponse.map((company) => ({
+                      id: company.id,
+                      name: company.name,
+                    }))}
+                    label={"Empresas"}
+                    isDisabled={isAllCompanies}
+                    setValue={setValue}
+                    name={field.name}
+                    label2={"Empresas"}
+                    control={field}
+                    onChange={setSearchCompany}
+                    setErrors={setError}
+                    msjError={errors.company?.message}
+                  />
+                )}
               />
             </div>
 

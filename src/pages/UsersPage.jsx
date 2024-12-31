@@ -26,6 +26,9 @@ import BackButton from "../components/buttons/BackButton.jsx";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import notFoundImg from "../assets/images/notFound.svg";
+import SaveImg from "../assets/img/save.svg";
+import deleteImg from "../assets/img/deleted.svg";
+import { isMatch } from "lodash";
 const USER_TAB = "users";
 const SELLERS_TAB = "sellers";
 const ROLES_TAB = "roles";
@@ -39,13 +42,24 @@ const UsersPage = () => {
     total,
     setPage,
     page,
+    role,
+    search: searchUsers,
     itemsPerPage,
     setModified,
     setSearch,
     setIsActive,
     setRole,
+    downloadFile,
   } = useUsers();
-
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    clearErrors,
+    setError,
+    watch,
+  } = useForm();
   const {
     userSellerResponse,
     setItemsPerPage: setItemsPerPageSellers,
@@ -60,9 +74,9 @@ const UsersPage = () => {
   } = useUsersSellers();
   const { RolesResponse } = useRoles();
   const { deleteUser } = useDeleteUsers();
-  const [activeTab, setActiveTab] = useState(USER_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [isExportSellersModalOpen, setIsExportSellersModalOpen] =
     useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
@@ -71,30 +85,62 @@ const UsersPage = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [checkSelected, setCheckSelected] = useState("existente");
   const roleOptions = RolesResponse?.map((role) => role.name) || [];
-  const stateOptions = ["Activo", "Inactivo"];
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
+  const [dataEdit, setDataEdit] = useState(null);
 
+  const navigationActive = (tab) => {
+    switch (tab) {
+      case USER_TAB:
+        return USER_TAB;
+      case SELLERS_TAB:
+        return SELLERS_TAB;
+      case ROLES_TAB:
+        return ROLES_TAB;
+      default:
+        return USER_TAB;
+    }
+  };
+  const [activeTab, setActiveTab] = useState(
+    navigationActive(sessionStorage.getItem("activeTab")),
+  );
+
+  const handleDownloadExcel1 = () => {
+    const url = `${BASE_URL}/${getUsersExcel}?isSeller=false${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`;
+    downloadFile(url, `Usuarios.xlsx`);
+  };
+
+  const handleDownloadPdf1 = () => {
+    const url = `${BASE_URL}/${getUsersPdf}?isSeller=false${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`;
+
+    downloadFile(url, `Usuarios.pdf`);
+  };
+  const handleDownloadExcel2 = () => {
+    const url = `${BASE_URL}/${getUsersExcel}?isSeller=true${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`;
+    downloadFile(url, `Vendedores.xlsx`);
+  };
+
+  const handleDownloadPdf2 = () => {
+    const url = `${BASE_URL}/${getUsersPdf}?isSeller=true${searchUsers ? `&search=${searchUsers}` : ""}${role ? `&role=${role}` : ""}`;
+
+    downloadFile(url, `Vendedores.pdf`);
+  };
   const openModal = (id) => {
     const userToEdit = usersResponse.find((user) => user.id === id);
     if (userToEdit) {
+      setDataEdit(userToEdit);
       setValue("fullName", userToEdit.userInfo.fullName);
       setValue("email", userToEdit.email);
       setValue("ci", userToEdit.userInfo.ci);
       setValue("phone", userToEdit.userInfo.phone);
       setValue("role", userToEdit?.role?.id || "");
+      setValue("state", userToEdit.isActive ? "Activo" : "Inactivo");
     }
     setIsModalOpen(true);
     setUserId(id);
   };
-  const openExportModal = (id) => {
+  const openExportModal = () => {
     setIsExportModalOpen(true);
   };
-  const openExportSellersModal = (id) => {
+  const openExportSellersModal = () => {
     setIsExportSellersModalOpen(true);
   };
   const closeModal = () => {
@@ -116,11 +162,27 @@ const UsersPage = () => {
     setConfirmDeleteModalOpen(true);
   };
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = (setModified) => {
     deleteUser(userId, setModified);
     closeConfirmDeleteModal();
+    setConfirmDelete(true);
   };
-  const handleCancelClick = () => openConfirmCancelModal();
+  const handleCancelClick = () => {
+    const data = watch();
+    const dataNew = {
+      userInfo: { ci: data.ci, phone: data.phone, fullName: data.fullName },
+      email: data.email,
+      role: { id: data.role },
+      isActive: data.state === "Activo" ? true : false,
+    };
+    const hasChanges = !isMatch(dataEdit, dataNew);
+
+    if (hasChanges) {
+      openConfirmCancelModal();
+    } else {
+      closeModal();
+    }
+  };
   const handleConfirmCancel = () => {
     closeConfirmCancelModal();
     closeModal();
@@ -171,6 +233,9 @@ const UsersPage = () => {
           },
         });
     }
+    clearErrors();
+    clearErrors("state");
+    setError("state", { type: "manual", message: "Error message" });
   };
   const handleRoleFilterChange = (value) => {
     const rolselect = RolesResponse.filter((rol) => rol.name === value);
@@ -180,20 +245,9 @@ const UsersPage = () => {
       setRole(null);
     }
   };
-  const handleStateFilterChange = (value) => {
-    switch (value) {
-      case "Activo":
-        setIsActive(true);
-        break;
-      case "Inactivo":
-        setIsActive(false);
-        break;
-      default:
-        setIsActive(null);
-    }
-  };
 
   useEffect(() => {
+    sessionStorage.setItem("activeTab", activeTab);
     if (activeTab === SELLERS_TAB || activeTab === ROLES_TAB) {
       setRole(null);
       setIsActive(null);
@@ -358,7 +412,7 @@ const UsersPage = () => {
         {activeTab === SELLERS_TAB && (
           <SellersPage
             openConfirmDeleteModal={openConfirmDeleteModal}
-            setSearch={setSearchSellers}
+            setSearchSellers={setSearchSellers}
             userSellerResponse={userSellerResponse}
             setItemsPerPage={setItemsPerPageSellers}
             totalPage={totalPageSellers}
@@ -396,8 +450,8 @@ const UsersPage = () => {
             {...register("ci", {
               required: "Este campo es obligatorio",
             })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
+            errorApi={errors.ci}
+            msjError={errors.ci ? errors.ci.message : ""}
           />
           <Input
             label={"Teléfono de contacto"}
@@ -405,8 +459,8 @@ const UsersPage = () => {
             {...register("phone", {
               required: "Este campo es obligatorio",
             })}
-            errorApi={errors.fullName}
-            msjError={errors.fullName ? errors.fullName.message : ""}
+            errorApi={errors.phone}
+            msjError={errors.phone ? errors.phone.message : ""}
           />
           <Input
             placeholder={"Escribe tu correo"}
@@ -425,13 +479,29 @@ const UsersPage = () => {
             errorApi={errors.email}
             msjError={errors.email ? errors.email.message : ""}
           />
-          <div className="space-y-4">
+          <div>
+            <label htmlFor="selectState">Estado</label>
+            <Select
+              className="rounded-lg border"
+              id="selectState"
+              {...register("state", {
+                required: "Debes seleccionar un estado",
+              })}
+              onSelectionChange={(value) => {
+                setValue("state", value);
+              }}
+            >
+              <SelectItem key={"Activo"}>Activo</SelectItem>
+              <SelectItem key={"Inactivo"}>Inactivo</SelectItem>
+            </Select>
+          </div>
+          <div className="">
             <Checkbox
               defaultSelected={checkSelected === "existente"}
               isSelected={checkSelected === "existente"}
               onClick={() => setCheckSelected("existente")}
               radius="full"
-              className="font-light"
+              className="mt-2 font-light"
               size="sm"
             >
               Asignar rol existente
@@ -456,7 +526,7 @@ const UsersPage = () => {
               radius="full"
               isSelected={checkSelected === "nuevo"}
               onClick={() => setCheckSelected("nuevo")}
-              className="font-light"
+              className="mt-2 font-light"
               size="sm"
             >
               Asignar nuevo rol
@@ -508,27 +578,25 @@ const UsersPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a href={`${BASE_URL}/${getUsersExcel}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadExcel1}
+          />
 
-          <a href={`${BASE_URL}/${getUsersPdf}`} download target="_blank">
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadPdf1}
+          />
         </div>
       </ReusableModal>
       <ReusableModal
@@ -541,35 +609,25 @@ const UsersPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getUsersExcel}?isSeller=true`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadExcel2}
+          />
 
-          <a
-            href={`${BASE_URL}/${getUsersPdf}?isSeller=true`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadPdf2}
+          />
         </div>
       </ReusableModal>
       <ReusableModal
@@ -590,7 +648,12 @@ const UsersPage = () => {
         buttons={["accept"]}
         onAccept={closeSaveConfirmationModal}
       >
-        Los cambios fueron guardados exitosamente.
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={SaveImg} alt="save" />
+          <p className="font-roboto text-sm font-light text-black">
+            Los cambios fueron guardados correctamente.
+          </p>
+        </div>
       </ReusableModal>
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}
@@ -598,9 +661,25 @@ const UsersPage = () => {
         title="Eliminar usuario"
         variant="confirmation"
         buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete(userId)}
+        onAccept={() => handleConfirmDelete(setModified)}
       >
         Este usuario será eliminado de forma permanente. ¿Desea continuar?
+      </ReusableModal>
+      {/*modal para elementos eliminados*/}
+      <ReusableModal
+        isOpen={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Usuario eliminado"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setConfirmDelete(false)}
+      >
+        <div className="flex h-[14rem] flex-col items-center justify-center">
+          <img src={deleteImg} alt="delete" />
+          <p className="font-roboto text-sm font-light text-black">
+            El usuario fue eliminado correctamente.
+          </p>
+        </div>
       </ReusableModal>
     </div>
   );

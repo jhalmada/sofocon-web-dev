@@ -11,7 +11,7 @@ const useAddPriceList = () => {
         await PriceListService.postAddPriceListApi(priceListData);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     } finally {
       setLoading(false);

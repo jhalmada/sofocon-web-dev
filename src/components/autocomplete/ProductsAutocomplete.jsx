@@ -8,23 +8,38 @@ const ProductsAutocomplete = ({
   name,
   setValue,
   onChange,
-  array2,
   placeholder = "Buscar...",
   isDisabled = false,
   setAutocompleteResults,
   selectedItems,
+  setQuantity,
 }) => {
   const handleSelect = (item) => {
-    if (!selectedItems.some((selectedItem) => selectedItem.id === item.id)) {
-      const updatedSelectedItems = [...selectedItems, item];
+    const updatedSelectedItems = [...selectedItems];
+    const index = selectedItems.findIndex(
+      (selectedItem) => selectedItem.id === item.id,
+    );
+
+    if (index === -1) {
+      updatedSelectedItems.push(item);
       setValue(name, updatedSelectedItems);
       setAutocompleteResults(updatedSelectedItems);
+
+      setQuantity((prevQuantities) => ({
+        ...prevQuantities,
+        [item.id]: prevQuantities[item.id] || 1,
+      }));
     } else {
-      const updatedSelectedItems = selectedItems.filter(
+      const newSelectedItems = updatedSelectedItems.filter(
         (selectedItem) => selectedItem.id !== item.id,
       );
-      setValue(name, updatedSelectedItems);
-      setAutocompleteResults(updatedSelectedItems);
+      setValue(name, newSelectedItems);
+      setAutocompleteResults(newSelectedItems);
+      setQuantity((prevQuantities) => {
+        const newQuantities = { ...prevQuantities };
+        delete newQuantities[item.id];
+        return newQuantities;
+      });
     }
   };
 

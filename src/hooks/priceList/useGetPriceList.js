@@ -10,6 +10,8 @@ const useGetPriceList = () => {
   const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [client, setClient] = useState(null);
+  const [inApp, setInApp] = useState(true);
 
   const getAllPriceList = async () => {
     try {
@@ -19,19 +21,21 @@ const useGetPriceList = () => {
         itemsPerPage,
         search,
         category,
+        client,
+        inApp,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
       setPriceListResponse(data.result);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }
   };
   useEffect(() => {
     getAllPriceList();
-  }, [page, itemsPerPage, modified, search, category]);
+  }, [page, itemsPerPage, modified, search, category, client]);
   return {
     priceListResponse,
     loading,
@@ -45,6 +49,7 @@ const useGetPriceList = () => {
     modified,
     setSearch,
     setCategory,
+    setClient,
   };
 };
 

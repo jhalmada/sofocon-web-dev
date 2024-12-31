@@ -24,7 +24,7 @@ const useGetSellerBest = () => {
       });
       setSellerBestResponse(data);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

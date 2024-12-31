@@ -37,6 +37,9 @@ const RouteMapDetailsPage = () => {
     total,
     setPage,
     itemsPerPage,
+    isActive,
+    search: searchSellers,
+    downloadFile,
     setModified,
     setSearch,
     setIsActive,
@@ -55,6 +58,8 @@ const RouteMapDetailsPage = () => {
     total: totalCompanies,
     setPage: setPageCompanies,
     page: pageCompanies,
+    search: searchCompanies,
+    status,
     itemsPerPage: itemsPerPageCompanies,
     setModified: setModifiedCompanies,
     setRoutes: setRoutesCompanies,
@@ -71,6 +76,13 @@ const RouteMapDetailsPage = () => {
   const [isSellersExportModalOpen, setIsSellersExportModalOpen] =
     useState(false);
   const [nameCompany, setNameCompany] = useState("");
+  const [allCompanies, setAllCompanies] = useState(companiesResponse || []);
+  const [filteredCompanies, setFilteredCompanies] = useState(allCompanies);
+  const [companySearchTerm, setCompanySearchTerm] = useState("");
+  const [allSellers, setAllSellers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredSellers, setFilteredSellers] = useState(allSellers);
+  const [companyModified, setCompanyModified] = useState(false);
 
   const oneRute = async (id) => {
     const newdatos = await getOneSellerRoute(id);
@@ -82,26 +94,32 @@ const RouteMapDetailsPage = () => {
 
   useEffect(() => {
     oneRute(id);
-  }, []);
-
-  {
-    /*Vendedores*/
-  }
-  const [allSellers, setAllSellers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredSellers, setFilteredSellers] = useState(allSellers);
+  }, [companyModified]);
 
   useEffect(() => {
     setAllSellers(usersResponse);
   }, [usersResponse]);
 
-  {
-    /*Empresas*/
-  }
-  const [allCompanies, setAllCompanies] = useState(companiesResponse || []);
-  const [assignedCompanies, setAssignedCompanies] = useState([]);
-  const [filteredCompanies, setFilteredCompanies] = useState(allCompanies);
-  const [companySearchTerm, setCompanySearchTerm] = useState("");
+  const handleDownloadSellersExcel = () => {
+    const url = `${BASE_URL}/${getUsersExcel}?isSeller=true&route=${id}${searchSellers ? `&search=${searchSellers}` : ""}${isActive !== null ? `&isActive=${isActive}` : ""}`;
+    downloadFile(url, `Rutas - Vendedores.xlsx`);
+  };
+
+  const handleDownloadSellersPdf = () => {
+    const url = `${BASE_URL}/${getUsersPdf}?isSeller=true&route=${id}${searchSellers ? `&search=${searchSellers}` : ""}${isActive !== null ? `&isActive=${isActive}` : ""}`;
+
+    downloadFile(url, `Rutas - Vendedores.pdf`);
+  };
+  const handleDownloadClientsExcel = () => {
+    const url = `${BASE_URL}/${getClientsExcel}?route=${id}${searchCompanies ? `&search=${searchCompanies}` : ""}${status ? `&status=${status}` : ""}`;
+    downloadFile(url, `Rutas - Empresas.xlsx`);
+  };
+
+  const handleDownloadClientsPdf = () => {
+    const url = `${BASE_URL}/${getClientsPdf}?route=${id}${searchCompanies ? `&search=${searchCompanies}` : ""}${status ? `&status=${status}` : ""}`;
+
+    downloadFile(url, `Rutas - Empresas.pdf`);
+  };
 
   const openModal = (id) => {
     setIsModalOpen(true);
@@ -155,18 +173,13 @@ const RouteMapDetailsPage = () => {
     }
   }, [companySearchTerm, allCompanies]);
 
-  const openExportModal = (id) => {
+  const openExportModal = () => {
     setIsExportModalOpen(true);
   };
-  const openSellersExportModal = (id) => {
+  const openSellersExportModal = () => {
     setIsSellersExportModalOpen(true);
   };
 
-  //funciones
-  const onSubmits = (data) => {};
-
-  //funciones del modal de añadir vendedor
-  //para cerrar el modal
   const closeModal = () => {
     setIsModalOpen(false);
     setIsExportModalOpen(false);
@@ -176,9 +189,9 @@ const RouteMapDetailsPage = () => {
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-  //para el boton de cancelar
+
   const handleCancelClick = () => openConfirmCancelModal();
-  //para la confirmacion de cancelar
+
   const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
@@ -282,14 +295,15 @@ const RouteMapDetailsPage = () => {
                   </th>
                 </tr>
               </thead>
+
               <tbody>
                 <RouteMapDetailsRow
                   id={datos?.id}
                   name={datos?.name || "Nombre de la ruta"}
                   zone={datos?.zone || "zona de la ruta"}
-                  companies={datos?.totalClients || "cargando"}
-                  sellers={datos?.totalSeller || "cargando"}
-                  state={datos?.isActive || "cargando"}
+                  companies={datos?.totalClients || "0"}
+                  sellers={datos?.totalSeller || "0"}
+                  state={datos?.isActive || "Sin estado"}
                   array={companiesResponse}
                 />
               </tbody>
@@ -301,6 +315,7 @@ const RouteMapDetailsPage = () => {
           <AddSellerRoutePage
             arraySeller={userSellerResponse?.result || []}
             itemsPerPage={itemsPerPage}
+            setSearch={setSearch}
             page={page}
             setItemsPerPage={setItemsPerPage}
             setPage={setPage}
@@ -315,12 +330,14 @@ const RouteMapDetailsPage = () => {
             idCompany={id}
             nameCompany={datos?.name}
             setIsActive={setIsActive}
+            companyModified={setCompanyModified}
           />
         )}
         {activeTab === COMPANIES_TAB && (
           <AddCompanyRoutePage
             page={pageCompanies}
             itemsPerPage={itemsPerPageCompanies}
+            setSearch={setCompanySearch}
             setPage={setPageCompanies}
             totalPage={totalPageCompanies}
             total={totalCompanies}
@@ -333,6 +350,7 @@ const RouteMapDetailsPage = () => {
             idCompany={id}
             nameCompany={datos?.name}
             setStatus={setStatus}
+            companyModified={setCompanyModified}
           />
         )}
       </div>
@@ -349,35 +367,25 @@ const RouteMapDetailsPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getUsersExcel}?isSeller=true&route=${id}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadSellersExcel}
+          />
 
-          <a
-            href={`${BASE_URL}/${getUsersPdf}/?isSeller=true&route=${id}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadSellersPdf}
+          />
         </div>
       </ReusableModal>
 
@@ -393,35 +401,25 @@ const RouteMapDetailsPage = () => {
       >
         Elige el formato en el que desea descargar el contenido de la lista:
         <div className="mt-4 flex flex-col space-y-4">
-          <a
-            href={`${BASE_URL}/${getClientsExcel}/?route=${id}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo Excel"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo Excel"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadClientsExcel}
+          />
 
-          <a
-            href={`${BASE_URL}/${getClientsPdf}/?route=${id}`}
-            download
-            target="_blank"
-          >
-            <Button
-              width="min-w-[14rem]"
-              text="Descargar archivo PDF"
-              icon={DownloadIcon}
-              color={"cancel"}
-              shadow="shadow-blur"
-              iconPosition={"left"}
-            />
-          </a>
+          <Button
+            width="min-w-[14rem]"
+            text="Descargar archivo PDF"
+            icon={DownloadIcon}
+            color={"cancel"}
+            shadow="shadow-blur"
+            iconPosition={"left"}
+            onClick={handleDownloadClientsPdf}
+          />
         </div>
       </ReusableModal>
 

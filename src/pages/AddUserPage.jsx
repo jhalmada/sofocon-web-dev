@@ -22,7 +22,7 @@ const AddUserPage = () => {
   } = useForm();
   const navigate = useNavigate();
   const { RolesResponse } = useRoles();
-  const { postAddUsers, loading } = AddUsers();
+  const { postAddUsers } = AddUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
@@ -212,8 +212,8 @@ const AddUserPage = () => {
                     hasNumber: (value) =>
                       /\d/.test(value) || "Debes incluir al menos un número",
                     hasLetter: (value) =>
-                      /[a-zA-Z]/.test(value) ||
-                      "Debes incluir al menos una letra",
+                      /[a-z]/.test(value) ||
+                      "Debes incluir al menos una letra minuscula",
                   },
                 })}
                 errorApi={errors.password}

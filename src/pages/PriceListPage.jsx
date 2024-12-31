@@ -11,6 +11,7 @@ import Input from "../components/inputs/Input";
 import { Checkbox } from "@nextui-org/react";
 import usePutPriceList from "../hooks/priceList/usePutPriceList";
 import SaveImg from "../assets/img/save.png";
+import { isMatch } from "lodash";
 
 const PriceListPage = ({
   priceListResponse,
@@ -22,7 +23,6 @@ const PriceListPage = ({
   total,
   setModified,
 }) => {
-  //estados
   const [deletemodal, setDeleteModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [priceListId, setPriceListId] = useState(null);
@@ -31,20 +31,19 @@ const PriceListPage = ({
   const [confirmModal, setConfirmModal] = useState(false);
   const [isConfirmCancelModalOpen, setIsConfirmCancelModalOpen] =
     useState(false);
-  //hooks
+  const [dataEdit, setDataEdit] = useState(null);
 
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm();
 
   const { deletePriceList } = useDeletePriceList();
 
   const { changedPriceList } = usePutPriceList();
-
-  //funciones
 
   const handleDelete = (priceListId) => {
     setPriceListId(priceListId);
@@ -66,6 +65,7 @@ const PriceListPage = ({
       (price) => price.id === priceListId,
     );
     if (priceList) {
+      setDataEdit(priceList);
       setValue("name", priceList.name);
       setIsDirect(priceList.isDirect);
     }
@@ -87,6 +87,18 @@ const PriceListPage = ({
     if (response) {
       setEditModal(false);
       setConfirmModal(true);
+    }
+  };
+
+  const cancelEdit = () => {
+    const data = watch();
+    const newData = { name: data.name, isDirect };
+
+    const hasChanges = !isMatch(dataEdit, newData);
+    if (hasChanges) {
+      setIsConfirmCancelModalOpen(true);
+    } else {
+      setEditModal(false);
     }
   };
 
@@ -159,7 +171,7 @@ const PriceListPage = ({
         buttons={["accept"]}
         onAccept={() => setConfirmDelete(false)}
       >
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex h-[14rem] flex-col items-center justify-center">
           <img src={deleteImg} alt="delete" />
           <p className="font-roboto text-sm font-light text-black">
             El elemento fue eliminado correctamente.
@@ -169,11 +181,11 @@ const PriceListPage = ({
       {/*modal para editar*/}
       <ReusableModal
         isOpen={editModal}
-        onClose={() => setIsConfirmCancelModalOpen(true)}
+        onClose={() => cancelEdit()}
         title="Editar Categoria"
         onSubmit={handleSubmit(onSubmit)}
         buttons={["cancel", "save"]}
-        handleCancelClick={() => setIsConfirmCancelModalOpen(true)}
+        handleCancelClick={() => cancelEdit()}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
@@ -210,7 +222,7 @@ const PriceListPage = ({
         buttons={["accept"]}
         onAccept={() => setConfirmModal(false)}
       >
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex h-[14rem] flex-col items-center justify-center">
           <img src={SaveImg} alt="save" />
           <p className="font-roboto text-sm font-light text-black">
             Los cambios fueron guardados correctamente.

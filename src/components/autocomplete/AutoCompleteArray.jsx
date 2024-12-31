@@ -15,28 +15,24 @@ const AutoCompleteArray = ({
   placeholder = "Buscar...",
   hidden = false,
   msjError,
+  onChange,
 }) => {
-  // Estado para las opciones seleccionadas y sus valores
   const [selectedItems, setSelectedItems] = useState(array2 || []);
 
-  // Actualiza las opciones seleccionadas en el formulario
   useEffect(() => {
     if (setValue) {
-      setValue(name, selectedItems); // Asegura que los valores se pasen correctamente al formulario
+      setValue(name, selectedItems);
     }
   }, [selectedItems, name, setValue]);
 
-  // Maneja la selección de una opción del Autocomplete
   const handleSelect = (item) => {
     if (!selectedItems.find((el) => el.id === item.id)) {
       const newSelection = [...selectedItems, { ...item, value: "" }];
       setSelectedItems(newSelection);
-      // Limpia el error cuando se selecciona un producto
       clearErrors && clearErrors(name);
     }
   };
 
-  // Maneja la actualización del valor ingresado en el input de cada opción seleccionada
   const handleInputChange = (id, newValue) => {
     const updatedItems = selectedItems.map((el) =>
       el.id === id ? { ...el, value: newValue } : el,
@@ -44,7 +40,6 @@ const AutoCompleteArray = ({
     setSelectedItems(updatedItems);
   };
 
-  // Elimina una opción seleccionada
   const handleDeleteSelection = (item) => {
     const filteredItems = selectedItems.filter((el) => el.id !== item.id);
     setSelectedItems(filteredItems);
@@ -52,6 +47,45 @@ const AutoCompleteArray = ({
 
   return (
     <div>
+      <label className="mt-2 block font-roboto text-sm">{label}</label>
+      <div>
+        <Autocomplete
+          disabledKeys={selectedItems.map((item) => item.id)}
+          className="w-full rounded-lg border"
+          selectedKey={""}
+          placeholder={placeholder}
+          startContent={<img src={search} alt="Buscar" />}
+          onInputChange={(e) => onChange(e)}
+          popoverProps={{
+            placement: "top-start",
+            modifiers: [
+              {
+                name: "offset",
+                options: {
+                  offset: [0, 8],
+                },
+              },
+            ],
+          }}
+        >
+          {array.map((item) => (
+            <AutocompleteItem
+              key={item.id}
+              value={item.id}
+              onClick={() => handleSelect(item)}
+              endContent={
+                selectedItems.some((el) => el.id === item.id) && (
+                  <p>Seleccionado</p>
+                )
+              }
+            >
+              {item.name}
+            </AutocompleteItem>
+          ))}
+        </Autocomplete>
+      </div>
+      {msjError && <p className="font-roboto text-xs text-red_e">{msjError}</p>}
+
       {!hidden && (
         <div className="flex w-full flex-wrap">
           {selectedItems.length > 0 && (
@@ -90,32 +124,6 @@ const AutoCompleteArray = ({
           ))}
         </div>
       )}
-
-      {/* Autocomplete */}
-      <label className="mt-2 block font-roboto text-sm">{label}</label>
-      <Autocomplete
-        disabledKeys={selectedItems.map((item) => item.id)}
-        className="w-full rounded-lg border"
-        selectedKey={""}
-        placeholder={placeholder}
-        startContent={<img src={search} alt="Buscar" />}
-      >
-        {array.map((item) => (
-          <AutocompleteItem
-            key={item.id}
-            value={item.id}
-            onClick={() => handleSelect(item)}
-            endContent={
-              selectedItems.some((el) => el.id === item.id) && (
-                <p>Seleccionado</p>
-              )
-            }
-          >
-            {item.name}
-          </AutocompleteItem>
-        ))}
-      </Autocomplete>
-      {msjError && <p className="font-roboto text-xs text-red_e">{msjError}</p>}
     </div>
   );
 };
