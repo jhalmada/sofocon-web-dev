@@ -1,11 +1,12 @@
 import { io } from "socket.io-client";
+import { BASE_URL } from "../../utils/Constants";
 
 export const useSocket = () => {
   const socketConnected = () => {
     let newSocket;
 
     try {
-      newSocket = io("https://sofocon.api.novexisconsulting.xyz");
+      newSocket = io(BASE_URL);
 
       newSocket.on("connect", () => {});
 
