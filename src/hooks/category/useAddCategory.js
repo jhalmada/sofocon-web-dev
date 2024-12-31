@@ -10,7 +10,7 @@ const useAddCategory = () => {
       const { data } = await CategoryService.postAddCategoryApi(categoryData);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     } finally {
       setLoading(false);

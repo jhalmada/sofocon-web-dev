@@ -14,7 +14,7 @@ const useAddroles = () => {
         },
       );
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

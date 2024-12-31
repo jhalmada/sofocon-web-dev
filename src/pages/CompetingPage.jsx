@@ -14,7 +14,6 @@ import pageLostImg from "../assets/images/pageLost.svg";
 import { useState } from "react";
 import SearchInput from "../components/inputs/SearchInput";
 import Calendar from "../components/calendar/Calendar";
-import SaveImg from "../assets/img/save.svg";
 import deleteImg from "../assets/img/deleted.svg";
 const CompetingPage = ({
   companiesResponse,
@@ -91,7 +90,6 @@ const CompetingPage = ({
     setConfirmDeleteModalOpen(true);
   };
   const handleVisitFilterChange = (value) => {
-    console.log(value);
     switch (value) {
       case "< 1 mes":
         setNextVisit(1);
@@ -132,7 +130,6 @@ const CompetingPage = ({
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     const {
       nextVisit,
       name,
@@ -150,7 +147,6 @@ const CompetingPage = ({
       nextVisit.day,
     );
 
-    //formate la fecha para que sea aceptada por el back
     const formattedDate = newdata.toISOString();
     switch (checkSelected) {
       case "RUT":

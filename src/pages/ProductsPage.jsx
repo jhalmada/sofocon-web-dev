@@ -23,7 +23,6 @@ const INVENTORY_TAB = "inventory";
 const PRICES_TAB = "prices";
 
 const ProductsPage = () => {
-  //estados
   const navegacionActive = (tabActive) => {
     switch (tabActive) {
       case INVENTORY_TAB:
@@ -50,7 +49,6 @@ const ProductsPage = () => {
   const [FileAccept, setFileAccept] = useState(false);
   const [dataEdit, setDataEdit] = useState(null);
 
-  //hooks
   const {
     categoryResponse,
     itemsPerPage,
@@ -87,7 +85,6 @@ const ProductsPage = () => {
     formState: { errors },
     watch,
   } = useForm();
-  //funciones
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -191,13 +188,13 @@ const ProductsPage = () => {
           <div className="flex">
             <h2
               onClick={() => setActiveTab(INVENTORY_TAB)}
-              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === INVENTORY_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} shadow-n p-4 text-center text-md font-medium leading-6`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === INVENTORY_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-n`}
             >
               Inventario
             </h2>
             <h2
               onClick={() => setActiveTab(PRICES_TAB)}
-              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === PRICES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} shadow-n p-4 text-center text-md font-medium leading-6`}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === PRICES_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-n`}
             >
               Listas de precios
             </h2>

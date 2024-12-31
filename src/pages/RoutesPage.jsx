@@ -11,7 +11,7 @@ import PlusIcon from "../assets/icons/plus.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import useSellerRoutes from "../hooks/sellerRoutes/useSellerRoutes.js";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes.js";
 import useDeleteSellerRoute from "../hooks/sellerRoutes/useDeleteSellerRoutes.js";
@@ -21,7 +21,7 @@ import deleteImg from "../assets/img/deleted.svg";
 import disconnectedImg from "../assets/images/disconnected.svg";
 import { isMatch } from "lodash";
 
-const SELLER_TAB = "sellers";
+const SELLERSMAP_TAB = "sellersmap";
 const RoutesPage = () => {
   const { changedSellerRoute } = usePutSellerRoute();
   const { deleteSellerRoute } = useDeleteSellerRoute();
@@ -38,7 +38,7 @@ const RoutesPage = () => {
     setIsActive,
     setSearch,
   } = useSellerRoutes();
-  const [activeTab, setActiveTab] = useState(SELLER_TAB);
+  const [activeTab, setActiveTab] = useState(SELLERSMAP_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -98,8 +98,6 @@ const RoutesPage = () => {
       isActive: data.status === "true" ? true : false,
     };
     const hasChanges = !isMatch(dataEdit, newData);
-    console.log(dataEdit);
-    console.log(newData);
 
     if (hasChanges) {
       openConfirmCancelModal();
@@ -153,8 +151,8 @@ const RoutesPage = () => {
   };
 
   useEffect(() => {
-    sessionStorage.setItem("activeTab", SELLER_TAB);
-  }, []);
+    sessionStorage.setItem("activeTab", SELLERSMAP_TAB);
+  }, [activeTab]);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
       <div className="flex flex-grow flex-col p-6">
@@ -178,14 +176,14 @@ const RoutesPage = () => {
         <div className="flex items-center">
           <div className="flex">
             <h2
-              onClick={() => setActiveTab(SELLER_TAB)}
-              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === SELLER_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
+              onClick={() => setActiveTab(SELLERSMAP_TAB)}
+              className={`min-w-40 cursor-pointer rounded-t-lg ${activeTab === SELLERSMAP_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
             >
               Listado
             </h2>
           </div>
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
-            {activeTab === SELLER_TAB && (
+            {activeTab === SELLERSMAP_TAB && (
               <div className="flex space-x-4">
                 <Link to={"agregar-ruta"}>
                   <Button text="Nueva ruta" icon={PlusIcon} />
@@ -194,7 +192,7 @@ const RoutesPage = () => {
             )}
           </div>
         </div>
-        {activeTab === SELLER_TAB && (
+        {activeTab === SELLERSMAP_TAB && (
           <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
             <div>
               <div className="flex justify-end">

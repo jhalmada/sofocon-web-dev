@@ -10,7 +10,7 @@ const useAddNotes = () => {
       const { data } = await NotesService.postAddNotesApi(noteData);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     } finally {
       setLoading(false);

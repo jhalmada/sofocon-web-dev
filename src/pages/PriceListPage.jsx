@@ -23,7 +23,6 @@ const PriceListPage = ({
   total,
   setModified,
 }) => {
-  //estados
   const [deletemodal, setDeleteModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [priceListId, setPriceListId] = useState(null);
@@ -33,7 +32,6 @@ const PriceListPage = ({
   const [isConfirmCancelModalOpen, setIsConfirmCancelModalOpen] =
     useState(false);
   const [dataEdit, setDataEdit] = useState(null);
-  //hooks
 
   const {
     register,
@@ -46,8 +44,6 @@ const PriceListPage = ({
   const { deletePriceList } = useDeletePriceList();
 
   const { changedPriceList } = usePutPriceList();
-
-  //funciones
 
   const handleDelete = (priceListId) => {
     setPriceListId(priceListId);

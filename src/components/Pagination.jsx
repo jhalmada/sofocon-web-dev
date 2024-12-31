@@ -106,7 +106,6 @@ const Pagination = ({
           onChange={(e) => {
             pageIndex(e.target.value);
             onPageChange(0);
-            console.log(e.target.value);
           }}
           value={itemsPerPage}
         >

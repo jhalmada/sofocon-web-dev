@@ -71,7 +71,6 @@ const AddSellerRoutePage = ({
     setConfirmDeleteModalOpen(false);
   };
 
-  //funcion para transformar los Arrays
   const transformData = (array) => {
     return array.map((item) => ({
       id: item.id,

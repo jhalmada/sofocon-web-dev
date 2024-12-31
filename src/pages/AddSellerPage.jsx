@@ -76,7 +76,6 @@ const AddSellerPage = () => {
     navigate("/inicio/personal");
   };
 
-  //funcion para transformar los Arrays
   const transformData = (array) => {
     return array.map((item) => ({
       id: item.id,
@@ -149,6 +148,7 @@ const AddSellerPage = () => {
               msjError={errors.ci ? errors.ci.message : ""}
             />
             <Input
+              type="number"
               label={"Teléfono de contacto"}
               placeholder={"123456789"}
               {...register("phone", {

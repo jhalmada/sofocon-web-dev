@@ -1,13 +1,10 @@
 import Pagination from "../components/Pagination";
-import RouteCompanieDetailsRow from "../components/RouteCompanieDetailsRow";
 import deleteIcon from "../assets/icons/trash3.svg";
 import useCompanies from "../hooks/companies/useCompanies";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
 import ReusableModal from "../components/modals/ReusableModal";
-import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
 import { useState } from "react";
-import FilterSelect from "../components/filters/FilterSelect";
 import usePutPriceList from "../hooks/priceList/usePutPriceList";
 import SearchInput from "../components/inputs/SearchInput";
 
@@ -35,9 +32,7 @@ const CompanyInListPricePage = ({
   const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
   const { changedPriceList } = usePutPriceList();
   const {
-    register,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
   } = useForm();
@@ -68,7 +63,6 @@ const CompanyInListPricePage = ({
     setConfirmDeleteModalOpen(false);
   };
 
-  //funcion para transformar los Arrays
   const transformData = (array) => {
     return array.map((item) => ({
       id: item.id,

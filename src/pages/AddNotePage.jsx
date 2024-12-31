@@ -14,7 +14,6 @@ const NOTES_TAB = "notes";
 const AddNotesPage = () => {
   const [noteId, setNoteId] = useState(null);
   const [activeTab, setActiveTab] = useState(NOTES_TAB);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -33,7 +32,7 @@ const AddNotesPage = () => {
 
   const navigate = useNavigate();
 
-  const { postAddNotes, loading } = useAddNotes();
+  const { postAddNotes } = useAddNotes();
   const { companyResponse } = useGetOneCompany(id);
 
   const {
@@ -49,18 +48,14 @@ const AddNotesPage = () => {
     setSaveConfirmationModalOpen(false);
     setConfirmDeleteModalOpen(false);
   };
-  const openConfirmCancelModal = () => setConfirmCancelModalOpen(true);
+
   const closeConfirmCancelModal = () => setConfirmCancelModalOpen(false);
-  const openSaveConfirmationModal = () => setSaveConfirmationModalOpen(true);
   const closeSaveConfirmationModal = () => {
     navigate(`/inicio/empresas/notas/${idCliente}`);
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-  const openConfirmDeleteModal = (id) => {
-    setNoteId(id);
-    setConfirmDeleteModalOpen(true);
-  };
+
   const closeConfirmDeleteModal = () => setConfirmDeleteModalOpen(false);
   const handleConfirmDelete = () => {
     closeConfirmDeleteModal();

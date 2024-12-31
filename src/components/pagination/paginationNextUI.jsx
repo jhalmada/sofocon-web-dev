@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Pagination, Button } from "@nextui-org/react";
+import  { useEffect, useState } from "react";
+import { Pagination } from "@nextui-org/react";
 
 const PaginationNextUI = ({ total, setPage, page = 1 }) => {
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     setTotalPages(Number(total));
-    console.log(totalPages);
+  
   }, [total]);
 
   return (

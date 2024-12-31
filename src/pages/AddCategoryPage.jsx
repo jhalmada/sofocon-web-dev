@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import uploadIcon from "../assets/icons/arrow-blue.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
 import Button from "../components/buttons/Button.jsx";
 import ReusableModal from "../components/modals/ReusableModal.jsx";
 import Input from "../components/inputs/Input.jsx";
 import BackButton from "../components/buttons/BackButton.jsx";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import useAddCategory from "../hooks/category/useAddCategory.js";
 import { useNavigate } from "react-router-dom";
 const NOTES_TAB = "notes";
@@ -25,7 +25,6 @@ const AddCategoryPage = () => {
     register,
     handleSubmit,
     setValue,
-    control,
     setError,
     formState: { errors },
   } = useForm();
@@ -77,7 +76,6 @@ const AddCategoryPage = () => {
       formData.append("file", file);
     }
     const response = postAddCategory(formData);
-    console.log(response);
     if (response) {
       openSaveConfirmationModal();
     }

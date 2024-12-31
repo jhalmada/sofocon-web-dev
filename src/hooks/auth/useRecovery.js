@@ -10,7 +10,7 @@ const useRecovery = () => {
       const { data } = await AuthService.recoveryPasswordAction(datos);
       return data;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return e;
     } finally {
       setLoading(false);

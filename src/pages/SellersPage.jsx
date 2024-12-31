@@ -14,7 +14,6 @@ import usePutusers from "../hooks/users/usePutUsers";
 import notFoundImg from "../assets/images/notFound.svg";
 import SearchInput from "../components/inputs/SearchInput";
 import SaveImg from "../assets/img/save.svg";
-import deleteImg from "../assets/img/deleted.svg";
 import { isMatch } from "lodash";
 
 const SellersPage = ({
@@ -28,9 +27,7 @@ const SellersPage = ({
   page,
   itemsPerPage,
   setModified,
-  setIsActive,
 }) => {
-  //estados
   const [arraySelected, setArraySelected] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,7 +38,6 @@ const SellersPage = ({
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
 
-  //hooks
   const {
     register,
     handleSubmit,
@@ -53,8 +49,6 @@ const SellersPage = ({
   const { changedUser } = usePutusers();
 
   const { sellerRoutesResponse, setSearch } = useSellerRoutes();
-
-  //funciones
 
   const handleUserCreation = async (userData) => {
     try {
@@ -137,7 +131,6 @@ const SellersPage = ({
     closeModal();
   };
 
-  //funcion para transformar los Arrays
   const transformData = (array) => {
     return array.map((item) => ({
       id: item.id,

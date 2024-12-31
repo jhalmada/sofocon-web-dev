@@ -55,7 +55,6 @@ const TableRole = () => {
 
   const { deleteUser } = useDeleteRoles();
   const [roleId, setRoleId] = useState("");
-  const [rolePage, setRolePage] = useState(5);
   const { RolesResponse, setRolModified } = useRoles();
   const [isModalOpen, setModalOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -64,14 +63,14 @@ const TableRole = () => {
     useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalButtons, setModalButtons] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const startIndex = currentPage * rolePage;
+
+  
   const paginatedRoles = RolesResponse ? RolesResponse : [];
 
   const openModal = (id) => {
     const roleEdit = RolesResponse.find((role) => role.id === id);
     setPermisosSelected(roleEdit.permissions);
-    console.log(roleEdit);
+   
     if (roleEdit) {
       setValue("name", roleEdit.name);
     }
@@ -135,7 +134,6 @@ const TableRole = () => {
   };
 
   const onChangesPermissions = (e) => {
-    console.log(e.target.value);
     setValue("permissions", e.target.value);
   };
 

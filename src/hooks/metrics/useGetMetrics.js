@@ -11,7 +11,7 @@ const useGetMetrics = () => {
       const { data } = await MetricsService.getMetricsApi();
       setMetricsResponse(data);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

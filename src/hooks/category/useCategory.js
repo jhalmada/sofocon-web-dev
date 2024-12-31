@@ -28,7 +28,7 @@ const useCategory = () => {
       setTotal(data.pagination.total);
       setCategoryResponse(data.result);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

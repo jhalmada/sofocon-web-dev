@@ -10,9 +10,6 @@ const BarcodeReader = ({ onBarcodeChange }) => {
     const handleKeyDown = (evento) => {
       if (evento.keyCode === 13) {
         evento.preventDefault();
-        const codigoDeBarras = codigoRef.current.value;
-
-        console.log(codigoDeBarras);
         codigoRef.current.value = "";
       }
     };

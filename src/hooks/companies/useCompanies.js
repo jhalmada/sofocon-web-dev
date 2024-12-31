@@ -20,7 +20,7 @@ const useCompanies = (id = null) => {
   const downloadFile = useCallback(async (url, fileName) => {
     try {
       setLoading(true);
-      console.log("Descargando archivo desde:", url);
+    
       const response = await axios.get(url, {
         responseType: "blob",
         headers: {
@@ -67,7 +67,7 @@ const useCompanies = (id = null) => {
       setTotal(data.pagination.total);
       setCompaniesResponse(data.result);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

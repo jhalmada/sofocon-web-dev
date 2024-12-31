@@ -66,7 +66,6 @@ const NewSalePage = () => {
   const [discount, setDiscount] = useState([]);
   const [discount2, setDiscount2] = useState("");
   const [numChecks, setNumChecks] = useState(0);
-  const [dataRecharge, setDataRecharge] = useState(false);
 
   const total = subtotal
     ? subtotal * 1.22 - subtotal * 1.22 * (discount2 / 100)
@@ -113,7 +112,6 @@ const NewSalePage = () => {
         rut,
         user,
         productInOrder: productInOrder.map((product) => {
-          console.log(product);
           return {
             ...product,
             isRecharge: product.isRecharge,
@@ -553,7 +551,6 @@ const NewSalePage = () => {
                 </p>
               </div>
             </div>
-            {console.log("autocompleteResults", autocompleteResults)}
             <div>
               {autocompleteResults.length > 0 && (
                 <div>
