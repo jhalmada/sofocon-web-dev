@@ -63,14 +63,15 @@ const TableRole = () => {
     useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalButtons, setModalButtons] = useState([]);
+  const [modalMessage, setModalMessage] = useState("");
+  const [deleteAdmin, setDeleteAdmin] = useState(false);
 
-  
   const paginatedRoles = RolesResponse ? RolesResponse : [];
 
   const openModal = (id) => {
     const roleEdit = RolesResponse.find((role) => role.id === id);
     setPermisosSelected(roleEdit.permissions);
-   
+
     if (roleEdit) {
       setValue("name", roleEdit.name);
     }
@@ -117,8 +118,23 @@ const TableRole = () => {
     setModalButtons(["cancel", "save"]);
   };
 
-  const handleDeleteClick = () => {
-    openConfirmCancelModal();
+  const handleDeleteClick = (role) => {
+    if (
+      role.permissions.includes("ADMIN") ||
+      role.permissions.includes("USER_SUPER_ADMIN")
+    ) {
+      setDeleteAdmin(true);
+      setModalMessage(
+        "No se puede eliminar el rol que contenga el permiso ADMIN.",
+      );
+    } else {
+      setDeleteAdmin(false);
+      setModalMessage(
+        "Este rol será eliminado de forma permanente. ¿Desea continuar?",
+      );
+    }
+    setRoleId(role.id);
+    setConfirmCancelModalOpen(true);
   };
 
   const handleConfirmCancelBackClick = (id) => {
@@ -165,6 +181,7 @@ const TableRole = () => {
             </tr>
           </thead>
           <tbody>
+            {console.log("roles", paginatedRoles)}
             {paginatedRoles.map((role, index) => (
               <tr key={index} className="border-b border-gray text-center">
                 <td className="p-2 text-left">{role.name}</td>
@@ -187,7 +204,7 @@ const TableRole = () => {
                       alt="Delete icon"
                       className="h-5 w-5 cursor-pointer"
                       onClick={() => {
-                        handleDeleteClick();
+                        handleDeleteClick(role);
                         setRoleId(role.id);
                       }}
                     />
@@ -240,16 +257,19 @@ const TableRole = () => {
           )}
         </form>
       </ReusableModal>
-
       <ReusableModal
         isOpen={isConfirmCancelModalOpen}
         onClose={closeConfirmCancelModal}
         title="Eliminar rol"
         variant="confirmation"
-        buttons={["back", "accept"]}
-        onAccept={() => handleConfirmCancelBackClick(roleId)}
+        buttons={deleteAdmin ? ["accept"] : ["back", "accept"]}
+        onAccept={() =>
+          deleteAdmin
+            ? setConfirmCancelModalOpen(false)
+            : handleConfirmCancelBackClick(roleId)
+        }
       >
-        Este rol será eliminado de forma permanente. ¿Desea continuar?
+        {modalMessage}
       </ReusableModal>
 
       <ReusableModal
