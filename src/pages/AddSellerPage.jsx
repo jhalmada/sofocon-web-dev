@@ -153,12 +153,12 @@ const AddSellerPage = () => {
               placeholder={"123456789"}
               {...register("phone", {
                 maxLength: {
-                  value: 12,
-                  message: "Solo se permiten 12 caracteres",
+                  value: 15,
+                  message: "Solo se permiten 15 caracteres",
                 },
                 minLength: {
-                  value: 12,
-                  message: "Se requieren al menos 12 caracteres",
+                  value: 15,
+                  message: "Se requieren al menos 15 caracteres",
                 },
               })}
               errorApi={errors.phone}
