@@ -264,8 +264,8 @@ const SellersPage = ({
                 message: "El número debe tener al menos 8 dígitos",
               },
               maxLength: {
-                value: 15,
-                message: "El número no puede tener más de 15 dígitos",
+                value: 8,
+                message: "El número no puede tener más de 8 dígitos",
               },
             })}
             errorApi={errors.ci}
