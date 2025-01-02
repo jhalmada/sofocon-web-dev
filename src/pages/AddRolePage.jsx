@@ -14,6 +14,8 @@ const AddRolePage = () => {
   const navigate = useNavigate();
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -21,6 +23,10 @@ const AddRolePage = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = async (data) => {
+    if (isSubmit) return;
+
+    setIsSubmit(true);
+
     const newRole = await postAddRoles({
       name: data.name,
       permissions: [...data.permissions, "USER_ADMIN"],
@@ -76,9 +82,11 @@ const AddRolePage = () => {
                 })}
                 onSelectionChange={(values) => setValue("permissions", values)}
               >
-                {permisos.map((permiso) => (
-                  <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-                ))}
+                {permisos
+                  .filter((permiso) => permiso.key !== "USER_SUPER_ADMIN")
+                  .map((permiso) => (
+                    <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+                  ))}
               </Select>
               {errors.permissions && (
                 <span className="font-roboto text-xs text-red_e">
@@ -95,6 +103,7 @@ const AddRolePage = () => {
                   color={"save"}
                   type={"submit"}
                   icon={ArrowRightIcon}
+                  disabled={isSubmit}
                 />
               </div>
             </div>
