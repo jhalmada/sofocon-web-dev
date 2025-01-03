@@ -39,8 +39,10 @@ export const PRODUCTS_ADD = "agregar-producto";
 export const CATEGORY_ADD = "nueva-categoria";
 export const LIST_PRICE_ADD = "nueva-lista";
 export const LIST_PRICE_ID = "lista/:id/:name";
-export const IMAGE_BASE = "https://nyc3.digitaloceanspaces.com/tribe-s3/";
+export const IMAGE_BASE = import.meta.env.VITE_IMAGE_BASE_URL;
+
 
 export const TYPE_PRODUCTS = ["A", "AE", "C", "H", "PA", "PB"];
 export const MEDIDA = ["cm", "cm3", "kg", "gr", "libras", "mts", "litro"];
-export const MAP_API_KEY = "AIzaSyB2WppIRyBKnjBjmaubxjeeP8eKbEZUDlQ";
+export const MAP_API_KEY = import.meta.env.VITE_MAP_API_KEY;
+
