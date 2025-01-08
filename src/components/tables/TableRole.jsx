@@ -246,9 +246,11 @@ const TableRole = () => {
             })}
             onChange={onChangesPermissions}
           >
-            {permisos.map((permiso) => (
-              <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
-            ))}
+            {permisos
+              .filter((permiso) => permiso.key !== "USER_SUPER_ADMIN")
+              .map((permiso) => (
+                <SelectItem key={permiso.key}>{permiso.label}</SelectItem>
+              ))}
           </Select>
           {errors.permissions && (
             <span className="font-roboto text-xs text-red_e">
