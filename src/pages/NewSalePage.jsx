@@ -167,9 +167,11 @@ const NewSalePage = () => {
   };
 
   const closeSaveConfirmationModal = () => {
-    setIsConfirmationModalOpen(false);
-    setIsSaveConfirmationModalOpen(false);
-    navigate("/inicio/ordenes");
+    if (status === 201) {
+      setIsConfirmationModalOpen(false);
+      setIsSaveConfirmationModalOpen(false);
+      navigate("/inicio/ordenes");
+    }
   };
   const handleConfirmSaveClick = () => {
     setConfirmation(true);
