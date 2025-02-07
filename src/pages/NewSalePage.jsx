@@ -32,7 +32,7 @@ const NewSalePage = () => {
     formState: { errors },
   } = useForm();
   const { barCode, setBarCode } = useOrders();
-  const { postAddOrders } = useAddOrders();
+  const { postAddOrders, status } = useAddOrders();
   const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const {
@@ -167,11 +167,9 @@ const NewSalePage = () => {
   };
 
   const closeSaveConfirmationModal = () => {
-    if (status === 201) {
-      setIsConfirmationModalOpen(false);
-      setIsSaveConfirmationModalOpen(false);
-      navigate("/inicio/ordenes");
-    }
+    setIsConfirmationModalOpen(false);
+    setIsSaveConfirmationModalOpen(false);
+    navigate("/inicio/ordenes");
   };
   const handleConfirmSaveClick = () => {
     setConfirmation(true);
@@ -184,7 +182,6 @@ const NewSalePage = () => {
           : company,
         user: seller,
       });
-      setIsSaveConfirmationModalOpen(true);
     }
   };
   const handleSelectCompany = (selectedCompany) => {
@@ -341,6 +338,11 @@ const NewSalePage = () => {
     setSearchList(lists);
   }, [lists]);
 
+  useEffect(() => {
+    if (status === 201) {
+      setIsSaveConfirmationModalOpen(true);
+    }
+  }, [status]);
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">

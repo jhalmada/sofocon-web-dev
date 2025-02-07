@@ -3,12 +3,16 @@ import { OrdersService } from "../../services/orders/orders.service.js";
 
 const useAddOrders = () => {
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(null);
 
   const postAddOrders = useCallback(async (orderData) => {
     try {
       setLoading(true);
-      const { data } = await OrdersService.postAddOrdersApi(orderData);
-      return data;
+      const response = await OrdersService.postAddOrdersApi(orderData);
+      setStatus(response.status);
+      console.log("status", response.status);
+      console.log("data", response.data);
+      return response.data;
     } catch (e) {
       console.error(e);
       throw e;
@@ -17,7 +21,7 @@ const useAddOrders = () => {
     }
   }, []);
 
-  return { postAddOrders, loading };
+  return { postAddOrders, loading, status };
 };
 
 export default useAddOrders;
