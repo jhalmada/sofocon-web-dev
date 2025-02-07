@@ -6,7 +6,7 @@ const useUsersSellers = () => {
   const [userSellerResponse, setUsersSellerResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(null);
   const [totalPage, setTotalPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
@@ -17,7 +17,7 @@ const useUsersSellers = () => {
   const downloadFile = useCallback(async (url, fileName) => {
     try {
       setLoading(true);
- 
+
       const response = await axios.get(url, {
         responseType: "blob",
         headers: {
@@ -48,7 +48,7 @@ const useUsersSellers = () => {
       setLoading(true);
       const { data } = await UserService.getUsersSellersApi({
         page,
-        itemsPerPage,
+        itemsPerPage: total || itemsPerPage,
         search,
         route,
         isActive,
@@ -56,6 +56,9 @@ const useUsersSellers = () => {
       if (data) {
         setTotalPage(data.pagination.totalPages);
         setTotal(data.pagination.total);
+        if (itemsPerPage < data.pagination.total) {
+          setItemsPerPage(data.pagination.total);
+        }
         setUsersSellerResponse(data);
       }
     } catch (e) {

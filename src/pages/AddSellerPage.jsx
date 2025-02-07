@@ -157,8 +157,8 @@ const AddSellerPage = () => {
                   message: "Solo se permiten 15 caracteres",
                 },
                 minLength: {
-                  value: 15,
-                  message: "Se requieren al menos 15 caracteres",
+                  value: 2,
+                  message: "Se requieren al menos 2 caracteres",
                 },
               })}
               errorApi={errors.phone}
