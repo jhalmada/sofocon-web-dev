@@ -304,56 +304,106 @@ const ClientsOrdersPage = () => {
               />
             </div>
             {orderDetails?.productInOrder?.map((order) => (
-              <div className="flex w-full space-x-2" key={order.id}>
-                <div className="w-1/2">
-                  <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg bg-gray p-2">
-                    {order.product?.name || "nombre del producto"}
-                  </span>
-                </div>
+              <div className="flex w-full flex-col" key={order.id}>
+                <div className="flex space-x-2">
+                  <div className="w-1/2">
+                    <span className="mt-[1.50rem] flex h-10 w-full items-center justify-between rounded-lg bg-gray p-2">
+                      {order.product?.name || "nombre del producto"}
+                    </span>
+                  </div>
 
-                <div className="flex w-1/2 space-x-2">
-                  <Input
-                    type="number"
-                    label="Cantidad"
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    disabled
-                    defaultValue={order.amount || 1}
-                    minValue={1}
-                    placeholder="Cant."
-                  />
-                  <Input
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    label="Precio"
-                    value={"$" + (order.fixedPrice || "precio")}
-                    disabled
-                  />
-                  <Input
-                    type="number"
-                    label="Desc."
-                    placeholder="%"
-                    value={(order.discountPercent || 0) + "%"}
-                    bg="bg-gray"
-                    placeholderColor="placeholder-black_b"
-                    border="none"
-                    disabled
-                  />
-                  <div className="w-full">
+                  <div className="flex w-1/2 space-x-2">
                     <Input
                       type="number"
-                      label="Recarga"
-                      placeholder={
-                        order?.product?.isToRecharge === "true" ? "Si" : "No"
-                      }
+                      label="Cantidad"
+                      bg="bg-gray"
+                      placeholderColor="placeholder-black_b"
+                      border="none"
+                      disabled
+                      defaultValue={order.amount || 1}
+                      minValue={1}
+                      placeholder="Cant."
+                    />
+                    <Input
+                      bg="bg-gray"
+                      placeholderColor="placeholder-black_b"
+                      border="none"
+                      label="Precio"
+                      value={"$" + (order.fixedPrice || "precio")}
+                      disabled
+                    />
+                    <Input
+                      type="number"
+                      label="Desc."
+                      placeholder="%"
+                      value={(order.discountPercent || 0) + "%"}
                       bg="bg-gray"
                       placeholderColor="placeholder-black_b"
                       border="none"
                       disabled
                     />
+                    <div className="w-full">
+                      <Input
+                        type="number"
+                        label="Recarga"
+                        placeholder={
+                          order?.product?.isToRecharge === "true" ? "Si" : "No"
+                        }
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        disabled
+                      />
+                    </div>
                   </div>
+                </div>
+                <div className="flex">
+                  <div className="w-1/2"></div>
+                  {order.itemsRemoval?.map((item, index) => (
+                    <div key={index} className="flex w-1/2 space-x-2">
+                      <Input
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        label={"Cód."}
+                        placeholder={item.barCode}
+                        disabled
+                      />
+                      <Input
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        label={"Matrícula"}
+                        placeholder={item.enrollment}
+                        disabled
+                      />
+
+                      <Input
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        label={"N° UNIT de fábrica"}
+                        placeholder={item.fabricUNIT}
+                        disabled
+                      />
+                      <Input
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        label={"N° UNIT actual"}
+                        placeholder={item.newUNIT || "sin datos"}
+                        disabled
+                      />
+                      <Input
+                        bg="bg-gray"
+                        placeholderColor="placeholder-black_b"
+                        border="none"
+                        label={"Fecha última carga"}
+                        placeholder={formatDate(item.lastDate)}
+                        disabled
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}

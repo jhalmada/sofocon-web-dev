@@ -275,7 +275,6 @@ const RechargePage = () => {
             <label className="block text-sm font-semibold text-black_b">
               Detalle
             </label>
-            {/* <label className="-mb-6 block text-sm">Recargas</label> */}
 
             {orderDetails?.productInOrder?.map((order) => (
               <div className="flex" key={order.id}>
