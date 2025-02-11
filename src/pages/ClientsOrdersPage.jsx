@@ -303,6 +303,7 @@ const ClientsOrdersPage = () => {
                 disabled
               />
             </div>
+            {console.log("detalles", orderDetails?.productInOrder)}
             {orderDetails?.productInOrder?.map((order) => (
               <div className="flex w-full flex-col" key={order.id}>
                 <div className="flex space-x-2">
@@ -357,16 +358,18 @@ const ClientsOrdersPage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex">
-                  <div className="w-1/2"></div>
+                <div className="flex flex-col 2xl:items-end">
                   {order.itemsRemoval?.map((item, index) => (
-                    <div key={index} className="flex w-1/2 space-x-2">
+                    <div
+                      key={index}
+                      className="grid w-full grid-cols-5 gap-4 2xl:w-1/2"
+                    >
                       <Input
                         bg="bg-gray"
                         placeholderColor="placeholder-black_b"
                         border="none"
                         label={"Cód."}
-                        placeholder={item.barCode}
+                        placeholder={item.barCode || "sin datos"}
                         disabled
                       />
                       <Input
@@ -374,7 +377,7 @@ const ClientsOrdersPage = () => {
                         placeholderColor="placeholder-black_b"
                         border="none"
                         label={"Matrícula"}
-                        placeholder={item.enrollment}
+                        placeholder={item.enrollment || "sin datos"}
                         disabled
                       />
 
@@ -383,7 +386,7 @@ const ClientsOrdersPage = () => {
                         placeholderColor="placeholder-black_b"
                         border="none"
                         label={"N° UNIT de fábrica"}
-                        placeholder={item.fabricUNIT}
+                        placeholder={item.fabricUNIT || "sin datos"}
                         disabled
                       />
                       <Input
@@ -399,7 +402,7 @@ const ClientsOrdersPage = () => {
                         placeholderColor="placeholder-black_b"
                         border="none"
                         label={"Fecha última carga"}
-                        placeholder={formatDate(item.lastDate)}
+                        placeholder={formatDate(item.lastDate) || "sin datos"}
                         disabled
                       />
                     </div>
