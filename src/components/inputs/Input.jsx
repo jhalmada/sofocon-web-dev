@@ -35,7 +35,7 @@ const Input = forwardRef(
     const handleChange = (e) => {
       const value = e.target.value;
       if (type === "number") {
-        const numericValue = value.replace(/\D/g, "");
+        const numericValue = value.replace(/[^0-9,]/g, "");
         e.target.value = numericValue;
       }
       if (onChange) {
