@@ -180,7 +180,6 @@ const WorkshopPage = () => {
     setOpenScannerModal(false);
     setIsExportCompetingModalOpen(false);
     setIsSellersModalOpen(false);
-    setBarCode(null);
   };
 
   const closeConfirmCancelModal = () => {
@@ -239,6 +238,10 @@ const WorkshopPage = () => {
       default:
     }
   }, [activeTab, getAllOrders]);
+
+  useEffect(() => {
+    setBarCode(null);
+  });
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">

@@ -6,7 +6,7 @@ const useUsersSellers = () => {
   const [userSellerResponse, setUsersSellerResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(null);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
@@ -48,7 +48,7 @@ const useUsersSellers = () => {
       setLoading(true);
       const { data } = await UserService.getUsersSellersApi({
         page,
-        itemsPerPage: total || itemsPerPage,
+        itemsPerPage: itemsPerPage, // original: total || itemsPerPage
         search,
         route,
         isActive,
@@ -56,9 +56,10 @@ const useUsersSellers = () => {
       if (data) {
         setTotalPage(data.pagination.totalPages);
         setTotal(data.pagination.total);
-        if (itemsPerPage < data.pagination.total) {
-          setItemsPerPage(data.pagination.total);
-        }
+        //original:
+        // if (itemsPerPage < data.pagination.total) {
+        //   setItemsPerPage(data.pagination.total);
+        // }
         setUsersSellerResponse(data);
       }
     } catch (e) {
