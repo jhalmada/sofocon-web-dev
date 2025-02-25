@@ -206,13 +206,14 @@ const AddProductPage = () => {
                       value: true,
                       message: "Campo obligatorio",
                     },
+
                     maxLength: {
                       value: 10,
                       message: "el campo no puede exceder los 10 caracteres.",
                     },
                     minLength: {
                       value: 1,
-                      message: "el campo debe contener al menos 1 caracteres.",
+                      message: "el campo debe contener al menos 1 caracter.",
                     },
                   })}
                   msjError={errors.amount ? errors.amount.message : ""}
