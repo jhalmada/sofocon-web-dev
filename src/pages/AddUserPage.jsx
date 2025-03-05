@@ -163,12 +163,12 @@ const AddUserPage = () => {
               placeholder={"123456789"}
               {...register("phone", {
                 minLength: {
-                  value: 8,
-                  message: "Debe ingresar minimo 8 digitos.",
+                  value: 2,
+                  message: "Debe ingresar minimo 2 digitos.",
                 },
                 maxLength: {
-                  value: 15,
-                  message: "Solo se permiten 15 digitos.",
+                  value: 8,
+                  message: "Solo se permiten 8 digitos.",
                 },
               })}
               errorApi={errors.phone}

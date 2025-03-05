@@ -44,7 +44,6 @@ const Pagination = ({
           <img src={ChevronLeftFilledIcon} alt="Chevron left icon" />
         </button>
 
-        {/* Botón para la primera página */}
         {currentPage > 4 && (
           <>
             <button
@@ -60,7 +59,6 @@ const Pagination = ({
           </>
         )}
 
-        {/* Botones de paginación en el grupo de 5 */}
         {pageButtons.map((index) => (
           <button
             key={index}
@@ -71,7 +69,6 @@ const Pagination = ({
           </button>
         ))}
 
-        {/* Botón para la última página */}
         {currentPage < totalPages - 5 && (
           <>
             <div className="flex items-center">
