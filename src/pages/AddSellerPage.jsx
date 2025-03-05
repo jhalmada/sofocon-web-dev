@@ -153,8 +153,8 @@ const AddSellerPage = () => {
               placeholder={"123456789"}
               {...register("phone", {
                 maxLength: {
-                  value: 15,
-                  message: "Solo se permiten 15 caracteres",
+                  value: 8,
+                  message: "Solo se permiten 8 caracteres como máximo",
                 },
                 minLength: {
                   value: 2,
