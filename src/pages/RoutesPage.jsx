@@ -277,7 +277,7 @@ const RoutesPage = () => {
                 currentPage={page}
                 totalPages={totalPage}
                 onPageChange={setPage}
-                itemPerPage={itemsPerPage}
+                itemsPerPage={itemsPerPage}
                 total={total}
               />
             </div>

@@ -1,26 +1,42 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const BarcodeReader = ({ onBarcodeChange }) => {
   const codigoRef = useRef(null);
-  const handleInputChange = (event) => {
-    const codigo = event.target.value;
-    onBarcodeChange(codigo);
-  };
+  const [barcodeValue, setBarcodeValue] = useState('');
+  const [typingTimeout, setTypingTimeout] = useState(null);
+
   useEffect(() => {
-    const handleKeyDown = (evento) => {
-      if (evento.keyCode === 13) {
-        evento.preventDefault();
-        codigoRef.current.value = "";
+    const inputElement = codigoRef.current;
+    inputElement.focus();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        setBarcodeValue('');
+        codigoRef.current.value = '';
       }
     };
-
-    const inputElement = codigoRef.current;
-    inputElement.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      inputElement.removeEventListener("keydown", handleKeyDown);
+
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
+
+  const handleInputChange = (event) => {
+    const codigo = event.target.value;
+    setBarcodeValue(codigo);
+
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+
+    setTypingTimeout(setTimeout(() => {
+      if (codigo.length > 0) { 
+        onBarcodeChange(codigo);
+      }
+    }, 500)); 
+  };
 
   return (
     <div>
@@ -28,8 +44,9 @@ const BarcodeReader = ({ onBarcodeChange }) => {
         className="border-gray-300 w-full rounded-lg border p-2 outline-none"
         type="text"
         ref={codigoRef}
-        placeholder="Enfoca este input y usa el lector"
+        placeholder="Click aquí, luego scanea"
         onChange={handleInputChange}
+        value={barcodeValue}
       />
       <br />
     </div>
