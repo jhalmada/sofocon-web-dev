@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 import useCompanies from "../hooks/companies/useCompanies";
 import AddSellersRoutes from "../hooks/sellerRoutes/useAddSellerRoutes";
 import BackButton from "../components/buttons/BackButton";
-import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import NextAutoCompleteUsers from "../components/autocomplete/NextAutocompleteUsers";
 import NextAutoCompleteCompanies from "../components/autocomplete/NextAutocompleteCompanies";
