@@ -16,11 +16,12 @@ const useCompanies = (id = null) => {
   const [status, setStatus] = useState(null);
   const [competence, setCompetence] = useState(false);
   const [list, setList] = useState(id);
+  const [user, setUser] = useState(null);
 
   const downloadFile = useCallback(async (url, fileName) => {
     try {
       setLoading(true);
-    
+
       const response = await axios.get(url, {
         responseType: "blob",
         headers: {
@@ -60,6 +61,7 @@ const useCompanies = (id = null) => {
         status,
         list,
         competence,
+        user,
       });
       //aqui haces con el resultado lo que necesites
 
@@ -85,7 +87,9 @@ const useCompanies = (id = null) => {
     status,
     competence,
     list,
+    user,
   ]);
+
   return {
     companiesResponse,
     loading,
@@ -108,6 +112,8 @@ const useCompanies = (id = null) => {
     setCompetence,
     setList,
     downloadFile,
+    setUser,
+    user,
   };
 };
 
