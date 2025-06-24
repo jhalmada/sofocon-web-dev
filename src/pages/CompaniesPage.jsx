@@ -376,15 +376,15 @@ const CompaniesPage = () => {
   };
   const handleVisitFilterChange = (value) => {
     switch (value) {
-      case "< 1 mes":
+      case "- 1 mes":
         setNextVisit(1);
         setPage(0);
         break;
-      case "< 2 meses":
+      case "- 2 meses":
         setNextVisit(2);
         setPage(0);
         break;
-      case "> 2 meses":
+      case "+ 2 meses":
         setNextVisit(3);
         setPage(0);
         break;

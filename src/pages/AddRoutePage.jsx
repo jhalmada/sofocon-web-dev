@@ -11,6 +11,8 @@ import AddSellersRoutes from "../hooks/sellerRoutes/useAddSellerRoutes";
 import BackButton from "../components/buttons/BackButton";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import useUsersSellers from "../hooks/users/useUsersSellers";
+import NextAutoCompleteUsers from "../components/autocomplete/NextAutocompleteUsers";
+import NextAutoCompleteCompanies from "../components/autocomplete/NextAutocompleteCompanies";
 
 const AddRoutePage = () => {
   const options = ["Activo", "Inactivo"];
@@ -30,6 +32,7 @@ const AddRoutePage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const { route } = useParams();
+  const { companiesResponse: CompanieResult, setUser, user } = useCompanies();
 
   const handleSellerCreation = async (sellerData) => {
     try {
@@ -165,24 +168,27 @@ const AddRoutePage = () => {
               </Select>
             </div>
             <div className="mb-4 space-y-2">
-              <NextAutoComplete
+              <NextAutoCompleteUsers
                 label2={"Vendedores Asignados"}
                 array={transformData(userSellerResponse?.result || []) || []}
                 name={"vendedores"}
                 label={"Agregar Vendedores"}
+                setUser={setUser}
                 setValue={setValue}
                 onChange={setSearch}
               />
             </div>
 
             <div className="mb-4 space-y-2">
-              <NextAutoComplete
+              <NextAutoCompleteCompanies
+                array2={CompanieResult}
                 label2={"Empresas Asignadas"}
                 array={companiesResponse || []}
                 name={"empresas"}
                 label={"Agregar Empresas"}
                 setValue={setValue}
                 onChange={setSearchCompany}
+                user={user}
               />
             </div>
           </div>
