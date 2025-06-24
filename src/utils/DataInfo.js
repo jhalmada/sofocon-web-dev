@@ -106,7 +106,7 @@ const menuItems = [
       "SECTION_HOME",
       "USER_SUPER_ADMIN",
       "SECTION_ADMINISTRATION",
-      "SECTION_USERS",
+      "SECTION_SELLER",
       "SECTION_ROUTES",
       "SECTION_PRODUCTS",
       "SECTION_ORDERS",
@@ -125,7 +125,7 @@ const menuItems = [
     path: "/inicio/personal",
     icon: peopleIcon,
     activeIcon: peopleActiveIcon,
-    permisses: ["SECTION_USERS", "USER_SUPER_ADMIN"],
+    permisses: ["SECTION_SELLER", "USER_SUPER_ADMIN"],
   },
 
   {
