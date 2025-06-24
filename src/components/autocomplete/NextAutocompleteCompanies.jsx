@@ -25,32 +25,40 @@ const NextAutoCompleteCompanies = ({
   user = null,
 }) => {
   //estados
-  console.log("array", array2);
-  const [selectedItems, setSelectedItems] = useState(array2 || []);
-  console.log("selectedItems", selectedItems);
+  const [selectedItems, setSelectedItems] = useState(array2);
 
   useEffect(() => {
-    if (user) {
-      setSelectedItems([...selectedItems, ...array2]);
+    if (user && array2.length > 0) {
+      const merged = [...selectedItems];
+
+      array2.forEach((item) => {
+        const exists = merged.some((i) => i.id === item.id);
+        if (!exists) merged.push(item);
+      });
+
+      setSelectedItems(merged);
+      setValue(name, merged);
     }
   }, [array2]);
 
   const handleSelect = (item) => {
-    if (!selectedItems.includes(item)) {
-      setSelectedItems([...selectedItems, item]);
-      setValue(name, [...selectedItems, item]);
+    const exists = selectedItems.some((i) => i.id === item.id);
+    if (!exists) {
+      const updated = [...selectedItems, item];
+      setSelectedItems(updated);
+      setValue(name, updated);
       setErrors && setErrors(name, null);
     } else {
-      setSelectedItems(selectedItems.filter((selection) => selection !== item));
+      const updated = selectedItems.filter((i) => i.id !== item.id);
+      setSelectedItems(updated);
+      setValue(name, updated);
     }
   };
-  //para eliminar de la lista
+
   const handleDeleteSelection = (item) => {
-    setSelectedItems(selectedItems.filter((selection) => selection !== item));
-    setValue(
-      name,
-      selectedItems.filter((selection) => selection !== item),
-    );
+    const updated = selectedItems.filter((i) => i.id !== item.id);
+    setSelectedItems(updated);
+    setValue(name, updated);
   };
 
   return (
