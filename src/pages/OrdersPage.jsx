@@ -430,9 +430,7 @@ const OrdersPage = () => {
             setEntryDate={setEntryDate}
           />
         )}
-        {activeTab === STATUS_PANEL_TAB && (
-          <StatusPanelPage ordersResponse={ordersResponse || []} />
-        )}
+        {activeTab === STATUS_PANEL_TAB && <StatusPanelPage />}
       </div>
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}

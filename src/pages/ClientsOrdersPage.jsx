@@ -303,7 +303,6 @@ const ClientsOrdersPage = () => {
                 disabled
               />
             </div>
-            {console.log("detalles", orderDetails?.productInOrder)}
             {orderDetails?.productInOrder?.map((order) => (
               <div className="flex w-full flex-col" key={order.id}>
                 <div className="flex space-x-2">

@@ -167,8 +167,8 @@ const AddUserPage = () => {
                   message: "Debe ingresar minimo 2 digitos.",
                 },
                 maxLength: {
-                  value: 8,
-                  message: "Solo se permiten 8 digitos.",
+                  value: 9,
+                  message: "Solo se permiten 9 digitos.",
                 },
               })}
               errorApi={errors.phone}
