@@ -22,4 +22,9 @@ export class UserService {
         Authorization: `Bearer ${token}`,
       },
     });
+
+  static putSellersPasswordApi = async (userId, password) =>
+    await axios.put(`${usersRoutes.putSellersPassword}/${userId}`, {
+      password,
+    });
 }

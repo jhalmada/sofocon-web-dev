@@ -137,11 +137,18 @@ const TableRole = () => {
     setConfirmCancelModalOpen(true);
   };
 
-  const handleConfirmCancelBackClick = (id) => {
-    deleteUser(id, setRolModified);
+  const handleConfirmCancelBackClick = async (id) => {
+    const result = await deleteUser(id, setRolModified);
+    if (result.status === 405) {
+      setModalMessage(
+        "El rol no se pudo eliminar porque está siendo utilizado por un usuario.",
+      );
+      setDeleteAdmin(true);
+    } else {
+      setConfirmDelete(true);
+    }
     closeConfirmCancelModal();
     closeModal();
-    setConfirmDelete(true);
   };
 
   const handleConfirmSaveClick = () => {
@@ -181,7 +188,6 @@ const TableRole = () => {
             </tr>
           </thead>
           <tbody>
-            {console.log("roles", paginatedRoles)}
             {paginatedRoles.map((role, index) => (
               <tr key={index} className="border-b border-gray text-center">
                 <td className="p-2 text-left">{role.name}</td>

@@ -479,6 +479,7 @@ const UsersPage = () => {
             errorApi={errors.email}
             msjError={errors.email ? errors.email.message : ""}
           />
+
           <div>
             <label htmlFor="selectState">Estado</label>
             <Select

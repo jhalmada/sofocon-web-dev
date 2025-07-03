@@ -367,7 +367,6 @@ const AddCompaniePage = () => {
               label={"Otros datos"}
               placeholder={"Escribe..."}
               {...register("managerName", {
-                required: "Este campo es requerido",
                 minLength: {
                   value: 2,
                   message: "El campo debe contener al menos 2 caracteres.",

@@ -10,8 +10,6 @@ const useAddOrders = () => {
       setLoading(true);
       const response = await OrdersService.postAddOrdersApi(orderData);
       setStatus(response.status);
-      console.log("status", response.status);
-      console.log("data", response.data);
       return response.data;
     } catch (e) {
       console.error(e);
