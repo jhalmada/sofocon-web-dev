@@ -12,7 +12,7 @@ const useDeleteRoles = () => {
       setIsDeleted(true);
       setModified((prev) => !prev);
     } catch (error) {
-      console.error("Error al eliminar rol: ", error);
+      return error;
     } finally {
       setIsLoading(false);
     }

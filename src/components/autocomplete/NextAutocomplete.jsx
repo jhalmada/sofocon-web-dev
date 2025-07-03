@@ -22,6 +22,7 @@ const NextAutoComplete = ({
   hidden = false,
   setErrors = null,
   msjError = "",
+  mt = "3",
 }) => {
   //estados
   const [selectedItems, setSelectedItems] = useState(array2 || []);
@@ -46,7 +47,7 @@ const NextAutoComplete = ({
 
   return (
     <div className="mb-1">
-      <label className="mt-3 block font-roboto text-sm">{label}</label>
+      <label className={`mt-${mt} block font-roboto text-sm`}>{label}</label>
       <Autocomplete
         isDisabled={isDisabled}
         disabledKeys={selectedItems.map((item) => item.id)}

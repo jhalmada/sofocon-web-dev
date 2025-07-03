@@ -15,6 +15,10 @@ import notFoundImg from "../assets/images/notFound.svg";
 import SearchInput from "../components/inputs/SearchInput";
 import SaveImg from "../assets/img/save.svg";
 import { isMatch } from "lodash";
+import { Checkbox } from "@nextui-org/react";
+import IconEye from "../assets/icons/IconEye.svg";
+import IconEyeSlash from "../assets/icons/IconEyeSlash.svg";
+import usePutSellerPassword from "../hooks/users/usePutSellerPassword";
 
 const SellersPage = ({
   openConfirmDeleteModal,
@@ -37,6 +41,7 @@ const SellersPage = ({
     useState(false);
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
+  const [editPassword, setEditPassword] = useState(false);
 
   const {
     register,
@@ -47,6 +52,7 @@ const SellersPage = ({
   } = useForm();
   const { RolesResponse } = useRoles();
   const { changedUser } = usePutusers();
+  const { changedUserPassword } = usePutSellerPassword();
 
   const { sellerRoutesResponse, setSearch } = useSellerRoutes();
 
@@ -66,7 +72,12 @@ const SellersPage = ({
     }
   };
   const onSubmit = (data) => {
-    const { phone, ci, fullName, email, role, sellerRoute } = data;
+    const { phone, ci, fullName, email, role, sellerRoute, password } = data;
+    if (editPassword) {
+      changedUserPassword(userId, password);
+      setEditPassword(false);
+      setValue("password", "");
+    }
     handleUserCreation({
       email,
       sellerRoute: sellerRoute && sellerRoute.map((ruta) => ({ id: ruta.id })),
@@ -239,12 +250,12 @@ const SellersPage = ({
                 message: "Solo se permiten números",
               },
               minLength: {
-                value: 15,
-                message: "El número debe tener al menos 15 dígitos",
+                value: 9,
+                message: "El número debe tener al menos 9 dígitos",
               },
               maxLength: {
-                value: 15,
-                message: "El número no puede tener más de 15 dígitos",
+                value: 9,
+                message: "El número no puede tener más de 9 dígitos",
               },
             })}
             errorApi={errors.phone}
@@ -290,6 +301,47 @@ const SellersPage = ({
               msjError={errors.email ? errors.email.message : ""}
             />
           </div>
+          <div>
+            <Checkbox
+              radius="full"
+              className="mb-0 font-light"
+              size="sm"
+              onChange={(e) => setEditPassword(e.target.checked)}
+            >
+              Cambiar contraseña
+            </Checkbox>
+            <Input
+              disabled={!editPassword}
+              type={"password"}
+              icon1={IconEye}
+              icon2={IconEyeSlash}
+              placeholder={"Escribe tu nueva contraseña..."}
+              label={"Nueva contraseña"}
+              {...register("password", {
+                required: {
+                  value: editPassword,
+                  message: "Campo obligatorio",
+                },
+                minLength: {
+                  value: 8,
+                  message: "La contraseña debe tener al menos 8 caracteres",
+                },
+                maxLength: {
+                  value: 20,
+                  message: "La contraseña debe tener menos de 20 caracteres",
+                },
+                validate: {
+                  hasNumber: (value) =>
+                    /\d/.test(value) || "Debes incluir al menos un número",
+                  hasLetter: (value) =>
+                    /[a-zA-Z]/.test(value) ||
+                    "Debes incluir al menos una letra",
+                },
+              })}
+              errorApi={errors.password}
+              msjError={errors.password ? errors.password.message : ""}
+            />
+          </div>
 
           <div className="relative">
             <NextAutoComplete
@@ -300,6 +352,7 @@ const SellersPage = ({
               label={"Asignar Ruta"}
               setValue={setValue}
               onChange={setSearch}
+              mt="0"
             />
             <p>{errors.vendedores && errors.vendedores.message}</p>
           </div>

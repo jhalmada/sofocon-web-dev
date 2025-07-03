@@ -33,6 +33,7 @@ const AddRolePage = () => {
     });
     setSaveConfirmationModalOpen(true);
   };
+
   const closeSaveConfirmationModal = () => {
     setSaveConfirmationModalOpen(false);
   };

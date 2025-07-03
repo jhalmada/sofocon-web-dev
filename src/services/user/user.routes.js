@@ -6,3 +6,4 @@ export const getUsersSeller = "/user/sellers";
 export const getUsersExcel = "user/xlsx";
 export const getUsersPdf = "user/pdf";
 export const putUsersPassword = "user/changePassword";
+export const putSellersPassword = "user/password";

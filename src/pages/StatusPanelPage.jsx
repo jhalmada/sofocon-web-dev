@@ -82,7 +82,7 @@ const StatusPanelPage = () => {
   }, [getAllOrders]);
 
   useEffect(() => {
-    setInBoard(false);
+    setInBoard(true);
   }, [setInBoard]);
   useEffect(() => {
     setItemsPerPage(100);
