@@ -4,6 +4,7 @@ import briefCaseFillIcon from "../../assets/icons/briefcase-fill-black.svg";
 import { Checkbox, Tooltip } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import usePutOrders from "../../hooks/orders/usePutOrders";
+import { set } from "lodash";
 
 const StatusCard = ({
   id,
@@ -17,6 +18,7 @@ const StatusCard = ({
   discountTotal,
   paymentType,
   charged,
+  setTotalOrders, // Function to update total orders count
 }) => {
   const { changedOrder } = usePutOrders();
 
@@ -45,7 +47,8 @@ const StatusCard = ({
     setTotal(
       subtotal ? subtotal * 1.22 - subtotal * 1.22 * (discountTotal / 100) : 0,
     );
-  }, []);
+    setTotalOrders((prev) => Number(prev) + Number(total.toFixed(0))); // Update total orders count
+  }, [setTotalOrders, productArray, discountTotal]);
 
   useEffect(() => {
     setIsCharged(charged);
