@@ -65,6 +65,7 @@ const TableRole = () => {
   const [modalButtons, setModalButtons] = useState([]);
   const [modalMessage, setModalMessage] = useState("");
   const [deleteAdmin, setDeleteAdmin] = useState(false);
+  const [rolNotEliminated, setRolNotEliminated] = useState(false);
 
   const paginatedRoles = RolesResponse ? RolesResponse : [];
 
@@ -139,11 +140,9 @@ const TableRole = () => {
 
   const handleConfirmCancelBackClick = async (id) => {
     const result = await deleteUser(id, setRolModified);
+    console.log(result);
     if (result.status === 405) {
-      setModalMessage(
-        "El rol no se pudo eliminar porque está siendo utilizado por un usuario.",
-      );
-      setDeleteAdmin(true);
+      setRolNotEliminated(true);
     } else {
       setConfirmDelete(true);
     }
@@ -292,6 +291,21 @@ const TableRole = () => {
           <img src={SaveImg} alt="save" />
           <p className="font-roboto text-sm font-light text-black">
             Los cambios fueron guardados correctamente.
+          </p>
+        </div>
+      </ReusableModal>
+      {/**modal para rol que no se puede eliminar */}
+      <ReusableModal
+        isOpen={rolNotEliminated}
+        onClose={() => setRolNotEliminated(false)}
+        title="Rol no eliminado"
+        variant="confirmation"
+        buttons={["accept"]}
+        onAccept={() => setRolNotEliminated(false)}
+      >
+        <div className="flex flex-col items-center justify-center">
+          <p className="font-roboto text-sm font-light text-black">
+            El rol no se puede eliminar porque está asociado a usuarios.
           </p>
         </div>
       </ReusableModal>

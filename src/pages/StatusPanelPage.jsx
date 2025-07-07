@@ -9,6 +9,7 @@ const StatusPanelPage = () => {
   const { ordersResponse, getAllOrders, setUser, setInBoard, setItemsPerPage } =
     useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
+  const [totalOrders, setTotalOrders] = useState(0);
 
   const {
     control,
@@ -95,28 +96,32 @@ const StatusPanelPage = () => {
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div>
-        <div className="flex w-[22rem] items-center gap-2">
-          <Controller
-            name="user"
-            control={control}
-            rules={{ required: "Este campo es obligatorio" }}
-            render={({ field }) => (
-              <CompleteSearchInput
-                array={transformData(userSellerResponse?.result || []) || []}
-                name={"user.name"}
-                setValue={setValue}
-                onChange={setSearchSellers}
-                onSelect={handleSelectSeller}
-                sellers={setSellers}
-                placeholder="Buscar vendedores"
-                {...field}
-              />
+        <div className="flex w-full items-center justify-between">
+          <div className="flex w-[22rem] items-center gap-2">
+            <Controller
+              name="user"
+              control={control}
+              rules={{ required: "Este campo es obligatorio" }}
+              render={({ field }) => (
+                <CompleteSearchInput
+                  array={transformData(userSellerResponse?.result || []) || []}
+                  name={"user.name"}
+                  setValue={setValue}
+                  onChange={setSearchSellers}
+                  onSelect={handleSelectSeller}
+                  sellers={setSellers}
+                  placeholder="Buscar vendedores"
+                  {...field}
+                />
+              )}
+            />
+            {errors.user && (
+              <p className="text-xs text-red_e">{errors.user.message}</p>
             )}
-          />
-          {errors.user && (
-            <p className="text-xs text-red_e">{errors.user.message}</p>
-          )}
+          </div>
+          <p className="mr-8">Total: ${totalOrders}</p>
         </div>
+
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
           <p>Ingreso a taller ({countOrdersByStatus("REQUEST")})</p>
           <p>En preparación ({countOrdersByStatus("PREPARATION")})</p>
@@ -295,6 +300,7 @@ const StatusPanelPage = () => {
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
                     charged={order?.isCharged}
+                    setTotalOrders={setTotalOrders}
                   />
                 ))
             )}
