@@ -12,6 +12,20 @@ import BackButton from "../components/buttons/BackButton";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import NextAutoCompleteUsers from "../components/autocomplete/NextAutocompleteUsers";
 import NextAutoCompleteCompanies from "../components/autocomplete/NextAutocompleteCompanies";
+import SearchInput from "../components/inputs/SearchInput";
+import TableCompaniesRoutes from "../components/tables/TableCompaniesRoutes";
+import FilterSelect from "../components/filters/FilterSelect";
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${day}/${month}/${year}`;
+};
+
+const visitOptions = ["- 1 mes", "- 2 meses", "+ 2 meses"];
 
 const AddRoutePage = () => {
   const options = ["Activo", "Inactivo"];
@@ -23,7 +37,41 @@ const AddRoutePage = () => {
   } = useForm();
   const navigate = useNavigate();
   const { userSellerResponse, setSearch } = useUsersSellers();
-  const [isMapModal, setIsMapModal] = useState(false);
+  const {
+    companiesResponse: companiesResponse2,
+    setItemsPerPage,
+    totalPage,
+    total,
+    setPage,
+    page,
+    itemsPerPage,
+    setNextVisit,
+    setNeighborhood,
+    setDepartment,
+    setUser: setUser2,
+  } = useCompanies();
+
+  const handleVisitFilterChange = (value) => {
+    switch (value) {
+      case "- 1 mes":
+        setNextVisit(1);
+        setPage(0);
+        break;
+      case "- 2 meses":
+        setNextVisit(2);
+        setPage(0);
+        break;
+      case "+ 2 meses":
+        setNextVisit(3);
+        setPage(0);
+        break;
+      default:
+        setNextVisit(null);
+        setPage(0);
+        "selecciona una opción válida";
+    }
+  };
+
   const [msjError, setMsjError] = useState("");
   const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
   const { postAddSellersRoutes } = AddSellersRoutes();
@@ -190,7 +238,66 @@ const AddRoutePage = () => {
                 user={user}
               />
             </div>
+            <div>
+              <label className="text-gray-700 block text-sm font-light">
+                Filtrar por:
+              </label>
+              <div className="flex flex-wrap gap-4">
+                {" "}
+                <SearchInput
+                  label={"Vendedor"}
+                  border="border border-black"
+                  rounded="rounded-[0.5rem]"
+                  placeholder="Buscar..."
+                  onChange={setUser2}
+                  icon={false}
+                  name="userSearch"
+                />
+                <SearchInput
+                  label={"Departamento"}
+                  border="border border-black"
+                  rounded="rounded-[0.5rem]"
+                  placeholder="Buscar..."
+                  onChange={setDepartment}
+                  icon={false}
+                  name="departmentSearch"
+                />
+                <SearchInput
+                  label={"Barrio"}
+                  border="border border-black"
+                  rounded="rounded-[0.5rem]"
+                  placeholder="Buscar..."
+                  onChange={setNeighborhood}
+                  icon={false}
+                  name="neighborhoodSearch"
+                />
+                <div className="flex flex-col">
+                  <label
+                    htmlFor="visitFilter"
+                    className={`font-roboto text-sm font-light text-black`}
+                  >
+                    Próxima visita
+                  </label>
+                  <FilterSelect
+                    options={visitOptions}
+                    placeholder="Próx. visita"
+                    onChange={handleVisitFilterChange}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
+          <TableCompaniesRoutes
+            companiesResponse2={companiesResponse2}
+            formatDate={formatDate}
+            setItemsPerPage={setItemsPerPage}
+            totalPage={totalPage}
+            page={page}
+            itemsPerPage={itemsPerPage}
+            total={total}
+            setPage={setPage}
+          />
+
           <div className="flex w-full justify-end py-6">
             <Button
               text={"GUARDAR"}
@@ -200,22 +307,6 @@ const AddRoutePage = () => {
             />
           </div>
         </form>
-        <ReusableModal
-          width="w-[45.37rem]"
-          isOpen={isMapModal}
-          onClose={handleCancelClick}
-          title="Marcar ubicación en el mapa"
-          onSubmit={handleSubmit(onSubmit)}
-          buttons={["cancel", "save"]}
-          handleCancelClick={handleCancelClick}
-        >
-          <div className="flex flex-col">
-            <Input label={"Dirección"} placeholder={"Escribir..."} />
-            <div className="flex h-[15rem] items-center justify-center bg-blue_l text-2xl text-white">
-              Mapa
-            </div>
-          </div>
-        </ReusableModal>
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}

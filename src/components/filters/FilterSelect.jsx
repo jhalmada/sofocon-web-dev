@@ -4,7 +4,7 @@ const FilterSelect = ({ options, placeholder, onChange }) => {
   return (
     <Select
       maxMenuHeight={200}
-      className="min-w-[9rem] max-w-[12rem] rounded-lg border 2xl:min-w-[8.5rem]"
+      className="max-h-11 min-w-[9rem] max-w-[12rem] rounded-lg border 2xl:min-w-[8.5rem]"
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
       title={placeholder}
