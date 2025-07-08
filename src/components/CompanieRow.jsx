@@ -1,11 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import watchIcon from "../assets/icons/watch.svg";
 import watchIcon2 from "../assets/icons/Frame 1.svg";
 import watchIcon3 from "../assets/icons/watch 3.svg";
 import puntosvertical from "../assets/icons/three-dots-vertical.svg";
 import { useEffect, useState } from "react";
 import {
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,

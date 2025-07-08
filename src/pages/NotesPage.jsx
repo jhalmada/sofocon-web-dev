@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Input from "../components/inputs/Input";
@@ -22,7 +22,7 @@ const NOTES_TAB = "notes";
 const NotesPage = () => {
   const { changedNote } = usePutNotes();
   const { deleteNote } = useDeleteNotes();
-  
+
   const {
     register,
     handleSubmit,
@@ -48,6 +48,11 @@ const NotesPage = () => {
   const { id } = useParams();
   const { companyResponse } = useGetOneCompany(id);
   const { notesResponse, setModified, setClient, setSearch } = useNotes(id);
+  const navigate = useNavigate();
+
+  const handleVolver = () => {
+    navigate(-1); // 🔙 Esto te lleva a la ruta anterior real (como el botón del navegador)
+  };
 
   const openModal = (noteId) => {
     const noteToEdit = notesResponse.find((note) => note.id === noteId);
@@ -152,7 +157,10 @@ const NotesPage = () => {
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
       <div className="flex flex-grow flex-col p-6">
         <div className="w-[4rem]">
-          <Link to="/inicio/empresas" className="text-sm font-medium leading-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-sm font-medium leading-4"
+          >
             <div className="mb-4 flex w-[4rem] items-center">
               <img
                 src={ChevronLeftIcon}
@@ -161,7 +169,7 @@ const NotesPage = () => {
               />
               Volver
             </div>
-          </Link>
+          </button>
         </div>
         <div className="flex justify-between">
           <h1 className="mb-5 text-xl font-medium leading-6 text-black_m">
