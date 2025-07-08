@@ -67,7 +67,9 @@ const NextAutoCompleteCompanies = ({
       <Autocomplete
         isDisabled={isDisabled}
         disabledKeys={selectedItems.map((item) => item.id)}
-        className="w-full rounded-lg border"
+        className={`w-full rounded-lg border ${
+          isDisabled ? "border-stone-400" : "border-black"
+        }`}
         selectedKey={""}
         placeholder={placeholder}
         startContent={<img src={search}></img>}

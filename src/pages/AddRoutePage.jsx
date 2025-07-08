@@ -12,6 +12,21 @@ import BackButton from "../components/buttons/BackButton";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import NextAutoCompleteUsers from "../components/autocomplete/NextAutocompleteUsers";
 import NextAutoCompleteCompanies from "../components/autocomplete/NextAutocompleteCompanies";
+import SearchInput from "../components/inputs/SearchInput";
+import TableCompaniesRoutes from "../components/tables/TableCompaniesRoutes";
+import FilterSelect from "../components/filters/FilterSelect";
+import { Checkbox } from "@nextui-org/react";
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${day}/${month}/${year}`;
+};
+
+const visitOptions = ["- 1 mes", "- 2 meses", "+ 2 meses"];
 
 const AddRoutePage = () => {
   const options = ["Activo", "Inactivo"];
@@ -23,7 +38,48 @@ const AddRoutePage = () => {
   } = useForm();
   const navigate = useNavigate();
   const { userSellerResponse, setSearch } = useUsersSellers();
-  const [isMapModal, setIsMapModal] = useState(false);
+  const {
+    companiesResponse: companiesResponse2,
+    setItemsPerPage,
+    totalPage,
+    total,
+    setPage,
+    page,
+    itemsPerPage,
+    setNextVisit,
+    nextVisit,
+    setNeighborhood,
+    setDepartment,
+    setUser: setUser2,
+    user: user2,
+  } = useCompanies();
+
+  //estados para el nuevo metodo de filtrado
+  const [nextVisit2, setNextVisit2] = useState(null);
+  const [neighborhood, setNeighborhood2] = useState("");
+  const [department, setDepartment2] = useState("");
+
+  const handleVisitFilterChange = (value) => {
+    switch (value) {
+      case "- 1 mes":
+        setNextVisit(1);
+        setPage(0);
+        break;
+      case "- 2 meses":
+        setNextVisit(2);
+        setPage(0);
+        break;
+      case "+ 2 meses":
+        setNextVisit(3);
+        setPage(0);
+        break;
+      default:
+        setNextVisit(null);
+        setPage(0);
+        "selecciona una opción válida";
+    }
+  };
+
   const [msjError, setMsjError] = useState("");
   const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
   const { postAddSellersRoutes } = AddSellersRoutes();
@@ -49,19 +105,37 @@ const AddRoutePage = () => {
   };
   const onSubmit = (data) => {
     const { name, status, vendedores, empresas, zone } = data;
+
     const seller = vendedores
       ? vendedores.map((vendedor) => ({ id: vendedor.id }))
       : [];
+
     const companies = empresas
       ? empresas.map((empresa) => ({ client: empresa.id }))
       : [];
-    const newData = {
+
+    const baseData = {
       name,
       zone,
-      isActive: status === "Activo" ? true : false,
+      isActive: status === "Activo",
       user: [...seller],
-      clientInRoute: [...companies],
     };
+
+    const newData =
+      checkSelected === "filters"
+        ? {
+            ...baseData,
+            filters: {
+              user: user2,
+              department: department,
+              neighborhood: neighborhood,
+              nextVisit: nextVisit,
+            },
+          }
+        : {
+            ...baseData,
+            clientInRoute: [...companies],
+          };
 
     handleSellerCreation(newData);
   };
@@ -83,6 +157,8 @@ const AddRoutePage = () => {
       name: item.userInfo.fullName,
     }));
   };
+
+  const [checkSelected, setCheckSelected] = useState("manual");
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -177,9 +253,19 @@ const AddRoutePage = () => {
                 onChange={setSearch}
               />
             </div>
+            <Checkbox
+              radius="full"
+              isSelected={checkSelected === "manual"}
+              onClick={() => setCheckSelected("manual")}
+              className="font-light"
+              size="sm"
+            >
+              Agregar Manualmente{" "}
+            </Checkbox>
 
             <div className="mb-4 space-y-2">
               <NextAutoCompleteCompanies
+                isDisabled={checkSelected !== "manual"}
                 array2={CompanieResult}
                 label2={"Empresas Asignadas"}
                 array={companiesResponse || []}
@@ -190,7 +276,96 @@ const AddRoutePage = () => {
                 user={user}
               />
             </div>
+            <Checkbox
+              radius="full"
+              isSelected={checkSelected === "filters"}
+              onClick={() => setCheckSelected("filters")}
+              className="font-light"
+              size="sm"
+            >
+              Agregar por filtros
+            </Checkbox>
+            <div className="mt-4">
+              <div className="flex flex-wrap gap-4">
+                {" "}
+                <div className="flex w-[22rem] flex-col">
+                  <label
+                    htmlFor="userFilter"
+                    className={`font-roboto text-sm font-light text-black`}
+                  >
+                    Vendedor
+                  </label>
+
+                  <Select
+                    isDisabled={checkSelected !== "filters"}
+                    dis
+                    labelPlacement="outside"
+                    placeholder="Vendedor"
+                    className="max-w-[21.875rem] rounded-lg border font-roboto font-medium"
+                    onSelectionChange={(value) => setUser2(value.anchorKey)}
+                  >
+                    {userSellerResponse &&
+                      userSellerResponse?.result?.map((rol) => (
+                        <SelectItem key={rol.id}>
+                          {rol.userInfo.fullName}
+                        </SelectItem>
+                      ))}
+                  </Select>
+                </div>
+                <SearchInput
+                  disabled={checkSelected !== "filters"}
+                  label={"Departamento"}
+                  border={`border ${checkSelected !== "filters" ? "border-stone-400" : "border-black"}`}
+                  rounded="rounded-[0.5rem]"
+                  placeholder="Buscar..."
+                  onChange={setDepartment}
+                  icon={false}
+                  name="departmentSearch"
+                  onChange2={setDepartment2}
+                />
+                <SearchInput
+                  disabled={checkSelected !== "filters"}
+                  label={"Barrio"}
+                  border={`border ${checkSelected !== "filters" ? "border-stone-400" : "border-black"}`}
+                  rounded="rounded-[0.5rem]"
+                  placeholder="Buscar..."
+                  onChange={setNeighborhood}
+                  icon={false}
+                  name="neighborhoodSearch"
+                  onChange2={setNeighborhood2}
+                />
+                <div className="flex flex-col">
+                  <label
+                    htmlFor="visitFilter"
+                    className={`font-roboto text-sm font-light text-black`}
+                  >
+                    Próxima visita
+                  </label>
+                  <FilterSelect
+                    disabled={checkSelected !== "filters"}
+                    options={visitOptions}
+                    placeholder="Próx. visita"
+                    onChange={handleVisitFilterChange}
+                    onChange2={setNextVisit2}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
+          {/* Table for companies routes */}
+          {checkSelected === "filters" && (
+            <TableCompaniesRoutes
+              companiesResponse2={companiesResponse2}
+              formatDate={formatDate}
+              setItemsPerPage={setItemsPerPage}
+              totalPage={totalPage}
+              page={page}
+              itemsPerPage={itemsPerPage}
+              total={total}
+              setPage={setPage}
+            />
+          )}
+
           <div className="flex w-full justify-end py-6">
             <Button
               text={"GUARDAR"}
@@ -200,22 +375,6 @@ const AddRoutePage = () => {
             />
           </div>
         </form>
-        <ReusableModal
-          width="w-[45.37rem]"
-          isOpen={isMapModal}
-          onClose={handleCancelClick}
-          title="Marcar ubicación en el mapa"
-          onSubmit={handleSubmit(onSubmit)}
-          buttons={["cancel", "save"]}
-          handleCancelClick={handleCancelClick}
-        >
-          <div className="flex flex-col">
-            <Input label={"Dirección"} placeholder={"Escribir..."} />
-            <div className="flex h-[15rem] items-center justify-center bg-blue_l text-2xl text-white">
-              Mapa
-            </div>
-          </div>
-        </ReusableModal>
         <ReusableModal
           isOpen={isSaveConfirmationModalOpen}
           onClose={closeSaveConfirmationModal}
