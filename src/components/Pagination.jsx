@@ -30,6 +30,7 @@ const Pagination = ({
           </span>
         </div>
         <button
+          type="button"
           className="rounded px-4 py-2"
           onClick={() => onPageChange(0)}
           disabled={currentPage === 0}
@@ -37,6 +38,7 @@ const Pagination = ({
           <img src={SkipPreviousFilledIcon} alt="Skip previous icon" />
         </button>
         <button
+          type="button"
           className="rounded px-4 py-2"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 0}
@@ -47,6 +49,7 @@ const Pagination = ({
         {currentPage > 4 && (
           <>
             <button
+              type="button"
               key={0}
               className={`rounded-full px-4 py-2 ${currentPage === 0 ? "bg-black_l" : "bg-black/5"}`}
               onClick={() => onPageChange(0)}
@@ -61,6 +64,7 @@ const Pagination = ({
 
         {pageButtons.map((index) => (
           <button
+            type="button"
             key={index}
             className={`rounded-full px-4 py-2 ${currentPage === index ? "bg-black_l" : ""}`}
             onClick={() => onPageChange(index)}
@@ -75,6 +79,7 @@ const Pagination = ({
               <span className="px-2">...</span>
             </div>
             <button
+              type="button"
               key={totalPages - 1}
               className={`rounded-full px-4 py-2 ${currentPage === totalPages - 1 ? "bg-black_l" : "bg-black/5"}`}
               onClick={() => onPageChange(totalPages - 1)}
@@ -85,6 +90,7 @@ const Pagination = ({
         )}
 
         <button
+          type="button"
           className="rounded px-4 py-2"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages - 1}
@@ -92,6 +98,7 @@ const Pagination = ({
           <img src={ChevronRightFilledIcon} alt="Chevron right icon" />
         </button>
         <button
+          type="button"
           className="rounded px-4 py-2"
           onClick={() => onPageChange(totalPages - 1)}
           disabled={currentPage === totalPages - 1}
