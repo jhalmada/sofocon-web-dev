@@ -7,14 +7,19 @@ const SearchInput = ({
   border = "border border-black_l",
   rounded = "rounded-[2rem]",
   onChange = () => {},
+  onChange2 = false,
   icon = true,
   name = "search",
   label = false,
+  disabled = false,
 }) => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     onChange(search);
+    if (onChange2) {
+      onChange2(search);
+    }
   }, [search]);
   return (
     <div className="flex flex-col">
@@ -30,6 +35,7 @@ const SearchInput = ({
         className={`${border} ${rounded} relative flex max-h-12 min-w-[22rem]`}
       >
         <input
+          disabled={disabled}
           id={name ? name : ""}
           type="text"
           value={search}
