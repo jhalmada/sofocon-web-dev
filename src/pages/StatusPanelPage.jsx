@@ -6,6 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 
 const StatusPanelPage = () => {
+  const [modificador, setModificador] = useState(false);
   const { ordersResponse, getAllOrders, setUser, setInBoard, setItemsPerPage } =
     useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
@@ -22,6 +23,8 @@ const StatusPanelPage = () => {
   const handleSelectSeller = (selectedSeller) => {
     if (selectedSeller) {
       setUser(selectedSeller.id);
+      setModificador((prev) => !prev);
+      alert("nueva petición");
     } else {
       setUser(null);
     }
@@ -301,6 +304,7 @@ const StatusPanelPage = () => {
                     paymentType={translatePaymentStatus(order?.paymentType)}
                     charged={order?.isCharged}
                     setTotalOrders={setTotalOrders}
+                    modified={modificador}
                   />
                 ))
             )}
