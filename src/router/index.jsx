@@ -198,7 +198,10 @@ export const router = createBrowserRouter([
             path: ADD_ROUTE_ROUTE,
             element: <AddRouteLayout />,
             children: [
-              { index: true, element: <AddRoutePage /> },
+              {
+                index: true,
+                element: <AddRoutePage />,
+              },
               {
                 path: ADD_USER_ROUTE,
                 element: <AddUserPage />,
@@ -212,6 +215,10 @@ export const router = createBrowserRouter([
           {
             path: ROUTES_MAP_ROUTE,
             element: <RouteMapDetailsPage />,
+          },
+          {
+            path: "notes/:id",
+            element: <NotesPage />,
           },
         ],
       },

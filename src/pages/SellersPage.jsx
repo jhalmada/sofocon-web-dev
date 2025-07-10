@@ -312,34 +312,30 @@ const SellersPage = ({
             </Checkbox>
             <Input
               disabled={!editPassword}
-              type={"password"}
+              type="password"
               icon1={IconEye}
               icon2={IconEyeSlash}
-              placeholder={"Escribe tu nueva contraseña..."}
-              label={"Nueva contraseña"}
+              placeholder="Escribe tu nueva contraseña..."
+              label="Nueva contraseña"
               {...register("password", {
-                required: {
-                  value: editPassword,
-                  message: "Campo obligatorio",
-                },
-                minLength: {
-                  value: 8,
-                  message: "La contraseña debe tener al menos 8 caracteres",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "La contraseña debe tener menos de 20 caracteres",
-                },
-                validate: {
-                  hasNumber: (value) =>
-                    /\d/.test(value) || "Debes incluir al menos un número",
-                  hasLetter: (value) =>
-                    /[a-zA-Z]/.test(value) ||
-                    "Debes incluir al menos una letra",
+                validate: (value) => {
+                  if (!editPassword) return true; // No validar si no se está editando
+
+                  if (!value) return "Campo obligatorio";
+                  if (value.length < 8)
+                    return "La contraseña debe tener al menos 8 caracteres";
+                  if (value.length > 20)
+                    return "La contraseña debe tener menos de 20 caracteres";
+                  if (!/\d/.test(value))
+                    return "Debes incluir al menos un número";
+                  if (!/[a-zA-Z]/.test(value))
+                    return "Debes incluir al menos una letra";
+
+                  return true;
                 },
               })}
               errorApi={errors.password}
-              msjError={errors.password ? errors.password.message : ""}
+              msjError={errors.password?.message || ""}
             />
           </div>
 
