@@ -44,7 +44,7 @@ const RouteCompanieDetailsRow = ({
       <td className="py-6 text-md font-semibold leading-[1.16rem]">
         {translateState(state)}
       </td>
-      <Link to={`/inicio/empresas/notas/${id}`}>
+      <Link to={`/inicio/rutas/notes/${id}`}>
         <td className="py-6 underline">{notes}</td>
       </Link>
       <td className="py-6">

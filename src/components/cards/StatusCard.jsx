@@ -18,7 +18,8 @@ const StatusCard = ({
   discountTotal,
   paymentType,
   charged,
-  setTotalOrders, // Function to update total orders count
+  setTotalOrders = false,
+  modified = false, // Function to update total orders count
 }) => {
   const { changedOrder } = usePutOrders();
 
@@ -47,8 +48,10 @@ const StatusCard = ({
     setTotal(
       subtotal ? subtotal * 1.22 - subtotal * 1.22 * (discountTotal / 100) : 0,
     );
-    setTotalOrders((prev) => Number(prev) + Number(total.toFixed(0))); // Update total orders count
-  }, [setTotalOrders, productArray, discountTotal]);
+    if (setTotalOrders) {
+      setTotalOrders((prev) => Number(prev) + Number(total.toFixed(0))); // Update total orders count
+    }
+  }, [setTotalOrders, productArray, discountTotal, modified]);
 
   useEffect(() => {
     setIsCharged(charged);

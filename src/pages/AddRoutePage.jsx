@@ -15,7 +15,7 @@ import NextAutoCompleteCompanies from "../components/autocomplete/NextAutocomple
 import SearchInput from "../components/inputs/SearchInput";
 import TableCompaniesRoutes from "../components/tables/TableCompaniesRoutes";
 import FilterSelect from "../components/filters/FilterSelect";
-import { Checkbox } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Checkbox } from "@nextui-org/react";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -296,21 +296,23 @@ const AddRoutePage = () => {
                     Vendedor
                   </label>
 
-                  <Select
+                  <Autocomplete
                     isDisabled={checkSelected !== "filters"}
-                    dis
-                    labelPlacement="outside"
-                    placeholder="Vendedor"
                     className="max-w-[21.875rem] rounded-lg border font-roboto font-medium"
+                    placeholder="Buscar vendedor"
+                    onInputChange={(e) => setSearch(e)}
                     onSelectionChange={(value) => setUser2(value.anchorKey)}
                   >
                     {userSellerResponse &&
                       userSellerResponse?.result?.map((rol) => (
-                        <SelectItem key={rol.id}>
+                        <AutocompleteItem
+                          key={rol.id}
+                          onClick={() => setUser2(rol.id)}
+                        >
                           {rol.userInfo.fullName}
-                        </SelectItem>
+                        </AutocompleteItem>
                       ))}
-                  </Select>
+                  </Autocomplete>
                 </div>
                 <SearchInput
                   disabled={checkSelected !== "filters"}
