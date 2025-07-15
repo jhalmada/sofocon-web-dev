@@ -144,7 +144,7 @@ const HomePage = () => {
             ))}
           </div>
           {/*Mapa*/}
-          {datosGuardados.includes("USER_SUPER_ADMIN") ? (
+          {datosGuardados && datosGuardados.includes("USER_SUPER_ADMIN") ? (
             <div
               onMouseMove={handleMouseMove}
               className="w-[85%] rounded-[0.875rem] bg-white pt-4 shadow-card"
