@@ -140,7 +140,6 @@ const TableRole = () => {
 
   const handleConfirmCancelBackClick = async (id) => {
     const result = await deleteUser(id, setRolModified);
-    console.log(result);
     if (result.status === 405) {
       setRolNotEliminated(true);
     } else {
