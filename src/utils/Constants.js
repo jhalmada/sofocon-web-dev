@@ -45,5 +45,5 @@ export const IMAGE_BASE = import.meta.env.VITE_IMAGE_BASE_URL;
 
 export const TYPE_PRODUCTS = ["A", "AE", "C", "H", "PA", "PB"];
 export const MEDIDA = ["cm", "cm3", "kg", "gr", "libras", "mts", "litro"];
-export const MAP_API_KEY = "AIzaSyDHbuj7ARWz4JH7uuxWglUnFvGQ_ZioSb4";
+export const MAP_API_KEY = "AIzaSyB2WppIRyBKnjBjmaubxjeeP8eKbEZUDlQ";
 
