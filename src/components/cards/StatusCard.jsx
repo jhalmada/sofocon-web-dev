@@ -4,7 +4,6 @@ import briefCaseFillIcon from "../../assets/icons/briefcase-fill-black.svg";
 import { Checkbox, Tooltip } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import usePutOrders from "../../hooks/orders/usePutOrders";
-import { set } from "lodash";
 
 const StatusCard = ({
   id,
@@ -15,11 +14,9 @@ const StatusCard = ({
   date,
   sellerName,
   isToDeliver,
-  discountTotal,
   paymentType,
-  charged,
-  setTotalOrders = false,
-  modified = false, // Function to update total orders count
+  charged, // Function to update total orders count
+  changeState,
 }) => {
   const { changedOrder } = usePutOrders();
 
@@ -31,31 +28,10 @@ const StatusCard = ({
   const additionalItems = productArray.length - displayedProducts.length;
 
   const updateOrderState = async (status) => {
-    setIsCharged(status);
     await changedOrder({ isCharged: status }, id);
+    setIsCharged(status);
+    changeState();
   };
-
-  useEffect(() => {
-    const subtotal = productArray.reduce((acc, item) => {
-      const itemQuantity = item.amount || 1;
-      const itemPrice = item.fixedPrice;
-      const discountPercentage = item.amount ? item.amount / 100 : 0;
-      const discountedPrice = itemPrice * (1 - discountPercentage);
-
-      return acc + discountedPrice * itemQuantity;
-    }, 0);
-
-    setTotal(
-      subtotal ? subtotal * 1.22 - subtotal * 1.22 * (discountTotal / 100) : 0,
-    );
-    if (setTotalOrders) {
-      setTotalOrders((prev) => Number(prev) + Number(total.toFixed(0))); // Update total orders count
-    }
-  }, [setTotalOrders, productArray, discountTotal, modified]);
-
-  useEffect(() => {
-    setIsCharged(charged);
-  }, [charged]);
 
   return (
     <div className="mt-2 flex h-auto min-h-[12rem] flex-col rounded-lg pb-2 shadow-br 2xl:min-h-[14rem]">

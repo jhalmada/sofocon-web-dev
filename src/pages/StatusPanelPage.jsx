@@ -7,10 +7,8 @@ import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 
 const StatusPanelPage = () => {
   const [modificador, setModificador] = useState(false);
-  const { ordersResponse, getAllOrders, setUser, setInBoard, setItemsPerPage } =
-    useOrders();
+  const { ordersResponse, ordersAmount, getAllOrders, setUser } = useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
-  const [totalOrders, setTotalOrders] = useState(0);
 
   const {
     control,
@@ -82,19 +80,12 @@ const StatusPanelPage = () => {
   };
 
   useEffect(() => {
-    getAllOrders({});
+    getAllOrders({ itemsPerPage: 100, inBoard: true });
   }, [getAllOrders]);
 
   useEffect(() => {
-    setInBoard(true);
-  }, [setInBoard]);
-  useEffect(() => {
-    setItemsPerPage(100);
-  }, []);
-
-  useEffect(() => {
     setSearchSellers(sellers);
-  }, [sellers]);
+  }, [sellers, setSearchSellers]);
 
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
@@ -122,7 +113,7 @@ const StatusPanelPage = () => {
               <p className="text-xs text-red_e">{errors.user.message}</p>
             )}
           </div>
-          <p className="mr-8">Total: ${totalOrders}</p>
+          <p className="mr-8">Total: ${ordersAmount}</p>
         </div>
 
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
@@ -303,8 +294,10 @@ const StatusPanelPage = () => {
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
                     charged={order?.isCharged}
-                    setTotalOrders={setTotalOrders}
                     modified={modificador}
+                    changeState={() =>
+                      getAllOrders({ itemsPerPage: 100, inBoard: true })
+                    }
                   />
                 ))
             )}

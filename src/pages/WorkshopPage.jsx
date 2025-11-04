@@ -88,29 +88,11 @@ const WorkshopPage = () => {
     "En preparación",
     "Para retirar del taller",
   ];
-  const years = [
-    { label: "2024", value: 2024 },
-    { label: "2025", value: 2025 },
-    { label: "2026", value: 2026 },
-    { label: "2027", value: 2027 },
-    { label: "2028", value: 2028 },
-    { label: "2029", value: 2029 },
-    { label: "2030", value: 2030 },
-    { label: "2031", value: 2031 },
-    { label: "2032", value: 2032 },
-    { label: "2033", value: 2033 },
-    { label: "2034", value: 2034 },
-    { label: "2035", value: 2035 },
-    { label: "2036", value: 2036 },
-    { label: "2037", value: 2037 },
-    { label: "2038", value: 2038 },
-    { label: "2039", value: 2039 },
-    { label: "2040", value: 2040 },
-    { label: "2041", value: 2041 },
-    { label: "2042", value: 2042 },
-    { label: "2043", value: 2043 },
-    { label: "2044", value: 2044 },
-  ];
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 11 }, (_, i) => {
+    const y = currentYear - 5 + i;
+    return { label: String(y), value: String(y) };
+  });
   const months = [
     { label: "Enero", value: "01" },
     { label: "Febrero", value: "02" },
@@ -180,7 +162,6 @@ const WorkshopPage = () => {
     setOpenScannerModal(false);
     setIsExportCompetingModalOpen(false);
     setIsSellersModalOpen(false);
-  
   };
 
   const closeConfirmCancelModal = () => {
@@ -240,10 +221,8 @@ const WorkshopPage = () => {
     }
   }, [activeTab, getAllOrders]);
   useEffect(() => {
-    setBarCode('');
-}, [activeTab]);
-
- 
+    setBarCode("");
+  }, [activeTab]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
