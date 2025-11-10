@@ -40,7 +40,11 @@ const NewSalePage = () => {
     setSearch: setSearchProducts,
     setList,
   } = useGetProducts();
-  const { priceListResponse, setSearch: setSearchList } = useGetPriceList();
+  const {
+    priceListResponse,
+    getAllPriceList,
+    setSearch: setSearchList,
+  } = useGetPriceList();
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -336,13 +340,17 @@ const NewSalePage = () => {
 
   useEffect(() => {
     setSearchList(lists);
-  }, [lists]);
+  }, [lists, setSearchList]);
 
   useEffect(() => {
     if (status === 201) {
       setIsSaveConfirmationModalOpen(true);
     }
   }, [status]);
+  useEffect(() => {
+    getAllPriceList();
+  }, [getAllPriceList]);
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">

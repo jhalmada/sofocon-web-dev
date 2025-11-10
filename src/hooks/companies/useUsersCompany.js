@@ -9,7 +9,7 @@ const useUserCompany = () => {
     try {
       setIsLoading(true);
       await CompaniesService.putUsersCompanyApi(usersList, companyId);
-      setModified((prev) => !prev);
+      if (setModified) setModified((prev) => !prev);
       return true;
     } catch (error) {
       console.error("Error al agregar los usuarios: ", error);

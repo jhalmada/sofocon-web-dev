@@ -5,7 +5,7 @@ import editIcon from "../assets/icons/pencil-square.svg";
 import deleteIcon from "../assets/icons/trash3.svg";
 import useDeletePriceList from "../hooks/priceList/useDeletePriceList";
 import ReusableModal from "../components/modals/ReusableModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import deleteImg from "../assets/img/deleted.png";
 import Input from "../components/inputs/Input";
 import { Checkbox } from "@nextui-org/react";
@@ -22,6 +22,7 @@ const PriceListPage = ({
   itemsPerPage,
   total,
   setModified,
+  getAllPriceList,
 }) => {
   const [deletemodal, setDeleteModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -101,6 +102,10 @@ const PriceListPage = ({
       setEditModal(false);
     }
   };
+
+  useEffect(() => {
+    getAllPriceList(0);
+  }, [getAllPriceList]);
 
   return (
     <div className="flex h-full w-full flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">

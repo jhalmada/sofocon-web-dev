@@ -72,7 +72,7 @@ const PlaceAutocomplete = ({
     placeAutocomplete.addListener("place_changed", () => {
       onPlaceSelect(placeAutocomplete.getPlace());
       setName(placeAutocomplete.getPlace().formatted_address);
-      setSelectManual(false);
+      setSelectManual(null);
     });
   }, [onPlaceSelect, placeAutocomplete]);
   return (

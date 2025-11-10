@@ -1,20 +1,22 @@
-import Pagination from "../components/Pagination";
+import Pagination from "../../components/Pagination";
 import { useForm } from "react-hook-form";
-import CompetingRow from "../components/CompetingRow";
-import editIcon from "../assets/icons/pencil-square.svg";
-import deleteIcon from "../assets/icons/trash3.svg";
+import CompetingRow from "../../components/CompetingRow";
+import editIcon from "../../assets/icons/pencil-square.svg";
+import deleteIcon from "../../assets/icons/trash3.svg";
 import { parseAbsoluteToLocal } from "@internationalized/date";
-import notesIcon from "../assets/icons/sticky-fill.svg";
-import FilterSelect from "../components/filters/FilterSelect";
+import notesIcon from "../../assets/icons/sticky-fill.svg";
+import FilterSelect from "../../components/filters/FilterSelect";
 import { Select, SelectItem } from "@nextui-org/select";
-import Input from "../components/inputs/Input";
+import Input from "../../components/inputs/Input";
 import { Checkbox } from "@nextui-org/react";
-import ReusableModal from "../components/modals/ReusableModal";
-import pageLostImg from "../assets/images/pageLost.svg";
+import ReusableModal from "../../components/modals/ReusableModal";
+import pageLostImg from "../../assets/images/pageLost.svg";
 import { useState } from "react";
-import SearchInput from "../components/inputs/SearchInput";
-import Calendar from "../components/calendar/Calendar";
-import deleteImg from "../assets/img/deleted.svg";
+import SearchInput from "../../components/inputs/SearchInput";
+import Calendar from "../../components/calendar/Calendar";
+import deleteImg from "../../assets/img/deleted.svg";
+import PropTypes from "prop-types";
+
 const CompetingPage = ({
   companiesResponse,
   setSearch,
@@ -550,4 +552,21 @@ const CompetingPage = ({
     </div>
   );
 };
+
+CompetingPage.propTypes = {
+  companiesResponse: PropTypes.array.isRequired,
+  setSearch: PropTypes.func,
+  setItemsPerPage: PropTypes.func,
+  totalPage: PropTypes.number,
+  total: PropTypes.number,
+  setPage: PropTypes.func,
+  page: PropTypes.number,
+  itemsPerPage: PropTypes.number,
+  setNextVisit: PropTypes.func,
+  changedCompany: PropTypes.func,
+  setModified: PropTypes.func,
+  setSaveConfirmationModalOpen: PropTypes.func,
+  deleteCompany: PropTypes.func,
+};
+
 export default CompetingPage;

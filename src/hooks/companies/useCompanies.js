@@ -19,6 +19,8 @@ const useCompanies = (id = null) => {
   const [user, setUser] = useState(null);
   const [neighborhood, setNeighborhood] = useState(null);
   const [department, setDepartment] = useState(null);
+  const [searchStartDate, setSearchStartDate] = useState(null);
+  const [searchEndDate, setSearchEndDate] = useState(null);
 
   const downloadFile = useCallback(async (url, fileName) => {
     try {
@@ -66,6 +68,8 @@ const useCompanies = (id = null) => {
         user,
         neighborhood,
         department,
+        searchStartDate,
+        searchEndDate,
       });
       //aqui haces con el resultado lo que necesites
 
@@ -94,6 +98,8 @@ const useCompanies = (id = null) => {
     user,
     department,
     neighborhood,
+    searchStartDate,
+    searchEndDate,
   ]);
 
   return {
@@ -122,6 +128,11 @@ const useCompanies = (id = null) => {
     setUser,
     setDepartment,
     user,
+    setSearchStartDate,
+    setSearchEndDate,
+    searchStartDate,
+    searchEndDate,
+    getAllCompanies,
   };
 };
 

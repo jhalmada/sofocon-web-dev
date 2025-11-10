@@ -27,9 +27,7 @@ const CardProducts = ({
         onClick={() => handleClick()}
         style={{
           backgroundImage:
-            img !== null
-              ? `url(${IMAGE_BASE}${img})`
-              : `url(${defaultCategory})`,
+            img !== null ? `url(${img})` : `url(${defaultCategory})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

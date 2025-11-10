@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { PriceListService } from "../../services/priceList/priceList.service.js";
 const useGetPriceList = () => {
   const [priceListResponse, setPriceListResponse] = useState([]);
@@ -7,13 +7,11 @@ const useGetPriceList = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [total, setTotal] = useState(0);
-  const [modified, setModified] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [client, setClient] = useState(null);
-  const [inApp, setInApp] = useState(true);
 
-  const getAllPriceList = async () => {
+  const getAllPriceList = useCallback(async () => {
     try {
       setLoading(true);
       const { data } = await PriceListService.getAllPriceListApi({
@@ -22,7 +20,6 @@ const useGetPriceList = () => {
         search,
         category,
         client,
-        inApp,
       });
       setTotalPage(data.pagination.totalPages);
       setTotal(data.pagination.total);
@@ -32,10 +29,8 @@ const useGetPriceList = () => {
     } finally {
       setLoading(false);
     }
-  };
-  useEffect(() => {
-    getAllPriceList();
-  }, [page, itemsPerPage, modified, search, category, client]);
+  }, [page, itemsPerPage, search, category, client]);
+
   return {
     priceListResponse,
     loading,
@@ -45,11 +40,10 @@ const useGetPriceList = () => {
     setPage,
     page,
     itemsPerPage,
-    setModified,
-    modified,
     setSearch,
     setCategory,
     setClient,
+    getAllPriceList,
   };
 };
 
