@@ -78,7 +78,7 @@ const RechargeDataPage = () => {
       });
 
       if (newItemsDetails) {
-        navigate(`/inicio/taller/recarga/${query.get("id")}`);
+        navigate(`/inicio/taller`);
         setSaveConfirmationModalOpen(true);
       } else {
         setIsModalOpen(true);

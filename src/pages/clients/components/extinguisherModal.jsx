@@ -56,6 +56,10 @@ export const ExtinguisherModal = ({ company, isOpen, onClose }) => {
     onCloseAdd();
   };
 
+  const updateExtinguisherList = () => {
+    getAllExtinguisher({ client: company.id });
+  };
+
   useEffect(() => {
     getAllExtinguisher({ client: company.id });
   }, [company, getAllExtinguisher]);
@@ -160,6 +164,7 @@ export const ExtinguisherModal = ({ company, isOpen, onClose }) => {
         newExtinguisher={newExtinguisher}
         isOpen={isOpenAdd}
         onClose={closeModal}
+        updateExtinguisherList={updateExtinguisherList}
       />
     </>
   );

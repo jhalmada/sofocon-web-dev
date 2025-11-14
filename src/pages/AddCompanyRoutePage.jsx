@@ -6,10 +6,11 @@ import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
 import ReusableModal from "../components/modals/ReusableModal";
 import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterSelect from "../components/filters/FilterSelect";
 import SearchInput from "../components/inputs/SearchInput";
 import disconnectedImg from "../assets/images/disconnected.svg";
+import { CompaniesTable } from "./clients/components/companiesTable";
 
 const AddCompanyRoutePage = ({
   setSearch,
@@ -28,9 +29,14 @@ const AddCompanyRoutePage = ({
   nameCompany,
   setStatus,
   companyModified,
+  route,
 }) => {
   const { changedSellerRoute } = usePutSellerRoute();
-  const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
+  const {
+    companiesResponse,
+    setSearch: setSearchCompany,
+    getAllCompanies,
+  } = useCompanies({ competence: false });
   const {
     handleSubmit,
     setValue,
@@ -58,18 +64,6 @@ const AddCompanyRoutePage = ({
   const openConfirmDeleteModal = (id) => {
     setCompanyId(id);
     setConfirmDeleteModalOpen(true);
-  };
-  const handleConfirmDelete = () => {
-    const newCompanyArray = transformData(arrayCompanies).filter(
-      (element) => element.id !== companyId,
-    );
-    const newArray = newCompanyArray.map((company) => ({ client: company.id }));
-    const newData = {
-      clientInRoute: [...newArray],
-    };
-    changedSellerRoute(newData, idCompany, setModified);
-    setConfirmDeleteModalOpen(false);
-    companyModified((prev) => !prev);
   };
 
   //funcion para transformar los Arrays
@@ -103,89 +97,16 @@ const AddCompanyRoutePage = ({
         break;
     }
   };
-
+  useEffect(() => {
+    getAllCompanies();
+  }, [getAllCompanies]);
   return (
     <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
       <div>
-        <div className="flex justify-end">
-          <SearchInput placeholder="Buscar..." onChange={setSearch} />
-        </div>
-        <table className="mt-2 w-full">
-          <thead>
-            <tr>
-              <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                Nombre
-              </th>
-
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Dirección
-              </th>
-
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Próx. visita
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                <div className="flex flex-col items-center gap-2">
-                  <FilterSelect
-                    options={stateOptions}
-                    placeholder="Estado"
-                    onChange={handleStateFilterChange}
-                  />
-                </div>
-              </th>
-              <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                Notas
-              </th>
-              <th className="p-2 text-md font-semibold leading-[1.125rem]">
-                Acción
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {arrayCompanies.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="p-4 text-center">
-                  <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                    Ningún elemento coincide con tu búsqueda, inténtalo de
-                    nuevo. <br /> Puedes encontrar las rutas creadas aquí.
-                  </p>
-                  <img
-                    src={disconnectedImg}
-                    alt="Tabla vacía"
-                    className="mx-auto"
-                  />
-                </td>
-              </tr>
-            ) : (
-              arrayCompanies.map((companie, index) => (
-                <RouteCompanieDetailsRow
-                  key={index}
-                  id={companie.id}
-                  name={companie.name}
-                  direction={companie.address}
-                  nextVisits={formatDate(companie.nextVisit)}
-                  state={companie.status}
-                  notes={"Ver notas"}
-                  deleteIconSrc={deleteIcon}
-                  onDeleteClick={() => openConfirmDeleteModal(companie.id)}
-                />
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-      <div
-        className={
-          arrayCompanies.length === 0 ? "hidden" : `flex justify-center p-6`
-        }
-      >
-        <Pagination
-          pageIndex={setItemsPerPage}
-          currentPage={page}
-          totalPages={totalPage}
-          onPageChange={setPage}
-          itemsPerPage={itemsPerPage}
-          total={total}
+        <CompaniesTable
+          isCompeting={false}
+          route={route}
+          companyModified={companyModified}
         />
       </div>
       <ReusableModal
@@ -210,16 +131,6 @@ const AddCompanyRoutePage = ({
             <p>{errors.empresas && errors.empresas.message}</p>
           </form>
         </div>
-      </ReusableModal>
-      <ReusableModal
-        isOpen={isConfirmDeleteModalOpen}
-        onClose={() => setConfirmDeleteModalOpen(false)}
-        title="Eliminar empresa"
-        variant="confirmation"
-        buttons={["back", "accept"]}
-        onAccept={() => handleConfirmDelete()}
-      >
-        Esta empresa será eliminada de forma permanente. ¿Desea continuar?
       </ReusableModal>
     </div>
   );

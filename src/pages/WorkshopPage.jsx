@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/buttons/Button";
 import ReusableModal from "../components/modals/ReusableModal";
 import Pagination from "../components/Pagination";
@@ -9,9 +9,7 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import DownloadIcon from "../assets/icons/download.svg";
 import RechargeRow from "../components/RechargeRow.jsx";
 import FileIcon from "../assets/icons/file-earmark-ruled.svg";
-import { useForm } from "react-hook-form";
 import FilterSelect from "../components/filters/FilterSelect.jsx";
-import StoragePage from "./StoragePage.jsx";
 import { Select, SelectItem } from "@nextui-org/select";
 import useOrders from "../hooks/orders/useOrders.js";
 import pageLostImg from "../assets/images/pageLostWorkshop.svg";
@@ -24,13 +22,12 @@ import {
 } from "../services/orders/orders.routes.js";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
 import useDeleteOrders from "../hooks/orders/useDeleteOrders.js";
-
-const RECHARGE_TAB = "recarga";
-const STORAGE_TAB = "deposito";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
 
 const WorkshopPage = () => {
   const { deleteOrder } = useDeleteOrders();
 
+  const navigate = useNavigate();
   const {
     ordersResponse,
     setItemsPerPage,
@@ -49,32 +46,18 @@ const WorkshopPage = () => {
     setMonth,
     setStatus,
     setSearch,
-    setEntryDate,
-    setBarCode,
     getAllOrders,
   } = useOrders();
-  const {
-    formState: { errors },
-  } = useForm();
 
-  const navigationActive = (tab) => {
-    switch (tab) {
-      case RECHARGE_TAB:
-        return RECHARGE_TAB;
-      case STORAGE_TAB:
-        return STORAGE_TAB;
-      default:
-        return RECHARGE_TAB;
-    }
-  };
-  const [activeTab, setActiveTab] = useState(
-    navigationActive(sessionStorage.getItem("activeTab")),
-  );
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    ordersResponse: barcodeOrders,
+    setBarCode,
+    getAllOrders: getAllOrdersBarcode,
+  } = useOrders();
+  const [barcode, readBarcode] = useState("");
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isExportCompetingModalOpen, setIsExportCompetingModalOpen] =
     useState(false);
-  const [isSellersModalOpen, setIsSellersModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setIsConfirmCancelModalOpen] =
     useState(false);
   const [openScannerModal, setOpenScannerModal] = useState(false);
@@ -157,11 +140,9 @@ const WorkshopPage = () => {
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
     setIsExportModalOpen(false);
     setOpenScannerModal(false);
     setIsExportCompetingModalOpen(false);
-    setIsSellersModalOpen(false);
   };
 
   const closeConfirmCancelModal = () => {
@@ -209,20 +190,35 @@ const WorkshopPage = () => {
   };
 
   useEffect(() => {
-    sessionStorage.setItem("activeTab", activeTab);
-    switch (activeTab) {
-      case RECHARGE_TAB:
-        getAllOrders({ recharge: true });
-        break;
-      case STORAGE_TAB:
-        getAllOrders({ recharge: false });
-        break;
-      default:
+    if (barcodeOrders.length > 0) {
+      const { productInOrder } = barcodeOrders[0];
+
+      const items = productInOrder
+        .map((product) => ({
+          ...product,
+          matchedItem: product.itemsRemoval.find((i) => i.barCode === barcode),
+        }))
+        .filter((p) => p.matchedItem);
+
+      navigate(
+        `/inicio/taller/datos-recarga/${items[0].matchedItem.id}?orderId=${barcodeOrders[0].orderId}&id=${barcodeOrders[0].id}`,
+      );
     }
-  }, [activeTab, getAllOrders]);
+    closeModal();
+  }, [barcodeOrders]);
+
   useEffect(() => {
+    getAllOrders({ recharge: true });
+  }, [getAllOrders]);
+
+  useEffect(() => {
+    if (barcode !== "") getAllOrdersBarcode({ recharge: true });
+    setBarCode(barcode);
+  }, [barcode, getAllOrdersBarcode]);
+
+  /*   useEffect(() => {
     setBarCode("");
-  }, [activeTab]);
+  }, [activeTab]); */
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -247,183 +243,162 @@ const WorkshopPage = () => {
           </div>
         </div>
 
-        <div className="flex items-center">
-          <div className="flex">
-            <h2
-              onClick={() => setActiveTab(RECHARGE_TAB)}
-              className={`w-52 cursor-pointer rounded-t-lg ${activeTab === RECHARGE_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} p-4 text-center text-md font-medium leading-6 shadow-t`}
-            >
-              Pedidos con recarga
-            </h2>
-            <h2
-              onClick={() => setActiveTab(STORAGE_TAB)}
-              className={`${activeTab === STORAGE_TAB ? "bg-white text-black_b" : "bg-gray text-black_m"} w-52 cursor-pointer rounded-t-lg p-4 text-center text-md font-medium leading-6 shadow-t`}
-            >
-              Pedidos sin recarga
-            </h2>
-          </div>
+        <div className="mb-5 flex items-center">
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
-            {activeTab === RECHARGE_TAB && (
-              <div className="flex gap-[.6rem]">
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                  onClick={() => openExportModal()}
-                />
-                <Link to={"/inicio/taller/plantilla-unit"}>
-                  <Button text="Planilla UNIT" icon={FileIcon} />
-                </Link>
+            <div className="flex gap-[.6rem]">
+              <Button
+                text="Exportar lista"
+                icon={DownloadIcon}
+                color={"cancel"}
+                onClick={() => openExportModal()}
+              />
+              <Link to={"/inicio/taller/plantilla-unit"}>
+                <Button text="Planilla UNIT" icon={FileIcon} />
+              </Link>
 
-                <Button
-                  text="Escanear producto"
-                  color={"save"}
-                  icon={barCodeIcon}
-                  onClick={() => setOpenScannerModal(true)}
-                />
-              </div>
-            )}
-            {activeTab === STORAGE_TAB && (
-              <div className="flex gap-[.6rem]">
-                <Button
-                  text="Exportar lista"
-                  icon={DownloadIcon}
-                  color={"cancel"}
-                  onClick={() => openExportCompetingModal()}
-                />
-              </div>
-            )}
+              <Button
+                text="Escanear producto"
+                color={"save"}
+                icon={barCodeIcon}
+                onClick={() => setOpenScannerModal(true)}
+              />
+            </div>
+            <div className="flex gap-[.6rem]">
+              <Button
+                text="Exportar lista"
+                icon={DownloadIcon}
+                color={"cancel"}
+                onClick={() => openExportCompetingModal()}
+              />
+            </div>
           </div>
         </div>
-        {activeTab === RECHARGE_TAB && (
-          <div className="flex h-full flex-grow flex-col overflow-auto rounded-tr-lg bg-white p-5">
-            <div className="flex justify-between">
-              <div className="flex space-x-2">
-                <div className="flex items-center gap-2">
-                  <p className="ml-2 text-black_m">Período</p>
-                  <Select
-                    placeholder="Selecciona un mes"
-                    labelPlacement="outside"
-                    className="w-52 rounded-lg border"
-                    onChange={(e) => handleChangeMonth(e.target.value)}
-                  >
-                    {months.map((month) => (
-                      <SelectItem key={month.value} value={month.value}>
-                        {month.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Select
-                    placeholder="Selecciona un año"
-                    defaultSelectedKeys={[year.toString()]}
-                    labelPlacement="outside"
-                    className="w-52 rounded-lg border"
-                    onChange={(e) => handleChangeYear(e.target.value)}
-                  >
-                    {years.map((year) => (
-                      <SelectItem key={year.value} value={year.value}>
-                        {year.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
+        <div className="flex h-full flex-grow flex-col overflow-auto rounded-tr-lg bg-white p-5">
+          <div className="flex justify-between">
+            <div className="flex space-x-2">
+              <div className="flex items-center gap-2">
+                <p className="ml-2 text-black_m">Período</p>
+                <Select
+                  placeholder="Selecciona un mes"
+                  labelPlacement="outside"
+                  className="w-52 rounded-lg border"
+                  onChange={(e) => handleChangeMonth(e.target.value)}
+                >
+                  {months.map((month) => (
+                    <SelectItem key={month.value} value={month.value}>
+                      {month.label}
+                    </SelectItem>
+                  ))}
+                </Select>
               </div>
-              <div>
-                <SearchInput placeholder="Buscar..." onChange={setSearch} />
+              <div className="flex items-center gap-2">
+                <Select
+                  placeholder="Selecciona un año"
+                  defaultSelectedKeys={[year.toString()]}
+                  labelPlacement="outside"
+                  className="w-52 rounded-lg border"
+                  onChange={(e) => handleChangeYear(e.target.value)}
+                >
+                  {years.map((year) => (
+                    <SelectItem key={year.value} value={year.value}>
+                      {year.label}
+                    </SelectItem>
+                  ))}
+                </Select>
               </div>
             </div>
-            <div className="flex flex-grow flex-col justify-between">
-              <div>
-                <table className="mt-2 w-full">
-                  <thead>
-                    <tr>
-                      <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
-                        Empresa
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        ID de orden
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Fecha de ingreso
-                      </th>
-
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Vendedor
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        <div className="flex flex-col items-center gap-2">
-                          <FilterSelect
-                            options={stateOptions}
-                            placeholder="Estado"
-                            onChange={handleStateFilterChange}
-                          />
-                        </div>
-                      </th>
-                      <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
-                        Acción
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {ordersResponse.length === 0 ? (
-                      <tr>
-                        <td colSpan="6" className="p-4 text-center">
-                          <p className="text-md font-semibold leading-[1.3rem] text-black_l">
-                            Ningún elemento coincide con tu búsqueda, inténtalo
-                            de nuevo. <br /> Puedes encontrar a las solicitudes
-                            creadas aquí.
-                          </p>
-                          <img
-                            src={pageLostImg}
-                            alt="Tabla vacía"
-                            className="mx-auto"
-                          />
-                        </td>
-                      </tr>
-                    ) : (
-                      ordersResponse.map((order, index) => (
-                        <RechargeRow
-                          key={index}
-                          id={order.id}
-                          name={order?.client?.name || "Sin nombre"}
-                          orderId={order.orderId}
-                          entryData={formatDate(order.workShopDateEntry)}
-                          seller={
-                            order?.user?.userInfo?.fullName || "Sin asignar"
-                          }
-                          state={order.status}
-                          deleteIconSrc={deleteIcon}
-                          onDeleteClick={() => openConfirmDeleteModal(order.id)}
-                        />
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-              <div
-                className={
-                  ordersResponse.length === 0
-                    ? "hidden"
-                    : `flex justify-center p-6`
-                }
-              >
-                <Pagination
-                  pageIndex={setItemsPerPage}
-                  currentPage={page}
-                  totalPages={totalPage}
-                  onPageChange={setPage}
-                  itemsPerPage={itemsPerPage}
-                  total={total}
-                />
-              </div>
+            <div>
+              <SearchInput placeholder="Buscar..." onChange={setSearch} />
             </div>
           </div>
-        )}
+          <div className="flex flex-grow flex-col justify-between">
+            <div>
+              <table className="mt-2 w-full">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Empresa
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      ID de orden
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Fecha de ingreso
+                    </th>
 
-        {activeTab === STORAGE_TAB && (
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Vendedor
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      <div className="flex flex-col items-center gap-2">
+                        <FilterSelect
+                          options={stateOptions}
+                          placeholder="Estado"
+                          onChange={handleStateFilterChange}
+                        />
+                      </div>
+                    </th>
+                    <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Acción
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {ordersResponse.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="p-4 text-center">
+                        <p className="text-md font-semibold leading-[1.3rem] text-black_l">
+                          Ningún elemento coincide con tu búsqueda, inténtalo de
+                          nuevo. <br /> Puedes encontrar a las solicitudes
+                          creadas aquí.
+                        </p>
+                        <img
+                          src={pageLostImg}
+                          alt="Tabla vacía"
+                          className="mx-auto"
+                        />
+                      </td>
+                    </tr>
+                  ) : (
+                    ordersResponse.map((order, index) => (
+                      <RechargeRow
+                        key={index}
+                        id={order.id}
+                        name={order?.client?.name || "Sin nombre"}
+                        orderId={order.orderId}
+                        entryData={formatDate(order.workShopDateEntry)}
+                        seller={
+                          order?.user?.userInfo?.fullName || "Sin asignar"
+                        }
+                        state={order.status}
+                        deleteIconSrc={deleteIcon}
+                        onDeleteClick={() => openConfirmDeleteModal(order.id)}
+                      />
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <div
+              className={
+                ordersResponse.length === 0
+                  ? "hidden"
+                  : `flex justify-center p-6`
+              }
+            >
+              <Pagination
+                pageIndex={setItemsPerPage}
+                currentPage={page}
+                totalPages={totalPage}
+                onPageChange={setPage}
+                itemsPerPage={itemsPerPage}
+                total={total}
+              />
+            </div>
+          </div>
+        </div>
+        {/* {activeTab === STORAGE_TAB && (
           <StoragePage
             ordersResponse={ordersResponse || []}
             setSearch={setSearch}
@@ -441,30 +416,37 @@ const WorkshopPage = () => {
             total={total}
             setModified={setModified}
           />
-        )}
+        )} */}
       </div>
 
-      <ReusableModal
-        isOpen={openScannerModal}
-        onClose={closeModal}
-        title="Código de barras"
-        handleCancelClick={closeModal}
-      >
-        <p className="text-sm leading-[1rem] text-black_m">
-          Escanea el código de barras del producto para localizar la orden de
-          compra donde se encuentra, o ingresa el código de manera manual.
-        </p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-          }}
-          className="space-y-4"
-        >
-          <div className="px-2">
-            <BarcodeReader onBarcodeChange={setBarCode} />
-          </div>
-        </form>
-      </ReusableModal>
+      <Modal isOpen={openScannerModal} onClose={closeModal}>
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Código de barras
+              </ModalHeader>
+
+              <ModalBody>
+                <p className="text-sm leading-[1rem] text-black_m">
+                  Escanea el código de barras del producto para localizar la
+                  orden de compra donde se encuentra, o ingresa el código de
+                  manera manual.
+                </p>
+                <div className="px-2">
+                  <BarcodeReader
+                    barcode={barcode}
+                    onBarcodeChange={(code) => {
+                      setBarCode(code), readBarcode(code);
+                    }}
+                    closeModal={closeModal}
+                  />
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       <ReusableModal
         isOpen={isConfirmDeleteModalOpen}

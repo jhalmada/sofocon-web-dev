@@ -26,7 +26,12 @@ const coordenadasUruguay = {
   lat: -34.901,
   lng: -56.1698,
 };
-export const EditCompanyModal = ({ company, isOpen, onClose }) => {
+export const EditCompanyModal = ({
+  company,
+  isOpen,
+  onClose,
+  updateClientList,
+}) => {
   const [modalMap, setModalMap] = useState(false);
   const [checkSelected, setCheckSelected] = useState("RUT");
   const [competence, setCompetenceEdit] = useState(false);
@@ -45,6 +50,7 @@ export const EditCompanyModal = ({ company, isOpen, onClose }) => {
       if (newCompany) {
         reset();
       } else {
+        updateClientList();
         onClose();
       }
     } catch (error) {
@@ -53,7 +59,7 @@ export const EditCompanyModal = ({ company, isOpen, onClose }) => {
     }
   };
   const onSubmit = async (data) => {
-    /* const {
+    const {
       name,
       department,
       managerName,
@@ -62,10 +68,8 @@ export const EditCompanyModal = ({ company, isOpen, onClose }) => {
       address,
       neighborhood,
       competenceName,
-    } = data; */
-    onClose(true);
-    console.log(data);
-    /* handleCompanyCreation({
+    } = data;
+    handleCompanyCreation({
       name,
       department,
       managerName,
@@ -82,7 +86,7 @@ export const EditCompanyModal = ({ company, isOpen, onClose }) => {
       longitude: !selectManual
         ? selectedPlace?.geometry?.location.lng()
         : selectManual.lng,
-    }); */
+    });
   };
 
   useEffect(() => {
@@ -90,7 +94,13 @@ export const EditCompanyModal = ({ company, isOpen, onClose }) => {
   }, [reset, company]);
   return (
     <>
-      <Modal size="3xl" isOpen={isOpen} onClose={onClose}>
+      <Modal
+        size="3xl"
+        isOpen={isOpen}
+        onClose={onClose}
+        scrollBehavior="outside"
+        placement="center"
+      >
         <ModalContent>
           {() => (
             <>
@@ -370,7 +380,12 @@ export const EditCompanyModal = ({ company, isOpen, onClose }) => {
                   )}
                 </ModalBody>
                 <ModalFooter>
-                  <Button radius="full" color="default" variant="bordered">
+                  <Button
+                    radius="full"
+                    color="default"
+                    variant="bordered"
+                    onClick={onClose}
+                  >
                     Cerrar
                   </Button>
                   <Button radius="full" color="primary" type="submit">

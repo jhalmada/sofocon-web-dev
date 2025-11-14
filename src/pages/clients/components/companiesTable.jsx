@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Select, SelectItem } from "@nextui-org/select";
 import Pagination from "../../../components/Pagination";
 import useCompanies from "../../../hooks/companies/useCompanies";
@@ -8,8 +9,11 @@ import CompanieRow from "../../../components/CompanieRow";
 import pageLostImg from "../../../assets/images/pageLost.svg";
 import { parseDate } from "@internationalized/date";
 import FilterSelect from "../../../components/filters/FilterSelect";
+import { useEffect } from "react";
+
 const stateOptions = ["Frecuente", "Potencial", "De baja"];
-export const CompaniesTable = () => {
+
+export const CompaniesTable = ({ isCompeting, route, companyModified }) => {
   const {
     companiesResponse,
     setItemsPerPage,
@@ -26,12 +30,14 @@ export const CompaniesTable = () => {
     searchStartDate,
     searchEndDate,
     getAllCompanies,
-  } = useCompanies();
+  } = useCompanies({ competence: isCompeting, route: route });
+
   const handleVisitFilterChange = (e) => {
     console.log(e);
     setNextVisit(e.target.value);
     setPage(0);
   };
+
   const setSearchDate = (date) => {
     if (!date) {
       setSearchStartDate("");
@@ -58,6 +64,7 @@ export const CompaniesTable = () => {
       }).toISOString(),
     );
   };
+
   const handleStateFilterChange = (value) => {
     switch (value) {
       case "Frecuente":
@@ -80,44 +87,12 @@ export const CompaniesTable = () => {
   };
   const updateClientList = () => {
     getAllCompanies();
+    if (companyModified) companyModified();
   };
-  /* const openModal = (id) => {
-    clearErrors();
-    const companyToEdit = companiesResponse.find(
-      (company) => company.id === id,
-    );
-    if (companyToEdit) {
-      setDataEdit(companyToEdit);
-      const pos = { lat: companyToEdit.latitude, lng: companyToEdit.longitude };
-      setPosiciones(pos);
-      setDireccion("");
 
-      setValue("name", companyToEdit?.name || "");
-      setValue("department", companyToEdit?.department || "");
-      setValue("neighborhood", companyToEdit?.neighborhood || "");
-      setValue("address", companyToEdit?.address || "");
-      setValue("managerName", companyToEdit?.managerName || "");
-      setValue("phone", companyToEdit?.phone || "");
-      setValue("rut", companyToEdit?.rut || "");
-      setValue("status", companyToEdit?.status || "");
-      setValue("ci", companyToEdit?.ci || "");
-      setValue(
-        "nextVisit",
-        parseAbsoluteToLocal(
-          companyToEdit?.nextVisit || "2024-10-02T21:46:00.330Z",
-        ),
-      );
-      companyToEdit.competenceName
-        ? setValue("competenceName", companyToEdit.competenceName)
-        : setValue("competenceName", "");
-      companyToEdit.competenceName
-        ? setCompetenceEdit(true)
-        : setCompetenceEdit(false);
-    }
-    setIsModalOpen(true);
-    setCompanyId(id);
-    setIsModalOpen(true);
-  }; */
+  useEffect(() => {
+    getAllCompanies();
+  }, [route, getAllCompanies]);
   return (
     <>
       <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
@@ -193,17 +168,26 @@ export const CompaniesTable = () => {
                 <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                   Cliente
                 </th>
+                {isCompeting && (
+                  <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                    Empresa actual
+                  </th>
+                )}
 
                 <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                   Próxima visita
                 </th>
                 <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                   <div className="flex flex-col items-center gap-2">
-                    <FilterSelect
-                      options={stateOptions}
-                      placeholder="Tipo"
-                      onChange={handleStateFilterChange}
-                    />
+                    {!isCompeting ? (
+                      <FilterSelect
+                        options={stateOptions}
+                        placeholder="Tipo"
+                        onChange={handleStateFilterChange}
+                      />
+                    ) : (
+                      "Tipo"
+                    )}
                   </div>
                 </th>
                 <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
@@ -230,9 +214,11 @@ export const CompaniesTable = () => {
                 {companiesResponse.map((companie, index) => (
                   <>
                     <CompanieRow
+                      isCompeting={isCompeting}
                       key={index}
                       companie={companie}
                       updateClientList={updateClientList}
+                      route={route}
                     />
                   </>
                 ))}

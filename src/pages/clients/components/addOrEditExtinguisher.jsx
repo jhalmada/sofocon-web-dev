@@ -14,22 +14,27 @@ import moment from "moment";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useUpdateExtinguisher from "../../../hooks/extinguisher/useUpdateExtinguisher";
+import useAddExtinguisher from "../../../hooks/extinguisher/useAddExtinguisher";
 
 export const AddOrEditExtinguisherModal = ({
   newExtinguisher,
   isOpen,
   onClose,
+  updateExtinguisherList,
 }) => {
   const { register, handleSubmit, reset, formState } = useForm();
   const { updateExtinguisher, isLoading } = useUpdateExtinguisher();
+  const { addExtinguisher, isLoading: isLoadingAdd } = useAddExtinguisher();
   const onSubmit = async (data) => {
-    console.log(data);
     if (newExtinguisher.id) {
-      await updateExtinguisher(newExtinguisher.id, data, (response) =>
-        console.log(response),
+      await updateExtinguisher(newExtinguisher.id, data, () =>
+        updateExtinguisherList(),
       );
+    } else {
+      addExtinguisher({ ...data, client: newExtinguisher.client.id }, () => {
+        updateExtinguisherList();
+      });
     }
-    console.log(data);
     close();
   };
   const close = () => {
@@ -130,7 +135,7 @@ export const AddOrEditExtinguisherModal = ({
                   color="primary"
                   type="submit"
                   isDisabled={!formState.isValid}
-                  isLoading={isLoading}
+                  isLoading={isLoading || isLoadingAdd}
                 >
                   Guardar
                 </Button>

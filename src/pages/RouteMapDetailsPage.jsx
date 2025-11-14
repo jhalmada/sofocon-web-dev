@@ -65,7 +65,8 @@ const RouteMapDetailsPage = () => {
     setRoutes: setRoutesCompanies,
     setSearch: setCompanySearch,
     setStatus,
-  } = useCompanies();
+    getAllCompanies,
+  } = useCompanies({ competence: false });
 
   const [activeTab, setActiveTab] = useState(MAP_TAB);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -172,6 +173,10 @@ const RouteMapDetailsPage = () => {
       setFilteredCompanies(allCompanies);
     }
   }, [companySearchTerm, allCompanies]);
+
+  useEffect(() => {
+    getAllCompanies();
+  }, [getAllCompanies]);
 
   const openExportModal = () => {
     setIsExportModalOpen(true);
@@ -350,6 +355,7 @@ const RouteMapDetailsPage = () => {
             idCompany={id}
             nameCompany={datos?.name}
             setStatus={setStatus}
+            route={id}
             companyModified={setCompanyModified}
           />
         )}

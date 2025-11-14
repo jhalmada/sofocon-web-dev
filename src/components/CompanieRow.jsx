@@ -25,13 +25,14 @@ import notesIcon from "../assets/icons/sticky-fill.svg";
 import sellerIcons from "../assets/icons/sellerIcon.svg";
 import listPriceIcon from "../assets/icons/listPriceIcon.svg";
 import { EditCompanyModal } from "../pages/clients/components/editCompanyModal";
-import useGetPriceList from "../hooks/priceList/useGetPriceList";
 import NextAutoComplete from "./autocomplete/NextAutocomplete";
 import { useForm } from "react-hook-form";
 import useUsersSellers from "../hooks/users/useUsersSellers";
 import useUserCompany from "../hooks/companies/useUsersCompany";
 
 import { isMatch } from "lodash";
+import usePutSellerRoute from "../hooks/sellerRoutes/usePutSellerRoutes";
+import usePutCompany from "../hooks/companies/usePutCompanies";
 const translateState = (state) => {
   switch (state) {
     case "POTENTIAL":
@@ -89,12 +90,10 @@ const SellerList = ({ listUsers, setValue2, handleSubmit2, submit }) => {
   );
 };
 
-const CompanieRow = ({ companie, updateClientList }) => {
+const CompanieRow = ({ isCompeting, companie, updateClientList, route }) => {
   const navigate = useNavigate();
 
   const { addUsersCompany } = useUserCompany();
-
-  const { setClient, priceListResponse } = useGetPriceList();
   const { deleteCompany } = useDeleteCompanies();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
@@ -113,11 +112,13 @@ const CompanieRow = ({ companie, updateClientList }) => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
 
+  const { changedSellerRoute } = usePutSellerRoute();
   const {
     handleSubmit: handleSubmit2,
     setValue: setValue2,
     watch: watch2,
   } = useForm();
+  const { changedCompany } = usePutCompany();
   const handleNote = (id) => {
     navigate(`/inicio/empresas/notas/${id}`);
   };
@@ -140,13 +141,23 @@ const CompanieRow = ({ companie, updateClientList }) => {
   };
 
   const handleConfirmDelete = () => {
-    deleteCompany(companie.id);
+    if (route) {
+      const newArray = companie.clientInRoute.filter(
+        (element) => element.id === route,
+      );
+      const newData = {
+        ...companie,
+        clientInRoute: [...newArray],
+      };
+      changedCompany(newData, companie.id, () => updateClientList());
+    } else {
+      deleteCompany(companie.id);
+    }
     setIsDeleteModal(false);
     setConfirmDeleteModalOpen(true);
     updateClientList();
   };
   const onOpenPriceListModal = () => {
-    setClient(companie.id);
     setListPriceModal(true);
   };
   const submit = (data) => {
@@ -203,6 +214,11 @@ const CompanieRow = ({ companie, updateClientList }) => {
             </div>
           </div>
         </td>
+        {isCompeting && (
+          <td className="max-w-md py-4 text-start leading-[1.16rem]">
+            {companie?.competenceName}
+          </td>
+        )}
         <td className="text-center">
           <Tooltip content="Ver extinguidores">
             <Button
@@ -252,35 +268,39 @@ const CompanieRow = ({ companie, updateClientList }) => {
                     Notas
                   </div>
                 </DropdownItem>
-                <DropdownItem
-                  key="sellers"
-                  onClick={() => {
-                    setListUsers(companie.user);
-                    setIsSellersModalOpen(true);
-                  }}
-                >
-                  <div className="flex gap-3">
-                    <img
-                      src={sellerIcons}
-                      alt="seller icon"
-                      className="h-5 w-5 cursor-pointer"
-                    />
-                    Vendedores
-                  </div>
-                </DropdownItem>
-                <DropdownItem
-                  key="listPrice"
-                  onClick={() => onOpenPriceListModal()}
-                >
-                  <div className="flex gap-3">
-                    <img
-                      src={listPriceIcon}
-                      alt="list price icon"
-                      className="h-5 w-5 cursor-pointer"
-                    />
-                    Lista de precios
-                  </div>
-                </DropdownItem>
+                {!isCompeting && !route && (
+                  <DropdownItem
+                    key="sellers"
+                    onClick={() => {
+                      setListUsers(companie.user);
+                      setIsSellersModalOpen(true);
+                    }}
+                  >
+                    <div className="flex gap-3">
+                      <img
+                        src={sellerIcons}
+                        alt="seller icon"
+                        className="h-5 w-5 cursor-pointer"
+                      />
+                      Vendedores
+                    </div>
+                  </DropdownItem>
+                )}
+                {!isCompeting && (
+                  <DropdownItem
+                    key="listPrice"
+                    onClick={() => onOpenPriceListModal()}
+                  >
+                    <div className="flex gap-3">
+                      <img
+                        src={listPriceIcon}
+                        alt="list price icon"
+                        className="h-5 w-5 cursor-pointer"
+                      />
+                      Lista de precios
+                    </div>
+                  </DropdownItem>
+                )}
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -297,6 +317,7 @@ const CompanieRow = ({ companie, updateClientList }) => {
             company={companie}
             isOpen={isOpenEdit}
             onClose={onOpenChangeEdit}
+            updateClientList={updateClientList}
           />
         )}
       </tr>

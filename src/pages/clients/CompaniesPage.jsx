@@ -17,15 +17,7 @@ const COMPANIE_TAB = "companies";
 const COMPETING_TAB = "competing";
 
 const CompaniesPage = () => {
-  const {
-    downloadFile,
-    nextVisit,
-    search,
-    status,
-    setStatus,
-    setNextVisit,
-    setCompetence,
-  } = useCompanies();
+  const { downloadFile, nextVisit, search, status } = useCompanies();
 
   const navegacionActive = (tabActive) => {
     switch (tabActive) {
@@ -84,13 +76,13 @@ const CompaniesPage = () => {
   };
   useEffect(() => {
     sessionStorage.setItem("activeTab", activeTab);
-    if (activeTab === COMPETING_TAB) {
+    /*  if (activeTab === COMPETING_TAB) {
       setStatus("");
       setNextVisit(null);
       setCompetence(true);
     } else {
       setCompetence(false);
-    }
+    } */
   }, [activeTab]);
 
   return (
@@ -161,23 +153,8 @@ const CompaniesPage = () => {
             )}
           </div>
         </div>
-        {activeTab === COMPANIE_TAB && <CompaniesTable />}
-        {activeTab === COMPETING_TAB &&
-          {
-            /* <CompetingPage
-            companiesResponse={companiesResponse || []}
-            setSearch={setSearchCompanies}
-            setItemsPerPage={setItemsPerPage}
-            totalPage={totalPage}
-            total={total}
-            setPage={setPage}
-            page={page}
-            itemsPerPage={itemsPerPage}
-            setNextVisit={setNextVisit}
-            setModified={setModified}
-            setSaveConfirmationModalOpen={setSaveConfirmationModalOpen}
-          /> */
-          }}
+        {activeTab === COMPANIE_TAB && <CompaniesTable isCompeting={false} />}
+        {activeTab === COMPETING_TAB && <CompaniesTable isCompeting={true} />}
       </div>
 
       <ReusableModal

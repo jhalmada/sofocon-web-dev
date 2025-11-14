@@ -33,7 +33,11 @@ const NewSalePage = () => {
   } = useForm();
   const { barCode, setBarCode } = useOrders();
   const { postAddOrders, status } = useAddOrders();
-  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
+  const {
+    companiesResponse,
+    setSearch: setSearchCompanies,
+    getAllCompanies,
+  } = useCompanies({});
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const {
     productsResponse,
@@ -348,8 +352,9 @@ const NewSalePage = () => {
     }
   }, [status]);
   useEffect(() => {
+    getAllCompanies();
     getAllPriceList();
-  }, [getAllPriceList]);
+  }, [getAllPriceList, getAllCompanies]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">

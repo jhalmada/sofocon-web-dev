@@ -17,6 +17,7 @@ const StatusCard = ({
   paymentType,
   charged, // Function to update total orders count
   changeState,
+  discountTotal,
 }) => {
   const { changedOrder } = usePutOrders();
 
@@ -32,6 +33,20 @@ const StatusCard = ({
     setIsCharged(status);
     changeState();
   };
+  useEffect(() => {
+    const subtotal = productArray.reduce((acc, item) => {
+      const itemQuantity = item.amount || 1;
+      const itemPrice = item.fixedPrice;
+      const discountPercentage = item.amount ? item.amount / 100 : 0;
+      const discountedPrice = itemPrice * (1 - discountPercentage);
+
+      return acc + discountedPrice * itemQuantity;
+    }, 0);
+
+    setTotal(
+      subtotal ? subtotal * 1.22 - subtotal * 1.22 * (discountTotal / 100) : 0,
+    );
+  });
 
   return (
     <div className="mt-2 flex h-auto min-h-[12rem] flex-col rounded-lg pb-2 shadow-br 2xl:min-h-[14rem]">
@@ -84,7 +99,7 @@ const StatusCard = ({
           </ul>
         </div>
         <div className="flex flex-col space-y-2 px-2 text-xxs font-semibold leading-[.75rem] text-black_b 2xl:text-md">
-          <span>{"Total: $" + total.toFixed()}</span>
+          <span>{"Total: $" + total}</span>
           <span>{"Forma de pago: " + paymentType}</span>
         </div>
         <div className="space-y-2 px-2">
