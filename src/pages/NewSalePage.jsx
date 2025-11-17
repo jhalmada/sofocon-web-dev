@@ -1001,11 +1001,14 @@ const NewSalePage = () => {
             Escanea el código de barras del producto para localizar la orden de
             compra donde se encuentra, o ingresa el código de manera manual.
           </p>
-          <form className="space-y-4">
-            <div className="px-2">
-              <BarcodeReader onBarcodeChange={setBarCode} />
-            </div>
-          </form>
+          <div className="px-2">
+            <BarcodeReader
+              onBarcodeChange={(code) => {
+                setBarCode(code);
+              }}
+              closeModal={closeModal}
+            />
+          </div>
         </ReusableModal>
       </div>
     </div>

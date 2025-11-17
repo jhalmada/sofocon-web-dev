@@ -58,7 +58,6 @@ const BarcodeReader = ({ onBarcodeChange, closeModal }) => {
         value={barcodeValue}
       />
       <br />
-      <Button />
     </div>
   );
 };

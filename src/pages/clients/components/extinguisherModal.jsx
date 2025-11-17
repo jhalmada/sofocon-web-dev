@@ -71,7 +71,7 @@ export const ExtinguisherModal = ({ company, isOpen, onClose }) => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Extinguidores de {company.name}
+                Extintores de {company.name}
               </ModalHeader>
               <ModalBody>
                 <div className="flex justify-end">
@@ -93,8 +93,8 @@ export const ExtinguisherModal = ({ company, isOpen, onClose }) => {
                 >
                   <TableHeader>
                     <TableColumn key="name">Nombre</TableColumn>
-                    <TableColumn key="code">Código</TableColumn>
-                    <TableColumn key="serial">Serial</TableColumn>
+                    <TableColumn key="code">Código de barras</TableColumn>
+                    <TableColumn key="serial">Matrícula</TableColumn>
                     <TableColumn key="unit fabric">UNIT Fabrica</TableColumn>
                     <TableColumn key="unict actual">UNIT actual</TableColumn>
                     <TableColumn key="unit anterior">UNIT anterior</TableColumn>
@@ -107,7 +107,7 @@ export const ExtinguisherModal = ({ company, isOpen, onClose }) => {
                   <TableBody
                     isLoading={isLoading}
                     items={extinguisherResponse}
-                    emptyContent={"No hay extinguidores"}
+                    emptyContent={"No hay extintores"}
                     loadingContent={<Spinner label="Cargando..." />}
                   >
                     {(item) => (

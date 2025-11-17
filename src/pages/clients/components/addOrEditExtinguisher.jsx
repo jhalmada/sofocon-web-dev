@@ -73,14 +73,14 @@ export const AddOrEditExtinguisherModal = ({
                   isRequired
                   size="sm"
                   name="code"
-                  label="Código"
+                  label="Código de barras"
                   {...register("code", { required: true })}
                 />
                 <Input
                   isRequired
                   size="sm"
                   name="serial"
-                  label="Serial"
+                  label="Matrícula"
                   {...register("serial", { required: true })}
                 />
                 <div className="flex gap-2">

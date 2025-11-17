@@ -220,7 +220,7 @@ const CompanieRow = ({ isCompeting, companie, updateClientList, route }) => {
           </td>
         )}
         <td className="text-center">
-          <Tooltip content="Ver extinguidores">
+          <Tooltip content="Ver extintores">
             <Button
               size="sm"
               radius="full"
