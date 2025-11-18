@@ -17,9 +17,7 @@ const BarcodeReader = ({ onBarcodeChange, closeModal }) => {
         console.log("Código leído:", code);
 
         // 👉 Aquí haces tu acción
-        setBarcodeValue(code);
-        onBarcodeChange(code);
-        closeModal();
+        timer(code);
         inputElement.value = ""; // Limpia el campo para el siguiente escaneo
       }
     });
@@ -28,22 +26,25 @@ const BarcodeReader = ({ onBarcodeChange, closeModal }) => {
     };
   }, []);
 
-  const handleInputChange = (event) => {
-    const codigo = event.target.value;
-    setBarcodeValue(codigo);
-
+  const timer = (codigo) => {
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
 
+    setBarcodeValue(codigo);
     setTypingTimeout(
       setTimeout(() => {
         if (codigo.length > 0) {
           onBarcodeChange(codigo);
           closeModal();
         }
-      }, 500),
+      }, 1000),
     );
+  };
+
+  const handleInputChange = (event) => {
+    const codigo = event.target.value;
+    timer(codigo);
   };
 
   return (

@@ -2,7 +2,14 @@
 import { Select, SelectItem } from "@nextui-org/select";
 import Pagination from "../../../components/Pagination";
 import useCompanies from "../../../hooks/companies/useCompanies";
-import { Button, Chip, DateRangePicker, Input } from "@nextui-org/react";
+import {
+  Button,
+  Chip,
+  DateRangePicker,
+  Input,
+  Autocomplete,
+  AutocompleteItem,
+} from "@nextui-org/react";
 import moment from "moment";
 import CompanieRow from "../../../components/CompanieRow";
 
@@ -10,6 +17,7 @@ import pageLostImg from "../../../assets/images/pageLost.svg";
 import { parseDate } from "@internationalized/date";
 import FilterSelect from "../../../components/filters/FilterSelect";
 import { useEffect } from "react";
+import useUsersSellers from "../../../hooks/users/useUsersSellers";
 
 const stateOptions = ["Frecuente", "Potencial", "De baja"];
 
@@ -29,9 +37,11 @@ export const CompaniesTable = ({ isCompeting, route, companyModified }) => {
     setSearchStartDate,
     searchStartDate,
     searchEndDate,
+    setUser,
     getAllCompanies,
   } = useCompanies({ competence: isCompeting, route: route });
 
+  const { userSellerResponse, setSearch } = useUsersSellers();
   const handleVisitFilterChange = (e) => {
     console.log(e);
     setNextVisit(e.target.value);
@@ -97,8 +107,8 @@ export const CompaniesTable = ({ isCompeting, route, companyModified }) => {
     <>
       <div className="flex flex-grow flex-col justify-between overflow-auto rounded-tr-lg bg-white p-5">
         <div>
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <div className="w-[30%]">
+          <div className="mb-4 flex flex-col justify-between gap-4">
+            <div className="w-[50%]">
               <Input
                 isClearable
                 size="md"
@@ -109,8 +119,28 @@ export const CompaniesTable = ({ isCompeting, route, companyModified }) => {
               />
             </div>
 
-            <div className="flex w-[50%] items-center justify-end gap-2">
-              <div className="w-[50%]">
+            <div className="flex items-center justify-start gap-2">
+              <div>
+                <Autocomplete
+                  size="sm"
+                  label="Buscar vendedor"
+                  onInputChange={(e) => setSearch(e)}
+                  onSelectionChange={(value) => {
+                    setUser(value?.anchorKey || null);
+                  }}
+                >
+                  {userSellerResponse &&
+                    userSellerResponse?.result?.map((rol) => (
+                      <AutocompleteItem
+                        key={rol.id}
+                        onClick={() => setUser(rol.id)}
+                      >
+                        {rol.userInfo.fullName}
+                      </AutocompleteItem>
+                    ))}
+                </Autocomplete>
+              </div>
+              <div className="w-[300px]">
                 <Select
                   size="sm"
                   label="Proxima visita"

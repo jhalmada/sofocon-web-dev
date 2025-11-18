@@ -21,6 +21,9 @@ import BarcodeReader from "../components/scan/BarcodeReader.jsx";
 import useOrders from "../hooks/orders/useOrders.js";
 import Calendar from "../components/calendar/Calendar.jsx";
 import checkIcon from "../assets/images/checkOrder.svg";
+import useGetAllExtinguisher from "../hooks/extinguisher/useGetAllExtinguisher.js";
+import { parseDate } from "@internationalized/date";
+import moment from "moment";
 
 const NewSalePage = () => {
   const {
@@ -31,7 +34,9 @@ const NewSalePage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const { barCode, setBarCode } = useOrders();
+  const [indexBarcode, setIndexBarCode] = useState(null);
+  const [barcode, setbarcode] = useState(null);
+  const { extinguisherResponse, getAllExtinguisher } = useGetAllExtinguisher();
   const { postAddOrders, status } = useAddOrders();
   const {
     companiesResponse,
@@ -311,6 +316,51 @@ const NewSalePage = () => {
     }
     setDiscount2(value);
   };
+
+  const setDataExtinguisher = async (barCode) => {
+    await getAllExtinguisher({ code: barCode });
+  };
+
+  useEffect(() => {
+    if (indexBarcode) {
+      const index = indexBarcode.split("-")[0];
+      const indexRemoval = indexBarcode.split("-")[1];
+
+      if (extinguisherResponse.length > 0) {
+        console.log(extinguisherResponse);
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
+          extinguisherResponse[0].code,
+        );
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].enrollment`,
+          extinguisherResponse[0].serial,
+        );
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].fabricUNIT`,
+          extinguisherResponse[0].fabricUNIT,
+        );
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].numberUNIT`,
+          extinguisherResponse[0].numberUNIT,
+        );
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`,
+          parseDate(
+            moment(extinguisherResponse[0].latestVisit).format("YYYY-MM-DD"),
+          ),
+        );
+      } else {
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
+          barcode,
+        );
+      }
+
+      setIndexBarCode(null);
+      setbarcode(null);
+    }
+  }, [extinguisherResponse]);
 
   const truncateToTwoDecimals = (num) => {
     return Math.floor(num * 100) / 100;
@@ -688,7 +738,6 @@ const NewSalePage = () => {
                               <Input
                                 label={"Código de barras"}
                                 placeholder={"..."}
-                                value={barCode || null}
                                 bg="bg-white"
                                 {...register(
                                   `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
@@ -705,7 +754,10 @@ const NewSalePage = () => {
                               <span className="flex items-center">
                                 <div
                                   className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur"
-                                  onClick={() => setOpenScannerModal(true)}
+                                  onClick={() => {
+                                    setIndexBarCode(`${index}-${indexRemoval}`);
+                                    setOpenScannerModal(true);
+                                  }}
                                 >
                                   <img
                                     src={barCodeIcon}
@@ -1004,7 +1056,8 @@ const NewSalePage = () => {
           <div className="px-2">
             <BarcodeReader
               onBarcodeChange={(code) => {
-                setBarCode(code);
+                setbarcode(code);
+                setDataExtinguisher(code);
               }}
               closeModal={closeModal}
             />

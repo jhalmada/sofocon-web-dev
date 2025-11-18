@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,7 @@ import SearchInput from "../components/inputs/SearchInput";
 import TableCompaniesRoutes from "../components/tables/TableCompaniesRoutes";
 import FilterSelect from "../components/filters/FilterSelect";
 import { Autocomplete, AutocompleteItem, Checkbox } from "@nextui-org/react";
+import { CompaniesTable } from "./clients/components/companiesTable";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -26,7 +27,12 @@ const formatDate = (dateString) => {
   return `${day}/${month}/${year}`;
 };
 
-const visitOptions = ["- 1 mes", "- 2 meses", "+ 2 meses"];
+const visitOptions = [
+  "Vencidos",
+  "A un mes de vencerse",
+  "A dos meses de vencerse",
+  "Más de dos meses para vencerse",
+];
 
 const AddRoutePage = () => {
   const options = ["Activo", "Inactivo"];
@@ -52,7 +58,8 @@ const AddRoutePage = () => {
     setDepartment,
     setUser: setUser2,
     user: user2,
-  } = useCompanies();
+    getAllCompanies,
+  } = useCompanies({});
 
   //estados para el nuevo metodo de filtrado
   const [nextVisit2, setNextVisit2] = useState(null);
@@ -60,24 +67,10 @@ const AddRoutePage = () => {
   const [department, setDepartment2] = useState("");
 
   const handleVisitFilterChange = (value) => {
-    switch (value) {
-      case "- 1 mes":
-        setNextVisit(1);
-        setPage(0);
-        break;
-      case "- 2 meses":
-        setNextVisit(2);
-        setPage(0);
-        break;
-      case "+ 2 meses":
-        setNextVisit(3);
-        setPage(0);
-        break;
-      default:
-        setNextVisit(null);
-        setPage(0);
-        "selecciona una opción válida";
-    }
+    console.log(value);
+    if (!value || value == "") setNextVisit(null);
+    else setNextVisit(visitOptions.findIndex((item) => item === value));
+    setPage(0);
   };
 
   const [msjError, setMsjError] = useState("");
@@ -87,7 +80,7 @@ const AddRoutePage = () => {
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const { route } = useParams();
-  const { companiesResponse: CompanieResult, setUser, user } = useCompanies();
+  const { companiesResponse: CompanieResult, setUser, user } = useCompanies({});
 
   const handleSellerCreation = async (sellerData) => {
     try {
@@ -150,7 +143,6 @@ const AddRoutePage = () => {
     setSaveConfirmationModalOpen(false);
     closeModal();
   };
-  const handleCancelClick = () => closeModal();
   const transformData = (array) => {
     return array.map((item) => ({
       id: item.id,
@@ -159,6 +151,9 @@ const AddRoutePage = () => {
   };
 
   const [checkSelected, setCheckSelected] = useState("manual");
+  useEffect(() => {
+    getAllCompanies();
+  }, [getAllCompanies]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
@@ -296,12 +291,15 @@ const AddRoutePage = () => {
                     Vendedor
                   </label>
 
-                  <Autocomplete
+                  <Autocoamplete
                     isDisabled={checkSelected !== "filters"}
                     className="max-w-[21.875rem] rounded-lg border font-roboto font-medium"
                     placeholder="Buscar vendedor"
                     onInputChange={(e) => setSearch(e)}
-                    onSelectionChange={(value) => setUser2(value.anchorKey)}
+                    onSelectionChange={(value) => {
+                      console.log(value);
+                      setUser2(value?.anchorKey || null);
+                    }}
                   >
                     {userSellerResponse &&
                       userSellerResponse?.result?.map((rol) => (
@@ -312,7 +310,7 @@ const AddRoutePage = () => {
                           {rol.userInfo.fullName}
                         </AutocompleteItem>
                       ))}
-                  </Autocomplete>
+                  </Autocoamplete>
                 </div>
                 <SearchInput
                   disabled={checkSelected !== "filters"}
