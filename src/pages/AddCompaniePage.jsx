@@ -88,7 +88,6 @@ const AddCompaniePage = () => {
 
   const onSubmit = (data) => {
     const {
-      nextVisit,
       name,
       department,
       managerName,
@@ -96,14 +95,9 @@ const AddCompaniePage = () => {
       status,
       address,
       neighborhood,
+      visitPeriod,
     } = data;
-    const newdata = new Date(
-      nextVisit.year,
-      nextVisit.month - 1,
-      nextVisit.day,
-    );
 
-    const formattedDate = newdata.toISOString();
     switch (checkSelected) {
       case "RUT":
         handleCompanyCreation({
@@ -114,7 +108,7 @@ const AddCompaniePage = () => {
           status,
           address,
           neighborhood,
-          nextVisit: newdata,
+          visitPeriod,
           rut: data.rut,
           competenceName: competence ? data.competenceName : "",
           note: notes,
@@ -137,7 +131,7 @@ const AddCompaniePage = () => {
           status,
           address,
           neighborhood,
-          nextVisit: formattedDate,
+          visitPeriod,
           ci: data.ci,
           competenceName: competence ? data.competenceName : "",
           note: notes,
@@ -511,14 +505,26 @@ const AddCompaniePage = () => {
               <label
                 className={`${errors.nextVisit ? "text-red_e" : "text-black"} text-sm font-light`}
               >
-                Próxima visita
+                Próxima visita (meses)
               </label>
-              <Calendar
-                control={control}
-                errors={errors}
-                setErrorDataPicker={setErrorDataPicker}
-                errorDataPicker={errorDataPicker}
-                name="nextVisit"
+              <Input
+                type={"number"}
+                placeholder={
+                  "Escribe la cantidad de meses para el periodo de próxima visita..."
+                }
+                {...register("visitPeriod", {
+                  required: "Este campo es requerido",
+                  minLength: {
+                    value: 1,
+                    message: "Ingrese mínimo 1 mes",
+                  },
+                  maxLength: {
+                    value: 2,
+                    message: "Ingrese máximo 2 números",
+                  },
+                })}
+                errorApi={errors.visitPeriod}
+                msjError={errors.visitPeriod ? errors.visitPeriod.message : ""}
               />
             </div>
             <div className="mt-4 flex flex-col justify-between">

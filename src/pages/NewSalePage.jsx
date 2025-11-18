@@ -125,9 +125,10 @@ const NewSalePage = () => {
         rut,
         user,
         productInOrder: productInOrder.map((product) => {
+          console.log(product);
           return {
             ...product,
-            isRecharge: product.isRecharge,
+            isRecharge: product.isRecharge === "true" ? true : false,
             itemsRemoval:
               product.isRecharge === "true"
                 ? product.itemsRemoval.map((item) => {
