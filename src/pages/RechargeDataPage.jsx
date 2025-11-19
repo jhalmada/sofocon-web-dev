@@ -142,7 +142,7 @@ const RechargeDataPage = () => {
         >
           <div>
             <Select
-              className="mb-8 w-1/6 rounded-lg border"
+              className="w-1/6 rounded-lg border"
               label="Estado del extintor"
               labelPlacement="outside"
               placeholder={
@@ -151,7 +151,7 @@ const RechargeDataPage = () => {
                   : itemDetails?.status
               }
               defaultSelectedKeys={[itemDetails?.status]}
-              {...register("status", {})}
+              {...register("status", { required: "Este campo es obligatorio" })}
               onSelectionChange={(values) => {
                 setValue(`status`, values.anchorKey);
               }}
@@ -162,7 +162,7 @@ const RechargeDataPage = () => {
                 </SelectItem>
               ))}
             </Select>
-            <p className="-mt-4 font-roboto text-xs text-red_e">
+            <p className="mb-4 font-roboto text-xs text-red_e">
               {errors.status ? errors.status.message : ""}
             </p>
 
