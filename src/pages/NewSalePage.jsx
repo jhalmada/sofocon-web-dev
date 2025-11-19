@@ -6,7 +6,13 @@ import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
-import { Checkbox } from "@nextui-org/react";
+import {
+  Checkbox,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+} from "@nextui-org/react";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import barCodeIcon from "../assets/icons/barcode.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
@@ -18,7 +24,6 @@ import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
-import useOrders from "../hooks/orders/useOrders.js";
 import Calendar from "../components/calendar/Calendar.jsx";
 import checkIcon from "../assets/images/checkOrder.svg";
 import useGetAllExtinguisher from "../hooks/extinguisher/useGetAllExtinguisher.js";
@@ -1044,26 +1049,35 @@ const NewSalePage = () => {
             )}
           </div>
         </ReusableModal>
-        <ReusableModal
-          isOpen={openScannerModal}
-          onClose={closeModal}
-          title="Código de barras"
-          handleCancelClick={closeModal}
-        >
-          <p className="text-sm leading-[1rem] text-black_m">
-            Escanea el código de barras del producto para localizar la orden de
-            compra donde se encuentra, o ingresa el código de manera manual.
-          </p>
-          <div className="px-2">
-            <BarcodeReader
-              onBarcodeChange={(code) => {
-                setbarcode(code);
-                setDataExtinguisher(code);
-              }}
-              closeModal={closeModal}
-            />
-          </div>
-        </ReusableModal>
+
+        <Modal isOpen={openScannerModal} onClose={closeModal}>
+          <ModalContent>
+            {() => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Código de barras
+                </ModalHeader>
+
+                <ModalBody>
+                  <p className="text-sm leading-[1rem] text-black_m">
+                    Escanea el código de barras del producto para localizar la
+                    orden de compra donde se encuentra, o ingresa el código de
+                    manera manual.
+                  </p>
+                  <div className="my-2 px-2">
+                    <BarcodeReader
+                      onBarcodeChange={(code) => {
+                        setbarcode(code);
+                        setDataExtinguisher(code);
+                      }}
+                      closeModal={closeModal}
+                    />
+                  </div>
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
     </div>
   );

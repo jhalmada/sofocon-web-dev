@@ -16,7 +16,6 @@ import SearchInput from "../components/inputs/SearchInput";
 import TableCompaniesRoutes from "../components/tables/TableCompaniesRoutes";
 import FilterSelect from "../components/filters/FilterSelect";
 import { Autocomplete, AutocompleteItem, Checkbox } from "@nextui-org/react";
-import { CompaniesTable } from "./clients/components/companiesTable";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -291,7 +290,7 @@ const AddRoutePage = () => {
                     Vendedor
                   </label>
 
-                  <Autocoamplete
+                  <Autocomplete
                     isDisabled={checkSelected !== "filters"}
                     className="max-w-[21.875rem] rounded-lg border font-roboto font-medium"
                     placeholder="Buscar vendedor"
@@ -310,7 +309,7 @@ const AddRoutePage = () => {
                           {rol.userInfo.fullName}
                         </AutocompleteItem>
                       ))}
-                  </Autocoamplete>
+                  </Autocomplete>
                 </div>
                 <SearchInput
                   disabled={checkSelected !== "filters"}
