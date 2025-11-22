@@ -11,37 +11,22 @@ import {
 } from "@nextui-org/react";
 import { Select, SelectItem } from "@nextui-org/select";
 import { useForm } from "react-hook-form";
-import ReusableModal from "../../../components/modals/ReusableModal";
 import { useEffect, useState } from "react";
 import usePutCompany from "../../../hooks/companies/usePutCompanies";
-import { MapHandler, PlaceAutocomplete } from "../../../hooks/Maps/funtionMaps";
-import {
-  AdvancedMarker,
-  Map,
-  Marker,
-  useAdvancedMarkerRef,
-} from "@vis.gl/react-google-maps";
 
-const coordenadasUruguay = {
-  lat: -34.901,
-  lng: -56.1698,
-};
+import MapComponent from "./mapComponent";
+
 export const EditCompanyModal = ({
   company,
   isOpen,
   onClose,
   updateClientList,
 }) => {
-  const [modalMap, setModalMap] = useState(false);
   const [checkSelected, setCheckSelected] = useState("RUT");
   const [competence, setCompetenceEdit] = useState(false);
-
-  const [selectedPlace, setSelectedPlace] = useState(null);
-  const [selectManual, setSelectManual] = useState(null);
-  const [markerRef, marker] = useAdvancedMarkerRef();
-  const [direccion, setDireccion] = useState("");
   const { changedCompany } = usePutCompany();
-  const { register, handleSubmit, setValue, reset, formState } = useForm();
+  const { register, handleSubmit, setValue, watch, reset, formState } =
+    useForm();
 
   const handleCompanyCreation = async (companyData) => {
     try {
@@ -55,7 +40,7 @@ export const EditCompanyModal = ({
       }
     } catch (error) {
       console.error("Error al crear la empresa:", error);
-      onClose(true);
+      onClose();
     }
   };
   const onSubmit = async (data) => {
@@ -68,6 +53,9 @@ export const EditCompanyModal = ({
       address,
       neighborhood,
       competenceName,
+      visitPeriod,
+      latitude,
+      longitude,
     } = data;
     handleCompanyCreation({
       name,
@@ -77,15 +65,12 @@ export const EditCompanyModal = ({
       status,
       address,
       neighborhood,
+      visitPeriod,
+      latitude,
+      longitude,
       rut: checkSelected === "RUT" ? data.rut : null,
       ci: checkSelected === "CI" ? data.ci : null,
       competenceName: competence ? competenceName : "",
-      latitude: !selectManual
-        ? selectedPlace?.geometry?.location.lat()
-        : selectManual.lat,
-      longitude: !selectManual
-        ? selectedPlace?.geometry?.location.lng()
-        : selectManual.lng,
     });
   };
 
@@ -104,7 +89,12 @@ export const EditCompanyModal = ({
         <ModalContent>
           {() => (
             <>
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") e.preventDefault();
+                }}
+              >
                 <ModalHeader className="flex flex-col gap-1">
                   Editar
                 </ModalHeader>
@@ -134,7 +124,7 @@ export const EditCompanyModal = ({
                     {...register("phone", {
                       minLength: {
                         value: 2,
-                        message: "Debe ingresar minimo 2 caracteres.",
+                        message: "Debe ingresar mínimo 2 caracteres.",
                       },
                       maxLength: {
                         value: 15,
@@ -149,75 +139,52 @@ export const EditCompanyModal = ({
                     }
                     validate={(value) => {
                       if (value.length < 2)
-                        return "Debe ingresar minimo 2 caracteres.";
+                        return "Debe ingresar mínimo 2 caracteres.";
                       if (value.length > 15)
                         return "Ingrese solo los 15 digitos de su número";
                     }}
-                  />
-                  <Input
-                    isRequired
-                    label={"Departamento"}
-                    placeholder={"Escribir..."}
-                    {...register("department", {
-                      required: "Este campo es requerido",
-                      minLength: {
-                        value: 2,
-                        message:
-                          "El nombre debe contener al menos 2 caracteres.",
-                      },
-                      maxLength: {
-                        value: 50,
-                        message:
-                          "El nombre no puede exceder los 50 caracteres.",
-                      },
-                    })}
-                    validate={(value) => {
-                      if (value.length < 2)
-                        return "El nombre debe contener al menos 2 caracteres.";
-                      if (value.length > 50)
-                        return "El nombre no puede exceder los 50 caracteres.";
-                    }}
-                    errorMessage={
-                      formState.errors.department
-                        ? formState.errors.department.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    isRequired
-                    label={"Barrio"}
-                    placeholder={"Escribir..."}
-                    {...register("neighborhood", {
-                      required: "Este campo es requerido",
-                      minLength: {
-                        value: 2,
-                        message:
-                          "El nombre debe contener al menos 2 caracteres.",
-                      },
-                      maxLength: {
-                        value: 50,
-                        message:
-                          "El nombre no puede exceder los 50 caracteres.",
-                      },
-                    })}
-                    validate={(value) => {
-                      if (value.length < 2)
-                        return "El nombre debe contener al menos 2 caracteres.";
-                      if (value.length > 50)
-                        return "El nombre no puede exceder los 50 caracteres.";
-                    }}
-                    errorMessage={
-                      formState.errors.neighborhood
-                        ? formState.errors.neighborhood.message
-                        : ""
-                    }
                   />
                   <div>
                     <Input
                       isRequired
                       label={"Dirección"}
+                      id="address-input"
+                      value={watch("address")}
                       placeholder={"Escribir..."}
                       {...register("address", {
+                        required: "Este campo es requerido",
+                        minLength: {
+                          value: 2,
+                          message:
+                            "El nombre debe contener al menos 2 caracteres.",
+                        },
+                      })}
+                      minLength={2}
+                      errorApi={formState.errors.address}
+                      errorMessage={
+                        formState.errors.address
+                          ? formState.errors.address.message
+                          : ""
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault(); // Previene el comportamiento predeterminado del Enter
+                        }
+                      }}
+                    />
+                    <div id="address-content"></div>
+                    <div style={{ visibility: "hidden", height: "0" }}>
+                      <Input {...register("latitude")} />
+                      <Input {...register("longitude")} />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      isRequired
+                      label={"Departamento"}
+                      value={watch("department")}
+                      placeholder={"Escribir..."}
+                      {...register("department", {
                         required: "Este campo es requerido",
                         minLength: {
                           value: 2,
@@ -230,24 +197,57 @@ export const EditCompanyModal = ({
                             "El nombre no puede exceder los 50 caracteres.",
                         },
                       })}
-                      minLength={2}
-                      maxLength={50}
-                      errorApi={formState.errors.address}
+                      validate={(value) => {
+                        if (value.length < 2)
+                          return "El nombre debe contener al menos 2 caracteres.";
+                        if (value.length > 50)
+                          return "El nombre no puede exceder los 50 caracteres.";
+                      }}
                       errorMessage={
-                        formState.errors.address
-                          ? formState.errors.address.message
+                        formState.errors.department
+                          ? formState.errors.department.message
                           : ""
                       }
                     />
-                    <div
-                      onClick={() => setModalMap(true)}
-                      className="mt-2 flex cursor-pointer items-center"
-                    >
-                      <i className="fa-solid fa-location-dot"></i>
-                      <span className="text-xs leading-[.88rem] underline">
-                        Marcar en el mapa
-                      </span>
-                    </div>
+                    <Input
+                      isRequired
+                      label={"Barrio"}
+                      placeholder={"Escribir..."}
+                      value={watch("neighborhood")}
+                      {...register("neighborhood", {
+                        required: "Este campo es requerido",
+                        minLength: {
+                          value: 2,
+                          message:
+                            "El nombre debe contener al menos 2 caracteres.",
+                        },
+                        maxLength: {
+                          value: 50,
+                          message:
+                            "El nombre no puede exceder los 50 caracteres.",
+                        },
+                      })}
+                      validate={(value) => {
+                        if (value.length < 2)
+                          return "El nombre debe contener al menos 2 caracteres.";
+                        if (value.length > 50)
+                          return "El nombre no puede exceder los 50 caracteres.";
+                      }}
+                      errorMessage={
+                        formState.errors.neighborhood
+                          ? formState.errors.neighborhood.message
+                          : ""
+                      }
+                    />
+                  </div>
+                  <div>
+                    <MapComponent
+                      setValue={setValue}
+                      position={{
+                        lat: company.latitude,
+                        lng: company.longitude,
+                      }}
+                    />
                   </div>
                   <Input
                     label={"Otros datos"}
@@ -286,7 +286,7 @@ export const EditCompanyModal = ({
                           checkSelected === "RUT" && "Este campo es requerido",
                         minLength: {
                           value: 2,
-                          message: "Ingrese minimo 2 digitos.",
+                          message: "Ingrese mínimo 2 digitos.",
                         },
                       })}
                       errorApi={checkSelected === "RUT" && formState.errors.rut}
@@ -306,7 +306,7 @@ export const EditCompanyModal = ({
                           checkSelected === "CI" && "Este campo es requerido",
                         minLength: {
                           value: 2,
-                          message: "Ingrese minimo 2 digitos.",
+                          message: "Ingrese mínimo 2 digitos.",
                         },
                       })}
                       errorApi={checkSelected === "CI" && formState.errors.ci}
@@ -378,6 +378,39 @@ export const EditCompanyModal = ({
                       </p>
                     </>
                   )}
+                  <Input
+                    isRequired
+                    type={"text"}
+                    pattern="[0-9]*"
+                    label={"Meses para la proxima visita"}
+                    maxLength={2}
+                    placeholder={
+                      "Escribe la cantidad de meses para el periodo de próxima visita..."
+                    }
+                    {...register("visitPeriod", {
+                      required: "Este campo es requerido",
+
+                      minLength: {
+                        value: 1,
+                        message: "Ingrese mínimo 1 mes",
+                      },
+                      maxLength: {
+                        value: 2,
+                        message: "Ingrese máximo 2 números",
+                      },
+                    })}
+                    errorApi={formState.errors.visitPeriod}
+                    errorMessage={
+                      formState.errors.visitPeriod
+                        ? formState.errors.visitPeriod.message
+                        : ""
+                    }
+                    validate={(value) => {
+                      if (value.length < 1)
+                        return "Debe ingresar mínimo 1 caracter.";
+                      if (value.length > 2) return "Ingrese solo 2 digitos";
+                    }}
+                  />
                 </ModalBody>
                 <ModalFooter>
                   <Button
@@ -398,66 +431,79 @@ export const EditCompanyModal = ({
         </ModalContent>
       </Modal>
       {/**modal para el mapa */}
-      <ReusableModal
-        isOpen={modalMap}
-        onClose={() => setModalMap(false)}
-        title="Marcar ubicacion"
-        variant="confirmation"
-        buttons={["accept"]}
-        onAccept={() => setModalMap(false)}
-        width="w-[45.37rem]"
-      >
-        <div className="flex flex-col">
-          <PlaceAutocomplete
-            onPlaceSelect={setSelectedPlace}
-            value={direccion}
-            setSelectManual={setSelectManual}
-          />
+      {/*   <Modal isOpen={modalMap} onClose={() => setModalMap(false)}>
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Marcar ubicacion
+              </ModalHeader>
+              <ModalBody>
+                <div className="flex flex-col">
+                  <PlaceAutocomplete
+                    onPlaceSelect={setSelectedPlace}
+                    value={direccion}
+                    setSelectManual={setSelectManual}
+                  />
 
-          <div>
-            <Map
-              style={{ height: "15rem" }}
-              mapId={"8c732c82e4ec29d9"}
-              defaultCenter={coordenadasUruguay}
-              defaultZoom={5}
-              gestureHandling={"greedy"}
-              center={selectManual}
-              disableDefaultUI={true}
-            >
-              <Marker
-                ref={markerRef}
-                draggable={true}
-                position={selectManual}
-                onDragEnd={(e) => {
-                  setSelectManual({
-                    lat: e.latLng.lat(),
-                    lng: e.latLng.lng(),
-                  });
-                }}
-              />
+                  <div>
+                    <Map
+                      style={{ height: "15rem" }}
+                      mapId={"8c732c82e4ec29d9"}
+                      defaultCenter={coordenadasUruguay}
+                      defaultZoom={5}
+                      gestureHandling={"greedy"}
+                      center={selectManual}
+                      disableDefaultUI={true}
+                    >
+                      <Marker
+                        ref={markerRef}
+                        draggable={true}
+                        position={selectManual}
+                        onDragEnd={(e) => {
+                          setSelectManual({
+                            lat: e.latLng.lat(),
+                            lng: e.latLng.lng(),
+                          });
+                        }}
+                      />
 
-              <AdvancedMarker
-                className={`${!selectManual ? "visible" : "invisible"}`}
-                ref={markerRef}
-                position={null}
-                draggable={true}
-                onDragEnd={(e) =>
-                  setSelectManual({
-                    lat: e.latLng.lat(),
-                    lng: e.latLng.lng(),
-                  })
-                }
-              />
-            </Map>
-            <MapHandler
-              place={selectedPlace}
-              marker={marker}
-              setValue={setValue}
-              setDireccion={setDireccion}
-            />
-          </div>
-        </div>
-      </ReusableModal>
+                      <AdvancedMarker
+                        className={`${!selectManual ? "visible" : "invisible"}`}
+                        ref={markerRef}
+                        position={null}
+                        draggable={true}
+                        onDragEnd={(e) =>
+                          setSelectManual({
+                            lat: e.latLng.lat(),
+                            lng: e.latLng.lng(),
+                          })
+                        }
+                      />
+                    </Map>
+                    <MapHandler
+                      place={selectedPlace}
+                      marker={marker}
+                      setValue={setValue}
+                      setDireccion={setDireccion}
+                    />
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  radius="full"
+                  color="default"
+                  variant="bordered"
+                  onClick={() => setModalMap(false)}
+                >
+                  Cerrar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal> */}
     </>
   );
 };

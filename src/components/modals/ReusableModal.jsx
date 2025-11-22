@@ -19,7 +19,7 @@ const ReusableModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-[999999999] flex items-center justify-center bg-black bg-opacity-50">
       <div
         className={`relative max-h-screen ${width} overflow-auto rounded-lg bg-white p-8 shadow-lg`}
         onClick={(e) => e.stopPropagation()}
