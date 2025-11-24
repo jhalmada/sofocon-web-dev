@@ -113,7 +113,7 @@ const StatusPanelPage = () => {
               <p className="text-xs text-red_e">{errors.user.message}</p>
             )}
           </div>
-          <p className="mr-8">Total: ${ordersAmount}</p>
+          <p className="mr-8">Total: ${ordersAmount.toFixed(2)}</p>
         </div>
 
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
