@@ -65,7 +65,6 @@ const Input = forwardRef(
             title={placeholder}
             placeholder={placeholder}
             inputMode={type === "number" ? "numeric" : undefined}
-            pattern={type === "number" ? "^[0-9]+(\\.[0-9]+)?$" : undefined}
             className={`${placeholderColor} ${fontWeight} ${
               hidden ? "hidden" : ""
             } relative h-10 ${bg} w-full rounded-md ${border} p-2.5 pl-2.5 pr-10 font-roboto text-sm outline-none ${

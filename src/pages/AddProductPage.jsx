@@ -200,7 +200,6 @@ const AddProductPage = () => {
                 <Input
                   type="number"
                   placeholder="Escribir..."
-                  pattern={"^[0-9]+(\\,[0-9]+)?$"}
                   label="Capacidad"
                   {...register("amount", {
                     required: {
