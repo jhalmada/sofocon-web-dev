@@ -473,7 +473,7 @@ const UsersPage = () => {
             <Checkbox
               className="mt-3"
               {...register("isToRecharge")}
-              defaultChecked={watch("isToRecharge")}
+              defaultChecked={watch("isToRecharge") === "true"}
             >
               Producto de recarga
             </Checkbox>
