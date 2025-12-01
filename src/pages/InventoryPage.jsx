@@ -331,21 +331,7 @@ const UsersPage = () => {
             <Input
               placeholder="Escribir..."
               label="Descripcion"
-              {...register("description", {
-                required: {
-                  value: true,
-                  message: "Campo obligatorio",
-                },
-                maxLength: {
-                  value: 50,
-                  message: "la descripcion no puede exceder los 50 caracteres.",
-                },
-                minLength: {
-                  value: 3,
-                  message:
-                    "la descripcion debe contener al menos 3 caracteres.",
-                },
-              })}
+              {...register("description")}
               msjError={errors.description ? errors.description.message : ""}
             />
             <div className="flex gap-3">
@@ -484,7 +470,11 @@ const UsersPage = () => {
               )}
             </div>
 
-            <Checkbox className="mt-3" {...register("isToRecharge")}>
+            <Checkbox
+              className="mt-3"
+              {...register("isToRecharge")}
+              defaultChecked={watch("isToRecharge")}
+            >
               Producto de recarga
             </Checkbox>
           </form>
