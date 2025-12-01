@@ -23,6 +23,7 @@ import { BASE_URL, MEDIDA, TYPE_PRODUCTS } from "../utils/Constants.js";
 import notFoundImg from "../assets/images/notFound.svg";
 import { getProductsExcel } from "../services/products/products.routes.js";
 import { isMatch } from "lodash";
+import { Checkbox } from "@nextui-org/react";
 
 const UsersPage = () => {
   const [productId, setProductId] = useState(null);
@@ -91,6 +92,7 @@ const UsersPage = () => {
       setValue("type", product.type);
       setValue("amount", product.amount);
       setValue("unit", product.unit);
+      setValue("isToRecharge", product.isToRecharge);
       setListCategory([category]);
       setEditModal(true);
     }
@@ -125,6 +127,7 @@ const UsersPage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("amount", data.amount);
+    formData.append("isToRecharge", data.isToRecharge);
     if (file) {
       formData.append("file", file);
     }
@@ -480,6 +483,10 @@ const UsersPage = () => {
                 </p>
               )}
             </div>
+
+            <Checkbox className="mt-3" {...register("isToRecharge")}>
+              Producto de recarga
+            </Checkbox>
           </form>
         </ReusableModal>
         {/*modal para confirmar cancel o cambios no guardados*/}
