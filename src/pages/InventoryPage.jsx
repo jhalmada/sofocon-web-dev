@@ -92,7 +92,7 @@ const UsersPage = () => {
       setValue("type", product.type);
       setValue("amount", product.amount);
       setValue("unit", product.unit);
-      setValue("isToRecharge", product.isToRecharge);
+      setValue("isToRecharge", product.isToRecharge === "true");
       setListCategory([category]);
       setEditModal(true);
     }
