@@ -5,13 +5,14 @@ import axios from "axios";
 
 const useOrders = () => {
   const [ordersResponse, setOrdersResponse] = useState([]);
+  const [ordersAmount, setOrdersAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [modified, setModified] = useState(false);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
   const [status, setStatus] = useState(null);
   const [entryDate, setEntryDate] = useState(null);
   const [barCode, setBarCode] = useState(null);
@@ -19,7 +20,6 @@ const useOrders = () => {
   const [month, setMonth] = useState(null);
   const [week, setWeek] = useState(null);
   const [user, setUser] = useState(null);
-  const [inBoard, setInBoard] = useState(true);
   const [orderType, setOrderType] = useState({
     isPreOrder: false,
     isDirect: false,
@@ -28,7 +28,7 @@ const useOrders = () => {
   const downloadFile = useCallback(async (url, fileName, rechargeValue) => {
     try {
       setLoading(true);
-    
+
       const response = await axios.get(url, {
         responseType: "blob",
         headers: {
@@ -57,9 +57,16 @@ const useOrders = () => {
   }, []);
 
   const getAllOrders = useCallback(
-    async ({ isPreOrder, isDirect, inOrders, recharge }) => {
+    async ({
+      isPreOrder,
+      inBoard,
+      isDirect,
+      inOrders,
+      recharge,
+      itemsPerPage,
+    }) => {
       try {
-        setOrdersResponse([]);
+        //setOrdersResponse([]);
         setLoading(true);
         const { data } = await OrdersService.getAllOrdersApi({
           page,
@@ -78,6 +85,7 @@ const useOrders = () => {
           user,
           inBoard,
         });
+        setOrdersAmount(data.totalAmount);
         setTotalPage(data.pagination.totalPages);
         setTotal(data.pagination.total);
         setOrdersResponse(data.result);
@@ -98,9 +106,6 @@ const useOrders = () => {
       month,
       week,
       user,
-      modified,
-      inBoard,
-      downloadFile,
     ],
   );
 
@@ -112,14 +117,13 @@ const useOrders = () => {
     page,
     itemsPerPage,
     modified,
+    ordersAmount,
     status,
     search,
     month,
     year,
     week,
     user,
-    inBoard,
-    setInBoard,
     setPage,
     setModified,
     setItemsPerPage,

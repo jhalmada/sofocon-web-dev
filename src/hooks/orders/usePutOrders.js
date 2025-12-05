@@ -7,7 +7,6 @@ const usePutOrders = () => {
   const [modified, setModified] = useState(false);
 
   const changedOrder = async (orderData, orderId, setModified) => {
-
     try {
       setIsLoading(true);
       await OrdersService.putOrderApi(orderData, orderId);

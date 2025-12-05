@@ -6,7 +6,13 @@ import { useEffect, useState } from "react";
 import ReusableModal from "../components/modals/ReusableModal";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Controller, useForm } from "react-hook-form";
-import { Checkbox } from "@nextui-org/react";
+import {
+  Checkbox,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+} from "@nextui-org/react";
 import useUsersSellers from "../hooks/users/useUsersSellers.js";
 import barCodeIcon from "../assets/icons/barcode.svg";
 import ArrowRightIcon from "../assets/icons/arrow-right.svg";
@@ -18,9 +24,11 @@ import useGetPriceList from "../hooks/priceList/useGetPriceList.js";
 import ProductsAutocomplete from "../components/autocomplete/ProductsAutocomplete.jsx";
 import x from "../assets/icons/x.svg";
 import BarcodeReader from "../components/scan/BarcodeReader.jsx";
-import useOrders from "../hooks/orders/useOrders.js";
 import Calendar from "../components/calendar/Calendar.jsx";
 import checkIcon from "../assets/images/checkOrder.svg";
+import useGetAllExtinguisher from "../hooks/extinguisher/useGetAllExtinguisher.js";
+import { parseDate } from "@internationalized/date";
+import moment from "moment";
 
 const NewSalePage = () => {
   const {
@@ -31,16 +39,26 @@ const NewSalePage = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const { barCode, setBarCode } = useOrders();
+  const [indexBarcode, setIndexBarCode] = useState(null);
+  const [barcode, setbarcode] = useState(null);
+  const { extinguisherResponse, getAllExtinguisher } = useGetAllExtinguisher();
   const { postAddOrders, status } = useAddOrders();
-  const { companiesResponse, setSearch: setSearchCompanies } = useCompanies();
+  const {
+    companiesResponse,
+    setSearch: setSearchCompanies,
+    getAllCompanies,
+  } = useCompanies({});
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
   const {
     productsResponse,
     setSearch: setSearchProducts,
     setList,
   } = useGetProducts();
-  const { priceListResponse, setSearch: setSearchList } = useGetPriceList();
+  const {
+    priceListResponse,
+    getAllPriceList,
+    setSearch: setSearchList,
+  } = useGetPriceList();
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -112,9 +130,10 @@ const NewSalePage = () => {
         rut,
         user,
         productInOrder: productInOrder.map((product) => {
+          console.log(product);
           return {
             ...product,
-            isRecharge: product.isRecharge,
+            isRecharge: product.isRecharge === "true" ? true : false,
             itemsRemoval:
               product.isRecharge === "true"
                 ? product.itemsRemoval.map((item) => {
@@ -304,6 +323,51 @@ const NewSalePage = () => {
     setDiscount2(value);
   };
 
+  const setDataExtinguisher = async (barCode) => {
+    await getAllExtinguisher({ code: barCode });
+  };
+
+  useEffect(() => {
+    if (indexBarcode) {
+      const index = indexBarcode.split("-")[0];
+      const indexRemoval = indexBarcode.split("-")[1];
+
+      if (extinguisherResponse.length > 0) {
+        console.log(extinguisherResponse);
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
+          extinguisherResponse[0].code,
+        );
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].enrollment`,
+          extinguisherResponse[0].serial,
+        );
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].fabricUNIT`,
+          extinguisherResponse[0].fabricUNIT,
+        );
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].numberUNIT`,
+          extinguisherResponse[0].numberUNIT,
+        );
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`,
+          parseDate(
+            moment(extinguisherResponse[0].latestVisit).format("YYYY-MM-DD"),
+          ),
+        );
+      } else {
+        setValue(
+          `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
+          barcode,
+        );
+      }
+
+      setIndexBarCode(null);
+      setbarcode(null);
+    }
+  }, [extinguisherResponse]);
+
   const truncateToTwoDecimals = (num) => {
     return Math.floor(num * 100) / 100;
   };
@@ -336,13 +400,18 @@ const NewSalePage = () => {
 
   useEffect(() => {
     setSearchList(lists);
-  }, [lists]);
+  }, [lists, setSearchList]);
 
   useEffect(() => {
     if (status === 201) {
       setIsSaveConfirmationModalOpen(true);
     }
   }, [status]);
+  useEffect(() => {
+    getAllCompanies();
+    getAllPriceList();
+  }, [getAllPriceList, getAllCompanies]);
+
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
       <div className="flex flex-grow flex-col p-6">
@@ -675,7 +744,6 @@ const NewSalePage = () => {
                               <Input
                                 label={"Código de barras"}
                                 placeholder={"..."}
-                                value={barCode || null}
                                 bg="bg-white"
                                 {...register(
                                   `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
@@ -692,7 +760,10 @@ const NewSalePage = () => {
                               <span className="flex items-center">
                                 <div
                                   className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur"
-                                  onClick={() => setOpenScannerModal(true)}
+                                  onClick={() => {
+                                    setIndexBarCode(`${index}-${indexRemoval}`);
+                                    setOpenScannerModal(true);
+                                  }}
                                 >
                                   <img
                                     src={barCodeIcon}
@@ -978,22 +1049,35 @@ const NewSalePage = () => {
             )}
           </div>
         </ReusableModal>
-        <ReusableModal
-          isOpen={openScannerModal}
-          onClose={closeModal}
-          title="Código de barras"
-          handleCancelClick={closeModal}
-        >
-          <p className="text-sm leading-[1rem] text-black_m">
-            Escanea el código de barras del producto para localizar la orden de
-            compra donde se encuentra, o ingresa el código de manera manual.
-          </p>
-          <form className="space-y-4">
-            <div className="px-2">
-              <BarcodeReader onBarcodeChange={setBarCode} />
-            </div>
-          </form>
-        </ReusableModal>
+
+        <Modal isOpen={openScannerModal} onClose={closeModal}>
+          <ModalContent>
+            {() => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Código de barras
+                </ModalHeader>
+
+                <ModalBody>
+                  <p className="text-sm leading-[1rem] text-black_m">
+                    Escanea el código de barras del producto para localizar la
+                    orden de compra donde se encuentra, o ingresa el código de
+                    manera manual.
+                  </p>
+                  <div className="my-2 px-2">
+                    <BarcodeReader
+                      onBarcodeChange={(code) => {
+                        setbarcode(code);
+                        setDataExtinguisher(code);
+                      }}
+                      closeModal={closeModal}
+                    />
+                  </div>
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
     </div>
   );

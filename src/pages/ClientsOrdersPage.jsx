@@ -129,23 +129,25 @@ const ClientsOrdersPage = () => {
     setDiscount(discountAmount.toFixed(2));
   }, [orderDetails, discountPercent]);
 
-  const handleStateChange = (e) => {
+  const handleStateChange = async (e) => {
     const translateState = (state) => {
       switch (state) {
         case "Ingreso a taller":
           return "REQUEST";
         case "En preparación":
           return "PREPARATION";
-        case "Para retirar del taller":
+        case "Para retirar del taller": {
           setTempStatus("READY_PICKUP");
           setIsModalOpen(true);
           return null;
+        }
         case "Egreso":
           return "EGRESS";
-        case "Entregado":
+        case "Entregado": {
           setTempStatus("DELIVERED");
           setConfirmationModalOpen(true);
           return null;
+        }
         default:
           return state;
       }
@@ -153,7 +155,7 @@ const ClientsOrdersPage = () => {
 
     const newStatus = translateState(e.target.value);
     if (newStatus) {
-      updateOrderState(newStatus);
+      await updateOrderState(newStatus);
     }
   };
 
@@ -163,23 +165,21 @@ const ClientsOrdersPage = () => {
     if (status === "READY_PICKUP") {
       updatedData.workShopDateEntry = new Date();
     }
-    await changedOrder({ status }, orderDetails.id, setModified);
+    await changedOrder({ status }, orderDetails.id);
+    if (tempStatus) {
+      setTempStatus(null);
+      navigate("/inicio/ordenes");
+    }
   };
 
   const handleConfirm = () => {
-    if (tempStatus) {
-      updateOrderState(tempStatus);
-      setTempStatus(null);
-    }
+    updateOrderState(tempStatus);
     setConfirmationModalOpen(false);
   };
-  const handleConfirmState = () => {
-    if (tempStatus) {
-      updateOrderState(tempStatus);
-      setTempStatus(null);
-    }
+  const handleConfirmState = async () => {
+    updateOrderState(tempStatus);
+
     setIsModalOpen(false);
-    navigate("/inicio/ordenes");
   };
 
   const handleClose = () => {

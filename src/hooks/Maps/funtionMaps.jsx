@@ -4,12 +4,12 @@ import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 
 const direccionText = (address) => {
   const parts = address.split(","); // Divide la dirección por comas
-
+  console.log(address);
   if (parts.length < 2) {
     return { error: "La dirección no está en el formato esperado" };
   }
 
-  const direccion = parts[0].trim(); // Primer parte como dirección
+  const direccion = address; // Primer parte como dirección
 
   // Extraemos el barrio de la segunda parte
   const barrioParts = parts[1].trim().split(" ");
@@ -40,7 +40,7 @@ const MapHandler = ({ place, marker, setValue, setDireccion }) => {
         direccionText(place.formatted_address).direccion,
     );
     setValue(
-      "neighborhood",
+      "department",
       place.formatted_address && direccionText(place.formatted_address).barrio,
     );
   }, [map, place, marker]);
@@ -66,13 +66,14 @@ const PlaceAutocomplete = ({
 
     setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
   }, [places]);
+
   useEffect(() => {
     if (!placeAutocomplete) return;
 
     placeAutocomplete.addListener("place_changed", () => {
       onPlaceSelect(placeAutocomplete.getPlace());
       setName(placeAutocomplete.getPlace().formatted_address);
-      setSelectManual(false);
+      setSelectManual(null);
     });
   }, [onPlaceSelect, placeAutocomplete]);
   return (

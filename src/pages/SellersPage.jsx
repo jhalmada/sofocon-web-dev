@@ -190,7 +190,7 @@ const SellersPage = ({
               {userSellerResponse?.result?.map((user, index) => (
                 <SellerRow
                   key={index}
-                  fullName={user.userInfo?.fullName || "Nombre no disponible"}
+                  fullName={user?.userInfo?.fullName || "Nombre no disponible"}
                   email={user.email}
                   contact={user.userInfo?.phone}
                   route={"Ruta"}

@@ -5,7 +5,7 @@ import uploadIcon from "../assets/icons/arrow-blue.svg";
 import Button from "../components/buttons/Button";
 import arrowRigthIcon from "../assets/icons/arrow-right.svg";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAddProducts from "../hooks/products/useAddProducts";
 import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray";
 import ReusableModal from "../components/modals/ReusableModal";
@@ -34,7 +34,11 @@ const AddProductPage = () => {
   } = useForm();
 
   const { postAddProducts } = useAddProducts();
-  const { priceListResponse } = useGetPriceList();
+  const { priceListResponse, getAllPriceList } = useGetPriceList();
+
+  useEffect(() => {
+    getAllPriceList();
+  }, [getAllPriceList]);
 
   const { id } = useParams();
 
@@ -180,18 +184,11 @@ const AddProductPage = () => {
                 >
                   Tipo:
                 </label>
-                <Select
-                  placeholder="Seleccionar tipo"
-                  className={`rounded-lg border ${errors.type ? "border-red_e text-red_e" : ""} `}
+                <Input
+                  type="text"
+                  placeholder="Escribir tipo"
                   {...register("type")}
-                  onChange={(e) =>
-                    handleSelectionChange(e.target.value, "type")
-                  }
-                >
-                  {TYPE_PRODUCTS.map((tipo) => (
-                    <SelectItem key={tipo}>{tipo}</SelectItem>
-                  ))}
-                </Select>
+                />
                 <p className="mt-1 font-roboto text-xs text-red_e">
                   {errors.type ? errors.type.message : ""}
                 </p>

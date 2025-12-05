@@ -4,7 +4,6 @@ import briefCaseFillIcon from "../../assets/icons/briefcase-fill-black.svg";
 import { Checkbox, Tooltip } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import usePutOrders from "../../hooks/orders/usePutOrders";
-import { set } from "lodash";
 
 const StatusCard = ({
   id,
@@ -15,11 +14,10 @@ const StatusCard = ({
   date,
   sellerName,
   isToDeliver,
-  discountTotal,
   paymentType,
-  charged,
-  setTotalOrders = false,
-  modified = false, // Function to update total orders count
+  charged, // Function to update total orders count
+  changeState,
+  discountTotal,
 }) => {
   const { changedOrder } = usePutOrders();
 
@@ -31,10 +29,10 @@ const StatusCard = ({
   const additionalItems = productArray.length - displayedProducts.length;
 
   const updateOrderState = async (status) => {
-    setIsCharged(status);
     await changedOrder({ isCharged: status }, id);
+    setIsCharged(status);
+    changeState();
   };
-
   useEffect(() => {
     const subtotal = productArray.reduce((acc, item) => {
       const itemQuantity = item.amount || 1;
@@ -48,14 +46,7 @@ const StatusCard = ({
     setTotal(
       subtotal ? subtotal * 1.22 - subtotal * 1.22 * (discountTotal / 100) : 0,
     );
-    if (setTotalOrders) {
-      setTotalOrders((prev) => Number(prev) + Number(total.toFixed(0))); // Update total orders count
-    }
-  }, [setTotalOrders, productArray, discountTotal, modified]);
-
-  useEffect(() => {
-    setIsCharged(charged);
-  }, [charged]);
+  });
 
   return (
     <div className="mt-2 flex h-auto min-h-[12rem] flex-col rounded-lg pb-2 shadow-br 2xl:min-h-[14rem]">
@@ -108,7 +99,7 @@ const StatusCard = ({
           </ul>
         </div>
         <div className="flex flex-col space-y-2 px-2 text-xxs font-semibold leading-[.75rem] text-black_b 2xl:text-md">
-          <span>{"Total: $" + total.toFixed()}</span>
+          <span>{"Total: $" + total}</span>
           <span>{"Forma de pago: " + paymentType}</span>
         </div>
         <div className="space-y-2 px-2">

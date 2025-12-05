@@ -23,8 +23,8 @@ const Pagination = ({
 
   return (
     <div className="flex flex-col items-center px-1.5">
-      <div className="flex space-x-2">
-        <div className="mt-2">
+      <div className="flex items-center space-x-2">
+        <div>
           <span className="text-sm text-black_m">
             {startItem} - {endItem} de {total} items
           </span>
@@ -51,7 +51,7 @@ const Pagination = ({
             <button
               type="button"
               key={0}
-              className={`rounded-full px-4 py-2 ${currentPage === 0 ? "bg-black_l" : "bg-black/5"}`}
+              className={`h-[30px] rounded-full px-[10px] ${currentPage === 0 ? "bg-black_l" : "bg-black/5"}`}
               onClick={() => onPageChange(0)}
             >
               1
@@ -66,7 +66,7 @@ const Pagination = ({
           <button
             type="button"
             key={index}
-            className={`rounded-full px-4 py-2 ${currentPage === index ? "bg-black_l" : ""}`}
+            className={`h-[30px] rounded-full px-[10px] ${currentPage === index ? "bg-black_l" : ""}`}
             onClick={() => onPageChange(index)}
           >
             {index + 1}
@@ -81,7 +81,7 @@ const Pagination = ({
             <button
               type="button"
               key={totalPages - 1}
-              className={`rounded-full px-4 py-2 ${currentPage === totalPages - 1 ? "bg-black_l" : "bg-black/5"}`}
+              className={`h-[30px] rounded-full px-[10px] ${currentPage === totalPages - 1 ? "bg-black_l" : "bg-black/5"}`}
               onClick={() => onPageChange(totalPages - 1)}
             >
               {totalPages}

@@ -17,7 +17,7 @@ const InventaryRow = ({
     <tr className="border-b border-gray text-center">
       <td className="w-10">
         <img
-          src={picture !== null ? `${IMAGE_BASE}${picture}` : defaultIcon}
+          src={picture !== null ? `${picture}` : defaultIcon}
           alt={name}
           className="h-8 w-8 rounded-full"
         />

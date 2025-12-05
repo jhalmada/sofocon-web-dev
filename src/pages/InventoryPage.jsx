@@ -23,6 +23,7 @@ import { BASE_URL, MEDIDA, TYPE_PRODUCTS } from "../utils/Constants.js";
 import notFoundImg from "../assets/images/notFound.svg";
 import { getProductsExcel } from "../services/products/products.routes.js";
 import { isMatch } from "lodash";
+import { Checkbox } from "@nextui-org/react";
 
 const UsersPage = () => {
   const [productId, setProductId] = useState(null);
@@ -91,6 +92,7 @@ const UsersPage = () => {
       setValue("type", product.type);
       setValue("amount", product.amount);
       setValue("unit", product.unit);
+      setValue("isToRecharge", product.isToRecharge === "true");
       setListCategory([category]);
       setEditModal(true);
     }
@@ -125,6 +127,7 @@ const UsersPage = () => {
     formData.append("name", data.name);
     formData.append("description", data.description);
     formData.append("amount", data.amount);
+    formData.append("isToRecharge", data.isToRecharge);
     if (file) {
       formData.append("file", file);
     }
@@ -328,21 +331,7 @@ const UsersPage = () => {
             <Input
               placeholder="Escribir..."
               label="Descripcion"
-              {...register("description", {
-                required: {
-                  value: true,
-                  message: "Campo obligatorio",
-                },
-                maxLength: {
-                  value: 50,
-                  message: "la descripcion no puede exceder los 50 caracteres.",
-                },
-                minLength: {
-                  value: 3,
-                  message:
-                    "la descripcion debe contener al menos 3 caracteres.",
-                },
-              })}
+              {...register("description")}
               msjError={errors.description ? errors.description.message : ""}
             />
             <div className="flex gap-3">
@@ -480,6 +469,14 @@ const UsersPage = () => {
                 </p>
               )}
             </div>
+
+            <Checkbox
+              className="mt-3"
+              {...register("isToRecharge")}
+              defaultChecked={watch("isToRecharge") === "true"}
+            >
+              Producto de recarga
+            </Checkbox>
           </form>
         </ReusableModal>
         {/*modal para confirmar cancel o cambios no guardados*/}

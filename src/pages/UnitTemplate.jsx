@@ -17,6 +17,7 @@ const UnitTemplate = () => {
     search,
     month,
     setMonth,
+    setYear,
     setSearch,
     setItemsPerPage,
     totalPage,
@@ -34,6 +35,12 @@ const UnitTemplate = () => {
   const [isConfirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [routeId, setRouteId] = useState(null);
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 11 }, (_, i) => {
+    const y = currentYear - 5 + i;
+    return { label: String(y), value: String(y) };
+  });
 
   const months = [
     { label: "Enero", value: "01" },
@@ -101,6 +108,10 @@ const UnitTemplate = () => {
     setIsExportModalOpen(true);
   };
 
+  const handleChangeYear = (value) => {
+    setYear(value);
+    setPage(0);
+  };
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between">
       <div className="flex flex-grow flex-col p-6">
@@ -157,6 +168,19 @@ const UnitTemplate = () => {
                   {months.map((unitMonth) => (
                     <SelectItem key={unitMonth.value} value={unitMonth.value}>
                       {unitMonth.label}
+                    </SelectItem>
+                  ))}
+                </Select>
+                <Select
+                  placeholder="Selecciona un año"
+                  defaultSelectedKeys={[currentYear.toString()]}
+                  labelPlacement="outside"
+                  className="w-52 rounded-lg border"
+                  onChange={(e) => handleChangeYear(e.target.value)}
+                >
+                  {years.map((year) => (
+                    <SelectItem key={year.value} value={year.value}>
+                      {year.label}
                     </SelectItem>
                   ))}
                 </Select>

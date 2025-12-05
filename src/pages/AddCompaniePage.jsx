@@ -21,6 +21,7 @@ import {
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
 import Calendar from "../components/calendar/Calendar";
+import MapComponent from "./clients/components/mapComponent";
 
 const coordenadasUruguay = {
   lat: -34.901,
@@ -88,7 +89,6 @@ const AddCompaniePage = () => {
 
   const onSubmit = (data) => {
     const {
-      nextVisit,
       name,
       department,
       managerName,
@@ -96,14 +96,11 @@ const AddCompaniePage = () => {
       status,
       address,
       neighborhood,
+      visitPeriod,
+      latitude,
+      longitude,
     } = data;
-    const newdata = new Date(
-      nextVisit.year,
-      nextVisit.month - 1,
-      nextVisit.day,
-    );
 
-    const formattedDate = newdata.toISOString();
     switch (checkSelected) {
       case "RUT":
         handleCompanyCreation({
@@ -114,7 +111,7 @@ const AddCompaniePage = () => {
           status,
           address,
           neighborhood,
-          nextVisit: newdata,
+          visitPeriod,
           rut: data.rut,
           competenceName: competence ? data.competenceName : "",
           note: notes,
@@ -137,7 +134,7 @@ const AddCompaniePage = () => {
           status,
           address,
           neighborhood,
-          nextVisit: formattedDate,
+          visitPeriod,
           ci: data.ci,
           competenceName: competence ? data.competenceName : "",
           note: notes,
@@ -299,8 +296,10 @@ const AddCompaniePage = () => {
             </div>
             <div className="flex gap-4">
               <Input
+                id="address-input"
                 label={"Dirección"}
                 placeholder={"Escribir..."}
+                value={watch("address")}
                 {...register("address", {
                   required: "Este campo es requerido",
                   minLength: {
@@ -318,6 +317,7 @@ const AddCompaniePage = () => {
               <Input
                 label={"Departamento"}
                 placeholder={"Escribir..."}
+                value={watch("department")}
                 {...register("department", {
                   required: "Este campo es requerido",
                   minLength: {
@@ -335,6 +335,7 @@ const AddCompaniePage = () => {
               <Input
                 label={"Barrio"}
                 placeholder={"Escribir..."}
+                value={watch("neighborhood")}
                 {...register("neighborhood", {
                   required: "Este campo es requerido",
                   minLength: {
@@ -352,17 +353,14 @@ const AddCompaniePage = () => {
                 }
               />
             </div>
-
-            <div
-              onClick={() => setModalPrueba(true)}
-              className="mb-2 flex w-[8rem] cursor-pointer justify-center"
-            >
-              <img src={geoaltIcon} alt="geo Icon" />
-              <span className="mb-1 mt-2 text-xs leading-[.88rem] underline">
-                Marcar en el mapa
-              </span>
+            <div style={{ visibility: "hidden", height: "0" }}>
+              <Input {...register("latitude")} />
+              <Input {...register("longitude")} />
             </div>
-
+            <div id="address-content"></div>
+            <div>
+              <MapComponent setValue={setValue} />
+            </div>
             <Input
               label={"Otros datos"}
               placeholder={"Escribe..."}
@@ -511,14 +509,26 @@ const AddCompaniePage = () => {
               <label
                 className={`${errors.nextVisit ? "text-red_e" : "text-black"} text-sm font-light`}
               >
-                Próxima visita
+                Próxima visita (meses)
               </label>
-              <Calendar
-                control={control}
-                errors={errors}
-                setErrorDataPicker={setErrorDataPicker}
-                errorDataPicker={errorDataPicker}
-                name="nextVisit"
+              <Input
+                type={"number"}
+                placeholder={
+                  "Escribe la cantidad de meses para el periodo de próxima visita..."
+                }
+                {...register("visitPeriod", {
+                  required: "Este campo es requerido",
+                  minLength: {
+                    value: 1,
+                    message: "Ingrese mínimo 1 mes",
+                  },
+                  maxLength: {
+                    value: 2,
+                    message: "Ingrese máximo 2 números",
+                  },
+                })}
+                errorApi={errors.visitPeriod}
+                msjError={errors.visitPeriod ? errors.visitPeriod.message : ""}
               />
             </div>
             <div className="mt-4 flex flex-col justify-between">

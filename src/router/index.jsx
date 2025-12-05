@@ -46,7 +46,7 @@ import NotesLayout from "../layouts/Notes";
 import CompaniesLayout from "../layouts/Companies";
 import RoutesLayout from "../layouts/Routes";
 import HomePage from "../pages/HomePage";
-import CompaniesPage from "../pages/CompaniesPage";
+import CompaniesPage from "../pages/clients/CompaniesPage";
 import UsersPage from "../pages/UsersPage";
 import AddCompaniePage from "../pages/AddCompaniePage";
 import AddUserPage from "../pages/AddUserPage";

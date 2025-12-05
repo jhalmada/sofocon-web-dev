@@ -71,6 +71,7 @@ const ProductsPage = () => {
     setPage: setPagePriceList,
     setSearch: setSearchPriceList,
     setModified: setModifiedPriceList,
+    getAllPriceList,
   } = useGetPriceList();
 
   const { deleteCategory } = useDeleteCategory();
@@ -267,6 +268,7 @@ const ProductsPage = () => {
               itemsPerPage={itemsPerPagePriceList}
               total={totalPriceList}
               setModified={setModifiedPriceList}
+              getAllPriceList={getAllPriceList}
             />
           )}
         </div>

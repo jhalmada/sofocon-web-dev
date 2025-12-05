@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { CompaniesService } from "../../services/companies/companies.service.js";
 import { SOFOCON_JWT_TOKEN } from "../../utils/Constants";
 import axios from "axios";
-const useCompanies = (id = null) => {
+const useCompanies = (props) => {
   const [companiesResponse, setCompaniesResponse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -14,11 +14,12 @@ const useCompanies = (id = null) => {
   const [search, setSearch] = useState(null);
   const [nextVisit, setNextVisit] = useState(null);
   const [status, setStatus] = useState(null);
-  const [competence, setCompetence] = useState(false);
-  const [list, setList] = useState(id);
+  const [list, setList] = useState(props?.id || null);
   const [user, setUser] = useState(null);
   const [neighborhood, setNeighborhood] = useState(null);
   const [department, setDepartment] = useState(null);
+  const [searchStartDate, setSearchStartDate] = useState(null);
+  const [searchEndDate, setSearchEndDate] = useState(null);
 
   const downloadFile = useCallback(async (url, fileName) => {
     try {
@@ -50,22 +51,24 @@ const useCompanies = (id = null) => {
     }
   }, []);
   //la funcion principal
-  const getAllCompanies = async () => {
+  const getAllCompanies = useCallback(async () => {
     try {
       setLoading(true);
       //consumir el servicio
       const { data } = await CompaniesService.getAllCompaniesApi({
         page,
         itemsPerPage,
-        route,
+        route: props?.route || route || null,
         search,
         nextVisit,
         status,
         list,
-        competence,
+        competence: props.competence,
         user,
         neighborhood,
         department,
+        searchStartDate,
+        searchEndDate,
       });
       //aqui haces con el resultado lo que necesites
 
@@ -77,23 +80,19 @@ const useCompanies = (id = null) => {
     } finally {
       setLoading(false);
     }
-  };
-  //que permite actualizar las lista de empresa cada vez que se modifica el paginado, o se elimina una empresa
-  useEffect(() => {
-    getAllCompanies();
   }, [
     page,
     itemsPerPage,
-    modified,
     route,
     search,
     nextVisit,
     status,
-    competence,
     list,
     user,
     department,
     neighborhood,
+    searchStartDate,
+    searchEndDate,
   ]);
 
   return {
@@ -107,7 +106,6 @@ const useCompanies = (id = null) => {
     itemsPerPage,
     search,
     nextVisit,
-    competence,
     status,
     setModified,
     modified,
@@ -116,12 +114,16 @@ const useCompanies = (id = null) => {
     setNeighborhood,
     setNextVisit,
     setStatus,
-    setCompetence,
     setList,
     downloadFile,
     setUser,
     setDepartment,
     user,
+    setSearchStartDate,
+    setSearchEndDate,
+    searchStartDate,
+    searchEndDate,
+    getAllCompanies,
   };
 };
 
