@@ -45,15 +45,30 @@ const ClientsOrdersPage = () => {
         throw new Error("La red respondió incorrectamente");
       }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      const buffer = await response.arrayBuffer();
+
+      // Forzar tipo PDF
+      const blob = new Blob([buffer], { type: "application/pdf" });
+      const fileURL = window.URL.createObjectURL(blob);
+
+      // 1. Abrir correctamente en nueva pestaña
+      const newTab = window.open();
+      if (newTab) {
+        newTab.location.href = fileURL;
+      }
+
+      // 2. Forzar descarga real
       const a = document.createElement("a");
-      a.href = url;
+      a.href = fileURL;
       a.download = `order_${id}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
-      window.URL.revokeObjectURL(url);
+
+      // 3. Liberar memoria después
+      setTimeout(() => {
+        window.URL.revokeObjectURL(fileURL);
+      }, 10000);
     } catch (error) {
       console.error("Falló al descargar el archivo:", error);
     }
