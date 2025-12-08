@@ -341,19 +341,11 @@ const UsersPage = () => {
                 >
                   Tipo:
                 </label>
-                <Select
-                  size="small"
-                  placeholder="Seleccionar tipo"
-                  className={`rounded-lg border ${errors.type ? "border-red_e text-red_e" : ""} `}
+                <Input
+                  type="text"
+                  placeholder="Escribir tipo"
                   {...register("type")}
-                  onChange={(e) =>
-                    handleSelectionChange(e.target.value, "type")
-                  }
-                >
-                  {TYPE_PRODUCTS.map((tipo) => (
-                    <SelectItem key={tipo}>{tipo}</SelectItem>
-                  ))}
-                </Select>
+                />
                 <p className="mt-1 font-roboto text-xs text-red_e">
                   {errors.type ? errors.type.message : ""}
                 </p>
