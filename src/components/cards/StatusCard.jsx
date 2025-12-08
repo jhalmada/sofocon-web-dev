@@ -34,7 +34,23 @@ const StatusCard = ({
     changeState();
   };
   useEffect(() => {
-    const subtotal = productArray.reduce((acc, item) => {
+    let newSubTotal = 0;
+    productArray?.forEach((order) => {
+      const price = order.fixedPrice || 0;
+      const amount = order.amount || 1;
+      const productDiscount = (price * (order.discountPercent || 0)) / 100;
+      const discountedPrice = price - productDiscount;
+
+      newSubTotal += discountedPrice * amount;
+    });
+
+    const newIva = newSubTotal * 0.22;
+    const discountAmount = (newSubTotal + newIva) * (discountTotal / 100);
+    const newTotal = newSubTotal + newIva - discountAmount;
+
+    setTotal(newTotal);
+
+    /*  const subtotal = productArray.reduce((acc, item) => {
       const itemQuantity = item.amount || 1;
       const itemPrice = item.fixedPrice;
       const discountPercentage = item.amount ? item.amount / 100 : 0;
@@ -45,7 +61,7 @@ const StatusCard = ({
 
     setTotal(
       subtotal ? subtotal * 1.22 - subtotal * 1.22 * (discountTotal / 100) : 0,
-    );
+    ); */
   });
 
   return (
@@ -99,7 +115,7 @@ const StatusCard = ({
           </ul>
         </div>
         <div className="flex flex-col space-y-2 px-2 text-xxs font-semibold leading-[.75rem] text-black_b 2xl:text-md">
-          <span>{"Total: $" + total}</span>
+          <span>{"Total: $" + total.toFixed(2)}</span>
           <span>{"Forma de pago: " + paymentType}</span>
         </div>
         <div className="space-y-2 px-2">

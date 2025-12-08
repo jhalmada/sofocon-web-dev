@@ -73,13 +73,22 @@ const AddRoutePage = () => {
   };
 
   const [msjError, setMsjError] = useState("");
-  const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
+  const {
+    companiesResponse,
+    setSearch: setSearchCompany,
+    getAllCompanies: getAllCompanies1,
+  } = useCompanies();
   const { postAddSellersRoutes } = AddSellersRoutes();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
     useState(false);
   const { route } = useParams();
-  const { companiesResponse: CompanieResult, setUser, user } = useCompanies({});
+  const {
+    companiesResponse: CompanieResult,
+    setUser,
+    user,
+    getAllCompanies: getAllCompanies2,
+  } = useCompanies({});
 
   const handleSellerCreation = async (sellerData) => {
     try {
@@ -150,6 +159,13 @@ const AddRoutePage = () => {
   };
 
   const [checkSelected, setCheckSelected] = useState("manual");
+
+  useEffect(() => {
+    getAllCompanies1();
+  }, [getAllCompanies1]);
+  useEffect(() => {
+    getAllCompanies2();
+  }, [getAllCompanies2]);
   useEffect(() => {
     getAllCompanies();
   }, [getAllCompanies]);
