@@ -4,7 +4,7 @@ import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import arrowRigthIcon from "../assets/icons/arrow-right.svg";
 import { Controller, useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AutoCompleteArray from "../components/autocomplete/AutoCompleteArray";
 import ReusableModal from "../components/modals/ReusableModal";
 import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
@@ -12,6 +12,7 @@ import { Checkbox } from "@nextui-org/react";
 import useGetProducts from "../hooks/products/useGetProducts";
 import useCompanies from "../hooks/companies/useCompanies";
 import useAddPriceList from "../hooks/priceList/useAddPriceList";
+import { use } from "react";
 
 const AddPriceListPage = () => {
   //estados
@@ -23,7 +24,11 @@ const AddPriceListPage = () => {
 
   //Hooks
   const { productsResponse, setSearch } = useGetProducts();
-  const { companiesResponse, setSearch: setSearchCompany } = useCompanies();
+  const {
+    companiesResponse,
+    setSearch: setSearchCompany,
+    getAllCompanies,
+  } = useCompanies({});
   const navigate = useNavigate();
   const {
     register,
@@ -70,6 +75,10 @@ const AddPriceListPage = () => {
     setSaveConfirmationModalOpen(false);
     navigate("..");
   };
+
+  useEffect(() => {
+    getAllCompanies();
+  }, [getAllCompanies]);
 
   return (
     <div className="flex min-h-[calc(100vh-4.375rem)] flex-col justify-between bg-gray">
