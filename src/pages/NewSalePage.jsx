@@ -130,13 +130,14 @@ const NewSalePage = () => {
         rut,
         user,
         productInOrder: productInOrder.map((product) => {
-          console.log(product);
+          console.log(product.itemsRemoval);
           return {
             ...product,
             isRecharge: product.isRecharge === "true" ? true : false,
             itemsRemoval:
               product.isRecharge === "true"
                 ? product.itemsRemoval.map((item) => {
+                    console.log(item.lastDate);
                     return {
                       ...item,
                       lastDate: (item.lastDate = new Date(
@@ -176,6 +177,7 @@ const NewSalePage = () => {
   };
 
   const onSubmit = (data) => {
+    console.log("onsubmit", data);
     setOrderData({ ...data, delivered: deliveredValue });
     setIsConfirmationModalOpen(true);
   };
@@ -725,10 +727,33 @@ const NewSalePage = () => {
                       </div>
                     </div>
                   ))}
-                  {autocompleteResults.map((item, index) => {
-                    return (
-                      item.isToRecharge === "true" &&
-                      Array.from({ length: quantity[item.id] || 1 }).map(
+                  {/*
+  Suposiciones:
+  - tienes productInOrder en el scope (array con objetos que contienen product.id)
+  - quantity es un objeto tipo { [productId]: number | string }
+*/}
+
+                  {autocompleteResults
+                    // 1) filtrar primero para no mezclar booleans con elementos
+                    .filter(
+                      (item) =>
+                        (item.isRecharge ?? item.isToRecharge) === "true",
+                    )
+                    // 2) flatMap para devolver 0..N elementos por item de forma limpia
+                    .flatMap((item, autoIndex) => {
+                      // buscar el índice real en productInOrder si existe (mejor para register paths)
+
+                      // si no lo encuentra, usa el índice del autocomplete como fallback
+                      const indexToUse = autoIndex;
+
+                      // cantidad como número (fallback a item.amount o 1)
+                      const count = Math.max(
+                        1,
+                        Number(quantity?.[item.id] ?? item.amount ?? 1),
+                      );
+
+                      // generar los elementos
+                      return Array.from({ length: count }).map(
                         (_, indexRemoval) => (
                           <div
                             key={`recharged-${item.id}-${indexRemoval}`}
@@ -740,28 +765,30 @@ const NewSalePage = () => {
                                 {item.name}
                               </span>
                             </p>
+
                             <div className="flex space-x-2">
                               <Input
                                 label={"Código de barras"}
                                 placeholder={"..."}
                                 bg="bg-white"
                                 {...register(
-                                  `productInOrder[${index}].itemsRemoval[${indexRemoval}].barCode`,
-                                  {
-                                    required: "Este campo es obligatorio",
-                                  },
+                                  `productInOrder[${indexToUse}].itemsRemoval[${indexRemoval}].barCode`,
+                                  { required: "Este campo es obligatorio" },
                                 )}
                                 msjError={
-                                  errors?.productInOrder?.[index]
+                                  errors?.productInOrder?.[indexToUse]
                                     ?.itemsRemoval?.[indexRemoval]?.barCode
                                     ?.message || ""
                                 }
                               />
+
                               <span className="flex items-center">
                                 <div
                                   className="mt-2 flex h-[2.5rem] w-[2.5rem] cursor-pointer items-center justify-center rounded-full bg-blue_b text-white shadow-blur"
                                   onClick={() => {
-                                    setIndexBarCode(`${index}-${indexRemoval}`);
+                                    setIndexBarCode(
+                                      `${indexToUse}-${indexRemoval}`,
+                                    );
                                     setOpenScannerModal(true);
                                   }}
                                 >
@@ -773,40 +800,39 @@ const NewSalePage = () => {
                                 </div>
                               </span>
                             </div>
+
                             <div className="flex space-x-2">
                               <Input
                                 label={"Matrícula"}
                                 placeholder={"X234234"}
                                 bg="bg-white"
                                 {...register(
-                                  `productInOrder[${index}].itemsRemoval[${indexRemoval}].enrollment`,
-                                  {
-                                    required: "Este campo es obligatorio",
-                                  },
+                                  `productInOrder[${indexToUse}].itemsRemoval[${indexRemoval}].enrollment`,
+                                  { required: "Este campo es obligatorio" },
                                 )}
                                 msjError={
-                                  errors?.productInOrder?.[index]
+                                  errors?.productInOrder?.[indexToUse]
                                     ?.itemsRemoval?.[indexRemoval]?.enrollment
                                     ?.message || ""
                                 }
                               />
+
                               <Input
                                 label={"N° UNIT de fábrica"}
-                                placeholder={"123455"}
+                                placeholder={`${indexRemoval}`}
                                 bg="bg-white"
                                 {...register(
-                                  `productInOrder[${index}].itemsRemoval[${index}].fabricUNIT`,
-                                  {
-                                    required: "Este campo es obligatorio",
-                                  },
+                                  `productInOrder[${indexToUse}].itemsRemoval[${indexRemoval}].fabricUNIT`,
+                                  { required: "Este campo es obligatorio" },
                                 )}
                                 msjError={
-                                  errors?.productInOrder?.[index]
+                                  errors?.productInOrder?.[indexToUse]
                                     ?.itemsRemoval?.[indexRemoval]?.fabricUNIT
                                     ?.message || ""
                                 }
                               />
                             </div>
+
                             <div className="flex w-full space-x-2">
                               <div className="w-full">
                                 <span className="mb-1 text-sm font-light leading-[1rem] text-black_b">
@@ -817,21 +843,20 @@ const NewSalePage = () => {
                                   forward={false}
                                   control={control}
                                   errors={errors}
-                                  name={`productInOrder[${index}].itemsRemoval[${indexRemoval}].lastDate`}
+                                  name={`productInOrder[${indexToUse}].itemsRemoval[${indexRemoval}].lastDate`}
                                 />
                               </div>
+
                               <Input
                                 label={"N° UNIT actual"}
                                 placeholder={"123455"}
                                 bg="bg-white"
                                 {...register(
-                                  `productInOrder[${index}].itemsRemoval[${indexRemoval}].numberUNIT`,
-                                  {
-                                    required: "Este campo es obligatorio",
-                                  },
+                                  `productInOrder[${indexToUse}].itemsRemoval[${indexRemoval}].numberUNIT`,
+                                  { required: "Este campo es obligatorio" },
                                 )}
                                 msjError={
-                                  errors?.productInOrder?.[index]
+                                  errors?.productInOrder?.[indexToUse]
                                     ?.itemsRemoval?.[indexRemoval]?.numberUNIT
                                     ?.message || ""
                                 }
@@ -839,9 +864,8 @@ const NewSalePage = () => {
                             </div>
                           </div>
                         ),
-                      )
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               )}
             </div>
