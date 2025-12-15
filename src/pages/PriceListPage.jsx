@@ -80,15 +80,11 @@ const PriceListPage = ({
       name,
       isDirect,
     };
-    const response = await changedPriceList(
-      PriceData,
-      priceListId,
-      setModified,
-    );
-    if (response) {
-      setEditModal(false);
-      setConfirmModal(true);
-    }
+    await changedPriceList(PriceData, priceListId, setModified);
+
+    getAllPriceList(page);
+    setEditModal(false);
+    setConfirmModal(true);
   };
 
   const cancelEdit = () => {
