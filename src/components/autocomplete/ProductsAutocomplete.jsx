@@ -44,10 +44,10 @@ const ProductsAutocomplete = ({
   };
 
   const handleAutocompleteChange = (e) => {
-    const filteredResults = array.filter((item) =>
+    /* const filteredResults = array.filter((item) =>
       item.name.toLowerCase().includes(e.toLowerCase()),
-    );
-    setAutocompleteResults(filteredResults);
+    ); */
+    // setAutocompleteResults(filteredResults);
     onChange(e);
   };
 
