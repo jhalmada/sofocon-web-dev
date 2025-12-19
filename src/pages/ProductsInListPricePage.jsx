@@ -15,6 +15,7 @@ import SaveImg from "../assets/img/save.png";
 import deleteImg from "../assets/img/deleted.png";
 import { isMatch } from "lodash";
 import SearchInput from "../components/inputs/SearchInput";
+import useDeleteProductInPriceList from "../hooks/priceList/useDeleteProductInPriceList";
 const ProductsInListPricePage = ({
   arraySeller,
   setItemsPerPage,
@@ -39,6 +40,7 @@ const ProductsInListPricePage = ({
 
   const { productsResponse, setSearch: setSearchProduct } = useGetProducts();
   const { changedPriceList } = usePutPriceList();
+  const { deleteProductInPriceList } = useDeleteProductInPriceList();
   const [modalValidationProduct, setModalValidationProduct] = useState(false);
   const [modalConfirmation, setModalConfirmation] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -67,14 +69,7 @@ const ProductsInListPricePage = ({
 
   const onSubmit = async (data) => {
     const { products } = data;
-
-    const newArray2 = arraySeller.map((product) => ({
-      id: product.id,
-      name: product.name,
-      value: product.list[0].price,
-    }));
-
-    const newArray = [...newArray2, ...products];
+    const newArray = [...products];
 
     const respuesta = validateInput(products);
     if (!respuesta) {
@@ -102,26 +97,9 @@ const ProductsInListPricePage = ({
   };
 
   const handleConfirmDelete = () => {
-    const newProducts = transformData(arraySeller).filter(
-      (element) => element.id !== productId,
-    );
-    const PriceData = {
-      product: newProducts.map((product) => ({
-        product: product.id,
-        price: product.price,
-      })),
-    };
-    changedPriceList(PriceData, id, setModified);
+    deleteProductInPriceList(productId, setModified);
     setConfirmDeleteModalOpen(false);
     setConfirmDelete(true);
-  };
-
-  const transformData = (array) => {
-    return array.map((item) => ({
-      id: item.id,
-      name: item.name,
-      price: item.list[0].price,
-    }));
   };
 
   const handleEdit = (id) => {
