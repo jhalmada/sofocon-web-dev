@@ -378,47 +378,46 @@ const ClientsOrdersPage = () => {
                       key={index}
                       className="grid w-full grid-cols-5 gap-4 2xl:w-1/2"
                     >
-                      <Input
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        label={"Cód."}
-                        placeholder={item.barCode || "sin datos"}
-                        disabled
-                      />
-                      <Input
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        label={"Matrícula"}
-                        placeholder={item.enrollment || "sin datos"}
-                        disabled
-                      />
-
-                      <Input
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        label={"N° UNIT de fábrica"}
-                        placeholder={item.fabricUNIT || "sin datos"}
-                        disabled
-                      />
-                      <Input
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        label={"N° UNIT actual"}
-                        placeholder={item.newUNIT || "sin datos"}
-                        disabled
-                      />
-                      <Input
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        label={"Fecha última carga"}
-                        placeholder={formatDate(item.lastDate) || "sin datos"}
-                        disabled
-                      />
+                      <div className="w-full">
+                        <span className="text-sm font-semibold text-black_b">
+                          Cód.
+                        </span>
+                        <p className="text-black_b">
+                          {item.barCode || "sin datos"}
+                        </p>
+                      </div>
+                      <div className="w-full">
+                        <span className="text-sm font-semibold text-black_b">
+                          Matrícula
+                        </span>
+                        <p className="text-black_b">
+                          {item.enrollment || "sin datos"}
+                        </p>
+                      </div>
+                      <div className="w-full">
+                        <span className="text-sm font-semibold text-black_b">
+                          N° UNIT de fábrica
+                        </span>
+                        <p className="text-black_b">
+                          {item.fabricUNIT || "sin datos"}
+                        </p>
+                      </div>
+                      <div className="w-full">
+                        <span className="text-sm font-semibold text-black_b">
+                          N° UNIT actual
+                        </span>
+                        <p className="text-black_b">
+                          {item.newUNIT || "sin datos"}
+                        </p>
+                      </div>
+                      <div className="w-full">
+                        <span className="text-sm font-semibold text-black_b">
+                          Fecha última carga
+                        </span>
+                        <p className="text-black_b">
+                          {formatDate(item.lastDate) || "sin datos"}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
