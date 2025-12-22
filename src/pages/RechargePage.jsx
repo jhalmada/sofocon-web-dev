@@ -295,22 +295,18 @@ const RechargePage = () => {
                       className="-mt-6 mb-6 flex items-center space-x-2"
                       key={index}
                     >
-                      <Input
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        label={"Matrícula"}
-                        placeholder={item.enrollment}
-                        disabled
-                      />
-                      <Input
-                        bg="bg-gray"
-                        placeholderColor="placeholder-black_b"
-                        border="none"
-                        label={"Cód."}
-                        placeholder={item.barCode}
-                        disabled
-                      />
+                      <div className="w-full">
+                        <span className="text-sm font-semibold text-black_b">
+                          Matrícula
+                        </span>
+                        <p className="text-black_b">{item.enrollment}</p>
+                      </div>
+                      <div className="w-full">
+                        <span className="text-sm font-semibold text-black_b">
+                          Cód.
+                        </span>
+                        <p className="text-black_b">{item.barCode}</p>
+                      </div>
                       <div className="mt-3 flex items-center space-x-2">
                         <span
                           className={`flex h-[2.3rem] w-[7.5rem] items-center justify-center rounded-lg px-1 ${
