@@ -8,6 +8,8 @@ const PriceListRow = ({
   deleteIconSrc,
   onEditClick,
   onDeleteClick,
+  listPriceIcon,
+  onClientsClick,
   id,
 }) => {
   const navigate = useNavigate();
@@ -36,6 +38,12 @@ const PriceListRow = ({
       </td>
       <td className="py-6">
         <div className="flex justify-center gap-4">
+          <img
+            src={listPriceIcon}
+            alt="list price icon"
+            className="h-5 w-5 cursor-pointer"
+            onClick={onClientsClick}
+          />
           <img
             src={editIconSrc}
             alt="Edit icon"
