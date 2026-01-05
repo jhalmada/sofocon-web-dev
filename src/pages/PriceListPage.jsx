@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import Pagination from "../components/Pagination";
 import PriceListRow from "../components/PriceListRow";
 import editIcon from "../assets/icons/pencil-square.svg";
@@ -11,7 +11,11 @@ import Input from "../components/inputs/Input";
 import { Checkbox } from "@nextui-org/react";
 import usePutPriceList from "../hooks/priceList/usePutPriceList";
 import SaveImg from "../assets/img/save.png";
+import listPriceIcon from "../assets/icons/listPriceIcon.svg";
+import NextAutoComplete from "../components/autocomplete/NextAutocomplete";
+
 import { isMatch } from "lodash";
+import useCompanies from "../hooks/companies/useCompanies";
 
 const PriceListPage = ({
   priceListResponse,
@@ -25,6 +29,7 @@ const PriceListPage = ({
   getAllPriceList,
 }) => {
   const [deletemodal, setDeleteModal] = useState(false);
+  const [clientsModal, setClientsModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [priceListId, setPriceListId] = useState(null);
   const [editModal, setEditModal] = useState(false);
@@ -33,8 +38,15 @@ const PriceListPage = ({
   const [isConfirmCancelModalOpen, setIsConfirmCancelModalOpen] =
     useState(false);
   const [dataEdit, setDataEdit] = useState(null);
-
+  const [isAllCompanies, setIsAllCompanies] = useState(false);
   const {
+    companiesResponse,
+    setSearch: setSearchCompany,
+    getAllCompanies,
+  } = useCompanies({});
+  const {
+    control,
+    setError,
     register,
     handleSubmit,
     setValue,
@@ -74,6 +86,24 @@ const PriceListPage = ({
     setEditModal(true);
   };
 
+  const onOpenClientsModal = (priceListId) => {
+    const priceList = priceListResponse.find(
+      (price) => price.id === priceListId,
+    );
+    console.log(priceList);
+    if (priceList) {
+      setDataEdit(priceList);
+
+      setValue("name", priceList.name);
+      setValue("company", priceList.client);
+      setIsAllCompanies(priceList.totalClients <= 0 ? true : false);
+    }
+
+    getAllCompanies();
+    setPriceListId(priceListId);
+    setClientsModal(true);
+  };
+
   const onSubmit = async (data) => {
     const { name } = data;
     const PriceData = {
@@ -99,6 +129,18 @@ const PriceListPage = ({
     }
   };
 
+  const onSubmitClients = async (data) => {
+    console.log(data);
+    const { company } = data;
+    await changedPriceList(
+      { client: isAllCompanies ? null : company },
+      priceListId,
+      setModified,
+    );
+    getAllPriceList(page);
+    setClientsModal(false);
+    setConfirmModal(true);
+  };
   useEffect(() => {
     getAllPriceList(0);
   }, [getAllPriceList]);
@@ -132,7 +174,9 @@ const PriceListPage = ({
                 totalProducts={price.totalProducts}
                 editIconSrc={editIcon}
                 deleteIconSrc={deleteIcon}
+                listPriceIcon={listPriceIcon}
                 id={price.id}
+                onClientsClick={() => onOpenClientsModal(price.id)}
                 onEditClick={() => {
                   handleEdit(price.id);
                 }}
@@ -152,6 +196,54 @@ const PriceListPage = ({
           total={total}
         />
       </div>
+      <ReusableModal
+        isOpen={clientsModal}
+        onClose={() => setClientsModal(false)}
+        title="Agregar o quitar empresas"
+        onSubmit={handleSubmit(onSubmitClients)}
+        buttons={["cancel", "save"]}
+        handleCancelClick={() => setClientsModal(false)}
+      >
+        <form onSubmit={handleSubmit(onSubmitClients)}>
+          <Controller
+            name="company"
+            control={control}
+            rules={{
+              required: isAllCompanies
+                ? false
+                : "Debe seleccionar una empresa o todas",
+            }}
+            render={({ field }) => (
+              <NextAutoComplete
+                array={companiesResponse.map((company) => ({
+                  id: company.id,
+                  name: company.name,
+                }))}
+                label={"Empresas"}
+                isDisabled={isAllCompanies}
+                setValue={setValue}
+                name={field.name}
+                label2={"Empresas"}
+                control={field}
+                array2={watch("company").map((company) => ({
+                  id: company.id,
+                  name: company.name,
+                }))}
+                onChange={setSearchCompany}
+                setErrors={setError}
+                msjError={errors.company?.message}
+              />
+            )}
+          />
+
+          <Checkbox
+            onChange={() => setIsAllCompanies(!isAllCompanies)}
+            defaultSelected={isAllCompanies}
+          >
+            <p className="text-sm">Asignar a todas las empresas existente</p>
+          </Checkbox>
+        </form>
+      </ReusableModal>
       {/** modal par eliminar */}
       <ReusableModal
         isOpen={deletemodal}
@@ -193,7 +285,6 @@ const PriceListPage = ({
             label={"Nombre"}
             placeholder={"Escribir..."}
             {...register("name", {
-              required: "Este campo es obligatorio",
               maxLength: {
                 value: 50,
                 message: "Este campo no debe exceder los 50 caracteres",
