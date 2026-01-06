@@ -109,7 +109,9 @@ const BudgetPage = () => {
           <div className="flex items-center gap-2">
             <Select
               placeholder="Selecciona un año"
-              defaultSelectedKeys={[year.toString()]}
+              defaultSelectedKeys={[
+                year?.toString() || new Date().getFullYear(),
+              ]}
               labelPlacement="outside"
               className="w-52 rounded-lg border"
               onChange={(e) => handleChangeYear(e.target.value)}
