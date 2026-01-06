@@ -16,7 +16,7 @@ const useOrders = () => {
   const [status, setStatus] = useState(null);
   const [entryDate, setEntryDate] = useState(null);
   const [barCode, setBarCode] = useState(null);
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState(null);
   const [month, setMonth] = useState(null);
   const [week, setWeek] = useState(null);
   const [user, setUser] = useState(null);
