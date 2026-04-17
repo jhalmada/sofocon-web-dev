@@ -19,11 +19,14 @@ const StatusCard = ({
   charged, // Function to update total orders count
   changeState,
   discountTotal,
+  isBilled: isBilledProp,
+  billNumber,
 }) => {
   const { changedOrder } = usePutOrders();
 
   const [total, setTotal] = useState(0);
   const [isCharged, setIsCharged] = useState(charged);
+  const [isBilledLocal, setIsBilledLocal] = useState(isBilledProp || false);
 
   const productArray = Array.isArray(productsList) ? productsList : [];
   const displayedProducts = productArray.slice(0, 2);
@@ -33,6 +36,11 @@ const StatusCard = ({
     await changedOrder({ isCharged: status }, id);
     setIsCharged(status);
     changeState();
+  };
+
+  const updateBilledState = async (newValue) => {
+    await changedOrder({ isBilled: newValue }, id);
+    setIsBilledLocal(newValue);
   };
   useEffect(() => {
     let newSubTotal = 0;
@@ -66,7 +74,10 @@ const StatusCard = ({
   });
 
   return (
-    <div className="mt-2 flex h-auto min-h-[12rem] flex-col rounded-lg pb-2 shadow-br 2xl:min-h-[14rem]">
+    <div
+      className="mt-2 flex h-auto min-h-[12rem] flex-col rounded-lg pb-2 shadow-br 2xl:min-h-[14rem]"
+      style={{ backgroundColor: isBilledLocal ? '#dcfce7' : '#fee2e2' }}
+    >
       <div
         className={`flex ${bg} relative justify-center space-x-1 rounded-tl-lg rounded-tr-lg p-2`}
       >
@@ -139,6 +150,25 @@ const StatusCard = ({
             />
             {sellerName}
           </div>
+          <div className="flex items-center justify-between pt-1">
+            <Tooltip
+              content={isBilledLocal ? "Orden facturada" : "Marcar como facturado"}
+            >
+              <Checkbox
+                size="sm"
+                isSelected={isBilledLocal}
+                checked={isBilledLocal}
+                onChange={() => {
+                  updateBilledState(!isBilledLocal);
+                }}
+              >
+                <span className="text-xs">Facturado</span>
+              </Checkbox>
+            </Tooltip>
+          </div>
+          {billNumber && (
+            <p className="text-xs text-gray-500">N° Factura: {billNumber}</p>
+          )}
         </div>
       </div>
     </div>

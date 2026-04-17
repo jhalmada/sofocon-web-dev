@@ -4,6 +4,7 @@ import Input from "../components/inputs/Input";
 import Button from "../components/buttons/Button";
 import { useEffect, useState } from "react";
 import { Select, SelectItem } from "@nextui-org/select";
+import { Checkbox } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import DownloadIcon from "../assets/icons/download-white.svg";
 import useGetOneOrder from "../hooks/orders/useGetOneOrder";
@@ -30,6 +31,8 @@ const ClientsOrdersPage = () => {
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tempStatus, setTempStatus] = useState(null);
+  const [isBilled, setIsBilled] = useState(false);
+  const [billNumber, setBillNumber] = useState("");
 
   const accessToken = localStorage.getItem(SOFOCON_JWT_TOKEN);
   const handleDownloadClick = async () => {
@@ -117,6 +120,8 @@ const ClientsOrdersPage = () => {
   const oneOrder = async (id) => {
     const newdatos = await getOneOrder(id);
     setOrderDetails(newdatos);
+    setIsBilled(newdatos?.isBilled || false);
+    setBillNumber(newdatos?.billNumber || "");
   };
 
   useEffect(() => {
@@ -195,6 +200,21 @@ const ClientsOrdersPage = () => {
     updateOrderState(tempStatus);
 
     setIsModalOpen(false);
+  };
+
+  const handleBilledChange = async (newValue) => {
+    setIsBilled(newValue);
+    await changedOrder({ isBilled: newValue, billNumber: newValue ? billNumber : "" }, orderDetails.id);
+  };
+
+  const handleBillNumberChange = async (value) => {
+    setBillNumber(value);
+  };
+
+  const handleBillNumberBlur = async () => {
+    if (isBilled) {
+      await changedOrder({ billNumber }, orderDetails.id);
+    }
   };
 
   const handleClose = () => {
@@ -482,6 +502,28 @@ const ClientsOrdersPage = () => {
                 placeholderColor="placeholder-black_b"
                 disabled
               />
+            </div>
+
+            <div className="mt-4 flex w-1/2 items-center gap-4">
+              <Checkbox
+                isSelected={isBilled}
+                onChange={() => handleBilledChange(!isBilled)}
+              >
+                <span className="text-sm font-medium">Facturado</span>
+              </Checkbox>
+              <div className="flex-1">
+                <Input
+                  bg={isBilled ? "bg-white" : "bg-gray"}
+                  border={isBilled ? "border" : "none"}
+                  label={"N° Factura"}
+                  placeholder="Ingrese N° de factura"
+                  placeholderColor="placeholder-black_b"
+                  disabled={!isBilled}
+                  value={billNumber}
+                  onChange={(e) => handleBillNumberChange(e.target.value)}
+                  onBlur={handleBillNumberBlur}
+                />
+              </div>
             </div>
           </div>
           <div className="mt-5 flex w-full justify-end">

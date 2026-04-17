@@ -7,7 +7,7 @@ import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 
 const StatusPanelPage = () => {
   const [modificador, setModificador] = useState(false);
-  const { ordersResponse, ordersAmount, getAllOrders, setUser, isCharged, setIsCharged } = useOrders();
+  const { ordersResponse, ordersAmount, getAllOrders, setUser, isBilled, setIsBilled } = useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
 
   const {
@@ -116,9 +116,9 @@ const StatusPanelPage = () => {
           <div className="flex items-center gap-4">
             <select
               className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-              value={isCharged}
+              value={isBilled}
               onChange={(e) => {
-                setIsCharged(e.target.value);
+                setIsBilled(e.target.value);
                 setModificador((prev) => !prev);
               }}
             >
@@ -169,6 +169,8 @@ const StatusPanelPage = () => {
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
                     charged={order?.isCharged}
+                    isBilled={order?.isBilled}
+                    billNumber={order?.billNumber}
                   />
                 ))
             )}
@@ -206,6 +208,8 @@ const StatusPanelPage = () => {
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
                     charged={order?.isCharged}
+                    isBilled={order?.isBilled}
+                    billNumber={order?.billNumber}
                   />
                 ))
             )}
@@ -242,6 +246,8 @@ const StatusPanelPage = () => {
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
                     charged={order?.isCharged}
+                    isBilled={order?.isBilled}
+                    billNumber={order?.billNumber}
                   />
                 ))
             )}
@@ -276,6 +282,8 @@ const StatusPanelPage = () => {
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
                     charged={order?.isCharged}
+                    isBilled={order?.isBilled}
+                    billNumber={order?.billNumber}
                   />
                 ))
             )}
