@@ -171,6 +171,7 @@ const StatusPanelPage = () => {
                     charged={order?.isCharged}
                     isBilled={order?.isBilled}
                     billNumber={order?.billNumber}
+                    isDirect={order?.isDirect}
                   />
                 ))
             )}
@@ -210,6 +211,7 @@ const StatusPanelPage = () => {
                     charged={order?.isCharged}
                     isBilled={order?.isBilled}
                     billNumber={order?.billNumber}
+                    isDirect={order?.isDirect}
                   />
                 ))
             )}
@@ -248,6 +250,7 @@ const StatusPanelPage = () => {
                     charged={order?.isCharged}
                     isBilled={order?.isBilled}
                     billNumber={order?.billNumber}
+                    isDirect={order?.isDirect}
                   />
                 ))
             )}
@@ -284,6 +287,7 @@ const StatusPanelPage = () => {
                     charged={order?.isCharged}
                     isBilled={order?.isBilled}
                     billNumber={order?.billNumber}
+                    isDirect={order?.isDirect}
                   />
                 ))
             )}
@@ -321,6 +325,9 @@ const StatusPanelPage = () => {
                     discountTotal={order?.discountPercent || 0}
                     paymentType={translatePaymentStatus(order?.paymentType)}
                     charged={order?.isCharged}
+                    isBilled={order?.isBilled}
+                    billNumber={order?.billNumber}
+                    isDirect={order?.isDirect}
                     modified={modificador}
                     changeState={() =>
                       getAllOrders({ itemsPerPage: 100, inBoard: true })

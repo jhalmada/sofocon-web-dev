@@ -3,6 +3,7 @@ import calendarIcon from "../../assets/icons/calendar.svg";
 import briefCaseFillIcon from "../../assets/icons/briefcase-fill-black.svg";
 import { Checkbox, Tooltip } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import usePutOrders from "../../hooks/orders/usePutOrders";
 
 const StatusCard = ({
@@ -21,8 +22,10 @@ const StatusCard = ({
   discountTotal,
   isBilled: isBilledProp,
   billNumber,
+  isDirect,
 }) => {
   const { changedOrder } = usePutOrders();
+  const navigate = useNavigate();
 
   const [total, setTotal] = useState(0);
   const [isCharged, setIsCharged] = useState(charged);
@@ -41,6 +44,15 @@ const StatusCard = ({
   const updateBilledState = async (newValue) => {
     await changedOrder({ isBilled: newValue }, id);
     setIsBilledLocal(newValue);
+  };
+
+  const handleCardClick = (e) => {
+    // No navegar si se clickeó un checkbox o su label
+    if (e.target.closest('label') || e.target.closest('[role="checkbox"]') || e.target.type === 'checkbox') return;
+    const route = isDirect
+      ? `/inicio/ordenes/ordenes-directas/${id}`
+      : `/inicio/ordenes/ordenes-clientes/${id}`;
+    navigate(route);
   };
   useEffect(() => {
     let newSubTotal = 0;
@@ -75,8 +87,9 @@ const StatusCard = ({
 
   return (
     <div
-      className="mt-2 flex h-auto min-h-[12rem] flex-col rounded-lg pb-2 shadow-br 2xl:min-h-[14rem]"
+      className="mt-2 flex h-auto min-h-[12rem] cursor-pointer flex-col rounded-lg pb-2 shadow-br transition-opacity hover:opacity-80 2xl:min-h-[14rem]"
       style={{ backgroundColor: isBilledLocal ? '#dcfce7' : '#fee2e2' }}
+      onClick={handleCardClick}
     >
       <div
         className={`flex ${bg} relative justify-center space-x-1 rounded-tl-lg rounded-tr-lg p-2`}
