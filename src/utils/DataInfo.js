@@ -16,6 +16,8 @@ import peopleActiveIcon from "../assets/icons/people-fill.svg";
 import shopActiveIcon from "../assets/icons/shop-window-fill.svg";
 import clipboardChek from "../assets/icons/clipboard-check.svg";
 import clipboardChekActive from "../assets/icons/clipboard-checkActive.svg";
+import briefcaseIcon from "../assets/icons/briefcase.svg";
+import briefcaseActiveIcon from "../assets/icons/briefcase-fill.svg";
 
 const users = [
   {
@@ -155,6 +157,13 @@ const menuItems = [
     icon: toolsIcon,
     activeIcon: toolsActiveIcon,
     permisses: ["SECTION_WORKSHOP", "USER_SUPER_ADMIN"],
+  },
+  {
+    name: "Liquidaciones",
+    path: "/inicio/liquidaciones",
+    icon: briefcaseIcon,
+    activeIcon: briefcaseActiveIcon,
+    permisses: ["SECTION_ADMINISTRATION", "USER_SUPER_ADMIN"],
   },
 ];
 

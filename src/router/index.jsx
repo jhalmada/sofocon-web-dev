@@ -83,6 +83,7 @@ import ListPriceDetailsPage from "../pages/ListPriceDetailsPage";
 import MetricsLayout from "../layouts/Metrics";
 import MetricsDetails from "../pages/MetricsDetails";
 import AddRouteLayout from "../layouts/AddRouteLayout";
+import SettlementsPage from "../pages/SettlementsPage";
 
 export const router = createBrowserRouter([
   {
@@ -314,6 +315,10 @@ export const router = createBrowserRouter([
             element: <DepositPage />,
           },
         ],
+      },
+      {
+        path: "liquidaciones",
+        element: <SettlementsPage />,
       },
     ],
   },
