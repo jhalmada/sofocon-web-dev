@@ -20,6 +20,7 @@ const useOrders = () => {
   const [month, setMonth] = useState(null);
   const [week, setWeek] = useState(null);
   const [user, setUser] = useState(null);
+  const [isCharged, setIsCharged] = useState("");
   const [orderType, setOrderType] = useState({
     isPreOrder: false,
     isDirect: false,
@@ -84,6 +85,7 @@ const useOrders = () => {
           week,
           user,
           inBoard,
+          isCharged,
         });
         setOrdersAmount(data.totalAmount);
         setTotalPage(data.pagination.totalPages);
@@ -106,6 +108,7 @@ const useOrders = () => {
       month,
       week,
       user,
+      isCharged,
     ],
   );
 
@@ -136,6 +139,8 @@ const useOrders = () => {
     setMonth,
     setWeek,
     setUser,
+    isCharged,
+    setIsCharged,
     getAllOrders,
     downloadFile,
   };

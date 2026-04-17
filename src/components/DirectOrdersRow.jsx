@@ -19,6 +19,7 @@ const translateState = (state) => {
 
 const DirectOrdersRow = ({
   name,
+  address,
   orderId,
   date,
   seller,
@@ -41,6 +42,13 @@ const DirectOrdersRow = ({
         title={name}
       >
         {name}
+      </td>
+      <td
+        className="max-w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap py-6 text-left"
+        onClick={handleRowClick}
+        title={address || ""}
+      >
+        {address || "-"}
       </td>
 
       <td

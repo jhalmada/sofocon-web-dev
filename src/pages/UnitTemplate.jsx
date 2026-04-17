@@ -28,6 +28,8 @@ const UnitTemplate = () => {
     downloadFile,
   } = useGetUnitOrders();
 
+  const [viewMode, setViewMode] = useState("list"); // "list" | "grid"
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmCancelModalOpen, setConfirmCancelModalOpen] = useState(false);
   const [isSaveConfirmationModalOpen, setSaveConfirmationModalOpen] =
@@ -142,7 +144,29 @@ const UnitTemplate = () => {
           </div>
 
           <div className="flex h-8 w-full items-center justify-end gap-[0.875rem] rounded p-2">
-            <div className="flex space-x-4">
+            <div className="flex items-center space-x-4">
+              <div className="flex overflow-hidden rounded-lg border border-gray">
+                <button
+                  className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                    viewMode === "list"
+                      ? "bg-primary text-white"
+                      : "bg-white text-black_m hover:bg-gray"
+                  }`}
+                  onClick={() => setViewMode("list")}
+                >
+                  Lista
+                </button>
+                <button
+                  className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                    viewMode === "grid"
+                      ? "bg-primary text-white"
+                      : "bg-white text-black_m hover:bg-gray"
+                  }`}
+                  onClick={() => setViewMode("grid")}
+                >
+                  Cuadrícula
+                </button>
+              </div>
               <Button
                 text="Exportar lista"
                 icon={DownloadIcon}
@@ -189,105 +213,210 @@ const UnitTemplate = () => {
                 <SearchInput placeholder="Buscar..." onChange={setSearch} />
               </div>
             </div>
-            <table className="mt-2 w-full">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th className="text-center text-md font-semibold leading-[1.125rem]">
-                    Empresa
-                  </th>
-                  <th></th>
-                  <th></th>
-                  <th className="text-center text-md font-semibold leading-[1.125rem]">
-                    Polvo
-                  </th>
-                  <th></th>
-                  <th></th>
-                  <th className="min-w-[6rem] text-center text-md font-semibold leading-[1.125rem]">
-                    Marca UNIT
-                  </th>
-                </tr>
-                <tr>
-                  <th className="border-b-2 border-gray p-2 text-left text-md font-semibold leading-[1.125rem]">
-                    Fecha
-                  </th>
-                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Nombre
-                  </th>
-                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Dirección
-                  </th>
-                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Tipo
-                  </th>
-                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Mar./Color
-                  </th>
-                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Cap.(kg/l)
-                  </th>
-                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Fabr.
-                  </th>
-                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Actual
-                  </th>
-                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Matrícula
-                  </th>
-                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Ensayo
-                  </th>
-                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Presión (MPa)
-                  </th>
-                  <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Exp. Rem. (%)
-                  </th>
-                  <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
-                    Baja
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {orderUnitResponse.map((order, index) => (
-                  <UnitTemplateRow
-                    key={index}
-                    id={order.id}
-                    entryDate={
-                      formatDate(
-                        order?.productInOrder.order.workShopDateEntry,
-                      ) || "Sin datos"
-                    }
-                    name={
-                      order?.productInOrder.order.client?.name || "Sin datos"
-                    }
-                    direction={
-                      order?.productInOrder.order.client?.address || "Sin datos"
-                    }
-                    type={order?.productInOrder.product?.type || "Sin datos"}
-                    color={order?.color || "Sin datos"}
-                    capacity={
-                      order?.productInOrder.product?.amount || "Sin datos"
-                    }
-                    factory={order.fabricUNIT ? "Si" : "No"}
-                    current={order.numberUNIT || "Sin datos"}
-                    registration={order.enrollment || "Sin datos"}
-                    trial={
-                      order.testDate ? formatDate(order.testDate) : "Sin datos"
-                    }
-                    pressure={order?.pressure || "Sin datos"}
-                    exp={order?.expansion || "Sin datos"}
-                    discontinued={
-                      order?.status === "DISABLED" ||
-                      order?.status === "Inhabilitado"
-                        ? "Si"
-                        : "No"
-                    }
-                  />
-                ))}
-              </tbody>
-            </table>
+            {viewMode === "list" ? (
+              <table className="mt-2 w-full">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th className="text-center text-md font-semibold leading-[1.125rem]">
+                      Empresa
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th className="text-center text-md font-semibold leading-[1.125rem]">
+                      Polvo
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th className="min-w-[6rem] text-center text-md font-semibold leading-[1.125rem]">
+                      Marca UNIT
+                    </th>
+                  </tr>
+                  <tr>
+                    <th className="border-b-2 border-gray p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Fecha
+                    </th>
+                    <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Nombre
+                    </th>
+                    <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Dirección
+                    </th>
+                    <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Tipo
+                    </th>
+                    <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Mar./Color
+                    </th>
+                    <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Cap.(kg/l)
+                    </th>
+                    <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Fabr.
+                    </th>
+                    <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Actual
+                    </th>
+                    <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Matrícula
+                    </th>
+                    <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Ensayo
+                    </th>
+                    <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Presión (MPa)
+                    </th>
+                    <th className="border-b-2 border-gray bg-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Exp. Rem. (%)
+                    </th>
+                    <th className="border-b-2 border-gray p-2 text-center text-md font-semibold leading-[1.125rem]">
+                      Baja
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orderUnitResponse.map((order, index) => (
+                    <UnitTemplateRow
+                      key={index}
+                      id={order.id}
+                      entryDate={
+                        formatDate(
+                          order?.productInOrder.order.workShopDateEntry,
+                        ) || "Sin datos"
+                      }
+                      name={
+                        order?.productInOrder.order.client?.name || "Sin datos"
+                      }
+                      direction={
+                        order?.productInOrder.order.client?.address ||
+                        "Sin datos"
+                      }
+                      type={
+                        order?.productInOrder.product?.type || "Sin datos"
+                      }
+                      color={order?.color || "Sin datos"}
+                      capacity={
+                        order?.productInOrder.product?.amount || "Sin datos"
+                      }
+                      factory={order.fabricUNIT ? "Si" : "No"}
+                      current={order.numberUNIT || "Sin datos"}
+                      registration={order.enrollment || "Sin datos"}
+                      trial={
+                        order.testDate
+                          ? formatDate(order.testDate)
+                          : "Sin datos"
+                      }
+                      pressure={order?.pressure || "Sin datos"}
+                      exp={order?.expansion || "Sin datos"}
+                      discontinued={
+                        order?.status === "DISABLED" ||
+                        order?.status === "Inhabilitado"
+                          ? "Si"
+                          : "No"
+                      }
+                    />
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="mt-2 overflow-x-auto rounded-lg border border-gray">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gray">
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        Fecha
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        Empresa
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        Dirección
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        Tipo
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        Mar./Color
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        Cap.(Kg/l)
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        N. Fábrica
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        N. Actual
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        Matrícula
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        Ensayo
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        Presión (MPa)
+                      </th>
+                      <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-nowrap">
+                        Exp. Rem (%)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orderUnitResponse.map((order, index) => (
+                      <tr
+                        key={index}
+                        className={`${
+                          index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                        } hover:bg-blue-50`}
+                      >
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm whitespace-nowrap">
+                          {formatDate(
+                            order?.productInOrder.order.workShopDateEntry,
+                          ) || "Sin datos"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm">
+                          {order?.productInOrder.order.client?.name ||
+                            "Sin datos"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm">
+                          {order?.productInOrder.order.client?.address ||
+                            "Sin datos"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm whitespace-nowrap">
+                          {order?.productInOrder.product?.type || "Sin datos"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm whitespace-nowrap">
+                          {order?.color || "Sin datos"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm whitespace-nowrap">
+                          {order?.productInOrder.product?.amount || "Sin datos"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm whitespace-nowrap">
+                          {order.fabricUNIT ? "Si" : "No"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm whitespace-nowrap">
+                          {order.numberUNIT || "Sin datos"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm whitespace-nowrap">
+                          {order.enrollment || "Sin datos"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm whitespace-nowrap">
+                          {order.testDate
+                            ? formatDate(order.testDate)
+                            : "Sin datos"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm whitespace-nowrap">
+                          {order?.pressure || "Sin datos"}
+                        </td>
+                        <td className="select-text cursor-text border border-gray-300 px-3 py-2 text-sm whitespace-nowrap">
+                          {order?.expansion || "Sin datos"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
           <div className="flex justify-center p-6">
             <Pagination

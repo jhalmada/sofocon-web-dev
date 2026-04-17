@@ -167,6 +167,9 @@ const DirectOrdersPage = () => {
                     <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
                       Empresa
                     </th>
+                    <th className="p-2 text-left text-md font-semibold leading-[1.125rem]">
+                      Direccion
+                    </th>
                     <th className="p-2 text-center text-md font-semibold leading-[1.125rem]">
                       ID de orden
                     </th>
@@ -195,7 +198,7 @@ const DirectOrdersPage = () => {
                   {ordersResponse.length === 0 ? (
                     <>
                       <tr>
-                        <td colSpan="6" className="p-4 text-center">
+                        <td colSpan="7" className="p-4 text-center">
                           <p className="text-md font-semibold leading-[1.3rem] text-black_l">
                             Ningún elemento coincide con tu búsqueda, inténtalo
                             de nuevo. <br /> Puedes encontrar a las órdenes
@@ -215,6 +218,7 @@ const DirectOrdersPage = () => {
                         key={index}
                         id={order.id}
                         name={order?.client?.name || "Sin nombre"}
+                        address={order?.client?.address || ""}
                         orderId={order.orderId}
                         date={
                           order.sellDate

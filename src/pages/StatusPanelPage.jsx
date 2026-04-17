@@ -7,7 +7,7 @@ import CompleteSearchInput from "../components/Searchs/CompleteSearchInput";
 
 const StatusPanelPage = () => {
   const [modificador, setModificador] = useState(false);
-  const { ordersResponse, ordersAmount, getAllOrders, setUser } = useOrders();
+  const { ordersResponse, ordersAmount, getAllOrders, setUser, isCharged, setIsCharged } = useOrders();
   const { userSellerResponse, setSearch: setSearchSellers } = useUsersSellers();
 
   const {
@@ -113,7 +113,21 @@ const StatusPanelPage = () => {
               <p className="text-xs text-red_e">{errors.user.message}</p>
             )}
           </div>
-          <p className="mr-8">Total: ${ordersAmount.toFixed(2)}</p>
+          <div className="flex items-center gap-4">
+            <select
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              value={isCharged}
+              onChange={(e) => {
+                setIsCharged(e.target.value);
+                setModificador((prev) => !prev);
+              }}
+            >
+              <option value="">Todos</option>
+              <option value="true">Facturado</option>
+              <option value="false">No facturado</option>
+            </select>
+            <p className="mr-8">Total: ${ordersAmount.toFixed(2)}</p>
+          </div>
         </div>
 
         <div className="mt-4 grid grid-cols-5 text-center font-semibold">
@@ -145,6 +159,7 @@ const StatusPanelPage = () => {
                     id={order.id}
                     key={index}
                     clientName={order?.client?.name}
+                    clientAddress={order?.client?.address}
                     orderId={"ID: " + order?.orderId}
                     productsList={order?.productInOrder || []}
                     date={formatDate(order?.sellDate)}
@@ -180,6 +195,7 @@ const StatusPanelPage = () => {
                     id={order.id}
                     key={index}
                     clientName={order?.client?.name}
+                    clientAddress={order?.client?.address}
                     orderId={"ID: " + order?.orderId}
                     productsList={order?.productInOrder || []}
                     date={formatDate(order?.sellDate)}
@@ -215,6 +231,7 @@ const StatusPanelPage = () => {
                     id={order.id}
                     key={index}
                     clientName={order?.client?.name}
+                    clientAddress={order?.client?.address}
                     orderId={"ID: " + order?.orderId}
                     productsList={order?.productInOrder || []}
                     date={formatDate(order?.sellDate)}
@@ -248,6 +265,7 @@ const StatusPanelPage = () => {
                     id={order.id}
                     key={index}
                     clientName={order?.client?.name}
+                    clientAddress={order?.client?.address}
                     orderId={"ID: " + order?.orderId}
                     productsList={order?.productInOrder || []}
                     date={formatDate(order?.sellDate)}
@@ -283,6 +301,7 @@ const StatusPanelPage = () => {
                     id={order.id}
                     key={index}
                     clientName={order?.client?.name}
+                    clientAddress={order?.client?.address}
                     orderId={"ID: " + order?.orderId}
                     productsList={order?.productInOrder || []}
                     date={formatDate(order?.sellDate)}

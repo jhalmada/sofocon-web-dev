@@ -295,6 +295,14 @@ const ClientsOrdersPage = () => {
             <Input
               bg="bg-gray"
               border="none"
+              label={"Direccion"}
+              placeholder={orderDetails?.client?.address || "Sin direccion"}
+              placeholderColor="placeholder-black_b"
+              disabled
+            />
+            <Input
+              bg="bg-gray"
+              border="none"
               label={"R.U.T./CI"}
               placeholder={orderDetails?.client?.rut || "sin rut"}
               placeholderColor="placeholder-black_b"
@@ -372,55 +380,52 @@ const ClientsOrdersPage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col 2xl:items-end">
-                  {order.itemsRemoval?.map((item, index) => (
-                    <div
-                      key={index}
-                      className="grid w-full grid-cols-5 gap-4 2xl:w-1/2"
-                    >
-                      <div className="w-full">
-                        <span className="text-sm font-semibold text-black_b">
-                          Cód.
-                        </span>
-                        <p className="text-black_b">
-                          {item.barCode || "sin datos"}
-                        </p>
-                      </div>
-                      <div className="w-full">
-                        <span className="text-sm font-semibold text-black_b">
-                          Matrícula
-                        </span>
-                        <p className="text-black_b">
-                          {item.enrollment || "sin datos"}
-                        </p>
-                      </div>
-                      <div className="w-full">
-                        <span className="text-sm font-semibold text-black_b">
-                          N° UNIT de fábrica
-                        </span>
-                        <p className="text-black_b">
-                          {item.fabricUNIT || "sin datos"}
-                        </p>
-                      </div>
-                      <div className="w-full">
-                        <span className="text-sm font-semibold text-black_b">
-                          N° UNIT actual
-                        </span>
-                        <p className="text-black_b">
-                          {item.newUNIT || "sin datos"}
-                        </p>
-                      </div>
-                      <div className="w-full">
-                        <span className="text-sm font-semibold text-black_b">
-                          Fecha última carga
-                        </span>
-                        <p className="text-black_b">
-                          {formatDate(item.lastDate) || "sin datos"}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                {order.itemsRemoval?.length > 0 && (
+                  <div className="mt-2 overflow-x-auto">
+                    <table className="w-full border-collapse text-sm">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold text-black_b">
+                            Cód.
+                          </th>
+                          <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold text-black_b">
+                            Matrícula
+                          </th>
+                          <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold text-black_b">
+                            N° UNIT de fábrica
+                          </th>
+                          <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold text-black_b">
+                            N° UNIT actual
+                          </th>
+                          <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold text-black_b">
+                            Fecha última carga
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {order.itemsRemoval.map((item, index) => (
+                          <tr key={index} className="hover:bg-gray-50">
+                            <td className="cursor-text select-text border border-gray-300 px-3 py-2 text-black_b">
+                              {item.barCode || "sin datos"}
+                            </td>
+                            <td className="cursor-text select-text border border-gray-300 px-3 py-2 text-black_b">
+                              {item.enrollment || "sin datos"}
+                            </td>
+                            <td className="cursor-text select-text border border-gray-300 px-3 py-2 text-black_b">
+                              {item.fabricUNIT || "sin datos"}
+                            </td>
+                            <td className="cursor-text select-text border border-gray-300 px-3 py-2 text-black_b">
+                              {item.newUNIT || "sin datos"}
+                            </td>
+                            <td className="cursor-text select-text border border-gray-300 px-3 py-2 text-black_b">
+                              {formatDate(item.lastDate) || "sin datos"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             ))}
 

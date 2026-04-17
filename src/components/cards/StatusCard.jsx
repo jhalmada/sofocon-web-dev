@@ -8,6 +8,7 @@ import usePutOrders from "../../hooks/orders/usePutOrders";
 const StatusCard = ({
   id,
   clientName,
+  clientAddress,
   orderId,
   productsList,
   bg = "bg-red_e",
@@ -91,6 +92,9 @@ const StatusCard = ({
           {clientName}
         </p>
       </div>
+      {clientAddress && (
+        <p className="px-2 pt-1 text-xs text-gray-500">{clientAddress}</p>
+      )}
       <div className="flex h-full min-h-[12rem] flex-col justify-between 2xl:min-h-[14rem]">
         <div className="p-2 text-xxs leading-[.75rem] text-black_l 2xl:text-md">
           {" "}
