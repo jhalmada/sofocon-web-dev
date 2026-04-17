@@ -6,10 +6,11 @@ const usePutOrders = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [modified, setModified] = useState(false);
 
-  const changedOrder = async (orderData, orderId, setModified) => {
+  const changedOrder = async (orderData, orderId, setModifiedCallback) => {
     try {
       setIsLoading(true);
       await OrdersService.putOrderApi(orderData, orderId);
+      if (setModifiedCallback) setModifiedCallback((prev) => !prev);
       setModified((prev) => !prev);
 
       return true;
